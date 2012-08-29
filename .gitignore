@@ -1,0 +1,11 @@
+*~
+*.pyc
+*.pyo
+*.swp
+*.mo 
+*.cfg
+dist
+*.egg-info
+build
+.project
+.pydevproject

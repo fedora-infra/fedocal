@@ -55,6 +55,22 @@ def create_tables(db_url, debug=False):
     return sessionmak()
 
 
+def create_session(db_url, debug=False, pool_recycle=3600):
+    """ Create the Session object to use to query the database.
+
+    :arg db_url, URL used to connect to the database. The URL contains
+    information with regards to the database engine, the host to connect
+    to, the user and password and the database name.
+      ie: <engine>://<user>:<password>@<host>/<dbname>
+    :arg debug, a boolean specifying wether we should have the verbose
+    output of sqlalchemy or not.
+    :return a Session that can be used to query the database.
+    """
+    engine = create_engine(db_url, echo=debug, pool_recycle=pool_recycle)
+    session = sessionmaker(bind=engine)
+    return session()
+
+
 class Calendar(BASE):
     """ Calendara table.
 
@@ -154,15 +170,15 @@ class Meeting(BASE):
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_start, meeting_stop, meeting_time,
-        calendar, reminder):
+        calendar_name, reminder_id):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
         self.meeting_start = meeting_start
         self.meeting_stop = meeting_stop
         self.meeting_time = meeting_time
-        self.calendar = Calendar.by_id(calendarid)
-        self.reminder = Reminder.by_id(reminderid)
+        self.calendar_name = calendar_name
+        self.reminder_id = reminder_id
 
     def __repr__(self):
         """ Representation of the Reminder object when printed.

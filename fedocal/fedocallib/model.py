@@ -34,6 +34,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relation as relationship
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql import and_
 
 BASE = declarative_base()
 
@@ -54,22 +55,6 @@ def create_tables(db_url, debug=False):
     BASE.metadata.create_all(engine)
     sessionmak = sessionmaker(bind=engine)
     return sessionmak()
-
-
-def create_session(db_url, debug=False, pool_recycle=3600):
-    """ Create the Session object to use to query the database.
-
-    :arg db_url, URL used to connect to the database. The URL contains
-    information with regards to the database engine, the host to connect
-    to, the user and password and the database name.
-      ie: <engine>://<user>:<password>@<host>/<dbname>
-    :arg debug, a boolean specifying wether we should have the verbose
-    output of sqlalchemy or not.
-    :return a Session that can be used to query the database.
-    """
-    engine = create_engine(db_url, echo=debug, pool_recycle=pool_recycle)
-    session = sessionmaker(bind=engine)
-    return session()
 
 
 class Calendar(BASE):
@@ -110,6 +95,14 @@ class Calendar(BASE):
         except NoResultFound:
             return None
 
+    @classmethod
+    def get_all(cls, session):
+        """ Retrieve all the Calendar available."""
+        try:
+            return session.query(cls).all()
+        except NoResultFound:
+            return None
+
 
 class Reminder(BASE):
     """ Reminders table.
@@ -142,7 +135,7 @@ class Reminder(BASE):
 
     @classmethod
     def by_id(cls, session, identifier):
-        """ Retrieve a Calendar object from the database based on its
+        """ Retrieve a Reminder object from the database based on its
         identifier.
         :return None if no calendar matched this identifier.
         """
@@ -150,6 +143,7 @@ class Reminder(BASE):
             return session.query(cls).get(identifier)
         except NoResultFound:
             return None
+
 
 class Meeting(BASE):
     """ Meetings table.
@@ -198,7 +192,7 @@ class Meeting(BASE):
 
     @classmethod
     def by_id(cls, session, identifier):
-        """ Retrieve a Calendar object from the database based on its
+        """ Retrieve a Meeting object from the database based on its
         identifier.
         :return None if no calendar matched this identifier.
         """
@@ -207,5 +201,27 @@ class Meeting(BASE):
         except NoResultFound:
             return None
 
+    @classmethod
+    def get_by_date(cls, session, start_date, stop_date):
+        """ Retrieve the list of meetings between two date.
+        We include the start date and exclude the stop date.
+        """
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.meeting_start >= start_date),
+                (Meeting.meeting_stop < stop_date)).all()
+        except NoResultFound:
+            return None
+
+
 if __name__ == '__main__':
-    create_tables('sqlite:///:memory:', True)
+    import os
+    import ConfigParser
+    CONFIG = ConfigParser.ConfigParser()
+    if os.path.exists('/etc/fedocal.cfg'):
+        CONFIG.readfp(open('/etc/fedocal.cfg'))
+    else:
+        CONFIG.readfp(open(os.path.join(os.path.dirname(
+            os.path.abspath(__file__)),
+            '..', 'fedocal.cfg')))
+    create_tables(CONFIG.get('fedocal', 'db_url'), True)

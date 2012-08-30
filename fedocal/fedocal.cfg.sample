@@ -1,0 +1,7 @@
+[fedocal]
+# Secret key for the Flask application
+secret_key=<The web application secret key>
+# url to the database server:
+;db_url=mysql://user:pass@host/db_name
+;db_url=postgres://user:pass@host/db_name
+db_url=sqlite://db_dev

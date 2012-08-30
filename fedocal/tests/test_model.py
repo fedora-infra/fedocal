@@ -30,11 +30,13 @@
 __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 
-from datetime import date
-from datetime import time
 import unittest
 import sys
 import os
+
+from datetime import date
+from datetime import time
+from datetime import timedelta
 
 from sqlalchemy.exc import IntegrityError
 
@@ -68,9 +70,9 @@ class Modeltests(unittest.TestCase):
         self.test_init_calendar()
         obj = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertNotEqual(obj, None)
-        self.assertTrue(obj.calendar_name, 'test_calendar')
-        self.assertTrue(obj.calendar_description, 'This is a test calendar')
-        self.assertTrue(obj.calendar_manager_group, 'fi-apprentice')
+        self.assertEqual(obj.calendar_name, 'test_calendar')
+        self.assertEqual(obj.calendar_description, 'This is a test calendar')
+        self.assertEqual(obj.calendar_manager_group, 'fi-apprentice')
 
     def test_init_reminder(self):
         """ Test the Reminder init function. """
@@ -100,11 +102,11 @@ class Modeltests(unittest.TestCase):
         self.test_init_reminder()
         obj = model.Reminder.by_id(self.session, 1)
         self.assertNotEqual(obj, None)
-        self.assertTrue(obj.reminder_offset, 'H-12')
-        self.assertTrue(obj.reminder_to,
+        self.assertEqual(obj.reminder_offset, 'H-12')
+        self.assertEqual(obj.reminder_to,
             'fi-apprentice@lists.fedoraproject.org,'\
             'ambassadors@lists.fedoraproject.org')
-        self.assertTrue(obj.reminder_text, 'This is your friendly reminder')
+        self.assertEqual(obj.reminder_text, 'This is your friendly reminder')
 
     def test_init_meeting(self):
         """ Test the Meeting init function. """
@@ -112,8 +114,8 @@ class Modeltests(unittest.TestCase):
         obj = model.Meeting(
             'Fedora-fr-test-meeting',
             'pingou, shaiton',
-            date(2012, 9, 3),
-            date(2012, 9, 3),
+            date.today(),
+            date.today(),
             time(19,00),
             time(20,00),
             'test_calendar',
@@ -122,14 +124,11 @@ class Modeltests(unittest.TestCase):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-    def test_init_meeting(self):
-        """ Test the Meeting init function. """
-        self.test_init_calendar()
         obj = model.Meeting(
-            'Fedora-fr-test-meeting',
-            'pingou, shaiton',
-            date.today(),
-            date.today(),
+            'test-meeting2',
+            'pingou',
+            date.today() + timedelta(days=10),
+            date.today() + timedelta(days=10),
             time(19,00),
             time(20,00),
             'test_calendar',
@@ -143,11 +142,31 @@ class Modeltests(unittest.TestCase):
         self.test_init_meeting()
         obj = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(obj, None)
-        self.assertTrue(obj.meeting_name, 'Fedora-fr-test-meeting')
-        self.assertTrue(obj.meeting_manager, 'pingou, shaiton')
-        self.assertTrue(obj.calendar.calendar_name, 'test_calendar')
-        self.assertTrue(obj.calendar.calendar_description, 'This is a test calendar')
+        self.assertEqual(obj.meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(obj.meeting_manager, 'pingou, shaiton')
+        self.assertEqual(obj.calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj.calendar.calendar_description, 'This is a test calendar')
         self.assertEqual(obj.reminder, None)
+
+    def test_get_by_date_meeting(self):
+        """ Test the query of a list of meetings between two dates. """
+        self.test_init_meeting()
+        week_day = date.today()
+        week_start = week_day - timedelta(days=week_day.weekday())
+        week_stop = week_day + timedelta(days=7)
+        obj = model.Meeting.get_by_date(self.session, week_start, week_stop)
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[0].calendar.calendar_description, 'This is a test calendar')
+        self.assertEqual(obj[0].reminder, None)
+
+        week_stop = week_day + timedelta(days=14)
+        obj = model.Meeting.get_by_date(self.session, week_start, week_stop)
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 2)
 
 
 if __name__ == '__main__':

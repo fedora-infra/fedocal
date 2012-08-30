@@ -2,7 +2,8 @@
 #-*- coding: utf-8 -*-
 
 """
- (c) 2011, 2012 - Copyright Pierre-Yves Chibon
+ (c) 2012 - Copyright Pierre-Yves Chibon
+ Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website

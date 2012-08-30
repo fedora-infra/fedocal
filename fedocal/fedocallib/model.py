@@ -160,14 +160,16 @@ class Meeting(BASE):
     __tablename__ = 'meetings'
     meeting_id = Column(Integer, primary_key=True)
     meeting_name = Column(String(200))
-    calendar_name = Column(String(80), ForeignKey('calendars.calendar_name'))
+    calendar_name = Column(String(80), ForeignKey('calendars.calendar_name'),
+        nullable=False)
     calendar = relationship("Calendar")
     meeting_manager = Column(String(160))  #  5 person max (32 * 5)
     meeting_start = Column(Date, default=datetime.utcnow().date())
     meeting_stop = Column(Date, default=datetime.utcnow().date())
     meeting_time_start = Column(Time, default=datetime.utcnow().time())
     meeting_time_stop = Column(Time, default=datetime.utcnow().time())
-    reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'))
+    reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
+        nullable=True)
     reminder = relationship("Reminder")
 
     def __init__(self, meeting_name, meeting_manager,

@@ -26,12 +26,16 @@ class Week(object):
     all its meetings.
     """
 
-    def __init__(self, calendar, start_date=None):
+    def __init__(self, session, calendar, start_date=None):
         """ Constructor, instanciate a week object for a given calendar.
         :arg calendar, the name of the calendar to use.
         :kwarg start_date, the starting date of the week.
         """
-        self.calendar = Calender.by_id(calendar)
+        self.session = session
+        if isinstance(calendar, str):
+            self.calendar = Calendar.by_id(session, calendar)
+        else:
+            self.calendar = calendar
         self.start_date = start_date
         self.stop_date = start_date + timedelta(days=7)
         self.meetings = self.get_meetings()
@@ -39,7 +43,12 @@ class Week(object):
     def get_meetings(self):
         """ Retrieves the list of this week meeting from the database.
         """
-        self.meetings = Meeting.get_by_date(self.start_date,
-            self.stop_date)
+        self.meetings = Meeting.get_by_date(self.session,
+            self.start_date, self.stop_date)
 
-
+    def __repr__(self):
+        """ Representation of the Week object when printed.
+        """
+        return "<Week('%s' from '%s' to '%s')>" % (
+            self.calendar.calendar_name,
+            self.start_date, self.stop_date)

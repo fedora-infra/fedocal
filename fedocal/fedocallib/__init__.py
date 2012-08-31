@@ -50,7 +50,7 @@ def get_calendars(session):
     return Calendar.get_all(session)
 
 
-def get_week(calendar, year=None, month=None, day=None):
+def get_week(session, calendar, year=None, month=None, day=None):
     """ For a given date, retrieve the corresponding week.
     For any missing parameters (ie: None), use the value of the current
     day.
@@ -65,6 +65,6 @@ def get_week(calendar, year=None, month=None, day=None):
         day = now.day
     week_day = date(year, month, day)
     week_start = week_day - timedelta(days=week_day.weekday())
-    week = Week(calendar, week_start)
+    week = Week(session, calendar, week_start)
     return week
 

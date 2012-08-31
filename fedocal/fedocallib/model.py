@@ -153,7 +153,7 @@ class Meeting(BASE):
 
     __tablename__ = 'meetings'
     meeting_id = Column(Integer, primary_key=True)
-    meeting_name = Column(String(200))
+    meeting_name = Column(String(200), nullable=False)
     calendar_name = Column(String(80), ForeignKey('calendars.calendar_name'),
         nullable=False)
     calendar = relationship("Calendar")

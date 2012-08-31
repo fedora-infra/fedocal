@@ -40,3 +40,8 @@ else:
 # Create the application.
 APP = Flask(__name__)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
+
+
+if __name__ == '__main__':
+    APP.debug = True
+    APP.run()

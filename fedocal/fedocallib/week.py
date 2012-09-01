@@ -32,10 +32,7 @@ class Week(object):
         :kwarg start_date, the starting date of the week.
         """
         self.session = session
-        if isinstance(calendar, str):
-            self.calendar = Calendar.by_id(session, calendar)
-        else:
-            self.calendar = calendar
+        self.calendar = calendar
         self.start_date = start_date
         self.stop_date = start_date + timedelta(days=7)
         self.meetings = self.get_meetings()

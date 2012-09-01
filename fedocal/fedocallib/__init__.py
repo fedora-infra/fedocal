@@ -148,6 +148,6 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
                 stop_time = '0%i' % stop_time
             key = '%s:%s' % (start_time, stop_time)
             if key in meetings:
-                meetings[key][meeting.meeting_start.weekday()] = meeting
+                meetings[key][meeting.meeting_date.weekday()] = meeting
             cnt = cnt + 1
     return meetings

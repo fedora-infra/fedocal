@@ -158,8 +158,7 @@ class Meeting(BASE):
         nullable=False)
     calendar = relationship("Calendar")
     meeting_manager = Column(String(160))  #  5 person max (32 * 5)
-    meeting_start = Column(Date, default=datetime.utcnow().date())
-    meeting_stop = Column(Date, default=datetime.utcnow().date())
+    meeting_date = Column(Date, default=datetime.utcnow().date())
     meeting_time_start = Column(Time, default=datetime.utcnow().time())
     meeting_time_stop = Column(Time, default=datetime.utcnow().time())
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
@@ -167,14 +166,12 @@ class Meeting(BASE):
     reminder = relationship("Reminder")
 
     def __init__(self, meeting_name, meeting_manager,
-        meeting_start, meeting_stop,
-        meeting_time_start, meeting_time_stop,
+        meeting_date, meeting_time_start, meeting_time_stop,
         calendar_name, reminder_id):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
-        self.meeting_start = meeting_start
-        self.meeting_stop = meeting_stop
+        self.meeting_date = meeting_date
         self.meeting_time_start = meeting_time_start
         self.meeting_time_stop = meeting_time_stop
         self.calendar_name = calendar_name
@@ -209,8 +206,8 @@ class Meeting(BASE):
         try:
             return session.query(cls).filter(and_
                 (Meeting.calendar == calendar),
-                (Meeting.meeting_start >= start_date),
-                (Meeting.meeting_stop < stop_date)).all()
+                (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_date < stop_date)).all()
         except NoResultFound:
             return None
 

@@ -202,12 +202,13 @@ class Meeting(BASE):
             return None
 
     @classmethod
-    def get_by_date(cls, session, start_date, stop_date):
+    def get_by_date(cls, session, calendar, start_date, stop_date):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
         """
         try:
             return session.query(cls).filter(and_
+                (Meeting.calendar == calendar),
                 (Meeting.meeting_start >= start_date),
                 (Meeting.meeting_stop < stop_date)).all()
         except NoResultFound:

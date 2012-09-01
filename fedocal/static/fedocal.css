@@ -1,0 +1,74 @@
+body {
+    padding: 0px;
+    background: url(http://git.fedorahosted.org/cgit-data/images/html-bg.png)
+        repeat-x scroll 0 10px #FFFFFF;
+    height: 100%;
+    margin-bottom: 0px;
+    color: #2E3436;
+    font-family: Cantarell,'Droid Sans','DejaVu Sans',Arial,sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+h4 {
+    color: #CE5C00;
+    font-size: 16px;
+    margin: 0.8em 0 0.4em;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+
+#agenda {
+    display: inline;
+    float: left;
+}
+
+#agenda table {
+    border-collapse:collapse;
+}
+
+
+#agenda td {
+    width: 100px;
+    height: 20px;
+    border-bottom: solid 1px grey;
+    border-left: solid 1px grey;
+}
+
+#agenda .time {
+    border-left: solid 0px;
+}
+
+#agenda th {
+    border-bottom: 1px dotted black;
+    padding: 5px;
+}
+
+#left-sidebar {
+    display: inline;
+    width: 150px;
+    margin-right: 0;
+    float: right;
+}
+
+#left-sidebar li {
+    margin-left: 0px;
+}
+
+
+<style type="text/css">
+table.bottomBorder { border-collapse:collapse; }
+table.bottomBorder td, table.bottomBorder th { border-bottom:1px dotted black;padding:5px; }
+</style>
+<!-- Be sure to place the above styles (i.e. everything between the <style></style> tags) into the document 'head' (i.e. between the <head></head> tags. Everything below goes inside the <body></body> tags) -->
+<table class="bottomBorder">
+<tr>
+<th>Table header</th><th>Table header</th>
+</tr>
+<tr>
+<td>Table cell 1</td><td>Table cell 2</td>
+</tr>
+</table>

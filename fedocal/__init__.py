@@ -49,13 +49,7 @@ APP.secret_key = CONFIG.get('fedocal', 'secret_key')
 def index():
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendars = Calendar.get_all(session)
-    week = fedocallib.get_week(session, calendars[0])
-    meetings = fedocallib.get_meetings(session, calendar)
-    return flask.render_template('agenda.html',
-        calendar=calendars[0],
-        calendars=calendars,
-        weekdays=weekdays,
-        meetings=meetings)
+    return calendar(calendars[0])
 
 
 @APP.route('/<calendar>')

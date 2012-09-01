@@ -44,32 +44,32 @@ else:
 APP = flask.Flask(__name__)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
 
-SESSION = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-
 
 @APP.route('/')
 def index():
-    calendars = Calendar.get_all(SESSION)
-    week = fedocallib.get_week(SESSION, calendars[0])
-    weekdays = fedocallib.get_week_days()
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    calendars = Calendar.get_all(session)
+    week = fedocallib.get_week(session, calendars[0])
+    meetings = fedocallib.get_meetings(session, calendar)
     return flask.render_template('agenda.html',
         calendar=calendars[0],
         calendars=calendars,
         weekdays=weekdays,
-        week=week)
+        meetings=meetings)
 
 
 @APP.route('/<calendar>')
 def calendar(calendar):
-    calendars = Calendar.get_all(SESSION)
-    calendar = Calendar.by_id(SESSION, calendar)
-    week = fedocallib.get_week(SESSION, calendar)
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    calendar = Calendar.by_id(session, calendar)
+    calendars = Calendar.get_all(session)
     weekdays = fedocallib.get_week_days()
+    meetings = fedocallib.get_meetings(session, calendar)
     return flask.render_template('agenda.html',
         calendar=calendar,
         calendars=calendars,
         weekdays=weekdays,
-        week=week)
+        meetings=meetings)
 
 
 if __name__ == '__main__':

@@ -35,12 +35,13 @@ class Week(object):
         self.calendar = calendar
         self.start_date = start_date
         self.stop_date = start_date + timedelta(days=7)
-        self.meetings = self.get_meetings()
+        self.meetings = []
+        self.get_meetings()
 
     def get_meetings(self):
         """ Retrieves the list of this week meeting from the database.
         """
-        self.meetings = Meeting.get_by_date(self.session,
+        self.meetings = Meeting.get_by_date(self.session, self.calendar,
             self.start_date, self.stop_date)
 
     def __repr__(self):

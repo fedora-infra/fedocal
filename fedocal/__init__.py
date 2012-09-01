@@ -27,7 +27,10 @@
 import ConfigParser
 import os
 
-from flask import Flask
+import flask
+
+import fedocallib
+from fedocallib.model import Calendar, Meeting, Reminder
 
 CONFIG = ConfigParser.ConfigParser()
 if os.path.exists('/etc/fedocal.cfg'):
@@ -38,8 +41,35 @@ else:
         'fedocal.cfg')))
 
 # Create the application.
-APP = Flask(__name__)
+APP = flask.Flask(__name__)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
+
+SESSION = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+
+
+@APP.route('/')
+def index():
+    calendars = Calendar.get_all(SESSION)
+    week = fedocallib.get_week(SESSION, calendars[0])
+    weekdays = fedocallib.get_week_days()
+    return flask.render_template('agenda.html',
+        calendar=calendars[0],
+        calendars=calendars,
+        weekdays=weekdays,
+        week=week)
+
+
+@APP.route('/<calendar>')
+def calendar(calendar):
+    calendars = Calendar.get_all(SESSION)
+    calendar = Calendar.by_id(SESSION, calendar)
+    week = fedocallib.get_week(SESSION, calendar)
+    weekdays = fedocallib.get_week_days()
+    return flask.render_template('agenda.html',
+        calendar=calendar,
+        calendars=calendars,
+        weekdays=weekdays,
+        week=week)
 
 
 if __name__ == '__main__':

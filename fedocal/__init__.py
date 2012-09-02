@@ -26,9 +26,12 @@
 
 import ConfigParser
 import os
+from urlparse import urljoin, urlparse
 
 import flask
+from flask.ext.fas import FAS
 
+import forms
 import fedocallib
 from fedocallib.model import Calendar, Meeting, Reminder
 
@@ -42,7 +45,40 @@ else:
 
 # Create the application.
 APP = flask.Flask(__name__)
+# set up FAS
+fas = FAS(APP)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
+
+
+def is_safe_url(target):
+    ref_url = urlparse(flask.request.host_url)
+    test_url = urlparse(urljoin(flask.request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+            ref_url.netloc == test_url.netloc
+
+
+def safe_redirect_back(next=None, fallback=('index', {})):
+    targets = []
+    if next:
+        targets.append(next)
+    if 'next' in flask.request.args and \
+       flask.request.args['next']:
+        targets.append(flask.request.args['next'])
+    targets.append(flask.url_for(fallback[0], **fallback[1]))
+    for target in targets:
+        if is_safe_url(target):
+            return flask.redirect(target)
+
+
+def is_admin():
+    """ Return wether the user is admin for this application or not. """
+    if not flask.g.fas_user:
+        return False
+    else:
+        print flask.g.fas_user.groups
+        if '' in flask.g.fas_user.groups:
+            return True
+    return False
 
 
 @APP.route('/')
@@ -54,26 +90,8 @@ def index():
 
 @APP.route('/<calendar>')
 def calendar(calendar):
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    calendar = Calendar.by_id(session, calendar)
-    calendars = Calendar.get_all(session)
-    week_start = fedocallib.get_start_week()
-    week_stop = fedocallib.get_stop_week()
-    weekdays = fedocallib.get_week_days()
-    meetings = fedocallib.get_meetings(session, calendar)
-    next_week = fedocallib.get_next_week(week_start.year,
-        week_start.month, week_start.day)
-    prev_week = fedocallib.get_previous_week(week_start.year,
-        week_start.month, week_start.day)
-    admin = fedocallib.is_admin()
-    return flask.render_template('agenda.html',
-        calendar=calendar,
-        calendars=calendars,
-        weekdays=weekdays,
-        meetings=meetings,
-        next_week=next_week,
-        prev_week=prev_week,
-        admin=admin)
+    return calendar_fullday(calendar, year=None, month=None, day=None)
+
 
 @APP.route('/<calendar>/<int:year>/<int:month>/<int:day>')
 def calendar_fullday(calendar, year, month, day):
@@ -88,7 +106,8 @@ def calendar_fullday(calendar, year, month, day):
         week_start.month, week_start.day)
     prev_week = fedocallib.get_previous_week(week_start.year,
         week_start.month, week_start.day)
-    admin = fedocallib.is_admin()
+    auth_form = forms.LoginForm()
+    admin = is_admin()
     return flask.render_template('agenda.html',
         calendar=calendar,
         calendars=calendars,
@@ -96,7 +115,31 @@ def calendar_fullday(calendar, year, month, day):
         meetings=meetings,
         next_week=next_week,
         prev_week=prev_week,
+        auth_form=auth_form,
         admin=admin)
+
+
+@APP.route('/login', methods=('GET', 'POST'))
+def auth_login():
+    if flask.g.fas_user:
+        return safe_redirect_back()
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        if fas.login(form.username.data, form.password.data):
+            flask.flash('Welcome, %s' % flask.g.fas_user.username)
+            return safe_redirect_back()
+        else:
+            flask.flash('Incorrect username or password')
+    return safe_redirect_back()
+
+
+@APP.route('/logout')
+def auth_logout():
+    if not flask.g.fas_user:
+        return safe_redirect_back()
+    fas.logout()
+    flask.flash('You have been logged out')
+    return safe_redirect_back()
 
 
 if __name__ == '__main__':

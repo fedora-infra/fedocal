@@ -1,5 +1,4 @@
 {% extends "master.html" %}
-{% from "_formhelpers.html" import render_field %}
 
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
@@ -13,51 +12,6 @@
 {% endblock %}
 
 {% block content %}
-
-<!-- start sidebar -->
-<div id="left-sidebar">
-    <h4>Calendars</h4>
-    <ul class="checkmark-list">
-        {% for calendar in calendars %}
-        <li>
-            <a href="{{url_for('calendar',
-                calendar=calendar.calendar_name)}}">
-                {{ calendar.calendar_name }}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
-    <h4> User </h4>
-    {% if not g.fas_user %}
-        <form action="{{ url_for('auth_login') }}" method="post">
-            <p>Log in using your <a href="{{ config.FAS_BASE_URL }}">
-                Fedora Accounts System</a> account.
-            </p>
-            {{ render_field(auth_form.username) }}
-            {{ render_field(auth_form.password) }}
-            <p class="buttons indent">
-                <input type="submit" class="submit positive" value="Log in">
-            </p>
-            {{ auth_form.csrf_token }}
-        </form>
-    {% else %}
-        <p> Welcome, {{ g.fas_user.username }}</p>
-        <ul class="checkmark-list">
-            <li><a href=""> Add a meeting </a></li>
-            <li><a href=""> Manage your meeting </a></li>
-            <li><a href="{{ url_for('auth_logout') }}"> Log-out </a></li>
-        </ul>
-    {% endif %}
-    {% if admin %}
-        <h4> Admin </h4>
-        <ul>
-            <li>
-            <a href="{{ url_for('add_calendar') }}"> Add a calendar </a>
-            </li>
-        </ul>
-    {% endif %}
-</div>
-<!-- end sidebar -->
 
 <p>
     <a href="{{url_for('calendar_fullday', calendar=calendar.calendar_name,

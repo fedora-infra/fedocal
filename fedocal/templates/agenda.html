@@ -1,14 +1,9 @@
 {% extends "master.html" %}
+{% from "_formhelpers.html" import render_field %}
 
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
 {% block content %}
-<h1> Fedora Calendar </h1>
-
-<h2> {{ calendar.calendar_name }} </h2>
-<p>
-    {{ calendar.calendar_description }}
-</p>
 
 <!-- start sidebar -->
 <div id="left-sidebar">
@@ -24,18 +19,24 @@
         {% endfor %}
     </ul>
     <h4> User </h4>
-    {% if g.fas_user %}
-        <p>You are not logged in</p>
-        <p>
-            <a href="">
-                Login
-            </a>
-        </p>
+    {% if not g.fas_user %}
+        <form action="{{ url_for('auth_login') }}" method="post">
+            <p>Log in using your <a href="{{ config.FAS_BASE_URL }}">
+                Fedora Accounts System</a> account.
+            </p>
+            {{ render_field(auth_form.username) }}
+            {{ render_field(auth_form.password) }}
+            <p class="buttons indent">
+                <input type="submit" class="submit positive" value="Log in">
+            </p>
+            {{ auth_form.csrf_token }}
+        </form>
     {% else %}
-        <p> Welcome </p>
+        <p> Welcome, {{ g.fas_user.username }}</p>
         <ul class="checkmark-list">
             <li><a href=""> Add a meeting </a></li>
             <li><a href=""> Manage your meeting </a></li>
+            <li><a href="{{ url_for('auth_logout') }}"> Log-out </a></li>
         </ul>
     {% endif %}
     {% if admin %}

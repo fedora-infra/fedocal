@@ -49,7 +49,7 @@ APP.secret_key = CONFIG.get('fedocal', 'secret_key')
 def index():
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendars = Calendar.get_all(session)
-    return calendar(calendars[0])
+    return calendar(calendars[0].calendar_name)
 
 
 @APP.route('/<calendar>')
@@ -57,13 +57,46 @@ def calendar(calendar):
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendar = Calendar.by_id(session, calendar)
     calendars = Calendar.get_all(session)
+    week_start = fedocallib.get_start_week()
+    week_stop = fedocallib.get_stop_week()
     weekdays = fedocallib.get_week_days()
     meetings = fedocallib.get_meetings(session, calendar)
+    next_week = fedocallib.get_next_week(week_start.year,
+        week_start.month, week_start.day)
+    prev_week = fedocallib.get_previous_week(week_start.year,
+        week_start.month, week_start.day)
+    admin = fedocallib.is_admin()
     return flask.render_template('agenda.html',
         calendar=calendar,
         calendars=calendars,
         weekdays=weekdays,
-        meetings=meetings)
+        meetings=meetings,
+        next_week=next_week,
+        prev_week=prev_week,
+        admin=admin)
+
+@APP.route('/<calendar>/<int:year>/<int:month>/<int:day>')
+def calendar_fullday(calendar, year, month, day):
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    calendar = Calendar.by_id(session, calendar)
+    calendars = Calendar.get_all(session)
+    week_start = fedocallib.get_start_week(year, month, day)
+    week_stop = fedocallib.get_stop_week(year, month, day)
+    weekdays = fedocallib.get_week_days(year, month, day)
+    meetings = fedocallib.get_meetings(session, calendar, year, month, day)
+    next_week = fedocallib.get_next_week(week_start.year,
+        week_start.month, week_start.day)
+    prev_week = fedocallib.get_previous_week(week_start.year,
+        week_start.month, week_start.day)
+    admin = fedocallib.is_admin()
+    return flask.render_template('agenda.html',
+        calendar=calendar,
+        calendars=calendars,
+        weekdays=weekdays,
+        meetings=meetings,
+        next_week=next_week,
+        prev_week=prev_week,
+        admin=admin)
 
 
 if __name__ == '__main__':

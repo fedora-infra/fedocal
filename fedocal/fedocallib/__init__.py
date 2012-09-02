@@ -197,3 +197,42 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
             cnt = cnt + 1
     return meetings
 
+
+def is_date_in_future(indate, start_time):
+    """ Return whether the date is in the future or the past.
+    :arg datestring, a datetime object of the date to check
+        (ie: '2012-09-01')
+    :arg start_time, a string of the starting time of the meeting
+    (ie: '08')
+    """
+    today = datetime.utcnow()
+    if today.date() < indate:
+        return False
+    elif today.hour < int(start_time) :
+        return False
+    else:
+        return True
+
+
+def get_past_meeting_of_user(session, username):
+    """ Return all past meeting which specified username is among the
+    managers.
+    :arg username, the FAS user name that you would like to have the
+    past meetings for.
+    """
+    meetings = Meeting.get_past_meeting_of_user(session, username,
+        datetime.utcnow())
+    print meetings
+    return meetings
+
+
+def get_future_meeting_of_user(session, username):
+    """ Return all future meeting which specified username is among the
+    managers.
+    :arg username, the FAS user name that you would like to have the
+    past meetings for.
+    """
+    meetings = Meeting.get_future_meeting_of_user(session, username,
+        datetime.utcnow())
+    print meetings
+    return meetings

@@ -55,7 +55,7 @@ def is_admin():
     if not flask.g.fas_user:
         return False
     else:
-        if '' in flask.g.fas_user.groups:
+        if CONFIG.get('fedocal', 'admin_group') in flask.g.fas_user.groups:
             return True
     return False
 

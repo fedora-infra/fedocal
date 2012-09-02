@@ -211,6 +211,32 @@ class Meeting(BASE):
         except NoResultFound:
             return None
 
+    @classmethod
+    def get_past_meeting_of_user(cls, session, username, start_date):
+        """ Retrieve the list of meetings which specified username
+        is among the managers and which date is older than the specified
+        one.
+        """
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.meeting_date < start_date),
+                (Meeting.meeting_manager.like('%%%s%%' % username))).all()
+        except NoResultFound:
+            return None
+
+    @classmethod
+    def get_future_meeting_of_user(cls, session, username, start_date):
+        """ Retrieve the list of meetings which specified username
+        is among the managers and which date is newer or egual than the
+        specified one.
+        """
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_manager.like('%%%s%%' % username))).all()
+        except NoResultFound:
+            return None
+
 
 if __name__ == '__main__':
     import os

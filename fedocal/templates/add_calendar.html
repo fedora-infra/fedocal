@@ -1,0 +1,21 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %} Add calendar {% endblock %}
+
+{% block content_titles %}
+    <h1>Add a new calendar</h1>
+{% endblock %}
+
+{% block content %}
+
+<form action="" method="post">
+{{ render_field(form.calendar_name) }}
+{{ render_field(form.calendar_description) }}
+{{ render_field(form.calendar_manager_groups) }}
+<p class="buttons indent">
+    <input type="submit" class="submit positive" value="Log in">
+</p>
+{{ form.csrf_token }}
+</form>
+{% endblock %}

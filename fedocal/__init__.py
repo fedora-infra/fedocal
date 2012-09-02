@@ -75,7 +75,6 @@ def is_admin():
     if not flask.g.fas_user:
         return False
     else:
-        print flask.g.fas_user.groups
         if '' in flask.g.fas_user.groups:
             return True
     return False
@@ -119,6 +118,20 @@ def calendar_fullday(calendar, year, month, day):
         admin=admin)
 
 
+@APP.route('/mine/')
+def my_meetings():
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'),
+        debug=True)
+    meetings = fedocallib.get_future_meeting_of_user(session,
+        flask.g.fas_user.username)
+    past_meetings = fedocallib.get_past_meeting_of_user(session,
+        flask.g.fas_user.username)
+    calendars = Calendar.get_all(session)
+    return flask.render_template('my_meeting.html', calendars=calendars,
+        title='My meeting',
+        meetings=meetings, pas_meetings=past_meetings)
+
+
 @APP.route('/login', methods=('GET', 'POST'))
 def auth_login():
     if flask.g.fas_user:
@@ -160,9 +173,44 @@ def add_calendar():
         except Exception, err:
             print err
             flask.flash('Could not add this calendar to the database')
-        else:
-            flask.flash('Incorrect information entered to add a new agenda')
+        flask.flash('Calendar added')
+        return safe_redirect_back()
+    else:
+        flask.flash('Incorrect information entered to add a new agenda')
     return flask.render_template('add_calendar.html', form=form)
+
+
+@APP.route('/<calendar>/add', methods=('GET', 'POST'))
+def add_meeting(calendar):
+    #if not flask.g.fas_user or not is_admin():
+        #return safe_redirect_back()
+    form = forms.AddMeetingForm()
+    if form.validate_on_submit():
+        session = fedocallib.create_session(
+            CONFIG.get('fedocal', 'db_url'))
+        if fedocallib.is_date_in_future(form.meeting_date.data,
+            form.meeting_time_start.data):
+                flask.flash('The date you entered is in the past')
+        else:
+            meeting = Meeting(
+                form.meeting_name.data,
+                flask.g.fas_user.username,
+                form.meeting_date.data,
+                '%s:00:00' % form.meeting_time_start.data,
+                '%s:00:00' % form.meeting_time_stop.data,
+                calendar,
+                None)
+            try:
+                meeting.save(session)
+                session.commit()
+            except Exception, err:
+                print err
+                flask.flash('Could not add this meeting to this calendar')
+            flask.flash('Calendar added')
+            return safe_redirect_back()
+    else:
+        flask.flash('Incorrect information entered to add a new meeting')
+    return flask.render_template('add_meeting.html', form=form)
 
 
 if __name__ == '__main__':

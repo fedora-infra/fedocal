@@ -21,15 +21,21 @@ a {
     text-decoration: none;
 }
 
-#agenda {
+#agenda, #my_meetings {
     display: inline;
     float: left;
 }
 
-#agenda table {
+#agenda table, #my_meetings table {
     border-collapse:collapse;
+    min-width: 600px;
 }
 
+#my_meetings td {
+    border-bottom: solid 1px grey;
+    border-top: solid 1px grey;
+    border-left: solid 1px grey;
+}
 
 #agenda td {
     width: 100px;
@@ -38,8 +44,13 @@ a {
     border-left: solid 1px grey;
 }
 
-#agenda .time {
+#agenda .time{
     border-left: solid 0px;
+}
+
+#my_meetings .time {
+    border-left: solid 0px;
+    width: 100px;
 }
 
 #agenda th {
@@ -57,18 +68,3 @@ a {
 #left-sidebar li {
     margin-left: 0px;
 }
-
-
-<style type="text/css">
-table.bottomBorder { border-collapse:collapse; }
-table.bottomBorder td, table.bottomBorder th { border-bottom:1px dotted black;padding:5px; }
-</style>
-<!-- Be sure to place the above styles (i.e. everything between the <style></style> tags) into the document 'head' (i.e. between the <head></head> tags. Everything below goes inside the <body></body> tags) -->
-<table class="bottomBorder">
-<tr>
-<th>Table header</th><th>Table header</th>
-</tr>
-<tr>
-<td>Table cell 1</td><td>Table cell 2</td>
-</tr>
-</table>

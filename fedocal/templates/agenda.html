@@ -23,9 +23,45 @@
         </li>
         {% endfor %}
     </ul>
+    <h4> User </h4>
+    {% if g.fas_user %}
+        <p>You are not logged in</p>
+        <p>
+            <a href="">
+                Login
+            </a>
+        </p>
+    {% else %}
+        <p> Welcome </p>
+        <ul class="checkmark-list">
+            <li><a href=""> Add a meeting </a></li>
+            <li><a href=""> Manage your meeting </a></li>
+        </ul>
+    {% endif %}
+    {% if admin %}
+        <h4> Admin </h4>
+        <ul>
+            <li>
+            <a href=""> Add a calendar </a>
+            </li>
+        </ul>
+    {% endif %}
 </div>
+<!-- end sidebar -->
 
-
+<p>
+    <a href="{{url_for('calendar_fullday', calendar=calendar.calendar_name,
+        year=prev_week.year, month=prev_week.month, day=prev_week.day)}}">
+         &lt;&lt; Previous week
+    </a> |
+    <a href="{{url_for('calendar', calendar=calendar.calendar_name)}}">
+         current week
+    </a> |
+    <a href="{{url_for('calendar_fullday', calendar=calendar.calendar_name,
+        year=next_week.year, month=next_week.month, day=next_week.day)}}">
+        Next week &gt;&gt;
+    </a>
+</p>
 <div id='agenda'>
     <table>
         <tr>

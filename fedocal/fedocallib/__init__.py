@@ -197,7 +197,3 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
             cnt = cnt + 1
     return meetings
 
-def is_admin():
-    """ Return wether the user is admin for this application or not. """
-    #return False
-    return True

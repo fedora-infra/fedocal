@@ -1,7 +1,7 @@
 body {
     padding: 0px;
-    background: url(http://git.fedorahosted.org/cgit-data/images/html-bg.png)
-        repeat-x scroll 0 10px #FFFFFF;
+    background: url(html-bg.png)
+        repeat-x scroll 0 0px #FFFFFF;
     height: 100%;
     margin-bottom: 0px;
     color: #2E3436;

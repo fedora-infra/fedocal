@@ -30,8 +30,7 @@ class AddCalendarForm(wtf.Form):
     calendar_name = wtf.TextField('Calendar',
         [wtf.validators.Required()])
     calendar_description = wtf.TextField('Description')
-    calendar_managers = wtf.TextField('Managers',
-        [wtf.validators.Required()])
+    calendar_manager_groups = wtf.TextField('Manager groups')
 
 
 class LoginForm(wtf.Form):

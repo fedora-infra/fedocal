@@ -25,12 +25,31 @@
 
 from flask.ext import wtf
 
+from fedocallib import HOURS
+
 
 class AddCalendarForm(wtf.Form):
     calendar_name = wtf.TextField('Calendar',
         [wtf.validators.Required()])
     calendar_description = wtf.TextField('Description')
     calendar_manager_groups = wtf.TextField('Manager groups')
+
+
+class AddMeetingForm(wtf.Form):
+    meeting_name = wtf.TextField('Meeting name',
+        [wtf.validators.Required()])
+
+    meeting_date = wtf.DateField('Date', [wtf.validators.Required()])
+
+    meeting_time_start = wtf.SelectField('Start time',
+        [wtf.validators.Required()],
+        choices = [(hour, hour) for hour in HOURS]
+        )
+
+    meeting_time_stop = wtf.SelectField('Stop time',
+        [wtf.validators.Required()],
+        choices = [(hour, hour) for hour in HOURS]
+        )
 
 
 class LoginForm(wtf.Form):

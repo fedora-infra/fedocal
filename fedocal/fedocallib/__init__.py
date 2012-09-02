@@ -76,6 +76,51 @@ def get_start_week(year=None, month=None, day=None):
     return week_start
 
 
+def get_stop_week(year=None, month=None, day=None):
+    """ For a given date, retrieve the day the week stops.
+    For any missing parameters (ie: None), use the value of the current
+    day.
+    :kwarg year, year to consider when searching a week.
+    :kwarg month, month to consider when searching a week.
+    :kwarg day, day to consider when searching a week.
+    :return a Date of the day the week started either based on the
+    current utc date or based on the information.
+    """
+    week_start = get_start_week(year, month, day)
+    week_stop = week_start + timedelta(days=7)
+    return week_stop
+
+
+def get_next_week(year=None, month=None, day=None):
+    """ For a given date, retrieve the day when the next week starts.
+    For any missing parameters (ie: None), use the value of the current
+    day.
+    :kwarg year, year to consider when searching a week.
+    :kwarg month, month to consider when searching a week.
+    :kwarg day, day to consider when searching a week.
+    :return a Date of the day the week started either based on the
+    current utc date or based on the information.
+    """
+    week_start = get_start_week(year, month, day)
+    next_week_start = week_start + timedelta(days=8)
+    return next_week_start
+
+
+def get_previous_week(year=None, month=None, day=None):
+    """ For a given date, retrieve the day when the previous week starts.
+    For any missing parameters (ie: None), use the value of the current
+    day.
+    :kwarg year, year to consider when searching a week.
+    :kwarg month, month to consider when searching a week.
+    :kwarg day, day to consider when searching a week.
+    :return a Date of the day the week started either based on the
+    current utc date or based on the information.
+    """
+    week_start = get_start_week(year, month, day)
+    previous_week_start = week_start - timedelta(days=8)
+    return previous_week_start
+
+
 def get_week(session, calendar, year=None, month=None, day=None):
     """ For a given date, retrieve the corresponding week.
     For any missing parameters (ie: None), use the value of the current
@@ -151,3 +196,8 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
                 meetings[key][meeting.meeting_date.weekday()] = meeting
             cnt = cnt + 1
     return meetings
+
+def is_admin():
+    """ Return wether the user is admin for this application or not. """
+    #return False
+    return True

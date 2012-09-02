@@ -142,6 +142,29 @@ def auth_logout():
     return safe_redirect_back()
 
 
+@APP.route('/calendar/add', methods=('GET', 'POST'))
+def add_calendar():
+    #if not flask.g.fas_user or not is_admin():
+        #return safe_redirect_back()
+    form = forms.AddCalendarForm()
+    if form.validate_on_submit():
+        session = fedocallib.create_session(
+            CONFIG.get('fedocal', 'db_url'))
+        calendar = Calendar(
+            form.calendar_name.data,
+            form.calendar_description.data,
+            form.calendar_manager_groups.data)
+        try:
+            calendar.save(session)
+            session.commit()
+        except Exception, err:
+            print err
+            flask.flash('Could not add this calendar to the database')
+        else:
+            flask.flash('Incorrect information entered to add a new agenda')
+    return flask.render_template('add_calendar.html', form=form)
+
+
 if __name__ == '__main__':
     APP.debug = True
     APP.run()

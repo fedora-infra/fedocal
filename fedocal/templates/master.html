@@ -1,10 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% from "_formhelpers.html" import render_field %}
+
+<!DOCTYPE html>
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 <head>
+    <title>{% block title %}{% endblock %} - Fedocal</title>
     <link rel="stylesheet" type="text/css" media="screen"
         href="{{ url_for('static', filename='fedocal.css') }}" />
-    <title>{% block title %}{% endblock %} - Fedocal</title>
     {% block head %}{% endblock %}
 </head>
 
@@ -20,6 +21,56 @@
     </ul>
     {% endif %}
     {% endwith %}
+
+
+<!-- start sidebar -->
+<div id="left-sidebar">
+    <h4>Calendars</h4>
+    <ul class="checkmark-list">
+        {% for calendar in calendars %}
+        <li>
+            <a href="{{url_for('calendar',
+                calendar=calendar.calendar_name)}}">
+                {{ calendar.calendar_name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <h4> User </h4>
+    {% if not g.fas_user %}
+        <form action="{{ url_for('auth_login') }}" method="post">
+            <p>Log in using your <a href="{{ config.FAS_BASE_URL }}">
+                Fedora Accounts System</a> account.
+            </p>
+            {{ render_field(auth_form.username) }}
+            {{ render_field(auth_form.password) }}
+            <p class="buttons indent">
+                <input type="submit" class="submit positive" value="Log in">
+            </p>
+            {{ auth_form.csrf_token }}
+        </form>
+    {% else %}
+        <p> Welcome, {{ g.fas_user.username }}</p>
+        <ul class="checkmark-list">
+            {% if calendar %}
+            <li><a href="{{ url_for('add_meeting',
+                calendar=calendar.calendar_name) }}"> Add a meeting </a>
+            </li>
+            {% endif %}
+            <li><a href="{{ url_for('my_meetings') }}"> Manage your meeting </a></li>
+            <li><a href="{{ url_for('auth_logout') }}"> Log-out </a></li>
+        </ul>
+    {% endif %}
+    {% if admin %}
+        <h4> Admin </h4>
+        <ul>
+            <li>
+            <a href="{{ url_for('add_calendar') }}"> Add a calendar </a>
+            </li>
+        </ul>
+    {% endif %}
+</div>
+<!-- end sidebar -->
 
     {% block content %}{% endblock %}
 

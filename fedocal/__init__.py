@@ -191,7 +191,8 @@ def add_meeting(calendar):
             flask.flash('Meeting added')
             return flask.redirect(flask.url_for('calendar',
                 calendar=calendar))
-    return flask.render_template('add_meeting.html', form=form)
+    return flask.render_template('add_meeting.html', calendar=calendar,
+        form=form)
 
 
 if __name__ == '__main__':

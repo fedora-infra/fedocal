@@ -21,17 +21,16 @@ a {
     text-decoration: none;
 }
 
-#agenda, #my_meetings {
-    display: inline;
-    float: left;
+#agenda, .my_meetings {
+    margin-bottom: 2em;
 }
 
-#agenda table, #my_meetings table {
+#agenda table, .my_meetings table {
     border-collapse:collapse;
-    min-width: 600px;
+    min-width: 800px;
 }
 
-#my_meetings td {
+.my_meetings td {
     border-bottom: solid 1px grey;
     border-top: solid 1px grey;
     border-left: solid 1px grey;
@@ -48,7 +47,7 @@ a {
     border-left: solid 0px;
 }
 
-#my_meetings .time {
+.my_meetings .time {
     border-left: solid 0px;
     width: 100px;
 }

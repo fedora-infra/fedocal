@@ -50,26 +50,6 @@ fas = FAS(APP)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
 
 
-def is_safe_url(target):
-    ref_url = urlparse(flask.request.host_url)
-    test_url = urlparse(urljoin(flask.request.host_url, target))
-    return test_url.scheme in ('http', 'https') and \
-            ref_url.netloc == test_url.netloc
-
-
-def safe_redirect_back(next=None, fallback=('index', {})):
-    targets = []
-    if next:
-        targets.append(next)
-    if 'next' in flask.request.args and \
-       flask.request.args['next']:
-        targets.append(flask.request.args['next'])
-    targets.append(flask.url_for(fallback[0], **fallback[1]))
-    for target in targets:
-        if is_safe_url(target):
-            return flask.redirect(target)
-
-
 def is_admin():
     """ Return wether the user is admin for this application or not. """
     if not flask.g.fas_user:
@@ -135,24 +115,24 @@ def my_meetings():
 @APP.route('/login', methods=('GET', 'POST'))
 def auth_login():
     if flask.g.fas_user:
-        return safe_redirect_back()
+        return flask.redirect('index')
     form = forms.LoginForm()
     if form.validate_on_submit():
         if fas.login(form.username.data, form.password.data):
             flask.flash('Welcome, %s' % flask.g.fas_user.username)
-            return safe_redirect_back()
+            return flask.redirect('index')
         else:
             flask.flash('Incorrect username or password')
-    return safe_redirect_back()
+    return flask.redirect('index')
 
 
 @APP.route('/logout')
 def auth_logout():
     if not flask.g.fas_user:
-        return safe_redirect_back()
+        return flask.redirect('index')
     fas.logout()
     flask.flash('You have been logged out')
-    return safe_redirect_back()
+    return flask.redirect('index')
 
 
 @APP.route('/calendar/add', methods=('GET', 'POST'))
@@ -174,7 +154,7 @@ def add_calendar():
             print err
             flask.flash('Could not add this calendar to the database')
         flask.flash('Calendar added')
-        return safe_redirect_back()
+        return flask.redirect('index')
     else:
         flask.flash('Incorrect information entered to add a new agenda')
     return flask.render_template('add_calendar.html', form=form)
@@ -191,6 +171,7 @@ def add_meeting(calendar):
         if fedocallib.is_date_in_future(form.meeting_date.data,
             form.meeting_time_start.data):
                 flask.flash('The date you entered is in the past')
+                return flask.redirect('add_meeting')
         else:
             meeting = Meeting(
                 form.meeting_name.data,
@@ -206,10 +187,10 @@ def add_meeting(calendar):
             except Exception, err:
                 print err
                 flask.flash('Could not add this meeting to this calendar')
-            flask.flash('Calendar added')
-            return safe_redirect_back()
-    else:
-        flask.flash('Incorrect information entered to add a new meeting')
+                return flask.redirect('index')
+            flask.flash('Meeting added')
+            return flask.redirect(flask.url_for('calendar',
+                calendar=calendar))
     return flask.render_template('add_meeting.html', form=form)
 
 

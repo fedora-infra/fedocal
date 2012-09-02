@@ -7,6 +7,14 @@
     <title>{% block title %}{% endblock %} - Fedocal</title>
     {% block head %}{% endblock %}
 </head>
+
+    <h1> Fedora Calendar </h1>
+
+    <h2> {{ calendar.calendar_name }} </h2>
+    <p>
+        {{ calendar.calendar_description }}
+    </p>
+
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <ul id="flashes">

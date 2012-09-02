@@ -8,12 +8,8 @@
     {% block head %}{% endblock %}
 </head>
 
-    <h1> Fedora Calendar </h1>
-
-    <h2> {{ calendar.calendar_name }} </h2>
-    <p>
-        {{ calendar.calendar_description }}
-    </p>
+    {% block content_titles %}
+    {% endblock %}
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}

@@ -3,6 +3,15 @@
 
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
+{% block content_titles %}
+    <h1> Fedora Calendar </h1>
+
+    <h2> {{ calendar.calendar_name }} </h2>
+    <p>
+        {{ calendar.calendar_description }}
+    </p>
+{% endblock %}
+
 {% block content %}
 
 <!-- start sidebar -->
@@ -43,7 +52,7 @@
         <h4> Admin </h4>
         <ul>
             <li>
-            <a href=""> Add a calendar </a>
+            <a href="{{ url_for('add_calendar') }}"> Add a calendar </a>
             </li>
         </ul>
     {% endif %}

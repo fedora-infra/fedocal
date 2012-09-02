@@ -1,0 +1,29 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content_titles %}
+    <h1> My Fedora meeting </h1>
+
+    <p>
+        Here below is the list of your meetings past and future.
+    </p>
+{% endblock %}
+
+{% block content %}
+
+<div id='my_meetings'>
+    <table>
+        {% for meeting in meetings %}
+        <tr>
+            <td class="time">{{ meeting.meeting_date }}</td>
+            <td> {{ meeting.meeting_name }} </td>
+            <td> Edit </td>
+            <td> Delete </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

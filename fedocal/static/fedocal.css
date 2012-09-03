@@ -37,7 +37,7 @@ a {
 }
 
 #agenda td {
-    width: 100px;
+    min-width: 100px;
     height: 20px;
     border-bottom: solid 1px grey;
     border-left: solid 1px grey;
@@ -59,7 +59,7 @@ a {
 
 #left-sidebar {
     display: inline;
-    width: 150px;
+    width: 200px;
     margin-right: 0;
     float: right;
 }

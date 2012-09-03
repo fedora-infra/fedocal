@@ -16,6 +16,7 @@ license.
 
 from datetime import datetime
 from datetime import date
+from datetime import time
 from datetime import timedelta
 
 from sqlalchemy import create_engine
@@ -169,7 +170,6 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
     :kwarg month, month to consider when searching a week.
     :kwarg day, day to consider when searching a week.
     """
-    print calendar
     week = get_week(session, calendar, year, month, day)
     meetings = {}
     cnt = 1
@@ -234,3 +234,17 @@ def get_future_meeting_of_user(session, username):
     meetings = Meeting.get_future_meeting_of_user(session, username,
         datetime.utcnow())
     return meetings
+
+
+def agenda_is_free(session, calendar, meeting_date,
+    time_start, time_stop):
+    """Check if there is already someting planned in this agenda at that
+    time.
+    :arg calendar, the name of the calendar of interest.
+    :arg meeting_date, the date of the meeting (as Datetime object)
+    :arg time_start, the time at which the meeting starts (as int)
+    :arg time_stop, the time at which the meeting stops (as int)
+    """
+    print '*', calendar
+    meetings = Meeting.get_by_time(session, calendar, meeting_date,
+        time(time_start), time(time_stop))

@@ -26,7 +26,8 @@
             <td class="calendar"> {{ meeting.calendar_name }} </td>
             <td> {{ meeting.meeting_name }} </td>
             <td class="button">
-                <a href="">
+                <a href="{{ url_for('edit_meeting',
+                    meeting_id=meeting.meeting_id) }}">
                     <img src="{{ url_for('static', filename='edit.png') }}"
                         title="Edit" alt="Edit"/>
                 </a>

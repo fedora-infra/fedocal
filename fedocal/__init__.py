@@ -114,24 +114,24 @@ def my_meetings():
 @APP.route('/login', methods=('GET', 'POST'))
 def auth_login():
     if flask.g.fas_user:
-        return flask.redirect(url_for('index'))
+        return flask.redirect(flask.url_for('index'))
     form = forms.LoginForm()
     if form.validate_on_submit():
         if fas.login(form.username.data, form.password.data):
             flask.flash('Welcome, %s' % flask.g.fas_user.username)
-            return flask.redirect(url_for('index'))
+            return flask.redirect(flask.url_for('index'))
         else:
             flask.flash('Incorrect username or password')
-    return flask.redirect(url_for('index'))
+    return flask.redirect(flask.url_for('index'))
 
 
 @APP.route('/logout')
 def auth_logout():
     if not flask.g.fas_user:
-        return flask.redirect(url_for('index'))
+        return flask.redirect(flask.url_for('index'))
     fas.logout()
     flask.flash('You have been logged out')
-    return flask.redirect(url_for('index'))
+    return flask.redirect(flask.url_for('index'))
 
 
 @APP.route('/calendar/add', methods=('GET', 'POST'))
@@ -153,7 +153,7 @@ def add_calendar():
             print err
             flask.flash('Could not add this calendar to the database')
         flask.flash('Calendar added')
-        return flask.redirect(url_for('index'))
+        return flask.redirect(flask.url_for('index'))
     else:
         flask.flash('Incorrect information entered to add a new agenda')
     return flask.render_template('add_calendar.html', form=form)
@@ -170,12 +170,17 @@ def add_meeting(calendar):
         if fedocallib.is_date_in_future(form.meeting_date.data,
             form.meeting_time_start.data):
                 flask.flash('The date you entered is in the past')
-                return flask.redirect(url_for('add_meeting'))
+                return flask.redirect(flask.url_for('add_meeting',
+                    calendar=calendar))
         elif int(form.meeting_time_start.data) > int(form.meeting_time_stop.data):
             flask.flash('The start time you have entered is later than the stop time.')
-            return flask.redirect(url_for('add_meeting'))
-        elif fedocallib.agenda_is_free(calendar, form.meeting_date.data,
-            form.meeting_time_start.data, form.meeting_time_stop.data):
+            return flask.redirect(flask.url_for('add_meeting',
+                calendar=calendar))
+        elif fedocallib.agenda_is_free(session,
+            calendar,
+            form.meeting_date.data,
+            int(form.meeting_time_start.data),
+            int(form.meeting_time_stop.data)):
             meeting = Meeting(
                 form.meeting_name.data,
                 flask.g.fas_user.username,
@@ -190,13 +195,14 @@ def add_meeting(calendar):
             except Exception, err:
                 print 'add_meeting:', err
                 flask.flash('Could not add this meeting to this calendar')
-                return flask.redirect(url_for('index'))
+                return flask.redirect(flask.url_for('index'))
             flask.flash('Meeting added')
             return flask.redirect(flask.url_for('calendar',
                 calendar=calendar))
         else:
             flask.flash('The start time you have entered is already occupied.')
-            return flask.redirect(url_for('add_meeting'))
+            return flask.redirect(flask.url_for('add_meeting',
+                calendar=calendar))
     return flask.render_template('add_meeting.html', calendar=calendar,
         form=form)
 

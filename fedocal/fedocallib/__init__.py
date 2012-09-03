@@ -222,7 +222,6 @@ def get_past_meeting_of_user(session, username):
     """
     meetings = Meeting.get_past_meeting_of_user(session, username,
         datetime.utcnow())
-    print meetings
     return meetings
 
 
@@ -234,5 +233,4 @@ def get_future_meeting_of_user(session, username):
     """
     meetings = Meeting.get_future_meeting_of_user(session, username,
         datetime.utcnow())
-    print meetings
     return meetings

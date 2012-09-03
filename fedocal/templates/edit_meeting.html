@@ -1,0 +1,48 @@
+{% extends "master.html" %}
+
+{% block title %} Edit meeting {% endblock %}
+
+{% block head %}
+    <link type="text/css" rel="stylesheet"
+        href="{{ url_for('static',
+            filename='flick/jquery-ui-1.8.23.custom.css')}}" />
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery-1.8.0.min.js') }}">
+    </script>
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery-ui-1.8.23.custom.min.js') }}">
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            $('#meeting_date').datepicker({
+                dateFormat: "yy-mm-dd",
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content_titles %}
+    <h1>
+        Edit meeting of <span style="font-style:italic">
+        {{ meeting.calendar_name }}</span>
+    </h1>
+{% endblock %}
+
+{% block content %}
+
+<form action="" method="post">
+{{ render_field(editform.meeting_name, value=meeting.meeting_name) }}
+{{ render_field(editform.meeting_date, value=meeting.meeting_date) }}
+{{ render_field(editform.meeting_time_start,
+    selected=start_hour) }}
+{{ render_field(editform.meeting_time_stop,
+    default=meeting.meeting_time_stop.hour) }}
+{{ render_field(editform.comanager, value=meeting.meeting_manager) }}
+<p class="buttons indent">
+    <input type="submit" class="submit positive" value="Add">
+</p>
+{{ editform.csrf_token }}
+</form>
+{% endblock %}

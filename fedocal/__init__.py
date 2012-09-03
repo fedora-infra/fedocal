@@ -182,7 +182,7 @@ def add_meeting(calendar):
             if not set(admin_groups).intersection(set(flask.g.fas_user.groups)):
                 flask.flash('You are not allowed to add a meeting to this calendar')
                 return flask.redirect('index')
-        if fedocallib.is_date_in_future(form.meeting_date.data,
+        if not fedocallib.is_date_in_future(form.meeting_date.data,
             form.meeting_time_start.data):
                 flask.flash('The date you entered is in the past')
                 return flask.redirect(flask.url_for('add_meeting',
@@ -196,9 +196,10 @@ def add_meeting(calendar):
             form.meeting_date.data,
             int(form.meeting_time_start.data),
             int(form.meeting_time_stop.data)):
+            manager = '%s,' % flask.g.fas_user.username
             meeting = Meeting(
                 form.meeting_name.data,
-                flask.g.fas_user.username,
+                manager,
                 form.meeting_date.data,
                 '%s:00:00' % form.meeting_time_start.data,
                 '%s:00:00' % form.meeting_time_stop.data,
@@ -220,6 +221,38 @@ def add_meeting(calendar):
                 calendar=calendar))
     return flask.render_template('add_meeting.html', calendar=calendar,
         form=form)
+
+
+@APP.route('/meeting/edit/<int:meeting_id>', methods=('GET', 'POST'))
+def edit_meeting(meeting_id):
+    """ Edit a specific meeting based on the meeting identifier.
+    """
+    if not flask.g.fas_user:
+        return flask.redirect(flask.url_for('index'))
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    meeting = Meeting.by_id(session, meeting_id)
+    if not fedocallib.is_date_in_future(meeting.meeting_date,
+        meeting.meeting_time_start.hour) :
+        flask.flash('This meeting has already occured, you may not change it anymore')
+        return flask.redirect(flask.url_for('index'))
+    editform = forms.AddMeetingForm()
+    # You are not allowed to remove yourself from the managers.
+    print meeting.meeting_manager
+    meeting.meeting_manager = meeting.meeting_manager.replace(
+        '%s,' % flask.g.fas_user.username, '')
+    if editform.validate_on_submit():
+        try:
+            calendar.save(session)
+            session.commit()
+        except Exception, err:
+            print err
+            flask.flash('Could not update this meeting.')
+        flask.flash('Meeting updated')
+        return flask.redirect(flask.url_for('index'))
+    start_hour = str(meeting.meeting_time_start.hour)
+    return flask.render_template('edit_meeting.html', meeting=meeting,
+        start_hour=start_hour,
+        editform=editform)
 
 
 if __name__ == '__main__':

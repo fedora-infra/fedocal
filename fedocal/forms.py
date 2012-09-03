@@ -50,6 +50,7 @@ class AddMeetingForm(wtf.Form):
         [wtf.validators.Required()],
         choices = [(hour, hour) for hour in HOURS]
         )
+    comanager = wtf.TextField('Co-manager')
 
 
 class LoginForm(wtf.Form):

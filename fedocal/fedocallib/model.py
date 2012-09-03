@@ -217,6 +217,20 @@ class Meeting(BASE):
             return None
 
     @classmethod
+    def get_by_time(cls, session, calendar, date, start_time, stop_time):
+        """ Retrieve the list of meetings for a given date and between
+        two times.
+        """
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.calendar_name == calendar),
+                (Meeting.meeting_date == date),
+                (Meeting.meeting_time_start >= start_time),
+                (Meeting.meeting_time_stop <= stop_time)).all()
+        except NoResultFound:
+            return None
+
+    @classmethod
     def get_past_meeting_of_user(cls, session, username, start_date):
         """ Retrieve the list of meetings which specified username
         is among the managers and which date is older than the specified

@@ -100,8 +100,7 @@ def calendar_fullday(calendar, year, month, day):
 
 @APP.route('/mine/')
 def my_meetings():
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'),
-        debug=True)
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     meetings = fedocallib.get_future_meeting_of_user(session,
         flask.g.fas_user.username)
     past_meetings = fedocallib.get_past_meeting_of_user(session,

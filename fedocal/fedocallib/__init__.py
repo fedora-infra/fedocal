@@ -206,9 +206,9 @@ def is_date_in_future(indate, start_time):
     (ie: '08')
     """
     today = datetime.utcnow()
-    if today.date() < indate:
+    if today.date() > indate:
         return False
-    elif today.hour < int(start_time) :
+    elif today.hour > int(start_time) :
         return False
     else:
         return True

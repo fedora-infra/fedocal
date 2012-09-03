@@ -28,7 +28,8 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
-    Time
+    Time,
+    UniqueConstraint,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -164,6 +165,10 @@ class Meeting(BASE):
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
         nullable=True)
     reminder = relationship("Reminder")
+
+    __table_args__ = (
+            UniqueConstraint('calendar_name', 'meeting_date', 'meeting_time_start'),
+            )
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_time_start, meeting_time_stop,

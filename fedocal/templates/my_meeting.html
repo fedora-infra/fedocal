@@ -18,21 +18,23 @@
     <table>
         {% for meeting in meetings %}
         <tr>
-            <td class="time">{{ meeting.meeting_date }}</td>
-            <td>
+            <td class="date">{{ meeting.meeting_date }}</td>
+            <td class="time">
                 {{ meeting.meeting_time_start }} to
                 {{ meeting.meeting_time_stop }}
             </td>
-            <td> {{ meeting.calendar_name }} </td>
+            <td class="calendar"> {{ meeting.calendar_name }} </td>
             <td> {{ meeting.meeting_name }} </td>
-            <td>
+            <td class="button">
                 <a href="">
-                    <img src="" alt="Edit"/>
+                    <img src="{{ url_for('static', filename='edit.png') }}"
+                        title="Edit" alt="Edit"/>
                 </a>
             </td>
-            <td>
+            <td class="button">
                 <a href="">
-                    <img src="" alt="Delete"/>
+                    <img src="{{ url_for('static', filename='delete.png') }}"
+                    title="Delete" alt="Delete"/>
                 </a>
             </td>
         </tr>
@@ -45,23 +47,13 @@
     <table>
         {% for meeting in pas_meetings %}
         <tr>
-            <td class="time">{{ meeting.meeting_date }}</td>
-            <td>
+            <td class="date">{{ meeting.meeting_date }}</td>
+            <td class="time">
                 {{ meeting.meeting_time_start }} to
                 {{ meeting.meeting_time_stop }}
             </td>
-            <td> {{ meeting.calendar_name }} </td>
+            <td class="calendar"> {{ meeting.calendar_name }} </td>
             <td> {{ meeting.meeting_name }} </td>
-            <td>
-                <a href="">
-                    <img src="" alt="Edit"/>
-                </a>
-            </td>
-            <td>
-                <a href="">
-                    <img src="" alt="Delete"/>
-                </a>
-            </td>
         </tr>
         {% endfor %}
     </table>

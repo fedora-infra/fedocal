@@ -43,13 +43,29 @@ a {
     border-left: solid 1px grey;
 }
 
-#agenda .time{
+#agenda .time {
     border-left: solid 0px;
 }
 
-.my_meetings .time {
+.my_meetings .date {
     border-left: solid 0px;
     width: 100px;
+}
+
+.my_meetings .time {
+    width: 150px;
+}
+
+.my_meetings .calendar {
+    width: 150px;
+}
+
+.my_meetings .button {
+    width: 50px;
+}
+
+.my_meetings img {
+    width: 24px;
 }
 
 #agenda th {

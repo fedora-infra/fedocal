@@ -1,6 +1,7 @@
 {% macro render_field(field, after="") %}
 <div class="row">
-  {{ field.label }}{{ field(**kwargs)|safe }}{% if after %} {{ after }}{% endif %}
+  {{ field.label }}{{ field(**kwargs)|safe }}
+  {% if after %} {{ after }}{% endif %}
   {% if field.errors %}
   <ul class="errors">
     {% for error in field.errors %}

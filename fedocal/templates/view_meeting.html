@@ -1,0 +1,29 @@
+{% extends "master.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content_titles %}
+    <h1> Fedora meeting </h1>
+
+    <p>
+        You are kindly invited to join to the following meeting:
+    </p>
+{% endblock %}
+
+{% block content %}
+
+<h4> Meeting: {{ meeting.meeting_name}}</h4>
+
+<ul>
+    <li>Date: {{ meeting.meeting_date }} UTC</li>
+    <li>Starting time: {{ meeting.meeting_time_start }} UTC</li>
+    <li>Ending time: {{ meeting.meeting_time_stop }} UTC</li>
+</ul>
+
+<p>
+This meeting is organized by {{ meeting.meeting_manager }} as part of
+the calendar <a href="{{ url_for('calendar', calendar=meeting.calendar_name) }}">
+{{ meeting.calendar_name }}</a>.
+</p>
+
+{% endblock %}

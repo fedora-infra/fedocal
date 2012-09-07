@@ -53,6 +53,10 @@ class AddMeetingForm(wtf.Form):
     comanager = wtf.TextField('Co-manager')
 
 
+class DeleteMeetingForm(wtf.Form):
+    confirm_delete = wtf.BooleanField('Yes I want to delete this meeting')
+
+
 class LoginForm(wtf.Form):
     username = wtf.TextField('Username', [wtf.validators.Required()])
     password = wtf.PasswordField('Password', [wtf.validators.Required()])

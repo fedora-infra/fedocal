@@ -97,6 +97,21 @@ class Calendar(BASE):
             return None
 
     @classmethod
+    def get_manager_groups(cls, session, identifier):
+        """ Return the list of managers for a given meeting.
+        """
+        calendar = Calendar.by_id(session, identifier)
+        if not calendar or not calendar.calendar_manager_group:
+            groups = []
+        else:
+            if ',' in calendar.calendar_manager_group:
+                groups = [item.strip()
+                    for item in calendar.calendar_manager_group.split(',')]
+            else:
+                groups = [calendar.calendar_manager_group]
+        return groups
+
+    @classmethod
     def get_all(cls, session):
         """ Retrieve all the Calendar available."""
         try:
@@ -208,6 +223,21 @@ class Meeting(BASE):
             return None
 
     @classmethod
+    def get_managers(cls, session, identifier):
+        """ Return the list of managers for a given meeting.
+        """
+        meeting = Meeting.by_id(session, identifier)
+        if not meeting or not meeting.meeting_manager:
+            managers = []
+        else:
+            if ',' in meeting.meeting_manager:
+                managers = [item.strip()
+                    for item in meeting.meeting_manager.split(',')]
+            else:
+                managers = [meeting.meeting_manager]
+        return managers
+
+    @classmethod
     def get_by_date(cls, session, calendar, start_date, stop_date):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
@@ -227,7 +257,7 @@ class Meeting(BASE):
         """
         try:
             return session.query(cls).filter(and_
-                (Meeting.calendar_name == calendar),
+                (Meeting.calendar == calendar),
                 (Meeting.meeting_date == date),
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_stop <= stop_time)).all()

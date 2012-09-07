@@ -182,10 +182,8 @@ def add_meeting(calendar):
         session = fedocallib.create_session(
             CONFIG.get('fedocal', 'db_url'))
         calendar = Calendar.by_id(session, calendar)
-        if calendar.calendar_manager_group:
-            admin_groups = [item.strip() 
-                for item in calendar.calendar_manager_group.split(',')]
-            if not set(admin_groups).intersection(set(flask.g.fas_user.groups)):
+        if fedocallib.is_user_managing_in_calendar(session,
+            calendar.calendar_name, flask.g.fas_user):
                 flask.flash('You are not allowed to add a meeting to this calendar')
                 return flask.redirect('index')
         if not fedocallib.is_date_in_future(form.meeting_date.data,
@@ -223,8 +221,8 @@ def add_meeting(calendar):
                 calendar=calendar.calendar_name))
         else:
             flask.flash('The start time you have entered is already occupied.')
-            return flask.redirect(flask.url_for('add_meeting',
-                calendar=calendar.calendar_name))
+            return flask.render_template('add_meeting.html',
+                calendar=calendar.calendar_name, form=form)
     return flask.render_template('add_meeting.html', calendar=calendar,
         form=form)
 
@@ -238,6 +236,9 @@ def edit_meeting(meeting_id):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    if not flask.g.fas_user.username in Meeting.get_managers(session, meeting_id):
+        flask.flash('You are not one of the manager of this meeting, you are not allowed to edit it.')
+        return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(session, meeting_id)
     if not fedocallib.is_date_in_future(meeting.meeting_date,
         meeting.meeting_time_start.hour) :
@@ -264,9 +265,20 @@ def edit_meeting(meeting_id):
             flask.flash('Could not update this meeting.')
         flask.flash('Meeting updated')
         return flask.redirect(flask.url_for('index'))
-    start_hour = str(meeting.meeting_time_start.hour)
+    if meeting.meeting_time_start.hour < 10:
+        start_hour = "0%s" % str(meeting.meeting_time_start.hour)
+    else:
+        start_hour = str(meeting.meeting_time_start.hour)
+    if meeting.meeting_time_stop.hour < 10:
+        stop_hour = "0%s" % str(meeting.meeting_time_stop.hour)
+    else:
+        stop_hour = str(meeting.meeting_time_stop.hour)
+    editform.meeting_name.data = meeting.meeting_name
+    editform.comanager.data = meeting.meeting_manager
+    editform.meeting_date.data = meeting.meeting_date
+    editform.meeting_time_start.data = start_hour
+    editform.meeting_time_stop.data = stop_hour
     return flask.render_template('edit_meeting.html', meeting=meeting,
-        start_hour=start_hour,
         editform=editform)
 
 

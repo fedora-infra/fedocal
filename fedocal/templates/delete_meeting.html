@@ -1,0 +1,37 @@
+{% extends "master.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content_titles %}
+    <h1>Delete Fedora meeting </h1>
+
+{% endblock %}
+
+{% block content %}
+
+<h4> Meeting: {{ meeting.meeting_name}}</h4>
+
+<ul>
+    <li>Date: {{ meeting.meeting_date }} UTC</li>
+    <li>Starting time: {{ meeting.meeting_time_start }} UTC</li>
+    <li>Ending time: {{ meeting.meeting_time_stop }} UTC</li>
+</ul>
+
+<p>
+You are removing this meeting from the calendar
+<a href="{{ url_for('calendar', calendar=meeting.calendar_name) }}">
+{{ meeting.calendar_name }}</a>.
+</p>
+
+<p>
+    Are you positively sure that's what you want to do?
+</p>
+<form action="" method="post">
+{{ render_field_invert(form.confirm_delete) }}
+<p class="buttons indent">
+    <input type="submit" class="submit positive" value="Add">
+</p>
+{{ form.csrf_token }}
+</form>
+
+{% endblock %}

@@ -170,7 +170,7 @@ def add_meeting(calendar):
     :arg calendar, name of the calendar in which to add the meeting.
     """
     if not flask.g.fas_user:
-        return flask.redirect('index')
+        return flask.redirect(flask.url_for('index'))
     form = forms.AddMeetingForm()
     if form.validate_on_submit():
         session = fedocallib.create_session(
@@ -186,11 +186,11 @@ def add_meeting(calendar):
             form.meeting_time_start.data):
                 flask.flash('The date you entered is in the past')
                 return flask.redirect(flask.url_for('add_meeting',
-                    calendar=calendar))
+                    calendar=calendar.calendar_name))
         elif int(form.meeting_time_start.data) > int(form.meeting_time_stop.data):
             flask.flash('The start time you have entered is later than the stop time.')
             return flask.redirect(flask.url_for('add_meeting',
-                calendar=calendar))
+                calendar=calendar.calendar_name))
         elif fedocallib.agenda_is_free(session,
             calendar,
             form.meeting_date.data,
@@ -203,7 +203,7 @@ def add_meeting(calendar):
                 form.meeting_date.data,
                 '%s:00:00' % form.meeting_time_start.data,
                 '%s:00:00' % form.meeting_time_stop.data,
-                calendar,
+                calendar.calendar_name,
                 None)
             try:
                 meeting.save(session)
@@ -214,11 +214,11 @@ def add_meeting(calendar):
                 return flask.redirect(flask.url_for('index'))
             flask.flash('Meeting added')
             return flask.redirect(flask.url_for('calendar',
-                calendar=calendar))
+                calendar=calendar.calendar_name))
         else:
             flask.flash('The start time you have entered is already occupied.')
             return flask.redirect(flask.url_for('add_meeting',
-                calendar=calendar))
+                calendar=calendar.calendar_name))
     return flask.render_template('add_meeting.html', calendar=calendar,
         form=form)
 
@@ -237,12 +237,19 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     editform = forms.AddMeetingForm()
     # You are not allowed to remove yourself from the managers.
-    print meeting.meeting_manager
     meeting.meeting_manager = meeting.meeting_manager.replace(
         '%s,' % flask.g.fas_user.username, '')
     if editform.validate_on_submit():
         try:
-            calendar.save(session)
+            meeting.meeting_name = editform.meeting_name.data
+            meeting.meeting_manager = '%s,%s' % (flask.g.fas_user.username,
+                editform.comanager.data)
+            meeting.meeting_date = editform.meeting_date.data
+            meeting.meeting_time_start = '%s:00:00' % (
+                editform.meeting_time_start.data)
+            meeting.meeting_time_stop = '%s:00:00' % (
+                editform.meeting_time_stop.data)
+            meeting.save(session)
             session.commit()
         except Exception, err:
             print err

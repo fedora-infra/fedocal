@@ -29,7 +29,7 @@ import os
 from urlparse import urljoin, urlparse
 
 import flask
-from flask.ext.fas import FAS
+from flask.ext.fas import FAS, cla_plus_one_required
 
 import forms
 import fedocallib
@@ -98,7 +98,9 @@ def calendar_fullday(calendar, year, month, day):
         admin=admin)
 
 
+# CLA + 1
 @APP.route('/mine/')
+@cla_plus_one_required
 def my_meetings():
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     meetings = fedocallib.get_future_meeting_of_user(session,
@@ -134,7 +136,9 @@ def auth_logout():
     return flask.redirect(flask.url_for('index'))
 
 
+# CLA + 1 (and admin)
 @APP.route('/calendar/add', methods=('GET', 'POST'))
+@cla_plus_one_required
 def add_calendar():
     """ Add a calendar to the database.
     This function is only accessible to admin of the webapp.
@@ -162,7 +166,9 @@ def add_calendar():
     return flask.render_template('add_calendar.html', form=form)
 
 
+# CLA + 1
 @APP.route('/<calendar>/add', methods=('GET', 'POST'))
+@cla_plus_one_required
 def add_meeting(calendar):
     """ Add a meeting to the database.
     This function is only available to CLA+1 member or members of the
@@ -223,7 +229,9 @@ def add_meeting(calendar):
         form=form)
 
 
+# CLA + 1
 @APP.route('/meeting/edit/<int:meeting_id>', methods=('GET', 'POST'))
+@cla_plus_one_required
 def edit_meeting(meeting_id):
     """ Edit a specific meeting based on the meeting identifier.
     """
@@ -252,7 +260,7 @@ def edit_meeting(meeting_id):
             meeting.save(session)
             session.commit()
         except Exception, err:
-            print err
+            print 'edit_meeting:',  err
             flask.flash('Could not update this meeting.')
         flask.flash('Meeting updated')
         return flask.redirect(flask.url_for('index'))
@@ -260,6 +268,42 @@ def edit_meeting(meeting_id):
     return flask.render_template('edit_meeting.html', meeting=meeting,
         start_hour=start_hour,
         editform=editform)
+
+
+@APP.route('/meeting/<int:meeting_id>', methods=('GET', 'POST'))
+def view_meeting(meeting_id):
+    """ View a specific meeting given its identifier.
+    """
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    meeting = Meeting.by_id(session, meeting_id)
+    calendars = Calendar.get_all(session)
+    return flask.render_template('view_meeting.html', meeting=meeting,
+        calendars=calendars, title=meeting.meeting_name)
+
+
+@APP.route('/meeting/delete/<int:meeting_id>', methods=('GET', 'POST'))
+def delete_meeting(meeting_id):
+    """ Delete a specific meeting given its identifier.
+    """
+    if not flask.g.fas_user:
+        return flask.redirect(flask.url_for('index'))
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    meeting = Meeting.by_id(session, meeting_id)
+    calendar = meeting.calendar_name
+    calendars = Calendar.get_all(session)
+    deleteform = forms.DeleteMeetingForm()
+    if deleteform.validate_on_submit():
+        if deleteform.confirm_delete.data:
+            try:
+                meeting.delete(session)
+                session.commit()
+            except Exception, err:
+                print 'edit_meeting:',  err
+                flask.flash('Could not update this meeting.')
+        flask.flash('Meeting deleted')
+        return flask.redirect(flask.url_for('calendar', calendar=calendar))
+    return flask.render_template('delete_meeting.html', form=deleteform,
+        meeting=meeting, calendars=calendars, title=meeting.meeting_name)
 
 
 if __name__ == '__main__':

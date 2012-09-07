@@ -33,7 +33,8 @@
                 </a>
             </td>
             <td class="button">
-                <a href="">
+                <a href="{{ url_for('delete_meeting',
+                    meeting_id=meeting.meeting_id) }}">
                     <img src="{{ url_for('static', filename='delete.png') }}"
                     title="Delete" alt="Delete"/>
                 </a>

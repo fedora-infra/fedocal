@@ -208,7 +208,7 @@ def is_date_in_future(indate, start_time):
     today = datetime.utcnow()
     if today.date() > indate:
         return False
-    elif today.hour > int(start_time) :
+    elif today.date() == indate and today.hour > int(start_time) :
         return False
     else:
         return True
@@ -245,6 +245,9 @@ def agenda_is_free(session, calendar, meeting_date,
     :arg time_start, the time at which the meeting starts (as int)
     :arg time_stop, the time at which the meeting stops (as int)
     """
-    print '*', calendar
     meetings = Meeting.get_by_time(session, calendar, meeting_date,
         time(time_start), time(time_stop))
+    if not meetings:
+        return True
+    else:
+        return False

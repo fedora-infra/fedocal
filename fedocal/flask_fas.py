@@ -132,7 +132,7 @@ def fas_login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if flask.g.fas_user is None:
-            return flask.redirect(flask.url_for('login',
+            return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         return f(*args, **kwargs)
     return decorated_function
@@ -149,7 +149,7 @@ def cla_plus_one_required(f):
             if len(non_cla_groups) == 0:
                 valid = False
         if not valid:
-            return flask.redirect(flask.url_for('login',
+            return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         else:
             return f(*args, **kwargs)

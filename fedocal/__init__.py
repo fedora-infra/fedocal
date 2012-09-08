@@ -289,11 +289,14 @@ def view_meeting(meeting_id):
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     meeting = Meeting.by_id(session, meeting_id)
     calendars = Calendar.get_all(session)
+    auth_form = forms.LoginForm()
     return flask.render_template('view_meeting.html', meeting=meeting,
-        calendars=calendars, title=meeting.meeting_name)
+        calendars=calendars, title=meeting.meeting_name,
+        auth_form=auth_form)
 
 
 @APP.route('/meeting/delete/<int:meeting_id>', methods=('GET', 'POST'))
+@cla_plus_one_required
 def delete_meeting(meeting_id):
     """ Delete a specific meeting given its identifier.
     """

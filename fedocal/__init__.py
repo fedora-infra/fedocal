@@ -144,7 +144,7 @@ def add_calendar():
     This function is only accessible to admin of the webapp.
     """
     if not flask.g.fas_user or not is_admin():
-        return flask.redirect('index')
+        return flask.redirect(flask.url_for('index'))
     form = forms.AddCalendarForm()
     if form.validate_on_submit():
         session = fedocallib.create_session(
@@ -182,10 +182,10 @@ def add_meeting(calendar):
         session = fedocallib.create_session(
             CONFIG.get('fedocal', 'db_url'))
         calendar = Calendar.by_id(session, calendar)
-        if fedocallib.is_user_managing_in_calendar(session,
+        if not fedocallib.is_user_managing_in_calendar(session,
             calendar.calendar_name, flask.g.fas_user):
                 flask.flash('You are not allowed to add a meeting to this calendar')
-                return flask.redirect('index')
+                return flask.redirect(flask.url_for('index'))
         if not fedocallib.is_date_in_future(form.meeting_date.data,
             form.meeting_time_start.data):
                 flask.flash('The date you entered is in the past')

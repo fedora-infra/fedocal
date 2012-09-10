@@ -120,47 +120,6 @@ class Calendar(BASE):
             return None
 
 
-class Reminder(BASE):
-    """ Reminders table.
-
-    Store the information about the reminders that should be sent
-    when asked in a meeting.
-    """
-
-    __tablename__ = 'reminders'
-    reminder_id = Column(Integer, primary_key=True)
-    reminder_offset = Column(Enum('H-12', 'H-24', 'H-48', 'H-168'))
-    reminder_to = Column(String(500))
-    reminder_text = Column(Text)
-
-    def __init__(self, reminder_offset, reminder_to, reminder_text):
-        """ Constructor instanciating the defaults values. """
-        self.reminder_offset = reminder_offset
-        self.reminder_to = reminder_to
-        self.reminder_text = reminder_text
-
-    def __repr__(self):
-        """ Representation of the Reminder object when printed.
-        """
-        return "<Reminder('%s', '%s')>" % (self.reminder_to,
-            self.reminder_offset)
-
-    def save(self, session):
-        """ Save the object into the database. """
-        session.add(self)
-
-    @classmethod
-    def by_id(cls, session, identifier):
-        """ Retrieve a Reminder object from the database based on its
-        identifier.
-        :return None if no calendar matched this identifier.
-        """
-        try:
-            return session.query(cls).get(identifier)
-        except NoResultFound:
-            return None
-
-
 class Meeting(BASE):
     """ Meetings table.
 
@@ -180,6 +139,9 @@ class Meeting(BASE):
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
         nullable=True)
     reminder = relationship("Reminder")
+    recursion_id = Column(Integer, ForeignKey('recurivity.recursion_id'),
+        nullable=True)
+    recursion = relationship("Recursive")
 
     __table_args__ = (
             UniqueConstraint('calendar_name', 'meeting_date', 'meeting_time_start'),
@@ -290,6 +252,87 @@ class Meeting(BASE):
         except NoResultFound:
             return None
 
+
+class Recursive(BASE):
+    """ recursivity table.
+
+    Store the information about the recursivity that can be set to a
+    meeting.
+    """
+
+    __tablename__ = 'recursivity'
+    recursion_id = Column(Integer, primary_key=True)
+    recursion_frequency = Column(Enum('7', '14'), nullable=False)
+    recursion_start = Column(Date, nullable=False,
+        default=datetime.utcnow().date())
+    recursion_ends = Column(Date, nullable=True)
+
+    def __init__(self, recursion_frequency, recursion_start, reminder_text):
+        """ Constructor instanciating the defaults values. """
+        self.recursion_frequency = recursion_frequency
+        self.recursion_start = recursion_start
+
+    def __repr__(self):
+        """ Representation of the Reminder object when printed.
+        """
+        return "<Recursion(From '%s' every '%s')>" % (
+            self.recursion_start, self.recursion_frequency)
+
+    def save(self, session):
+        """ Save the object into the database. """
+        session.add(self)
+
+    @classmethod
+    def by_id(cls, session, identifier):
+        """ Retrieve a Reminder object from the database based on its
+        identifier.
+        :return None if no calendar matched this identifier.
+        """
+        try:
+            return session.query(cls).get(identifier)
+        except NoResultFound:
+            return None
+
+
+class Reminder(BASE):
+    """ Reminders table.
+
+    Store the information about the reminders that should be sent
+    when asked in a meeting.
+    """
+
+    __tablename__ = 'reminders'
+    reminder_id = Column(Integer, primary_key=True)
+    reminder_offset = Column(Enum('H-12', 'H-24', 'H-48', 'H-168'))
+    reminder_to = Column(String(500))
+    reminder_text = Column(Text)
+
+    def __init__(self, reminder_offset, reminder_to, reminder_text):
+        """ Constructor instanciating the defaults values. """
+        self.reminder_offset = reminder_offset
+        self.reminder_to = reminder_to
+        self.reminder_text = reminder_text
+
+    def __repr__(self):
+        """ Representation of the Reminder object when printed.
+        """
+        return "<Reminder('%s', '%s')>" % (self.reminder_to,
+            self.reminder_offset)
+
+    def save(self, session):
+        """ Save the object into the database. """
+        session.add(self)
+
+    @classmethod
+    def by_id(cls, session, identifier):
+        """ Retrieve a Reminder object from the database based on its
+        identifier.
+        :return None if no calendar matched this identifier.
+        """
+        try:
+            return session.query(cls).get(identifier)
+        except NoResultFound:
+            return None
 
 if __name__ == '__main__':
     import os

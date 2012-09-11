@@ -26,6 +26,7 @@
 
 import ConfigParser
 import os
+import datetime
 from urlparse import urljoin, urlparse
 
 import flask
@@ -233,10 +234,13 @@ def add_meeting(calendar):
                     flask.flash('Could not add this reminder to this meeting')
                     flask.render_template('add_meeting.html',
                         calendar=calendar.calendar_name,  form=form)
-            if form.frequency.data and form.end_repeats.data:
+            if form.frequency.data:
+                ends_date = form.end_repeats.data
+                if not ends_date:
+                    ends_date = datetime.date(2121, 12, 31)
                 recursion = Recursive(
                     recursion_frequency = form.frequency.data,
-                    recursion_ends = form.end_repeats.data
+                    recursion_ends = ends_date
                     )
                 recursion.save(session)
                 try:

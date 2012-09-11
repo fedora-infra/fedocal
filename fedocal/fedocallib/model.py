@@ -196,6 +196,19 @@ class Meeting(BASE):
             return None
 
     @classmethod
+    def get_future_meetings_of_recursion(cls, session, meeting):
+        """ Return the list of meetings which are in the future and
+        associated with a specific recursivity.
+        """
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.calendar == meeting.calendar),
+                (Meeting.meeting_date >= meeting.meeting_date),
+                (Meeting.recursion == meeting.recursion)).all()
+        except NoResultFound:
+            return None
+
+    @classmethod
     def get_managers(cls, session, identifier):
         """ Return the list of managers for a given meeting.
         """

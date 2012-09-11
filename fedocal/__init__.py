@@ -283,10 +283,10 @@ def edit_meeting(meeting_id):
         meeting.meeting_time_start.hour) :
         flask.flash('This meeting has already occured, you may not change it anymore')
         return flask.redirect(flask.url_for('index'))
-    editform = forms.AddMeetingForm()
     # You are not allowed to remove yourself from the managers.
     meeting.meeting_manager = meeting.meeting_manager.replace(
         '%s,' % flask.g.fas_user.username, '')
+    editform = forms.AddMeetingForm(meeting=meeting)
     if editform.validate_on_submit():
         try:
             meeting.meeting_name = editform.meeting_name.data
@@ -304,21 +304,6 @@ def edit_meeting(meeting_id):
             flask.flash('Could not update this meeting.')
         flask.flash('Meeting updated')
         return flask.redirect(flask.url_for('index'))
-    if meeting.meeting_time_start.hour < 10:
-        start_hour = "0%s" % str(meeting.meeting_time_start.hour)
-    else:
-        start_hour = str(meeting.meeting_time_start.hour)
-    if meeting.meeting_time_stop.hour < 10:
-        stop_hour = "0%s" % str(meeting.meeting_time_stop.hour)
-    else:
-        stop_hour = str(meeting.meeting_time_stop.hour)
-    # Only the selection list come here
-    editform.meeting_time_start.data = start_hour
-    editform.meeting_time_stop.data = stop_hour
-    if meeting.recursion:
-        editform.frequency.data = meeting.recursion.recursion_frequency
-    if meeting.reminder:
-        editform.remind_who.data = meeting.reminder.reminder_to
     return flask.render_template('edit_meeting.html', meeting=meeting,
         form=editform)
 

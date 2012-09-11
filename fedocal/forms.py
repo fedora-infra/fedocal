@@ -52,19 +52,21 @@ class AddMeetingForm(wtf.Form):
         )
     comanager = wtf.TextField('Co-manager')
 
-    information = wtf.TextField('Information')
+    information = wtf.TextAreaField('Information')
 
     # Recursion
     frequency = wtf.SelectField('Repeat every',
-        [wtf.validators.Required()],
-        choices = [(None, None), ('7', '7 days'), ('14', '14 days')]
+        [wtf.validators.optional()],
+        choices = [ ('', ''),
+                    ('7', '7 days'),
+                    ('14', '14 days')]
         )
-    end_repeats = wtf.DateField('End date')
+    end_repeats = wtf.DateField('End date', [wtf.validators.optional()])
 
     # Reminder
     remind_when = wtf.SelectField('Send reminder',
-        [wtf.validators.Required()],
-        choices = [ (None, None),
+        [wtf.validators.optional()],
+        choices = [ ('', ''),
                     ('H-12', '12 hours before'),
                     ('H-24', '1 day before'),
                     ('H-48', '2 days before'),

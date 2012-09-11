@@ -150,7 +150,7 @@ class Meeting(BASE):
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_time_start, meeting_time_stop,
-        calendar_name, reminder_id):
+        calendar_name, reminder_id, recursion_id):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
@@ -159,6 +159,7 @@ class Meeting(BASE):
         self.meeting_time_stop = meeting_time_stop
         self.calendar_name = calendar_name
         self.reminder_id = reminder_id
+        self.recursion_id = recursion_id
 
     def __repr__(self):
         """ Representation of the Reminder object when printed.
@@ -269,16 +270,17 @@ class Recursive(BASE):
     recursion_ends = Column(Date,
         default=date(2121, 12, 31), nullable=False)
 
-    def __init__(self, recursion_frequency, recursion_start, reminder_text):
+    def __init__(self, recursion_frequency, recursion_ends):
         """ Constructor instanciating the defaults values. """
         self.recursion_frequency = recursion_frequency
-        self.recursion_start = recursion_start
+        self.recursion_ends = recursion_ends
 
     def __repr__(self):
         """ Representation of the Reminder object when printed.
         """
-        return "<Recursion(From '%s' every '%s')>" % (
-            self.recursion_start, self.recursion_frequency)
+        return "<Recursion(From '%s' to '%s' every '%s')>" % (
+            self.recursion_start, self.recursion_ends,
+            self.recursion_frequency)
 
     def save(self, session):
         """ Save the object into the database. """

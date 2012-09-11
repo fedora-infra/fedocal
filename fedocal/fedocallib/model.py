@@ -265,7 +265,8 @@ class Recursive(BASE):
     recursion_frequency = Column(Enum('7', '14'), nullable=False)
     recursion_start = Column(Date, nullable=False,
         default=datetime.utcnow().date())
-    recursion_ends = Column(Date, nullable=True)
+    recursion_ends = Column(Date,
+        default=datetime.date(2121, 12, 31), nullable=False)
 
     def __init__(self, recursion_frequency, recursion_start, reminder_text):
         """ Constructor instanciating the defaults values. """

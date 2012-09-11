@@ -305,3 +305,22 @@ def save_recursive_meeting(session, meeting):
         new_meeting.meeting_date = next_date
         new_meeting.save(session)
         next_date = next_date + delta
+
+def delete_recursive_meeting(session, meeting):
+    """ Delete from the database any future meetings associated with this
+    recursion.
+
+    :arg session: the database session to use
+    :arg meeting: the Meeting object from which are removed all further
+        meetings.
+    """
+    today = datetime.utcnow()
+    if meeting.recursion.recursion_ends < today.date() \
+            or not meeting.recursion.recursion_frequency:
+        return
+    delta = timedelta(days=int(meeting.recursion.recursion_frequency))
+    session.debug=True
+    meetings = Meeting.get_future_meetings_of_recursion(session, meeting)
+    for meeting in meetings:
+        print meeting
+        meeting.delete(session)

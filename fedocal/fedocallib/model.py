@@ -18,6 +18,7 @@ __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 
 from datetime import datetime
+from datetime import date
 
 from sqlalchemy import (
     create_engine,
@@ -139,7 +140,7 @@ class Meeting(BASE):
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
         nullable=True)
     reminder = relationship("Reminder")
-    recursion_id = Column(Integer, ForeignKey('recurivity.recursion_id'),
+    recursion_id = Column(Integer, ForeignKey('recursivity.recursion_id'),
         nullable=True)
     recursion = relationship("Recursive")
 
@@ -266,7 +267,7 @@ class Recursive(BASE):
     recursion_start = Column(Date, nullable=False,
         default=datetime.utcnow().date())
     recursion_ends = Column(Date,
-        default=datetime.date(2121, 12, 31), nullable=False)
+        default=date(2121, 12, 31), nullable=False)
 
     def __init__(self, recursion_frequency, recursion_start, reminder_text):
         """ Constructor instanciating the defaults values. """

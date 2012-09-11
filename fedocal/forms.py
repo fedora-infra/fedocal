@@ -74,7 +74,7 @@ class AddMeetingForm(wtf.Form):
                     ]
         )
     remind_who = wtf.TextField('Send reminder to',
-        [wtf.validators.Email()])
+        [wtf.validators.Email(), wtf.validators.optional()])
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but

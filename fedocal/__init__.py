@@ -33,7 +33,7 @@ from flask.ext.fas import FAS, cla_plus_one_required
 
 import forms
 import fedocallib
-from fedocallib.model import Calendar, Meeting, Reminder
+from fedocallib.model import Calendar, Meeting, Reminder, Recursive
 
 CONFIG = ConfigParser.ConfigParser()
 if os.path.exists('/etc/fedocal.cfg'):
@@ -210,14 +210,51 @@ def add_meeting(calendar):
                 '%s:00:00' % form.meeting_time_start.data,
                 '%s:00:00' % form.meeting_time_stop.data,
                 calendar.calendar_name,
-                None)
+                None, None)
+            meeting.save(session)
             try:
-                meeting.save(session)
-                session.commit()
+                session.flush()
             except Exception, err:
                 print 'add_meeting:', err
                 flask.flash('Could not add this meeting to this calendar')
-                return flask.redirect(flask.url_for('index'))
+                flask.render_template('add_meeting.html',
+                    calendar=calendar.calendar_name,  form=form)
+            if form.remind_when.data and form.remind_who.data:
+                reminder = Reminder(form.remind_when.data,
+                                    form.remind_who.data,
+                                    None)
+                reminder.save(session)
+                try:
+                    session.flush()
+                    meeting.reminder = reminder
+                    session.flush()
+                except Exception, err:
+                    print 'add_meeting:', err
+                    flask.flash('Could not add this reminder to this meeting')
+                    flask.render_template('add_meeting.html',
+                        calendar=calendar.calendar_name,  form=form)
+            if form.frequency.data and form.end_repeats.data:
+                recursion = Recursive(
+                    recursion_frequency = form.frequency.data,
+                    recursion_ends = form.end_repeats.data
+                    )
+                recursion.save(session)
+                try:
+                    session.flush()
+                    meeting.recursion = recursion
+                    session.flush()
+                except Exception, err:
+                    print 'add_meeting:', err
+                    flask.flash('Could not add this reminder to this meeting')
+                    flask.render_template('add_meeting.html',
+                        calendar=calendar.calendar_name,  form=form)
+                fedocallib.save_recursive_meeting(session, meeting)
+            try:
+                session.commit()
+            except Exception, err:
+                flask.flash('Something went wrong while commiting to the DB.')
+                flask.render_template('add_meeting.html',
+                    calendar=calendar.calendar_name,  form=form)
             flask.flash('Meeting added')
             return flask.redirect(flask.url_for('calendar',
                 calendar=calendar.calendar_name))
@@ -290,6 +327,9 @@ def view_meeting(meeting_id):
     """
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     meeting = Meeting.by_id(session, meeting_id)
+    if not meeting:
+        flask.flash('No meeting could be found for this identifier')
+        return flask.redirect(flask.url_for('index'))
     calendars = Calendar.get_all(session)
     auth_form = forms.LoginForm()
     return flask.render_template('view_meeting.html', meeting=meeting,

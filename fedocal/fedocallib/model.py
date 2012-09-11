@@ -175,6 +175,15 @@ class Meeting(BASE):
         """ Remove the object into the database. """
         session.delete(self)
 
+    def copy(self):
+        """ Return a new Meeting object containing the same information
+        as the present one.
+        """
+        return Meeting(self.meeting_name, self.meeting_manager,
+            self.meeting_date, self.meeting_time_start,
+            self.meeting_time_stop, self.calendar_name, self.reminder_id,
+            self.recursion_id)
+
     @classmethod
     def by_id(cls, session, identifier):
         """ Retrieve a Meeting object from the database based on its
@@ -307,8 +316,9 @@ class Reminder(BASE):
 
     __tablename__ = 'reminders'
     reminder_id = Column(Integer, primary_key=True)
-    reminder_offset = Column(Enum('H-12', 'H-24', 'H-48', 'H-168'))
-    reminder_to = Column(String(500))
+    reminder_offset = Column(Enum('H-12', 'H-24', 'H-48', 'H-168'),
+        nullable=False)
+    reminder_to = Column(String(500), nullable=False)
     reminder_text = Column(Text)
 
     def __init__(self, reminder_offset, reminder_to, reminder_text):

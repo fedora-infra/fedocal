@@ -312,8 +312,13 @@ def edit_meeting(meeting_id):
         stop_hour = "0%s" % str(meeting.meeting_time_stop.hour)
     else:
         stop_hour = str(meeting.meeting_time_stop.hour)
+    # Only the selection list come here
     editform.meeting_time_start.data = start_hour
     editform.meeting_time_stop.data = stop_hour
+    if meeting.recursion:
+        editform.frequency.data = meeting.recursion.recursion_frequency
+    if meeting.reminder:
+        editform.remind_who.data = meeting.reminder.reminder_to
     return flask.render_template('edit_meeting.html', meeting=meeting,
         form=editform)
 

@@ -108,6 +108,7 @@ class AddMeetingForm(wtf.Form):
 
 class DeleteMeetingForm(wtf.Form):
     confirm_delete = wtf.BooleanField('Yes I want to delete this meeting')
+    confirm_futher_delete = wtf.BooleanField('Yes, I want to delete all futher meetings.')
 
 
 class LoginForm(wtf.Form):

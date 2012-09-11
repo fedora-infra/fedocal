@@ -27,18 +27,16 @@
 {% endmacro %}
 
 {% macro render_field_in_row(field, after="") %}
-<div class="row">
-    <tr>
-        <td>{{ field.label }}</td>
-        <td>{{ field(**kwargs)|safe }}</td>
+<tr>
+    <td>{{ field.label }}</td>
+    <td>{{ field(**kwargs)|safe }}</td>
 {% if after %} <td>{{ after }}</td>{% endif %}
-    </tr>
-  {% if field.errors %}
-  <tr class="errors">
-    {% for error in field.errors %}
-    <td>{{ error }}</td>
-    {% endfor %}
-  </tr>
-  {% endif %}
-</div>
+</tr>
+{% if field.errors %}
+<tr class="errors">
+{% for error in field.errors %}
+<td>{{ error }}</td>
+{% endfor %}
+</tr>
+{% endif %}
 {% endmacro %}

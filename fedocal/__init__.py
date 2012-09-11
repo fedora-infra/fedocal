@@ -198,10 +198,10 @@ def add_meeting(calendar):
             return flask.redirect(flask.url_for('add_meeting',
                 calendar=calendar.calendar_name))
         elif fedocallib.agenda_is_free(session,
-            calendar,
-            form.meeting_date.data,
-            int(form.meeting_time_start.data),
-            int(form.meeting_time_stop.data)):
+                calendar,
+                form.meeting_date.data,
+                int(form.meeting_time_start.data),
+                int(form.meeting_time_stop.data)):
             manager = '%s,' % flask.g.fas_user.username
             meeting = Meeting(
                 form.meeting_name.data,

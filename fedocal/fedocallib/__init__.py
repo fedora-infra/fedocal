@@ -267,3 +267,21 @@ def is_user_managing_in_calendar(session, calendar_name, fas_user):
         return True
     else:
         return not set(manager_groups).intersection(set(fas_user.groups))
+
+def save_recursive_meeting(session, meeting):
+    """ Add to the database the correct number of meeting according to
+    its recursivity.
+    :arg session: the database session to use
+    :arg meeting: the Meeting object which will have to be updated and
+    replicated as long as the recursion olds true
+    """
+    if not meeting.recursion.recursion_frequency:
+        return
+    today = datetime.utcnow()
+    delta = timedelta(days=int(meeting.recursion.recursion_frequency))
+    next_date = meeting.meeting_date + delta
+    while next_date < meeting.recursion.recursion_ends:
+        new_meeting = meeting.copy()
+        new_meeting.meeting_date = next_date
+        new_meeting.save(session)
+        next_date = next_date + delta

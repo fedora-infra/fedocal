@@ -73,7 +73,37 @@ class AddMeetingForm(wtf.Form):
                     ('H-168', '7 days before'),
                     ]
         )
-    remind_who = wtf.TextField('Send reminder to')
+    remind_who = wtf.TextField('Send reminder to',
+        [wtf.validators.Email()])
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        if a meeting is set using the meeting keyword, then fill the
+        value of the form with the value from the Meeting object.
+        """
+        super(AddMeetingForm, self).__init__(*args, **kwargs)
+        if 'meeting' in kwargs:
+            meeting = kwargs['meeting']
+            if meeting.meeting_time_start.hour < 10:
+                start_hour = "0%s" % str(meeting.meeting_time_start.hour)
+            else:
+                start_hour = str(meeting.meeting_time_start.hour)
+            if meeting.meeting_time_stop.hour < 10:
+                stop_hour = "0%s" % str(meeting.meeting_time_stop.hour)
+            else:
+                stop_hour = str(meeting.meeting_time_stop.hour)
+        
+            self.meeting_name.data = meeting.meeting_name
+            self.meeting_date.data = meeting.meeting_date
+            self.meeting_time_start.data = start_hour
+            self.meeting_time_stop.data = stop_hour
+            self.comanager.data = meeting.meeting_manager
+            if meeting.recursion:
+                self.frequency.data = meeting.recursion.recursion_frequency
+                self.end_repeats.data = meeting.recursion.recursion_ends
+            if meeting.reminder:
+                self.remind_when.data = meeting.reminder.reminder_offset
+                self.remind_who.data = meeting.reminder.reminder_to
 
 
 class DeleteMeetingForm(wtf.Form):

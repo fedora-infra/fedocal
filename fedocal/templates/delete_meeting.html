@@ -28,6 +28,12 @@ You are removing this meeting from the calendar
 </p>
 <form action="" method="post">
 {{ render_field_invert(form.confirm_delete) }}
+{% if meeting.recursion %}
+<p>This meeting is a regular meeting, are you sure you want to delete all
+of them or just this one ? (Check only if you want to delete all future
+meetings as well)</p>
+{{ render_field_invert(form.confirm_futher_delete) }}
+{% endif %}
 <p class="buttons indent">
     <input type="submit" class="submit positive" value="Add">
 </p>

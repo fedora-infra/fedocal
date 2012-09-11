@@ -312,13 +312,10 @@ def edit_meeting(meeting_id):
         stop_hour = "0%s" % str(meeting.meeting_time_stop.hour)
     else:
         stop_hour = str(meeting.meeting_time_stop.hour)
-    editform.meeting_name.data = meeting.meeting_name
-    editform.comanager.data = meeting.meeting_manager
-    editform.meeting_date.data = meeting.meeting_date
     editform.meeting_time_start.data = start_hour
     editform.meeting_time_stop.data = stop_hour
     return flask.render_template('edit_meeting.html', meeting=meeting,
-        editform=editform)
+        form=editform)
 
 
 @APP.route('/meeting/<int:meeting_id>', methods=('GET', 'POST'))

@@ -338,8 +338,11 @@ def delete_meeting(meeting_id):
     deleteform = forms.DeleteMeetingForm()
     if deleteform.validate_on_submit():
         if deleteform.confirm_delete.data:
-            try:
+            if deleteform.confirm_futher_delete.data:
+                fedocallib.delete_recursive_meeting(session, meeting)
+            else:
                 meeting.delete(session)
+            try:
                 session.commit()
             except Exception, err:
                 print 'edit_meeting:',  err

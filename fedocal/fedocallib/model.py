@@ -264,7 +264,8 @@ class Meeting(BASE):
             return None
 
     @classmethod
-    def get_future_meeting_of_user(cls, session, username, start_date):
+    def get_future_meeting_of_user(cls, session, username, start_date,
+        end_date):
         """ Retrieve the list of meetings which specified username
         is among the managers and which date is newer or egual than the
         specified one.
@@ -272,6 +273,7 @@ class Meeting(BASE):
         try:
             return session.query(cls).filter(and_
                 (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_date <= end_date),
                 (Meeting.meeting_manager.like('%%%s%%' % username))).all()
         except NoResultFound:
             return None

@@ -248,7 +248,7 @@ def get_future_meeting_of_user(session, username):
         past meetings for.
     """
     meetings = Meeting.get_future_meeting_of_user(session, username,
-        datetime.utcnow())
+        datetime.utcnow(), datetime.utcnow() + timedelta(days=30))
     return meetings
 
 

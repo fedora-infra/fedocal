@@ -52,6 +52,27 @@ class AddMeetingForm(wtf.Form):
         )
     comanager = wtf.TextField('Co-manager')
 
+    information = wtf.TextField('Information')
+
+    # Recursion
+    frequency = wtf.SelectField('Repeat every',
+        [wtf.validators.Required()],
+        choices = [(None, None), ('7', '7 days'), ('14', '14 days')]
+        )
+    end_repeats = wtf.DateField('End date')
+
+    # Reminder
+    remind_when = wtf.SelectField('Send reminder',
+        [wtf.validators.Required()],
+        choices = [ (None, None),
+                    ('H-12', '12 hours before'),
+                    ('H-24', '1 day before'),
+                    ('H-48', '2 days before'),
+                    ('H-168', '7 days before'),
+                    ]
+        )
+    remind_who = wtf.TextField('Send reminder to')
+
 
 class DeleteMeetingForm(wtf.Form):
     confirm_delete = wtf.BooleanField('Yes I want to delete this meeting')

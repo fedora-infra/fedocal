@@ -24,6 +24,7 @@ from sqlalchemy import (
     create_engine,
     Column,
     Date,
+    distinct,
     Enum,
     ForeignKey,
     Integer,
@@ -105,11 +106,8 @@ class Calendar(BASE):
         if not calendar or not calendar.calendar_manager_group:
             groups = []
         else:
-            if ',' in calendar.calendar_manager_group:
-                groups = [item.strip()
-                    for item in calendar.calendar_manager_group.split(',')]
-            else:
-                groups = [calendar.calendar_manager_group]
+            groups = [item.strip()
+                for item in calendar.calendar_manager_group.split(',')]
         return groups
 
     @classmethod
@@ -145,7 +143,8 @@ class Meeting(BASE):
     recursion = relationship("Recursive")
 
     __table_args__ = (
-            UniqueConstraint('calendar_name', 'meeting_date', 'meeting_time_start'),
+            UniqueConstraint('calendar_name', 'meeting_date',
+                'meeting_time_start'),
             )
 
     def __init__(self, meeting_name, meeting_manager,
@@ -264,8 +263,8 @@ class Meeting(BASE):
             return None
 
     @classmethod
-    def get_future_meeting_of_user(cls, session, username, start_date,
-        end_date):
+    def get_future_single_meeting_of_user(cls, session, username,
+        start_date):
         """ Retrieve the list of meetings which specified username
         is among the managers and which date is newer or egual than the
         specified one.
@@ -273,8 +272,32 @@ class Meeting(BASE):
         try:
             return session.query(cls).filter(and_
                 (Meeting.meeting_date >= start_date),
-                (Meeting.meeting_date <= end_date),
+                (Meeting.recursion == None),
                 (Meeting.meeting_manager.like('%%%s%%' % username))).all()
+        except NoResultFound:
+            return None
+
+    @classmethod
+    def get_future_regular_meeting_of_user(cls, session, username,
+        start_date):
+        """ Retrieve the list of meetings which specified username
+        is among the managers and which date is newer or egual than the
+        specified one.
+        """
+        try:
+            recursive_meetings = session.query(distinct(cls.recursion_id)
+                ).filter(and_
+                    (Meeting.meeting_date >= start_date),
+                    (Meeting.recursion != None),
+                    (Meeting.meeting_manager.like('%%%s%%' % username))
+                ).all()
+            meetings = []
+            for recursive_meeting in recursive_meetings:
+                meetings.append(session.query(cls).filter(and_
+                    (Meeting.meeting_date >= start_date),
+                    (Meeting.recursion_id == recursive_meeting[0])
+                    ).order_by(Meeting.meeting_date).limit(1).one())
+            return meetings
         except NoResultFound:
             return None
 
@@ -362,6 +385,7 @@ class Reminder(BASE):
             return session.query(cls).get(identifier)
         except NoResultFound:
             return None
+
 
 if __name__ == '__main__':
     import os

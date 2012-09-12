@@ -239,7 +239,7 @@ def get_past_meeting_of_user(session, username):
     return meetings
 
 
-def get_future_meeting_of_user(session, username):
+def get_future_single_meeting_of_user(session, username):
     """ Return all future meeting which specified username is among the
     managers.
 
@@ -247,8 +247,21 @@ def get_future_meeting_of_user(session, username):
     :arg username: the FAS user name that you would like to have the
         past meetings for.
     """
-    meetings = Meeting.get_future_meeting_of_user(session, username,
-        datetime.utcnow(), datetime.utcnow() + timedelta(days=30))
+    meetings = Meeting.get_future_single_meeting_of_user(session,
+        username, datetime.utcnow())
+    return meetings
+
+
+def get_future_regular_meeting_of_user(session, username):
+    """ Return all future recursive meeting which specified username is
+    among the managers.
+
+    :arg session: the database session to use
+    :arg username: the FAS user name that you would like to have the
+        past meetings for.
+    """
+    meetings = Meeting.get_future_regular_meeting_of_user(session,
+        username, datetime.utcnow())
     return meetings
 
 
@@ -284,7 +297,10 @@ def is_user_managing_in_calendar(session, calendar_name, fas_user):
     if not manager_groups:
         return True
     else:
-        return not set(manager_groups).intersection(set(fas_user.groups))
+        return len(
+                    set(manager_groups).intersection(
+                    set(fas_user.groups))
+                ) >= 1
 
 
 def save_recursive_meeting(session, meeting):

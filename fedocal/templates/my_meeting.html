@@ -14,12 +14,11 @@
 {% block content %}
 
 <h4>Future meeting</h4>
-<p> This is the list of the coming meetings you have planned in
-the coming 30 days.
-</p>
+{% if single_meetings %}
+<p> This is the list of all non-recurrent meeting you created </p>
 <div class='my_meetings'>
     <table>
-        {% for meeting in meetings %}
+        {% for meeting in regular_meetings %}
         <tr>
             <td class="date">{{ meeting.meeting_date }}</td>
             <td class="time">
@@ -46,6 +45,40 @@ the coming 30 days.
         {% endfor %}
     </table>
 </div>
+{% endif %}
+
+{% if regular_meetings %}
+<p> This is the list of all regular meeting you created </p>
+<div class='my_meetings'>
+    <table>
+        {% for meeting in regular_meetings %}
+        <tr>
+            <td class="date">{{ meeting.meeting_date }}</td>
+            <td class="time">
+                {{ meeting.meeting_time_start }} to
+                {{ meeting.meeting_time_stop }}
+            </td>
+            <td class="calendar"> {{ meeting.calendar_name }} </td>
+            <td> {{ meeting.meeting_name }} </td>
+            <td class="button">
+                <a href="{{ url_for('edit_meeting',
+                    meeting_id=meeting.meeting_id) }}">
+                    <img src="{{ url_for('static', filename='edit.png') }}"
+                        title="Edit" alt="Edit"/>
+                </a>
+            </td>
+            <td class="button">
+                <a href="{{ url_for('delete_meeting',
+                    meeting_id=meeting.meeting_id) }}">
+                    <img src="{{ url_for('static', filename='delete.png') }}"
+                    title="Delete" alt="Delete"/>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
 
 <h4>Past meetings</h4>
 <div class='my_meetings'>

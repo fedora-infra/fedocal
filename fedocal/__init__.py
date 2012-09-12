@@ -65,7 +65,15 @@ def is_admin():
 def index():
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendars = Calendar.get_all(session)
-    return calendar(calendars[0].calendar_name)
+    if calendars:
+        return calendar(calendars[0].calendar_name)
+    else:
+        auth_form = forms.LoginForm()
+        admin = is_admin()
+        return flask.render_template('agenda.html',
+            calendar=None,
+            auth_form=auth_form,
+            admin=admin)
 
 
 @APP.route('/<calendar>')
@@ -106,14 +114,16 @@ def calendar_fullday(calendar, year, month, day):
 @cla_plus_one_required
 def my_meetings():
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meetings = fedocallib.get_future_meeting_of_user(session,
+    regular_meetings = fedocallib.get_future_regular_meeting_of_user(session,
+        flask.g.fas_user.username)
+    single_meetings = fedocallib.get_future_single_meeting_of_user(session,
         flask.g.fas_user.username)
     past_meetings = fedocallib.get_past_meeting_of_user(session,
         flask.g.fas_user.username)
     calendars = Calendar.get_all(session)
     return flask.render_template('my_meeting.html', calendars=calendars,
-        title='My meeting',
-        meetings=meetings, pas_meetings=past_meetings)
+        title='My meeting', regular_meetings=regular_meetings,
+        single_meetings=single_meetings, pas_meetings=past_meetings)
 
 
 @APP.route('/login', methods=('GET', 'POST'))

@@ -1,0 +1,16 @@
+- Fix the Edit meeting function to take into account recursion and reminders
+- Add the Information field to the Meeting object/logic
+- Implement the cron task to send the reminders
+
+- Unit-tests, unit-tests and more unit-tests
+- Fix current unit-tests
+
+- Add documentation on how to install/deploy it
+- Add setup.py
+- Add license
+- Complete the code documentation
+
+
+- Long term: see if we ever can provide a caldav output for the calendars
+   (it would be read only, but that would be pretty cool to have)
+

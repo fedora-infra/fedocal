@@ -163,8 +163,8 @@ class Meeting(BASE):
     def __repr__(self):
         """ Representation of the Reminder object when printed.
         """
-        return "<Meeting('%s', '%s')>" % (self.calendar,
-            self.meeting_name)
+        return "<Meeting('%s', '%s', '%s')>" % (self.calendar,
+            self.meeting_name, self.meeting_date)
 
     def save(self, session):
         """ Save the object into the database. """
@@ -203,6 +203,32 @@ class Meeting(BASE):
             return session.query(cls).filter(and_
                 (Meeting.calendar == meeting.calendar),
                 (Meeting.meeting_date >= meeting.meeting_date),
+                (Meeting.recursion == meeting.recursion)).all()
+        except NoResultFound:
+            return None
+
+    @classmethod
+    def get_last_meeting_of_recursion(cls, session, meeting):
+        """ Return the last meeting (by date) of associated with this
+        recursion identifier."""
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.calendar == meeting.calendar),
+                (Meeting.recursion == meeting.recursion)
+                ).order_by(Meeting.meeting_date.desc()).limit(1).one()
+        except NoResultFound:
+            return None
+
+    @classmethod
+    def get_meetings_past_end_of_recursion(cls, session, meeting):
+        """ Return the list of meetings which are associated with a
+        specific recursivity but are later than the end of the
+        recursion.
+        """
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.calendar == meeting.calendar),
+                (Meeting.meeting_date > meeting.recursion.recursion_ends),
                 (Meeting.recursion == meeting.recursion)).all()
         except NoResultFound:
             return None

@@ -322,6 +322,7 @@ def save_recursive_meeting(session, meeting):
         new_meeting.save(session)
         next_date = next_date + delta
 
+
 def delete_recursive_meeting(session, meeting):
     """ Delete from the database any future meetings associated with this
     recursion.
@@ -335,8 +336,37 @@ def delete_recursive_meeting(session, meeting):
             or not meeting.recursion.recursion_frequency:
         return
     delta = timedelta(days=int(meeting.recursion.recursion_frequency))
-    session.debug=True
     meetings = Meeting.get_future_meetings_of_recursion(session, meeting)
     for meeting in meetings:
-        print meeting
         meeting.delete(session)
+
+
+def delete_recursive_meeting_after_end(session, meeting):
+    """ Delete from the database all the emails which are associated with
+    this recusion but whose date are past the end of the recursivity.
+
+    :arg session: the database session to use
+    :arg meeting: the Meeting object from which are removed all further
+        meetings.
+    """
+    delta = timedelta(days=int(meeting.recursion.recursion_frequency))
+    meetings = Meeting.get_meetings_past_end_of_recursion(session, meeting)
+    for meeting in meetings:
+        meeting.delete(session)
+
+
+def add_recursive_meeting_after_end(session, meeting):
+    """ Check if all the meeting within a recursion are present and
+    otherwise add them.
+    """
+    if not meeting.recursion.recursion_frequency:
+        return
+    delta = timedelta(days=int(meeting.recursion.recursion_frequency))
+    last_meeting = Meeting.get_last_meeting_of_recursion(session, meeting)
+    if last_meeting.meeting_date + delta < last_meeting.recursion.recursion_ends:
+        next_date = last_meeting.meeting_date + delta
+        while next_date < meeting.recursion.recursion_ends:
+            new_meeting = meeting.copy()
+            new_meeting.meeting_date = next_date
+            new_meeting.save(session)
+            next_date = next_date + delta

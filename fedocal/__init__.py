@@ -297,29 +297,89 @@ def edit_meeting(meeting_id):
         meeting.meeting_time_start.hour) :
         flask.flash('This meeting has already occured, you may not change it anymore')
         return flask.redirect(flask.url_for('index'))
-    # You are not allowed to remove yourself from the managers.
-    meeting.meeting_manager = meeting.meeting_manager.replace(
-        '%s,' % flask.g.fas_user.username, '')
-    editform = forms.AddMeetingForm(meeting=meeting)
-    if editform.validate_on_submit():
+    form = forms.AddMeetingForm()
+    if form.validate_on_submit():
         try:
-            meeting.meeting_name = editform.meeting_name.data
+            meeting.meeting_name = form.meeting_name.data
             meeting.meeting_manager = '%s,%s' % (flask.g.fas_user.username,
-                editform.comanager.data)
-            meeting.meeting_date = editform.meeting_date.data
+                form.comanager.data)
+            meeting.meeting_date = form.meeting_date.data
             meeting.meeting_time_start = '%s:00:00' % (
-                editform.meeting_time_start.data)
+                form.meeting_time_start.data)
             meeting.meeting_time_stop = '%s:00:00' % (
-                editform.meeting_time_stop.data)
+                form.meeting_time_stop.data)
+
+            if form.remind_when.data and form.remind_who.data:
+                if meeting.reminder_id:
+                    meeting.reminder.reminder_offset = form.remind_when.data
+                    meeting.reminder.reminder_to = form.remind_who.data
+                    meeting.reminder.save(session)
+                else:
+                    reminder = Reminder(form.remind_when.data,
+                                    form.remind_who.data,
+                                    None)
+                    reminder.save(session)
+                    try:
+                        session.flush()
+                        meeting.reminder = reminder
+                        session.flush()
+                    except Exception, err:
+                        print 'edit_meeting:', err
+                        flask.flash('Could not edit the reminder of this meeting')
+                        return flask.render_template('edit_meeting.html',
+                            meeting=meeting, form=form)
+            elif meeting.reminder_id:
+                try:
+                    meeting.reminder.delete(session)
+                except Exception, err:
+                        print 'edit_meeting:', err
             meeting.save(session)
+
+            if form.frequency.data:
+                ends_date = form.end_repeats.data
+                if not ends_date:
+                    ends_date = datetime.date(2025, 12, 31)
+                if meeting.recursion_id:
+                    meeting.recursion.recursion_frequency = form.frequency.data
+                    meeting.recursion.recursion_ends = ends_date
+                    meeting.recursion.save(session)
+                    fedocallib.delete_recursive_meeting_after_end(session, meeting)
+                    fedocallib.add_recursive_meeting_after_end(session, meeting)
+                else:
+                    recursion = Recursive(
+                        recursion_frequency = form.frequency.data,
+                        recursion_ends = ends_date
+                        )
+                    recursion.save(session)
+                    try:
+                        session.flush()
+                        meeting.recursion = recursion
+                        session.flush()
+                    except Exception, err:
+                        print 'add_meeting:', err
+                        flask.flash('Could not edit this recursivity of this meeting')
+                        return flask.render_template('edit_meeting.html',
+                            meeting=meeting, form=form)
+                    fedocallib.save_recursive_meeting(session, meeting)
+            elif meeting.recursion_id:
+                try:
+                    meeting.recursion.delete(session)
+                except Exception, err:
+                        print 'edit_meeting:', err
+
             session.commit()
         except Exception, err:
             print 'edit_meeting:',  err
             flask.flash('Could not update this meeting.')
+            return flask.redirect(flask.url_for('edit_meeting',
+                meeting_id=meeting_id))
         flask.flash('Meeting updated')
-        return flask.redirect(flask.url_for('index'))
+        return flask.redirect(flask.url_for('view_meeting',
+            meeting_id=meeting_id))
+    else:
+        form = forms.AddMeetingForm(meeting=meeting)
     return flask.render_template('edit_meeting.html', meeting=meeting,
-        form=editform)
+        form=form)
 
 
 @APP.route('/meeting/<int:meeting_id>', methods=('GET', 'POST'))

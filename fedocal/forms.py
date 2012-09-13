@@ -23,6 +23,7 @@
  MA 02110-1301, USA.
 """
 
+import flask
 from flask.ext import wtf
 
 from fedocallib import HOURS
@@ -97,11 +98,14 @@ class AddMeetingForm(wtf.Form):
             self.meeting_date.data = meeting.meeting_date
             self.meeting_time_start.data = start_hour
             self.meeting_time_stop.data = stop_hour
-            self.comanager.data = meeting.meeting_manager
-            if meeting.recursion:
+            # You are not allowed to remove yourself from the managers.
+            meeting_manager = meeting.meeting_manager.replace(
+                        '%s,' % flask.g.fas_user.username, '')
+            self.comanager.data = meeting_manager
+            if meeting.recursion_id:
                 self.frequency.data = meeting.recursion.recursion_frequency
                 self.end_repeats.data = meeting.recursion.recursion_ends
-            if meeting.reminder:
+            if meeting.reminder_id:
                 self.remind_when.data = meeting.reminder.reminder_offset
                 self.remind_who.data = meeting.reminder.reminder_to
 

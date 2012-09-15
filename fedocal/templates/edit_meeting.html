@@ -63,6 +63,13 @@
 {{ render_field_in_row(form.remind_when) }}
 {{ render_field_in_row(form.remind_who) }}
 </table>
+
+<h4>Edit all?</h4>
+<p>This meeting is a recursive meeting, by default your changes will only
+affect this meeting unless you explecitely say otherwise:
+</p>
+{{ render_field(form.recursive_edit) }}
+
 <p class="buttons indent">
     <input type="submit" class="submit positive" value="Edit">
 </p>

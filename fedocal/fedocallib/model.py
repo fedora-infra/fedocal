@@ -319,10 +319,10 @@ class Meeting(BASE):
                 ).all()
             meetings = []
             for recursive_meeting in recursive_meetings:
-                meetings.append(session.query(cls).filter(and_
+                meetings.extend(session.query(cls).filter(and_
                     (Meeting.meeting_date >= start_date),
                     (Meeting.recursion_id == recursive_meeting[0])
-                    ).order_by(Meeting.meeting_date).limit(1).one())
+                    ).order_by(Meeting.meeting_date).limit(4).all())
             return meetings
         except NoResultFound:
             return None

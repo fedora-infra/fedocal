@@ -77,6 +77,9 @@ class AddMeetingForm(wtf.Form):
     remind_who = wtf.TextField('Send reminder to',
         [wtf.validators.Email(), wtf.validators.optional()])
 
+    # Recursive edit
+    recursive_edit = wtf.BooleanField('Yes I want to edit all the meetings')
+
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
         if a meeting is set using the meeting keyword, then fill the

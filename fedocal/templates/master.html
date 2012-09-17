@@ -26,6 +26,9 @@
 
 <!-- start sidebar -->
 <div id="left-sidebar">
+    <ul class="checkmark-list">
+        <li><a href="{{url_for('index')}}">Home</a></li>
+    </ul>
     <h4>Calendars</h4>
     <ul class="checkmark-list">
         {% for calendar in calendars %}

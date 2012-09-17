@@ -20,6 +20,10 @@
     <li>Ending time: {{ meeting.meeting_time_stop }} UTC</li>
 </ul>
 
+<pre>
+    {{ meeting.meeting_information }}
+</pre>
+
 <p>
 This meeting is organized by {{ meeting.meeting_manager }} as part of
 the calendar <a href="{{ url_for('calendar', calendar=meeting.calendar_name) }}">

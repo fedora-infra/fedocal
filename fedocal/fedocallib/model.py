@@ -135,6 +135,7 @@ class Meeting(BASE):
     meeting_date = Column(Date, default=datetime.utcnow().date())
     meeting_time_start = Column(Time, default=datetime.utcnow().time())
     meeting_time_stop = Column(Time, default=datetime.utcnow().time())
+    meeting_information = Column(Text)
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
         nullable=True)
     reminder = relationship("Reminder")
@@ -149,13 +150,14 @@ class Meeting(BASE):
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_time_start, meeting_time_stop,
-        calendar_name, reminder_id, recursion_id):
+        meeting_information, calendar_name, reminder_id, recursion_id):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
         self.meeting_date = meeting_date
         self.meeting_time_start = meeting_time_start
         self.meeting_time_stop = meeting_time_stop
+        self.meeting_information = meeting_information
         self.calendar_name = calendar_name
         self.reminder_id = reminder_id
         self.recursion_id = recursion_id

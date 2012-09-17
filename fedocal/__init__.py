@@ -220,6 +220,7 @@ def add_meeting(calendar):
                 form.meeting_date.data,
                 '%s:00:00' % form.meeting_time_start.data,
                 '%s:00:00' % form.meeting_time_stop.data,
+                form.information.data,
                 calendar.calendar_name,
                 None, None)
             meeting.save(session)
@@ -230,6 +231,7 @@ def add_meeting(calendar):
                 flask.flash('Could not add this meeting to this calendar')
                 flask.render_template('add_meeting.html',
                     calendar=calendar.calendar_name,  form=form)
+
             if form.remind_when.data and form.remind_who.data:
                 reminder = Reminder(form.remind_when.data,
                                     form.remind_who.data,
@@ -244,6 +246,7 @@ def add_meeting(calendar):
                     flask.flash('Could not add this reminder to this meeting')
                     flask.render_template('add_meeting.html',
                         calendar=calendar.calendar_name,  form=form)
+
             if form.frequency.data:
                 ends_date = form.end_repeats.data
                 if not ends_date:
@@ -308,6 +311,7 @@ def edit_meeting(meeting_id):
                 form.meeting_time_start.data)
             meeting.meeting_time_stop = '%s:00:00' % (
                 form.meeting_time_stop.data)
+            meeting.meeting_information = form.information.data
 
             if form.remind_when.data and form.remind_who.data:
                 if meeting.reminder_id:

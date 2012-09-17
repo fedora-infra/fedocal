@@ -101,6 +101,7 @@ class AddMeetingForm(wtf.Form):
             self.meeting_date.data = meeting.meeting_date
             self.meeting_time_start.data = start_hour
             self.meeting_time_stop.data = stop_hour
+            self.information.data = meeting.meeting_information
             # You are not allowed to remove yourself from the managers.
             meeting_manager = meeting.meeting_manager.replace(
                         '%s,' % flask.g.fas_user.username, '')

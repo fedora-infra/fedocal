@@ -24,6 +24,14 @@
     {{ meeting.meeting_information }}
 </pre>
 
+{% if meeting.recursion %}
+<p>
+    This meeting is recurrent, it occures every
+    {{ meeting.recursion.recursion_frequency }} days until
+    {{ meeting.recursion.recursion_ends }}
+</p>
+{% endif %}
+
 <p>
 This meeting is organized by {{ meeting.meeting_manager }} as part of
 the calendar <a href="{{ url_for('calendar', calendar=meeting.calendar_name) }}">

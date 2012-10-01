@@ -176,14 +176,29 @@ class Meeting(BASE):
         """ Remove the object into the database. """
         session.delete(self)
 
-    def copy(self):
-        """ Return a new Meeting object containing the same information
-        as the present one.
+    def copy(self, meeting=None):
+        """ Return if a meeting is provided, the same meeting with
+        updated information or else a new Meeting object containing the
+        same information as the present one.
+        :kwarg meeting: a Meeting object to update
+        :return a Meeting object with the same information as the current
+        object.
         """
-        return Meeting(self.meeting_name, self.meeting_manager,
-            self.meeting_date, self.meeting_time_start,
-            self.meeting_time_stop, self.calendar_name, self.reminder_id,
-            self.recursion_id)
+        if meeting:
+            meeting.meeting_name = self.meeting_name
+            meeting.meeting_manager = self.meeting_manager
+            meeting.meeting_date = self.meeting_date
+            meeting.meeting_time_start = self.meeting_time_start
+            meeting.meeting_time_stop = self.meeting_time_stop
+            meeting.calendar_name = self.calendar_name
+            meeting.reminder_id = self.reminder_id
+            meeting.recursion_id = self.recursion_id
+        else:
+            meeting = Meeting(self.meeting_name, self.meeting_manager,
+                self.meeting_date, self.meeting_time_start,
+                self.meeting_time_stop, self.calendar_name,
+                self.reminder_id, self.recursion_id)
+        return meeting
 
     @classmethod
     def by_id(cls, session, identifier):
@@ -231,6 +246,18 @@ class Meeting(BASE):
             return session.query(cls).filter(and_
                 (Meeting.calendar == meeting.calendar),
                 (Meeting.meeting_date > meeting.recursion.recursion_ends),
+                (Meeting.recursion == meeting.recursion)).all()
+        except NoResultFound:
+            return None
+
+    @classmethod
+    def get_meetings_of_recursion(cls, session, meeting):
+        """ Return the list of meetings which are associated with a
+        specific recursion.
+        """
+        try:
+            return session.query(cls).filter(and_
+                (Meeting.calendar == meeting.calendar),
                 (Meeting.recursion == meeting.recursion)).all()
         except NoResultFound:
             return None

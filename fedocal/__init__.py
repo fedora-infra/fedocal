@@ -347,8 +347,12 @@ def edit_meeting(meeting_id):
                     meeting.recursion.recursion_frequency = form.frequency.data
                     meeting.recursion.recursion_ends = ends_date
                     meeting.recursion.save(session)
-                    fedocallib.delete_recursive_meeting_after_end(session, meeting)
-                    fedocallib.add_recursive_meeting_after_end(session, meeting)
+                    fedocallib.delete_recursive_meeting_after_end(
+                        session, meeting)
+                    fedocallib.update_recursive_meeting(
+                        session, meeting)
+                    fedocallib.add_recursive_meeting_after_end(
+                        session, meeting)
                 else:
                     recursion = Recursive(
                         recursion_frequency = form.frequency.data,

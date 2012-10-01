@@ -339,7 +339,7 @@ def edit_meeting(meeting_id):
                         print 'edit_meeting:', err
             meeting.save(session)
 
-            if form.frequency.data and form.recursive_edit:
+            if form.frequency.data and form.recursive_edit.data:
                 ends_date = form.end_repeats.data
                 if not ends_date:
                     ends_date = datetime.date(2025, 12, 31)

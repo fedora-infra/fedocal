@@ -1,5 +1,3 @@
-- Fix the Edit meeting function to take into account recursion and reminders
-  - Fix the recursion meeting when updating one field
 - Implement the cron task to send the reminders
 
 - Unit-tests, unit-tests and more unit-tests

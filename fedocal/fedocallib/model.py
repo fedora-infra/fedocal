@@ -180,6 +180,9 @@ class Meeting(BASE):
         """ Return if a meeting is provided, the same meeting with
         updated information or else a new Meeting object containing the
         same information as the present one.
+        If a Meeting object is provided, all the information *but* the
+        date will be copied.
+
         :kwarg meeting: a Meeting object to update
         :return a Meeting object with the same information as the current
         object.
@@ -187,7 +190,7 @@ class Meeting(BASE):
         if meeting:
             meeting.meeting_name = self.meeting_name
             meeting.meeting_manager = self.meeting_manager
-            meeting.meeting_date = self.meeting_date
+            #meeting.meeting_date = self.meeting_date
             meeting.meeting_time_start = self.meeting_time_start
             meeting.meeting_time_stop = self.meeting_time_stop
             meeting.calendar_name = self.calendar_name
@@ -258,6 +261,7 @@ class Meeting(BASE):
         try:
             return session.query(cls).filter(and_
                 (Meeting.calendar == meeting.calendar),
+                (Meeting.meeting_date > meeting.meeting_date),
                 (Meeting.recursion == meeting.recursion)).all()
         except NoResultFound:
             return None

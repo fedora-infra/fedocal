@@ -334,7 +334,7 @@ def update_recursive_meeting(session, meeting):
         return
     for old_meeting in Meeting.get_meetings_of_recursion(session, meeting):
         new_meeting = meeting.copy(old_meeting)
-        new_meeting.save(session)
+    session.flush()
 
 
 def delete_recursive_meeting(session, meeting):

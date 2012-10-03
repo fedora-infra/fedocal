@@ -121,9 +121,11 @@ def my_meetings():
     past_meetings = fedocallib.get_past_meeting_of_user(session,
         flask.g.fas_user.username)
     calendars = Calendar.get_all(session)
+    admin = is_admin()
     return flask.render_template('my_meeting.html', calendars=calendars,
         title='My meeting', regular_meetings=regular_meetings,
-        single_meetings=single_meetings, pas_meetings=past_meetings)
+        single_meetings=single_meetings, pas_meetings=past_meetings,
+        admin=admin)
 
 
 @APP.route('/login', methods=('GET', 'POST'))
@@ -265,7 +267,9 @@ def add_meeting(calendar):
                     flask.flash('Could not add this reminder to this meeting')
                     flask.render_template('add_meeting.html',
                         calendar=calendar.calendar_name,  form=form)
+
                 fedocallib.save_recursive_meeting(session, meeting)
+
             try:
                 session.commit()
             except Exception, err:

@@ -199,7 +199,8 @@ class Meeting(BASE):
         else:
             meeting = Meeting(self.meeting_name, self.meeting_manager,
                 self.meeting_date, self.meeting_time_start,
-                self.meeting_time_stop, self.calendar_name,
+                self.meeting_time_stop, self.meeting_information,
+                self.calendar_name,
                 self.reminder_id, self.recursion_id)
         return meeting
 
@@ -357,6 +358,25 @@ class Meeting(BASE):
                     (Meeting.recursion_id == recursive_meeting[0])
                     ).order_by(Meeting.meeting_date).limit(4).all())
             return meetings
+        except NoResultFound:
+            return None
+
+    @classmethod
+    def get_meeting_with_reminder(cls, session, start_date,
+        start_time, offset):
+        """ Retrieve the list of meetings with a reminder set in
+        <offset> hours for the given day and at the specified hour.
+        """
+        try:
+            reminders = session.query(Reminder.reminder_id).filter(
+                    Reminder.reminder_offset == offset).all()
+            reminders = [int(item.reminder_id) for item in reminders]
+            if not reminders:
+                return []
+            return session.query(cls).filter(and_
+                    (Meeting.meeting_date == start_date),
+                    (Meeting.meeting_time_start == start_time),
+                    (Meeting.reminder_id.in_(reminders))).all()
         except NoResultFound:
             return None
 

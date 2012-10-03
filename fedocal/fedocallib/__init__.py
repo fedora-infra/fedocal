@@ -341,7 +341,7 @@ def delete_recursive_meeting(session, meeting):
     """ Delete from the database any future meetings associated with this
     recursion.
 
-    :arg session: the database session to use
+    :arg session: the database session to use.
     :arg meeting: the Meeting object from which are removed all further
         meetings.
     """
@@ -359,7 +359,7 @@ def delete_recursive_meeting_after_end(session, meeting):
     """ Delete from the database all the emails which are associated with
     this recusion but whose date are past the end of the recursivity.
 
-    :arg session: the database session to use
+    :arg session: the database session to use.
     :arg meeting: the Meeting object from which are removed all further
         meetings.
     """
@@ -372,6 +372,10 @@ def delete_recursive_meeting_after_end(session, meeting):
 def add_recursive_meeting_after_end(session, meeting):
     """ Check if all the meeting within a recursion are present and
     otherwise add them.
+
+    :arg session: the database session to use.
+    :arg meeting: the Meeting object to copy until the end of the
+        recursion.
     """
     if not meeting.recursion.recursion_frequency:
         return
@@ -384,3 +388,42 @@ def add_recursive_meeting_after_end(session, meeting):
             new_meeting.meeting_date = next_date
             new_meeting.save(session)
             next_date = next_date + delta
+
+
+def __generate_date_rounded_to_the_hour(date, offset):
+    """ For a given date, return a new date to which the given offset in
+    hours has been added and the time rounded to the hour.
+
+    :arg date: a datetime object to which to add the offset (in hours)
+        and to round to the hour.
+    :arg offset: an integer representing the number of hour to add to
+        the given date.
+    """
+    delta = timedelta(hours=offset)
+    new_date = date + delta
+    new_date = new_date - timedelta(minutes=new_date.minute,
+                                    seconds=new_date.second,
+                                    microseconds=new_date.microsecond)
+    return new_date
+
+def retrieve_meeting_to_remind(session):
+    """ Retrieve all the meetings for which we have to send a reminder.
+
+    :arg session: the database session to use.
+    """
+    today = datetime.utcnow()
+    # Retrieve meeting planned in less than 12h
+    new_date = __generate_date_rounded_to_the_hour(today, 12)
+    meetings = Meeting.get_meeting_with_reminder(session,
+        new_date.date(), new_date.time(), 'H-12')
+    new_date = __generate_date_rounded_to_the_hour(today, 24)
+    meetings.extend(Meeting.get_meeting_with_reminder(session,
+        new_date.date(), new_date.time(), 'H-24'))
+    new_date = __generate_date_rounded_to_the_hour(today, 48)
+    meetings.extend(Meeting.get_meeting_with_reminder(session,
+        new_date.date(), new_date.time(), 'H-48'))
+    new_date = __generate_date_rounded_to_the_hour(today, 168)
+    meetings.extend(Meeting.get_meeting_with_reminder(session,
+        new_date.date(), new_date.time(), 'H-168'))
+
+    return meetings

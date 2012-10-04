@@ -1,5 +1,3 @@
-- Implement the cron task to send the reminders
-
 - Unit-tests, unit-tests and more unit-tests
 - Fix current unit-tests
 
@@ -7,6 +5,8 @@
 - Add setup.py
 - Add license
 - Complete the code documentation
+
+- Add user timezone in a new column on the calendar view
 
 
 - Long term: see if we ever can provide a caldav output for the calendars

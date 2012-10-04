@@ -18,7 +18,7 @@
 <p> This is the list of all non-recurrent meeting you created </p>
 <div class='my_meetings'>
     <table>
-        {% for meeting in regular_meetings %}
+        {% for meeting in single_meetings %}
         <tr>
             <td class="date">{{ meeting.meeting_date }}</td>
             <td class="time">

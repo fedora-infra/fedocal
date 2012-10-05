@@ -30,7 +30,7 @@ import datetime
 from urlparse import urljoin, urlparse
 
 import flask
-from flask.ext.fas import FAS, cla_plus_one_required
+from flask_fas import FAS, cla_plus_one_required
 
 import forms
 import fedocallib

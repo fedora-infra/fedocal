@@ -93,7 +93,7 @@ def get_stop_week(year=None, month=None, day=None):
         current utc date or based on the information.
     """
     week_start = get_start_week(year, month, day)
-    week_stop = week_start + timedelta(days=7)
+    week_stop = week_start + timedelta(days=6)
     return week_stop
 
 
@@ -109,7 +109,7 @@ def get_next_week(year=None, month=None, day=None):
         current utc date or based on the information.
     """
     week_start = get_start_week(year, month, day)
-    next_week_start = week_start + timedelta(days=8)
+    next_week_start = week_start + timedelta(days=7)
     return next_week_start
 
 
@@ -125,7 +125,7 @@ def get_previous_week(year=None, month=None, day=None):
         current utc date or based on the information.
     """
     week_start = get_start_week(year, month, day)
-    previous_week_start = week_start - timedelta(days=8)
+    previous_week_start = week_start - timedelta(days=7)
     return previous_week_start
 
 
@@ -135,7 +135,7 @@ def get_week(session, calendar, year=None, month=None, day=None):
     day.
 
     :arg session: the database session to use
-    :arg calendar: the name of the calendar of interest.
+    :arg calendar: the Calendar object of interest.
     :kwarg year: year to consider when searching a week.
     :kwarg month: month to consider when searching a week.
     :kwarg day: day to consider when searching a week.
@@ -213,7 +213,7 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
 def is_date_in_future(indate, start_time):
     """ Return whether the date is in the future or the past.
 
-    :arg datestring: a datetime object of the date to check
+    :arg indate: a datetime object of the date to check
         (ie: '2012-09-01')
     :arg start_time: a string of the starting time of the meeting
         (ie: '08')
@@ -235,7 +235,7 @@ def get_past_meeting_of_user(session, username):
         past meetings for.
     """
     meetings = Meeting.get_past_meeting_of_user(session, username,
-        datetime.utcnow())
+        date.today())
     return meetings
 
 
@@ -311,7 +311,8 @@ def save_recursive_meeting(session, meeting):
     :arg meeting: the Meeting object which will have to be updated and
         replicated as long as the recursion olds true
     """
-    if not meeting.recursion.recursion_frequency:
+    if not meeting.recursion \
+            or not meeting.recursion.recursion_frequency:
         return
     today = datetime.utcnow()
     delta = timedelta(days=int(meeting.recursion.recursion_frequency))
@@ -324,13 +325,14 @@ def save_recursive_meeting(session, meeting):
 
 
 def update_recursive_meeting(session, meeting):
-    """ Update all the meeting part of a recursion.
+    """ Update all the future meetings part of the recursion.
 
     :arg session: the database session to use
     :arg meeting: the Meeting object containing the correct information
         to propagate to the other meetings in the recursion.
     """
-    if not meeting.recursion.recursion_frequency:
+    if not meeting.recursion \
+            or not meeting.recursion.recursion_frequency:
         return
     for old_meeting in Meeting.get_meetings_of_recursion(session, meeting):
         new_meeting = meeting.copy(old_meeting)
@@ -346,7 +348,8 @@ def delete_recursive_meeting(session, meeting):
         meetings.
     """
     today = datetime.utcnow()
-    if meeting.recursion.recursion_ends < today.date() \
+    if not meeting.recursion \
+            or meeting.recursion.recursion_ends < today.date() \
             or not meeting.recursion.recursion_frequency:
         return
     delta = timedelta(days=int(meeting.recursion.recursion_frequency))
@@ -377,7 +380,8 @@ def add_recursive_meeting_after_end(session, meeting):
     :arg meeting: the Meeting object to copy until the end of the
         recursion.
     """
-    if not meeting.recursion.recursion_frequency:
+    if not meeting.recursion \
+            or not meeting.recursion.recursion_frequency:
         return
     delta = timedelta(days=int(meeting.recursion.recursion_frequency))
     last_meeting = Meeting.get_last_meeting_of_recursion(session, meeting)

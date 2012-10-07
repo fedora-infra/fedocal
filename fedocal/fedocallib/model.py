@@ -93,10 +93,7 @@ class Calendar(BASE):
         identifier.
         :return None if no calendar matched this identifier.
         """
-        try:
-            return session.query(cls).get(identifier)
-        except NoResultFound:
-            return None
+        return session.query(cls).get(identifier)
 
     @classmethod
     def get_manager_groups(cls, session, identifier):
@@ -113,10 +110,7 @@ class Calendar(BASE):
     @classmethod
     def get_all(cls, session):
         """ Retrieve all the Calendar available."""
-        try:
-            return session.query(cls).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).all()
 
 
 class Meeting(BASE):
@@ -210,23 +204,17 @@ class Meeting(BASE):
         identifier.
         :return None if no calendar matched this identifier.
         """
-        try:
-            return session.query(cls).get(identifier)
-        except NoResultFound:
-            return None
+        return session.query(cls).get(identifier)
 
     @classmethod
     def get_future_meetings_of_recursion(cls, session, meeting):
         """ Return the list of meetings which are in the future and
         associated with a specific recursivity.
         """
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == meeting.calendar),
-                (Meeting.meeting_date >= meeting.meeting_date),
-                (Meeting.recursion == meeting.recursion)).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).filter(and_
+            (Meeting.calendar == meeting.calendar),
+            (Meeting.meeting_date >= meeting.meeting_date),
+            (Meeting.recursion == meeting.recursion)).all()
 
     @classmethod
     def get_last_meeting_of_recursion(cls, session, meeting):
@@ -246,26 +234,20 @@ class Meeting(BASE):
         specific recursivity but are later than the end of the
         recursion.
         """
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == meeting.calendar),
-                (Meeting.meeting_date > meeting.recursion.recursion_ends),
-                (Meeting.recursion == meeting.recursion)).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).filter(and_
+            (Meeting.calendar == meeting.calendar),
+            (Meeting.meeting_date > meeting.recursion.recursion_ends),
+            (Meeting.recursion == meeting.recursion)).all()
 
     @classmethod
     def get_meetings_of_recursion(cls, session, meeting):
         """ Return the list of meetings which are associated with a
         specific recursion.
         """
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == meeting.calendar),
-                (Meeting.meeting_date > meeting.meeting_date),
-                (Meeting.recursion == meeting.recursion)).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).filter(and_
+            (Meeting.calendar == meeting.calendar),
+            (Meeting.meeting_date > meeting.meeting_date),
+            (Meeting.recursion == meeting.recursion)).all()
 
     @classmethod
     def get_managers(cls, session, identifier):
@@ -287,27 +269,21 @@ class Meeting(BASE):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
         """
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date >= start_date),
-                (Meeting.meeting_date < stop_date)).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).filter(and_
+            (Meeting.calendar == calendar),
+            (Meeting.meeting_date >= start_date),
+            (Meeting.meeting_date < stop_date)).all()
 
     @classmethod
     def get_by_time(cls, session, calendar, date, start_time, stop_time):
         """ Retrieve the list of meetings for a given date and between
         two times.
         """
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date == date),
-                (Meeting.meeting_time_start >= start_time),
-                (Meeting.meeting_time_stop <= stop_time)).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).filter(and_
+            (Meeting.calendar == calendar),
+            (Meeting.meeting_date == date),
+            (Meeting.meeting_time_start >= start_time),
+            (Meeting.meeting_time_stop <= stop_time)).all()
 
     @classmethod
     def get_past_meeting_of_user(cls, session, username, start_date):
@@ -315,12 +291,9 @@ class Meeting(BASE):
         is among the managers and which date is older than the specified
         one.
         """
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.meeting_date < start_date),
-                (Meeting.meeting_manager.like('%%%s%%' % username))).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).filter(and_
+            (Meeting.meeting_date < start_date),
+            (Meeting.meeting_manager.like('%%%s%%' % username))).all()
 
     @classmethod
     def get_future_single_meeting_of_user(cls, session, username,
@@ -329,13 +302,10 @@ class Meeting(BASE):
         is among the managers and which date is newer or egual than the
         specified one.
         """
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.meeting_date >= start_date),
-                (Meeting.recursion == None),
-                (Meeting.meeting_manager.like('%%%s%%' % username))).all()
-        except NoResultFound:
-            return None
+        return session.query(cls).filter(and_
+            (Meeting.meeting_date >= start_date),
+            (Meeting.recursion == None),
+            (Meeting.meeting_manager.like('%%%s%%' % username))).all()
 
     @classmethod
     def get_future_regular_meeting_of_user(cls, session, username,
@@ -344,22 +314,19 @@ class Meeting(BASE):
         is among the managers and which date is newer or egual than the
         specified one.
         """
-        try:
-            recursive_meetings = session.query(distinct(cls.recursion_id)
-                ).filter(and_
-                    (Meeting.meeting_date >= start_date),
-                    (Meeting.recursion != None),
-                    (Meeting.meeting_manager.like('%%%s%%' % username))
-                ).all()
-            meetings = []
-            for recursive_meeting in recursive_meetings:
-                meetings.extend(session.query(cls).filter(and_
-                    (Meeting.meeting_date >= start_date),
-                    (Meeting.recursion_id == recursive_meeting[0])
-                    ).order_by(Meeting.meeting_date).limit(4).all())
-            return meetings
-        except NoResultFound:
-            return None
+        recursive_meetings = session.query(distinct(cls.recursion_id)
+            ).filter(and_
+                (Meeting.meeting_date >= start_date),
+                (Meeting.recursion != None),
+                (Meeting.meeting_manager.like('%%%s%%' % username))
+            ).all()
+        meetings = []
+        for recursive_meeting in recursive_meetings:
+            meetings.extend(session.query(cls).filter(and_
+                (Meeting.meeting_date >= start_date),
+                (Meeting.recursion_id == recursive_meeting[0])
+                ).order_by(Meeting.meeting_date).limit(4).all())
+        return meetings
 
     @classmethod
     def get_meeting_with_reminder(cls, session, start_date,
@@ -367,18 +334,15 @@ class Meeting(BASE):
         """ Retrieve the list of meetings with a reminder set in
         <offset> hours for the given day and at the specified hour.
         """
-        try:
-            reminders = session.query(Reminder.reminder_id).filter(
-                    Reminder.reminder_offset == offset).all()
-            reminders = [int(item.reminder_id) for item in reminders]
-            if not reminders:
-                return []
-            return session.query(cls).filter(and_
-                    (Meeting.meeting_date == start_date),
-                    (Meeting.meeting_time_start == start_time),
-                    (Meeting.reminder_id.in_(reminders))).all()
-        except NoResultFound:
-            return None
+        reminders = session.query(Reminder.reminder_id).filter(
+                Reminder.reminder_offset == offset).all()
+        reminders = [int(item.reminder_id) for item in reminders]
+        if not reminders:
+            return []
+        return session.query(cls).filter(and_
+                (Meeting.meeting_date == start_date),
+                (Meeting.meeting_time_start == start_time),
+                (Meeting.reminder_id.in_(reminders))).all()
 
 
 class Recursive(BASE):
@@ -418,10 +382,7 @@ class Recursive(BASE):
         identifier.
         :return None if no calendar matched this identifier.
         """
-        try:
-            return session.query(cls).get(identifier)
-        except NoResultFound:
-            return None
+        return session.query(cls).get(identifier)
 
 
 class Reminder(BASE):
@@ -460,13 +421,10 @@ class Reminder(BASE):
         identifier.
         :return None if no calendar matched this identifier.
         """
-        try:
-            return session.query(cls).get(identifier)
-        except NoResultFound:
-            return None
+        return session.query(cls).get(identifier)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     import os
     import ConfigParser
     CONFIG = ConfigParser.ConfigParser()

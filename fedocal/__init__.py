@@ -213,13 +213,14 @@ def add_meeting(calendar):
                 ' the stop time.')
             return flask.redirect(flask.url_for('add_meeting',
                 calendar=calendar.calendar_name))
-        elif calendar.calendar_multiple_meetings or \
+        elif bool(calendar.calendar_multiple_meetings) or \
+            (bool(calendar.calendar_multiple_meetings) == False and \
             fedocallib.agenda_is_free(session,
                 calendar,
                 form.meeting_date.data,
                 int(form.meeting_time_start.data),
                 int(form.meeting_time_stop.data)
-            ):
+            )):
             manager = '%s,' % flask.g.fas_user.username
             meeting = Meeting(
                 form.meeting_name.data,

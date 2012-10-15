@@ -140,10 +140,10 @@ class Meeting(BASE):
         nullable=True)
     recursion = relationship("Recursive")
 
-    __table_args__ = (
-            UniqueConstraint('calendar_name', 'meeting_date',
-                'meeting_time_start'),
-            )
+    #__table_args__ = (
+            #UniqueConstraint('calendar_name', 'meeting_date',
+                #'meeting_time_start'),
+            #)
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_time_start, meeting_time_stop,

@@ -21,7 +21,10 @@
 
 <p>
     In order to retrieve all the meetings within a given time frame you
-    will need to query <code>{{ url_for('api_date',
+    will need to query
+</p>
+<p>
+    <code>{{ url_for('api_date',
         calendar='calendar_name', start_date='start_date',
         end_date='end_date') }}</code>
 </p>
@@ -36,9 +39,13 @@
 </li>
 
 <p>
-    The last two arguments (start_date &amps; end_date) are actually
-    optionnals meaning that you may call <code>{{ url_for('api_date_default',
-        calendar='calendar_name') }}</code>.
+    The last two arguments (start_date &amp; end_date) are actually
+    optionnals meaning that you may call
+</p>
+<p>
+    <code>{{ url_for('api_date_default', calendar='calendar_name') }}</code>
+</p>
+<p>
     This will by default return you the coming six months.
 </p>
 
@@ -47,7 +54,10 @@
 
 <p>
     In order to retrieve all the meetings within a given time frame and
-    for a specific region, you will need to query <code>{{ 
+    for a specific region, you will need to query
+</p>
+<p>
+    <code>{{ 
         url_for('api_place', region='region',
         calendar='calendar_name', start_date='start_date',
         end_date='end_date') }}</code>
@@ -66,8 +76,13 @@
 
 <p>
     The last two arguments (start_date &amps; end_date) are actually
-    optionnals meaning that you may call <code>{{ url_for('api_place_default',
-        region='region', calendar='calendar_name') }}</code>.
+    optionnals meaning that you may call
+</p>
+<p>
+    <code>{{ url_for('api_place_default',
+        region='region', calendar='calendar_name') }}</code>
+</p>
+<p>
     This will by default return you the coming six months.
 </p>
 

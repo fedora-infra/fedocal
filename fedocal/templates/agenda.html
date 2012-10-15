@@ -41,12 +41,17 @@
         {% for time_entry in meetings |sort %}
         <tr>
             <td class="time">{{ time_entry }}</td>
-            {% for meeting in meetings[time_entry] %}
-                {% if meeting %}
+            {% for meeting_list in meetings[time_entry] %}
+                {% if meeting_list %}
                 <td>
+                    {% for meeting in meeting_list %}
                     <a href="{{ url_for('view_meeting', meeting_id=meeting.meeting_id) }}">
                         {{ meeting.meeting_name }}
                      </a>
+                     {% if not loop.last %}
+                     -
+                     {% endif %}
+                    {% endfor %}
                 </td>
                 {% else %}
                 <td></td>

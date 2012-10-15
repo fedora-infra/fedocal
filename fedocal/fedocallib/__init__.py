@@ -204,8 +204,12 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
             if len(str(stop_time)) == 1:
                 stop_time = '0%i' % stop_time
             key = '%s:%s' % (start_time, stop_time)
+            day = meeting.meeting_date.weekday()
             if key in meetings:
-                meetings[key][meeting.meeting_date.weekday()] = meeting
+                if meetings[key][day]:
+                    meetings[key][day].append(meeting)
+                else:
+                    meetings[key][day] = [meeting]
             cnt = cnt + 1
     return meetings
 

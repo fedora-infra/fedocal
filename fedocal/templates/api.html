@@ -1,0 +1,75 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content_titles %}
+    <h1> API - Fedora Calendar </h1>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>API</h1>
+
+<p>
+    Fedocal provides a small API to retrieve information from the database
+    in JSON.
+</p>
+
+<h2>Retrieve meetings in a time frame</h2>
+
+<p>
+    In order to retrieve all the meetings within a given time frame you
+    will need to query <code>{{ url_for('api_date',
+        calendar='calendar_name', start_date='start_date',
+        end_date='end_date') }}</code>
+</p>
+
+<p> The arguments are:</p>
+<li>
+    <ul><span class='arg'>calendar:</span> the name of the calendar.</ul>
+    <ul><span class='arg'>start_date:</span> the start date of the period
+    to consider. Format would be of type yyyy-mm-dd.</ul>
+    <ul><span class='arg'>end_date:</span> the end date of the period
+    to consider. Format would be of type yyyy-mm-dd.</ul>
+</li>
+
+<p>
+    The last two arguments (start_date &amps; end_date) are actually
+    optionnals meaning that you may call <code>{{ url_for('api_date_default',
+        calendar='calendar_name') }}</code>.
+    This will by default return you the coming six months.
+</p>
+
+
+<h2>Retrieve meeting in a time frame in a region</h2>
+
+<p>
+    In order to retrieve all the meetings within a given time frame and
+    for a specific region, you will need to query <code>{{ 
+        url_for('api_place', region='region',
+        calendar='calendar_name', start_date='start_date',
+        end_date='end_date') }}</code>
+</p>
+
+<p> The arguments are:</p>
+<li>
+    <ul><span class='arg'>region:</span> the name of the region you would
+        like to have the events off.</ul>
+    <ul><span class='arg'>calendar:</span> the name of the calendar.</ul>
+    <ul><span class='arg'>start_date:</span> the start date of the period
+    to consider. Format would be of type yyyy-mm-dd.</ul>
+    <ul><span class='arg'>end_date:</span> the end date of the period
+    to consider. Format would be of type yyyy-mm-dd.</ul>
+</li>
+
+<p>
+    The last two arguments (start_date &amps; end_date) are actually
+    optionnals meaning that you may call <code>{{ url_for('api_place_default',
+        region='region', calendar='calendar_name') }}</code>.
+    This will by default return you the coming six months.
+</p>
+
+
+{% endblock %}

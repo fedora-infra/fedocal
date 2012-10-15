@@ -439,6 +439,37 @@ def delete_meeting(meeting_id):
         meeting=meeting, calendars=calendars, title=meeting.meeting_name)
 
 
+### API
+
+@APP.route('/api/')
+def api():
+    auth_form = forms.LoginForm()
+    admin = is_admin()
+    return flask.render_template('api.html',
+        auth_form=auth_form,
+        admin=admin)
+
+
+@APP.route('/api/date/<calendar>/')
+def api_date_default(calendar):
+    return flask.render_template('api.html')
+
+
+@APP.route('/api/date/<calendar>/<start_date>/<end_date>/')
+def api_date(calendar, start_date, end_date):
+    return flask.render_template('api.html')
+
+
+@APP.route('/api/place/<region>/<calendar>/')
+def api_place_default(region, calendar):
+    return flask.render_template('api.html')
+
+
+@APP.route('/api/place/<region>/<calendar>/<start_date>/<end_date>/')
+def api_place(region, calendar, start_date, end_date):
+    return flask.render_template('api.html')
+
+
 if __name__ == '__main__':
     APP.debug = True
     APP.run()

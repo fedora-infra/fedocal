@@ -21,6 +21,7 @@ from datetime import datetime
 from datetime import date
 
 from sqlalchemy import (
+    Boolean,
     create_engine,
     Column,
     Date,
@@ -70,13 +71,15 @@ class Calendar(BASE):
     calendar_name = Column(String(80), primary_key=True)
     calendar_description = Column(String(500))
     calendar_manager_group = Column(String(100))  # 3 groups (3*32)
+    calendar_multiple_meetings = Column(Boolean, default=False)
 
     def __init__(self, calendar_name, calendar_description,
-        calendar_manager_group):
+        calendar_manager_group, calendar_multiple_meetings=False):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
         self.calendar_description = calendar_description
         self.calendar_manager_group = calendar_manager_group
+        self.calendar_multiple_meetings = calendar_multiple_meetings
 
     def __repr__(self):
         """ Representation of the Calendar object when printed.

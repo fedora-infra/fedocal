@@ -167,7 +167,8 @@ def add_calendar():
         calendar = Calendar(
             form.calendar_name.data,
             form.calendar_description.data,
-            form.calendar_manager_groups.data)
+            form.calendar_manager_groups.data,
+            form.calendar_multiple_meetings)
         try:
             calendar.save(session)
             session.commit()

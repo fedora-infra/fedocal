@@ -34,6 +34,8 @@ class AddCalendarForm(wtf.Form):
         [wtf.validators.Required()])
     calendar_description = wtf.TextField('Description')
     calendar_manager_groups = wtf.TextField('Manager groups')
+    calendar_multiple_meetings = wtf.BooleanField(
+        'Agenda can have multiple meetings on the same day?')
 
 
 class AddMeetingForm(wtf.Form):

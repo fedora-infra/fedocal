@@ -89,10 +89,13 @@ class Fedocallibtests(Modeltests):
         self.__setup_calendar()
         calendars = fedocallib.get_calendars(self.session)
         self.assertNotEqual(calendars, None)
-        self.assertEqual(len(calendars), 1)
+        self.assertEqual(len(calendars), 2)
         self.assertEqual(calendars[0].calendar_name, 'test_calendar')
         self.assertEqual(calendars[0].calendar_manager_group,
             'fi-apprentice')
+        self.assertEqual(calendars[1].calendar_name, 'test_calendar2')
+        self.assertEqual(calendars[1].calendar_manager_group,
+            'packager')
 
     def test_get_start_week(self):
         """ Test the get_start_week function. """
@@ -325,17 +328,17 @@ class Fedocallibtests(Modeltests):
         self.assertFalse(fedocallib.is_user_managing_in_calendar(
             self.session, 'test_calendar', user))
 
-        calendar = model.Calendar('test_calendar2',
+        calendar = model.Calendar('test_calendar3',
                     'This is a test calendar2', '')
         calendar.save(self.session)
         self.session.commit()
 
         user = FakeUser(['packager', 'infrastructure'])
         self.assertTrue(fedocallib.is_user_managing_in_calendar(
-            self.session, 'test_calendar2', user))
+            self.session, 'test_calendar3', user))
         user = FakeUser([])
         self.assertTrue(fedocallib.is_user_managing_in_calendar(
-            self.session, 'test_calendar2', user))
+            self.session, 'test_calendar3', user))
 
     def test_save_recursive_meeting(self):
         """ Test the save_recursive_meeting function. """

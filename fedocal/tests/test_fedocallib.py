@@ -89,7 +89,7 @@ class Fedocallibtests(Modeltests):
         self.__setup_calendar()
         calendars = fedocallib.get_calendars(self.session)
         self.assertNotEqual(calendars, None)
-        self.assertEqual(len(calendars), 2)
+        self.assertEqual(len(calendars), 3)
         self.assertEqual(calendars[0].calendar_name, 'test_calendar')
         self.assertEqual(calendars[0].calendar_manager_group,
             'fi-apprentice')
@@ -134,13 +134,13 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(week.calendar.calendar_name, 'test_calendar')
         self.assertNotEqual(week.meetings, None)
         self.assertEqual(len(week.meetings), 2)
-        self.assertEqual(week.meetings[0].meeting_name,
-            'Another test meeting2')
-        self.assertEqual(week.meetings[0].meeting_information,
-            'This is a test meeting with recursion2')
         self.assertEqual(week.meetings[1].meeting_name,
-            'Fedora-fr-test-meeting')
+            'Another test meeting2')
         self.assertEqual(week.meetings[1].meeting_information,
+            'This is a test meeting with recursion2')
+        self.assertEqual(week.meetings[0].meeting_name,
+            'Fedora-fr-test-meeting')
+        self.assertEqual(week.meetings[0].meeting_information,
             'This is a test meeting')
 
     def test_get_week_empty(self):
@@ -170,8 +170,10 @@ class Fedocallibtests(Modeltests):
         cnt = 0
         for meeting in meetings['19:20']:
             if meeting is not None:
-                self.assertTrue(meeting.meeting_name in 
-                    ['Fedora-fr-test-meeting', 'Another test meeting2'])
+                for meet in meeting:
+                    self.assertTrue(meet.meeting_name in 
+                        ['Fedora-fr-test-meeting',
+                            'Another test meeting2'])
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -184,26 +186,55 @@ class Fedocallibtests(Modeltests):
         cnt = 0
         for meeting in meetings['14:15']:
             if meeting is not None:
-                self.assertEqual(meeting.meeting_name, 'test-meeting2')
+                for meet in meeting:
+                    self.assertEqual(meet.meeting_name, 'test-meeting2')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
         cnt = 0
         for meeting in meetings['15:16']:
             if meeting is not None:
-                self.assertEqual(meeting.meeting_name, 'test-meeting2')
+                for meet in meeting:
+                    self.assertEqual(meet.meeting_name, 'test-meeting2')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
         cnt = 0
         for meeting in meetings['02:03']:
             if meeting is not None:
-                self.assertEqual(meeting.meeting_name,
+                for meet in meeting:
+                    self.assertEqual(meet.meeting_name,
                     'Another test meeting')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
         self.assertEqual(meetings['19:20'][0], None)
+
+    def test_get_meetings_with_multiple_same_time(self):
+        """ Test the get_meetings function when there are several
+        meetings at the same time. """
+        self.__setup_meeting()
+        calendar = model.Calendar.by_id(self.session, 'test_calendar4')
+        meetings = fedocallib.get_meetings(self.session, calendar)
+        cnt = 0
+        for meeting in meetings['14:15']:
+            if meeting is not None:
+                for meet in meeting:
+                    self.assertTrue(meet.meeting_name in
+                        ['test-meeting-st-1', 'test-meeting-st-2'])
+            else:
+                cnt = cnt + 1
+        self.assertEqual(cnt, 6)
+        cnt = 0
+        for meeting in meetings['15:16']:
+            if meeting is not None:
+                for meet in meeting:
+                    self.assertTrue(meet.meeting_name in
+                        ['test-meeting-st-1', 'test-meeting-st-2'])
+            else:
+                cnt = cnt + 1
+        self.assertEqual(cnt, 6)
+
 
     def test_is_date_in_future(self):
         """ Test the is_date_in_future function. """
@@ -344,7 +375,7 @@ class Fedocallibtests(Modeltests):
         """ Test the save_recursive_meeting function. """
         self.__setup_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meeting = model.Meeting.by_id(self.session, 4)
+        meeting = model.Meeting.by_id(self.session, 6)
 
         for delta_day in [7, 14, 21]:
             newdate = date.today() + timedelta(days=delta_day)

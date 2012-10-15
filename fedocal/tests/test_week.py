@@ -99,27 +99,25 @@ class Weektests(Modeltests):
         # Test the meeting in the week
         self.assertNotEqual(weekobj, None)
         self.assertNotEqual(weekobj.meetings[0], None)
-        self.assertEqual(weekobj.meetings[1].meeting_name,
-            'Fedora-fr-test-meeting')
-        self.assertEqual(weekobj.meetings[1].meeting_manager,
-            'pingou, shaiton')
-        self.assertEqual(weekobj.meetings[1].calendar.calendar_name,
-            'test_calendar')
-        self.assertEqual(weekobj.meetings[1].calendar.calendar_description,
-            'This is a test calendar')
-        self.assertEqual(weekobj.meetings[1].meeting_information,
-            'This is a test meeting')
-        self.assertEqual(weekobj.meetings[1].reminder, None)
-
         self.assertEqual(weekobj.meetings[0].meeting_name,
-            'Another test meeting2')
+            'Fedora-fr-test-meeting')
         self.assertEqual(weekobj.meetings[0].meeting_manager,
-            'pingou')
+            'pingou, shaiton')
+        self.assertEqual(weekobj.meetings[0].calendar.calendar_name,
+            'test_calendar')
+        self.assertEqual(weekobj.meetings[0].calendar.calendar_description,
+            'This is a test calendar')
         self.assertEqual(weekobj.meetings[0].meeting_information,
-            'This is a test meeting with recursion2')
-        
+            'This is a test meeting')
+        self.assertEqual(weekobj.meetings[0].reminder, None)
 
-   
+        self.assertEqual(weekobj.meetings[1].meeting_name,
+            'Another test meeting2')
+        self.assertEqual(weekobj.meetings[1].meeting_manager,
+            'pingou')
+        self.assertEqual(weekobj.meetings[1].meeting_information,
+            'This is a test meeting with recursion2')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Weektests)

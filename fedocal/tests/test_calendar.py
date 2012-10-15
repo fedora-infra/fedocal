@@ -53,14 +53,21 @@ class Calendartests(Modeltests):
     def test_init_calendar(self):
         """ Test the Calendar init function. """
         obj = model.Calendar('test_calendar', 'This is a test calendar',
-            'fi-apprentice', True)
+            'fi-apprentice', False)
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
 
         obj = model.Calendar('test_calendar2',
             'This is another test calendar',
-            'packager', False)
+            'packager', True)
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = model.Calendar('test_calendar4',
+            'This is yet another test calendar',
+            'packager', True)
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -108,7 +115,7 @@ class Calendartests(Modeltests):
         self.test_init_calendar()
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 2)
+        self.assertEqual(len(obj), 3)
         self.assertEqual(obj[0].calendar_name, 'test_calendar')
         self.assertEqual(obj[1].calendar_name, 'test_calendar2')
 

@@ -77,6 +77,27 @@ class Meetingtests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        # Two meetings at the same time
+        obj = model.Meeting(
+            'test-meeting-st-1', 'test',
+            date.today() + timedelta(days=1), time(14,00), time(16,00),
+            'This is a test meeting at the same time',
+            'test_calendar4',
+            None, None)
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = model.Meeting(
+            'test-meeting-st-2', 'test',
+            date.today() + timedelta(days=1), time(14,00), time(16,00),
+            'This is a second test meeting at the same time',
+            'test_calendar4',
+            None, None)
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
         # Meeting with a recursion
         recobj = model.Recursive('7', date.today() + timedelta(days=60))
         recobj.save(self.session)
@@ -220,19 +241,19 @@ class Meetingtests(Modeltests):
                 week_start, week_stop)
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 2)
-        self.assertEqual(obj[1].meeting_name, 'Fedora-fr-test-meeting')
-        self.assertEqual(obj[1].meeting_manager, 'pingou, shaiton')
-        self.assertEqual(obj[1].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[1].meeting_information,
-            'This is a test meeting')
-        self.assertEqual(obj[1].reminder, None)
-
-        self.assertEqual(obj[0].meeting_name, 'Another test meeting2')
-        self.assertEqual(obj[0].meeting_manager, 'pingou')
+        self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
         self.assertEqual(obj[0].meeting_information,
-            'This is a test meeting with recursion2')
+            'This is a test meeting')
         self.assertEqual(obj[0].reminder, None)
+
+        self.assertEqual(obj[1].meeting_name, 'Another test meeting2')
+        self.assertEqual(obj[1].meeting_manager, 'pingou')
+        self.assertEqual(obj[1].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[1].meeting_information,
+            'This is a test meeting with recursion2')
+        self.assertEqual(obj[1].reminder, None)
 
         week_stop = week_day + timedelta(days=12)
         obj = model.Meeting.get_by_date(self.session, cal,
@@ -243,7 +264,7 @@ class Meetingtests(Modeltests):
     def test_get_future_meetings_of_recursion(self):
         """ Test the Meeting get_future_meetings_of_recursion function. """
         self.test_init_meeting()
-        obj = model.Meeting.by_id(self.session, 3)
+        obj = model.Meeting.by_id(self.session, 5)
         self.assertNotEqual(obj, None)
         meetings = model.Meeting.get_future_meetings_of_recursion(
             self.session, obj)
@@ -270,7 +291,7 @@ class Meetingtests(Modeltests):
     def test_get_last_meeting_of_recursion(self):
         """ Test the Meeting get_last_meeting_of_recursion function. """
         self.test_init_meeting()
-        obj = model.Meeting.by_id(self.session, 3)
+        obj = model.Meeting.by_id(self.session, 5)
         self.assertNotEqual(obj, None)
         meeting = model.Meeting.get_last_meeting_of_recursion(
             self.session, obj)
@@ -281,7 +302,7 @@ class Meetingtests(Modeltests):
             'This is a test meeting with recursion')
         self.assertEqual(meeting.recursion_id, 1)
 
-    def test_get_last_meeting_of_recursio_fail(self):
+    def test_get_last_meeting_of_recursion_fail(self):
         """ Test the Meeting get_last_meeting_of_recursion function
         with a non-existant meeting. """
         obj = model.Meeting(
@@ -297,7 +318,7 @@ class Meetingtests(Modeltests):
         """ Test the Meeting get_meetings_past_end_of_recursion function.
         """
         self.test_init_meeting()
-        obj = model.Meeting.by_id(self.session, 3)
+        obj = model.Meeting.by_id(self.session, 5)
         self.assertNotEqual(obj, None)
         obj2 = obj.copy()
         obj2.meeting_date = date.today() + timedelta(days=90)
@@ -317,7 +338,7 @@ class Meetingtests(Modeltests):
         """ Test the Meeting get_meetings_past_end_of_recursion function.
         """
         self.test_init_meeting()
-        obj = model.Meeting.by_id(self.session, 3)
+        obj = model.Meeting.by_id(self.session, 5)
         self.assertNotEqual(obj, None)
         meetings = model.Meeting.get_meetings_past_end_of_recursion(
             self.session, obj)
@@ -328,7 +349,7 @@ class Meetingtests(Modeltests):
     def test_get_meetings_of_recursion(self):
         """ Test the Meeting get_meetings_of_recursion function. """
         self.test_init_meeting()
-        obj = model.Meeting.by_id(self.session, 4)
+        obj = model.Meeting.by_id(self.session, 6)
         self.assertNotEqual(obj, None)
         meetings = model.Meeting.get_meetings_of_recursion(self.session,
             obj)
@@ -344,7 +365,7 @@ class Meetingtests(Modeltests):
     def test_get_meetings_of_recursion_fail(self):
         """ Test the Meeting get_meetings_of_recursion function. """
         self.test_init_meeting()
-        obj = model.Meeting.by_id(self.session, 3)
+        obj = model.Meeting.by_id(self.session, 5)
         self.assertNotEqual(obj, None)
         meetings = model.Meeting.get_meetings_of_recursion(self.session,
             obj)
@@ -381,9 +402,9 @@ class Meetingtests(Modeltests):
             date.today(), time(00,00), time(23,59))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 2)
-        self.assertEqual(meetings[0].meeting_name,
-            'Another test meeting2')
         self.assertEqual(meetings[1].meeting_name,
+            'Another test meeting2')
+        self.assertEqual(meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
 
     def test_get_by_time_fail(self):

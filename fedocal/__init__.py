@@ -168,7 +168,7 @@ def add_calendar():
             form.calendar_name.data,
             form.calendar_description.data,
             form.calendar_manager_groups.data,
-            form.calendar_multiple_meetings)
+            bool(form.calendar_multiple_meetings.data))
         try:
             calendar.save(session)
             session.commit()
@@ -200,7 +200,8 @@ def add_meeting(calendar):
         calendar = Calendar.by_id(session, calendar)
         if not fedocallib.is_user_managing_in_calendar(session,
             calendar.calendar_name, flask.g.fas_user):
-                flask.flash('You are not allowed to add a meeting to this calendar')
+                flask.flash('You are not allowed to add a meeting to'\
+                    ' this calendar')
                 return flask.redirect(flask.url_for('index'))
         if not fedocallib.is_date_in_future(form.meeting_date.data,
             form.meeting_time_start.data):
@@ -208,21 +209,24 @@ def add_meeting(calendar):
                 return flask.redirect(flask.url_for('add_meeting',
                     calendar=calendar.calendar_name))
         elif int(form.meeting_time_start.data) > int(form.meeting_time_stop.data):
-            flask.flash('The start time you have entered is later than the stop time.')
+            flask.flash('The start time you have entered is later than'\
+                ' the stop time.')
             return flask.redirect(flask.url_for('add_meeting',
                 calendar=calendar.calendar_name))
-        elif fedocallib.agenda_is_free(session,
+        elif calendar.calendar_multiple_meetings or \
+            fedocallib.agenda_is_free(session,
                 calendar,
                 form.meeting_date.data,
                 int(form.meeting_time_start.data),
-                int(form.meeting_time_stop.data)):
+                int(form.meeting_time_stop.data)
+            ):
             manager = '%s,' % flask.g.fas_user.username
             meeting = Meeting(
                 form.meeting_name.data,
                 manager,
                 form.meeting_date.data,
-                '%s:00:00' % form.meeting_time_start.data,
-                '%s:00:00' % form.meeting_time_stop.data,
+                datetime.time(int(form.meeting_time_start.data)),
+                datetime.time(int(form.meeting_time_stop.data)),
                 form.information.data,
                 calendar.calendar_name,
                 None, None)
@@ -312,9 +316,9 @@ def edit_meeting(meeting_id):
             meeting.meeting_manager = '%s,%s' % (flask.g.fas_user.username,
                 form.comanager.data)
             meeting.meeting_date = form.meeting_date.data
-            meeting.meeting_time_start = '%s:00:00' % (
+            meeting.meeting_time_start = int(
                 form.meeting_time_start.data)
-            meeting.meeting_time_stop = '%s:00:00' % (
+            meeting.meeting_time_stop = int(
                 form.meeting_time_stop.data)
             meeting.meeting_information = form.information.data
 

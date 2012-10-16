@@ -24,10 +24,16 @@
  MA 02110-1301, USA.
 """
 
+## These two lines are needed to run on EL6
+__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
+import pkg_resources
+
+
 import ConfigParser
 import os
 import datetime
 from urlparse import urljoin, urlparse
+import vobject
 
 import flask
 from flask_fas import FAS, cla_plus_one_required
@@ -107,6 +113,21 @@ def calendar_fullday(calendar, year, month, day):
         prev_week=prev_week,
         auth_form=auth_form,
         admin=admin)
+
+
+@APP.route('/ical/<calendar>/')
+def ical_out(calendar):
+    """ Returns a iCal feed of the calendar from today - 1 month to
+    today + 6 month.
+    """
+    startd = datetime.date.today() - datetime.timedelta(days=30)
+    endd = datetime.date.today() + datetime.timedelta(days=180)
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    meetings = fedocallib.get_meetings_by_date(session, calendar,
+        startd, endd)
+    ical = vobject.iCalendar()
+    fedocallib.add_meetings_to_vcal(ical, meetings)
+    return flask.Response(ical.serialize(), mimetype='text/calendar')
 
 
 # CLA + 1

@@ -14,6 +14,8 @@ See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
 
+import vobject
+
 from datetime import datetime
 from datetime import date
 from datetime import time
@@ -212,6 +214,22 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
                     meetings[key][day] = [meeting]
             cnt = cnt + 1
     return meetings
+
+
+def get_meetings_by_date(session, calendar, start_date, end_date):
+    """ Return a list of meetings which have or will occur in between
+    the two provided dates.
+
+    :arg session: the database session to use
+    :arg calendar: the name of the calendar of interest.
+    :arg start_date: the date from which we would like to retrieve the
+        meetings (this day is included in the selection).
+    :arg start_date: the date until which we would like to retrieve the
+        meetings (this day is excluded from the selection).
+    """
+    calendar = Calendar.by_id(session, calendar)
+    return Meeting.get_by_date(session, calendar, start_date,
+        end_date)
 
 
 def is_date_in_future(indate, start_time):
@@ -435,3 +453,43 @@ def retrieve_meeting_to_remind(session):
         new_date.date(), new_date.time(), 'H-168'))
 
     return meetings
+
+
+def add_meeting_to_vcal(ical, meeting):
+    """ Convert a Meeting object into iCal object and add it to the
+    provided calendar.
+
+    :arg ical: the iCal calendar object to which the meetings should
+        be added.
+    :arg meeting: a single fedocal.model.Meeting object to convert to
+        iCal and add to the provided calendar.
+    """
+    utc = vobject.icalendar.utc
+    entry = ical.add('vevent')
+    entry.add('summary').value = meeting.meeting_name
+    entry.add('description').value = meeting.meeting_information
+    entry.add('organizer').value = meeting.meeting_manager
+
+    start = entry.add('dtstart')
+    meeting.meeting_time_start = meeting.meeting_time_start.replace(
+        tzinfo=utc)
+    start.value = datetime.combine(meeting.meeting_date,
+        meeting.meeting_time_start)
+    stop = entry.add('dtend')
+    meeting.meeting_time_stop = meeting.meeting_time_stop.replace(
+        tzinfo=utc)
+    stop.value = datetime.combine(meeting.meeting_date,
+        meeting.meeting_time_stop)
+
+
+def add_meetings_to_vcal(ical, meetings):
+    """ Convert the Meeting objects into iCal object and add them to
+    the provided calendar.
+
+    :arg ical: the iCal calendar object to which the meetings should
+        be added.
+    :arg meetings: a list of fedocal.model.Meeting object to convert to
+        iCal and add to the provided calendar.
+    """
+    for meeting in meetings:
+        add_meeting_to_vcal(ical, meeting)

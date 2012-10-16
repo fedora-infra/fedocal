@@ -618,6 +618,39 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
+    def test_add_meetings_to_vcal(self):
+        """ Test the add_meetings_to_vcal function. """
+        import vobject
+        calendar = vobject.iCalendar()
+        self.__setup_meeting()
+        meetings = fedocallib.get_future_single_meeting_of_user(
+            self.session, 'pingou')
+        self.assertNotEqual(meetings, None)
+        self.assertEqual(len(meetings), 2)
+
+        fedocallib.add_meetings_to_vcal(calendar, meetings)
+        cnt = 0
+        for event in calendar.vevent_list:
+            self.assertTrue(event.summary.value in [
+                'Test meeting with reminder', 'test-meeting2'])
+            self.assertEqual(event.organizer.value, 'pingou')
+            cnt = cnt + 1
+        self.assertEqual(cnt, len(meetings))
+
+    def test_get_meetings_by_date(self):
+        """ Test the get_meetings_by_date function. """
+        self.__setup_meeting()
+        meetings = fedocallib.get_meetings_by_date(self.session,
+            'test_calendar',
+            date.today() + timedelta(days=10),
+            date.today() + timedelta(days=12)
+            )
+        self.assertEqual(len(meetings), 3)
+        for meeting in meetings:
+            self.assertTrue(meeting.meeting_name in ['test-meeting2',
+                'Another test meeting', 'Test meeting with reminder'])
+            self.assertEqual(meeting.meeting_manager, 'pingou')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

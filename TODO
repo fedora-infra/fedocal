@@ -1,5 +1,4 @@
 - Unit-tests, unit-tests and more unit-tests
-- Fix current unit-tests
 
 - Add documentation on how to install/deploy it
 - Add setup.py
@@ -7,8 +6,3 @@
 - Complete the code documentation
 
 - Add user timezone in a new column on the calendar view
-
-
-- Long term: see if we ever can provide a caldav output for the calendars
-   (it would be read only, but that would be pretty cool to have)
-

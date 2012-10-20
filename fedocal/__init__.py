@@ -223,6 +223,8 @@ def add_calendar():
         except Exception, err:
             print err
             flask.flash('Could not add this calendar to the database')
+            return flask.render_template('add_calendar.html',
+                form=form)
         flask.flash('Calendar added')
         return flask.redirect(flask.url_for('index'))
     return flask.render_template('add_calendar.html', form=form)

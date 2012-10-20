@@ -15,7 +15,7 @@ license.
 """
 
 from datetime import timedelta
-from fedocallib.model import Meeting
+from model import Meeting
 
 
 class Week(object):

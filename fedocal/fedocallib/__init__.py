@@ -24,8 +24,8 @@ from datetime import timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from fedocallib.week import Week
-from fedocallib.model import Calendar, Reminder, Meeting
+from week import Week
+from model import Calendar, Reminder, Meeting
 
 
 MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July',

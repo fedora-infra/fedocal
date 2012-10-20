@@ -14,11 +14,8 @@ See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
 
-from datetime import datetime
-from datetime import date
 from datetime import timedelta
-
-from model import Calendar, Meeting
+from fedocallib.model import Meeting
 
 
 class Week(object):

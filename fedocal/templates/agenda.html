@@ -17,15 +17,17 @@
 
 {% if calendar %}
 <p>
-    <a href="{{url_for('calendar_fullday', calendar=calendar.calendar_name,
-        year=prev_week.year, month=prev_week.month, day=prev_week.day)}}">
+    <a href="{{url_for('calendar_fullday',
+        calendar_name=calendar.calendar_name, year=prev_week.year,
+        month=prev_week.month, day=prev_week.day)}}">
          &lt;&lt; Previous week
     </a> |
-    <a href="{{url_for('calendar', calendar=calendar.calendar_name)}}">
+    <a href="{{url_for('calendar', calendar_name=calendar.calendar_name)}}">
          current week
     </a> |
-    <a href="{{url_for('calendar_fullday', calendar=calendar.calendar_name,
-        year=next_week.year, month=next_week.month, day=next_week.day)}}">
+    <a href="{{url_for('calendar_fullday',
+        calendar_name=calendar.calendar_name, year=next_week.year,
+        month=next_week.month, day=next_week.day)}}">
         Next week &gt;&gt;
     </a>
 </p>
@@ -45,7 +47,8 @@
                 {% if meeting_list %}
                 <td>
                     {% for meeting in meeting_list %}
-                    <a href="{{ url_for('view_meeting', meeting_id=meeting.meeting_id) }}">
+                    <a href="{{ url_for('view_meeting',
+                        meeting_id=meeting.meeting_id) }}">
                         {{ meeting.meeting_name }}
                      </a>
                      {% if not loop.last %}

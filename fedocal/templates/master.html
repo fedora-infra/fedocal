@@ -35,7 +35,7 @@
         {% for calendar in calendars %}
         <li>
             <a href="{{url_for('calendar',
-                calendar=calendar.calendar_name)}}">
+                calendar_name=calendar.calendar_name)}}">
                 {{ calendar.calendar_name }}
             </a>
         </li>
@@ -59,7 +59,7 @@
         <ul class="checkmark-list">
             {% if calendar %}
             <li><a href="{{ url_for('add_meeting',
-                calendar=calendar.calendar_name) }}"> Add a meeting </a>
+                calendar_name=calendar.calendar_name) }}"> Add a meeting </a>
             </li>
             {% endif %}
             <li><a href="{{ url_for('my_meetings') }}"> Manage your meeting </a></li>

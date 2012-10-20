@@ -63,7 +63,7 @@
 
 <p class="buttons indent">
     <input type="submit" class="submit positive" value="Add">
-</p>
+    <input type="button" value="Cancel" onclick="history.back();">
 {{ form.csrf_token }}
 </form>
 {% endblock %}

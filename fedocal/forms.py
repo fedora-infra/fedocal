@@ -30,6 +30,7 @@ from fedocallib import HOURS
 
 
 class AddCalendarForm(wtf.Form):
+    """ Form used to create a new calendar. """
     calendar_name = wtf.TextField('Calendar',
         [wtf.validators.Required()])
     calendar_description = wtf.TextField('Description')
@@ -39,6 +40,7 @@ class AddCalendarForm(wtf.Form):
 
 
 class AddMeetingForm(wtf.Form):
+    """ Form used to create a new meeting. """
     meeting_name = wtf.TextField('Meeting name',
         [wtf.validators.Required()])
 
@@ -117,11 +119,13 @@ class AddMeetingForm(wtf.Form):
 
 
 class DeleteMeetingForm(wtf.Form):
+    """ Form used to delete a meeting. """
     confirm_delete = wtf.BooleanField('Yes I want to delete this meeting')
     confirm_futher_delete = wtf.BooleanField('Yes, I want to delete all futher meetings.')
 
 
 class LoginForm(wtf.Form):
+    """ Form to log in the application. """
     username = wtf.TextField('Username', [wtf.validators.Required()])
     password = wtf.PasswordField('Password', [wtf.validators.Required()])
 

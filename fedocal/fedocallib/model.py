@@ -169,6 +169,27 @@ class Meeting(BASE):
         """ Save the object into the database. """
         session.add(self)
 
+    def to_json(self):
+        """ Return a jsonify string of the object.
+        """
+        string = '{'
+        string = '%s\n  "meeting_name": "%s",' % (string,
+            self.meeting_name)
+        string = '%s\n  "meeting_manager": "%s",' % (string,
+            self.meeting_manager)
+        string = '%s\n  "meeting_date": "%s",' % (string,
+            self.meeting_date)
+        string = '%s\n  "meeting_time_start": "%s",' % (string,
+            self.meeting_time_start)
+        string = '%s\n  "meeting_time_stop": "%s",' % (string,
+            self.meeting_time_stop)
+        string = '%s\n  "meeting_information": "%s",' % (string,
+            self.meeting_information)
+        string = '%s\n  "calendar_name": "%s"' % (string,
+            self.calendar_name)
+        string = '%s\n}' % string
+        return string
+
     def delete(self, session):
         """ Remove the object into the database. """
         session.delete(self)

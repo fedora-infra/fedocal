@@ -69,6 +69,9 @@ def is_admin():
 
 @APP.route('/')
 def index():
+    """ Displays the index page with containing the first calendar (by
+    order of creation and if any) for the current week.
+    """
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendars = Calendar.get_all(session)
     if calendars:
@@ -84,11 +87,24 @@ def index():
 
 @APP.route('/<calendar>')
 def calendar(calendar):
+    """ Display the current week for a specific calendar.
+
+    :arg calendar: the name of the calendar that one would like to
+        consult.
+    """
     return calendar_fullday(calendar, year=None, month=None, day=None)
 
 
 @APP.route('/<calendar>/<int:year>/<int:month>/<int:day>')
 def calendar_fullday(calendar, year, month, day):
+    """ Display the week of a specific date for a specified calendar.
+
+    :arg calendar: the name of the calendar that one would like to
+        consult.
+    :arg year: the year of the date one would like to consult.
+    :arg month: the month of the date one would like to consult.
+    :arg day: the day of the date one would like to consult.
+    """
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendar = Calendar.by_id(session, calendar)
     calendars = Calendar.get_all(session)
@@ -119,6 +135,9 @@ def calendar_fullday(calendar, year, month, day):
 def ical_out(calendar):
     """ Returns a iCal feed of the calendar from today - 1 month to
     today + 6 month.
+
+    :arg calendar: the name of the calendar for which one would like to
+        get the iCal feed.
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
@@ -134,6 +153,10 @@ def ical_out(calendar):
 @APP.route('/mine/')
 @cla_plus_one_required
 def my_meetings():
+    """ Method to visualize and manage the meeting in which you are
+    involved, either because you created them or because someone gave
+    you manager rights to the meeting.
+    """
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     regular_meetings = fedocallib.get_future_regular_meeting_of_user(session,
         flask.g.fas_user.username)
@@ -151,6 +174,7 @@ def my_meetings():
 
 @APP.route('/login', methods=('GET', 'POST'))
 def auth_login():
+    """ Method to log into the application. """
     if flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     form = forms.LoginForm()
@@ -165,6 +189,7 @@ def auth_login():
 
 @APP.route('/logout')
 def auth_logout():
+    """ Method to log out from the application. """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     fas.logout()
@@ -210,6 +235,7 @@ def add_meeting(calendar):
     """ Add a meeting to the database.
     This function is only available to CLA+1 member or members of the
     group administrating of the said calendar.
+
     :arg calendar, name of the calendar in which to add the meeting.
     """
     if not flask.g.fas_user:
@@ -319,6 +345,8 @@ def add_meeting(calendar):
 @cla_plus_one_required
 def edit_meeting(meeting_id):
     """ Edit a specific meeting based on the meeting identifier.
+
+    :arg meeting_id: the identifier of the meeting to edit.
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
@@ -424,6 +452,8 @@ def edit_meeting(meeting_id):
 @APP.route('/meeting/<int:meeting_id>', methods=('GET', 'POST'))
 def view_meeting(meeting_id):
     """ View a specific meeting given its identifier.
+
+    :arg meeting_id: the identifier of the meeting to visualize.
     """
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     meeting = Meeting.by_id(session, meeting_id)
@@ -441,6 +471,8 @@ def view_meeting(meeting_id):
 @cla_plus_one_required
 def delete_meeting(meeting_id):
     """ Delete a specific meeting given its identifier.
+
+    :arg meeting_id: the identifier of the meeting to delete.
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
@@ -470,6 +502,7 @@ def delete_meeting(meeting_id):
 
 @APP.route('/api/')
 def api():
+    """ Display the api information page. """
     auth_form = forms.LoginForm()
     admin = is_admin()
     return flask.render_template('api.html',
@@ -479,12 +512,74 @@ def api():
 
 @APP.route('/api/date/<calendar>/')
 def api_date_default(calendar):
-    return flask.render_template('api.html')
+    """ Returns all the meetings for the specified calendar for the
+    time frame between today - 30 days to today + 180 days.
+
+    :arg calendar: the name of the calendar to retrieve information
+        from.
+    """
+    startd = datetime.date.today() - datetime.timedelta(days=30)
+    endd = datetime.date.today() + datetime.timedelta(days=180)
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    meetings = fedocallib.get_meetings_by_date(session, calendar,
+        startd, endd)
+    if not meetings:
+        output = '{ "retrieval": "notok", "meeting": []}'
+    else:
+        output = '{ "retrieval": "ok", "meeting": [\n'
+        cnt = 0
+        for meeting in meetings:
+            output = output + meeting.to_json()
+            cnt = cnt + 1
+            if cnt != len(meetings):
+                output = output + ','
+        output = output + '\n]}'
+    return flask.Response(output)
 
 
 @APP.route('/api/date/<calendar>/<start_date>/<end_date>/')
 def api_date(calendar, start_date, end_date):
-    return flask.render_template('api.html')
+    """ Returns all the meetings for the specified calendar for the
+    specified time frame.
+
+    :arg calendar: the name of the calendar to retrieve information
+        from.
+    :arg start_date: the start date of the time frame for which one
+        would like to retrieve the meetings.
+    :arg end_date: the end date of the time frame for which one would
+        like to retrieve the meetings.
+    """
+    start_date = start_date.split('-')
+    end_date = end_date.split('-')
+    if len(start_date) != 3 or len(end_date) != 3:
+        output = '{ "retrieval": "notok", "meeting": [], "error": '\
+            '"Date format invalid"}'
+        return flask.Response(output)
+    try:
+        start_date = [int(item) for item in start_date]
+        end_date = [int(item) for item in end_date]
+        startd = datetime.date(start_date[0], start_date[1],
+            start_date[2])
+        endd = datetime.date(end_date[0], end_date[1], end_date[2])
+    except ValueError, error:
+        output = '{ "retrieval": "notok", "meeting": [], "error": '\
+            '"Date format invalid: %s"}' % error
+        return flask.Response(output)
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    meetings = fedocallib.get_meetings_by_date(session, calendar,
+        startd, endd)
+    if not meetings:
+        output = '{ "retrieval": "notok", "meeting": []}'
+    else:
+        output = '{ "retrieval": "ok", "meeting": [\n'
+        cnt = 0
+        for meeting in meetings:
+            output = output + meeting.to_json()
+            cnt = cnt + 1
+            if cnt != len(meetings):
+                output = output + ','
+        output = output + '\n]}'
+    return flask.Response(output)
 
 
 @APP.route('/api/place/<region>/<calendar>/')

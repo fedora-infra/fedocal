@@ -24,8 +24,8 @@ from datetime import timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from week import Week
-from model import Calendar, Reminder, Meeting
+from fedocallib.week import Week
+from fedocallib.model import Calendar, Reminder, Meeting
 
 
 MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -336,7 +336,6 @@ def save_recursive_meeting(session, meeting):
     if not meeting.recursion \
             or not meeting.recursion.recursion_frequency:
         return
-    today = datetime.utcnow()
     delta = timedelta(days=int(meeting.recursion.recursion_frequency))
     next_date = meeting.meeting_date + delta
     while next_date < meeting.recursion.recursion_ends:
@@ -358,6 +357,7 @@ def update_recursive_meeting(session, meeting):
         return
     for old_meeting in Meeting.get_meetings_of_recursion(session, meeting):
         new_meeting = meeting.copy(old_meeting)
+        new_meeting.save(session)
     session.flush()
 
 
@@ -374,7 +374,6 @@ def delete_recursive_meeting(session, meeting):
             or meeting.recursion.recursion_ends < today.date() \
             or not meeting.recursion.recursion_frequency:
         return
-    delta = timedelta(days=int(meeting.recursion.recursion_frequency))
     meetings = Meeting.get_future_meetings_of_recursion(session, meeting)
     for meeting in meetings:
         meeting.delete(session)
@@ -416,17 +415,17 @@ def add_recursive_meeting_after_end(session, meeting):
             next_date = next_date + delta
 
 
-def __generate_date_rounded_to_the_hour(date, offset):
+def _generate_date_rounded_to_the_hour(meetingdate, offset):
     """ For a given date, return a new date to which the given offset in
     hours has been added and the time rounded to the hour.
 
-    :arg date: a datetime object to which to add the offset (in hours)
-        and to round to the hour.
+    :arg meetingdate: a datetime object to which to add the offset
+        (in hours) and to round to the hour.
     :arg offset: an integer representing the number of hour to add to
         the given date.
     """
     delta = timedelta(hours=offset)
-    new_date = date + delta
+    new_date = meetingdate + delta
     new_date = new_date - timedelta(minutes=new_date.minute,
                                     seconds=new_date.second,
                                     microseconds=new_date.microsecond)
@@ -439,16 +438,16 @@ def retrieve_meeting_to_remind(session):
     """
     today = datetime.utcnow()
     # Retrieve meeting planned in less than 12h
-    new_date = __generate_date_rounded_to_the_hour(today, 12)
+    new_date = _generate_date_rounded_to_the_hour(today, 12)
     meetings = Meeting.get_meeting_with_reminder(session,
         new_date.date(), new_date.time(), 'H-12')
-    new_date = __generate_date_rounded_to_the_hour(today, 24)
+    new_date = _generate_date_rounded_to_the_hour(today, 24)
     meetings.extend(Meeting.get_meeting_with_reminder(session,
         new_date.date(), new_date.time(), 'H-24'))
-    new_date = __generate_date_rounded_to_the_hour(today, 48)
+    new_date = _generate_date_rounded_to_the_hour(today, 48)
     meetings.extend(Meeting.get_meeting_with_reminder(session,
         new_date.date(), new_date.time(), 'H-48'))
-    new_date = __generate_date_rounded_to_the_hour(today, 168)
+    new_date = _generate_date_rounded_to_the_hour(today, 168)
     meetings.extend(Meeting.get_meeting_with_reminder(session,
         new_date.date(), new_date.time(), 'H-168'))
 

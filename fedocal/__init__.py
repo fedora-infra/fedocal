@@ -308,8 +308,8 @@ def add_meeting(calendar_name):
                 if not ends_date:
                     ends_date = datetime.date(2121, 12, 31)
                 recursion = Recursive(
-                    recursion_frequency = form.frequency.data,
-                    recursion_ends = ends_date
+                    recursion_frequency=form.frequency.data,
+                    recursion_ends=ends_date
                     )
                 recursion.save(session)
                 try:
@@ -321,7 +321,7 @@ def add_meeting(calendar_name):
                     flask.flash(
                         'Could not add this reminder to this meeting')
                     flask.render_template('add_meeting.html',
-                        calendar=calendar_name,  form=form)
+                        calendar=calendar_name, form=form)
 
                 fedocallib.save_recursive_meeting(session, meeting)
 
@@ -331,7 +331,7 @@ def add_meeting(calendar_name):
                 flask.flash(
                     'Something went wrong while commiting to the DB.')
                 flask.render_template('add_meeting.html',
-                    calendar=calendar_name,  form=form)
+                    calendar=calendar_name, form=form)
             flask.flash('Meeting added')
             return flask.redirect(flask.url_for('calendar',
                 calendar_name=calendar_name))
@@ -362,7 +362,7 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(session, meeting_id)
     if not fedocallib.is_date_in_future(meeting.meeting_date,
-        meeting.meeting_time_start.hour) :
+        meeting.meeting_time_start.hour):
         flask.flash('This meeting has already occured, you may not '\
             'change it anymore')
         return flask.redirect(flask.url_for('index'))
@@ -422,8 +422,8 @@ def edit_meeting(meeting_id):
                         session, meeting)
                 else:
                     recursion = Recursive(
-                        recursion_frequency = form.frequency.data,
-                        recursion_ends = ends_date
+                        recursion_frequency=form.frequency.data,
+                        recursion_ends=ends_date
                         )
                     recursion.save(session)
                     try:

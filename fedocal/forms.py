@@ -48,12 +48,12 @@ class AddMeetingForm(wtf.Form):
 
     meeting_time_start = wtf.SelectField('Start time',
         [wtf.validators.Required()],
-        choices = [(hour, hour) for hour in HOURS]
+        choices=[(hour, hour) for hour in HOURS]
         )
 
     meeting_time_stop = wtf.SelectField('Stop time',
         [wtf.validators.Required()],
-        choices = [(hour, hour) for hour in HOURS]
+        choices=[(hour, hour) for hour in HOURS]
         )
     comanager = wtf.TextField('Co-manager')
 
@@ -62,7 +62,7 @@ class AddMeetingForm(wtf.Form):
     # Recursion
     frequency = wtf.SelectField('Repeat every',
         [wtf.validators.optional()],
-        choices = [ ('', ''),
+        choices=[('', ''),
                     ('7', '7 days'),
                     ('14', '14 days')]
         )
@@ -71,7 +71,7 @@ class AddMeetingForm(wtf.Form):
     # Reminder
     remind_when = wtf.SelectField('Send reminder',
         [wtf.validators.optional()],
-        choices = [ ('', ''),
+        choices=[('', ''),
                     ('H-12', '12 hours before'),
                     ('H-24', '1 day before'),
                     ('H-48', '2 days before'),
@@ -100,7 +100,7 @@ class AddMeetingForm(wtf.Form):
                 stop_hour = "0%s" % str(meeting.meeting_time_stop.hour)
             else:
                 stop_hour = str(meeting.meeting_time_stop.hour)
-        
+
             self.meeting_name.data = meeting.meeting_name
             self.meeting_date.data = meeting.meeting_date
             self.meeting_time_start.data = start_hour
@@ -121,11 +121,11 @@ class AddMeetingForm(wtf.Form):
 class DeleteMeetingForm(wtf.Form):
     """ Form used to delete a meeting. """
     confirm_delete = wtf.BooleanField('Yes I want to delete this meeting')
-    confirm_futher_delete = wtf.BooleanField('Yes, I want to delete all futher meetings.')
+    confirm_futher_delete = wtf.BooleanField(
+        'Yes, I want to delete all futher meetings.')
 
 
 class LoginForm(wtf.Form):
     """ Form to log in the application. """
     username = wtf.TextField('Username', [wtf.validators.Required()])
     password = wtf.PasswordField('Password', [wtf.validators.Required()])
-

@@ -32,7 +32,6 @@ from sqlalchemy import (
     String,
     Text,
     Time,
-    UniqueConstraint,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -139,11 +138,6 @@ class Meeting(BASE):
     recursion_id = Column(Integer, ForeignKey('recursivity.recursion_id'),
         nullable=True)
     recursion = relationship("Recursive")
-
-    #__table_args__ = (
-            #UniqueConstraint('calendar_name', 'meeting_date',
-                #'meeting_time_start'),
-            #)
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_time_start, meeting_time_stop,

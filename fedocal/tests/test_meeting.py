@@ -230,6 +230,21 @@ class Meetingtests(Modeltests):
         self.assertEqual(obj.calendar.calendar_description, 'This is a test calendar')
         self.assertEqual(obj.reminder, None)
 
+    def test_to_json_meeting(self):
+        """ Test the to_json method a meeting. """
+        self.test_init_meeting()
+        obj = model.Meeting.by_id(self.session, 1)
+        exp = '{\n  '\
+            '"meeting_name": "Fedora-fr-test-meeting",\n  '\
+            '"meeting_manager": "pingou, shaiton",\n  '\
+            '"meeting_date": "2012-10-20",\n  '\
+            '"meeting_time_start": "19:00:00",\n  '\
+            '"meeting_time_stop": "20:00:00",\n  '\
+            '"meeting_information": "This is a test meeting",\n  '\
+            '"calendar_name": "test_calendar"\n'\
+            '}'
+        self.assertEqual(obj.to_json(), exp)
+
     def test_get_by_date_meeting(self):
         """ Test the query of a list of meetings between two dates. """
         self.test_init_meeting()

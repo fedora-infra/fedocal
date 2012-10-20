@@ -48,6 +48,7 @@ import fedocallib
 from fedocallib import model
 from tests import Modeltests
 
+
 class FakeUser(object):
     """ Fake user used to test the fedocallib library. """
 
@@ -171,7 +172,7 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['19:20']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertTrue(meet.meeting_name in 
+                    self.assertTrue(meet.meeting_name in
                         ['Fedora-fr-test-meeting',
                             'Another test meeting2'])
             else:
@@ -235,7 +236,6 @@ class Fedocallibtests(Modeltests):
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
 
-
     def test_is_date_in_future(self):
         """ Test the is_date_in_future function. """
         meeting_date = date.today()
@@ -267,7 +267,7 @@ class Fedocallibtests(Modeltests):
 
         obj = model.Meeting(
             'A past test meeting', 'pingou',
-            date.today() - timedelta(days=1), time(12,00), time(13,00),
+            date.today() - timedelta(days=1), time(12, 00), time(13, 00),
             'This is a past test meeting',
             'test_calendar', None, None)
         obj.save(self.session)
@@ -406,7 +406,6 @@ class Fedocallibtests(Modeltests):
         fedocallib.save_recursive_meeting(self.session,
             meeting)
 
-
     def test_update_recursive_meeting(self):
         """ Test the update_recursive_meeting function. """
         self.test_save_recursive_meeting()
@@ -452,7 +451,7 @@ class Fedocallibtests(Modeltests):
         """ Test the delete_recursive_meeting function. """
         self.test_save_recursive_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        
+
         newdate = date.today() + timedelta(days=21)
         meeting = model.Meeting.get_by_date(self.session, calendar,
             newdate, newdate + timedelta(days=1))[0]
@@ -491,7 +490,7 @@ class Fedocallibtests(Modeltests):
         """ Test the delete_recursive_meeting_after_end function. """
         self.test_save_recursive_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        
+
         newdate = date.today() + timedelta(days=21)
         meeting = model.Meeting.get_by_date(self.session, calendar,
             newdate, newdate + timedelta(days=1))[0]
@@ -585,7 +584,7 @@ class Fedocallibtests(Modeltests):
     def test_retrieve_meeting_to_remind(self):
         """ Test the retrieve_meeting_to_remind function. """
         self.__setup_calendar()
-        remobj = model.Reminder('H-12', 'root@localhost', 
+        remobj = model.Reminder('H-12', 'root@localhost',
             'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()

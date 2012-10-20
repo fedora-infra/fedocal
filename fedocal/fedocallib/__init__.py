@@ -243,7 +243,7 @@ def is_date_in_future(indate, start_time):
     today = datetime.utcnow()
     if today.date() > indate:
         return False
-    elif today.date() == indate and today.hour > int(start_time) :
+    elif today.date() == indate and today.hour > int(start_time):
         return False
     else:
         return True
@@ -406,7 +406,8 @@ def add_recursive_meeting_after_end(session, meeting):
         return
     delta = timedelta(days=int(meeting.recursion.recursion_frequency))
     last_meeting = Meeting.get_last_meeting_of_recursion(session, meeting)
-    if last_meeting.meeting_date + delta < last_meeting.recursion.recursion_ends:
+    if last_meeting.meeting_date + delta < \
+        last_meeting.recursion.recursion_ends:
         next_date = last_meeting.meeting_date + delta
         while next_date < meeting.recursion.recursion_ends:
             new_meeting = meeting.copy()
@@ -430,6 +431,7 @@ def _generate_date_rounded_to_the_hour(meetingdate, offset):
                                     seconds=new_date.second,
                                     microseconds=new_date.microsecond)
     return new_date
+
 
 def retrieve_meeting_to_remind(session):
     """ Retrieve all the meetings for which we have to send a reminder.

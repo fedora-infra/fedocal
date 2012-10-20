@@ -68,8 +68,10 @@ class Recursiontests(Modeltests):
         try:
             self.session.commit()
         except IntegrityError, error:
-            self.assertEqual(error.message, '(IntegrityError) constraint failed')
-            self.assertTrue(str(error).startswith("(IntegrityError) constraint"\
+            self.assertEqual(error.message,
+                '(IntegrityError) constraint failed')
+            self.assertTrue(str(error).startswith(
+            "(IntegrityError) constraint"\
             " failed u'INSERT INTO recursivity (recursion_frequency, "\
             "recursion_start, recursion_ends)"))
 
@@ -79,7 +81,8 @@ class Recursiontests(Modeltests):
         obj = model.Recursive.by_id(self.session, 1)
         self.assertNotEqual(obj, None)
         self.assertEqual(str(obj), '<Recursion(From \'%s\' to \'%s\' '\
-            'every \'14\')>' % (date.today(), date.today() + timedelta(days=7)))
+            'every \'14\')>' % (date.today(), date.today() +\
+            timedelta(days=7)))
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Recursiontests)

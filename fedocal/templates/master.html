@@ -10,10 +10,20 @@
     {% block head %}{% endblock %}
 </head>
 
-    {% block content_titles %}
-    {% endblock %}
+{% block content_titles %}
+    <header>
+    <h1><img alt="Fedora Calendar{% if title_extent is defined %} - {% endif %}" src="{{ url_for('static', filename='fedora-logo.png') }}" />{% if title_extent is defined %}<span>{{ title_extent }}</span>{% endif %}</h1>
 
-    {% with messages = get_flashed_messages() %}
+        {% if calendar %}
+        <h2> {{ calendar.calendar_name }} </h2>
+        <p>
+            {{ calendar.calendar_description }}
+        </p>
+        {% endif %}
+    </header>
+{% endblock %}
+
+{% with messages = get_flashed_messages() %}
     {% if messages %}
     <ul id="flashes">
         {% for message in messages %}
@@ -21,7 +31,7 @@
         {% endfor %}
     </ul>
     {% endif %}
-    {% endwith %}
+{% endwith %}
 
 
 <!-- start sidebar -->
@@ -76,7 +86,8 @@
 </div>
 <!-- end sidebar -->
 
-    {% block content %}{% endblock %}
-
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>

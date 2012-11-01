@@ -2,15 +2,12 @@
 
 {% block title %} {{ title }} {% endblock %}
 
-{% block content_titles %}
-    <h1> Fedora meeting </h1>
-
-    <p>
-        You are kindly invited to join to the following meeting:
-    </p>
-{% endblock %}
+{% set title_extent = 'Fedora meeting' %}
 
 {% block content %}
+<p>
+    You are kindly invited to join to the following meeting:
+</p>
 
 <h4> Meeting: {{ meeting.meeting_name}}</h4>
 

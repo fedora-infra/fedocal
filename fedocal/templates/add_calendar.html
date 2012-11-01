@@ -3,12 +3,9 @@
 
 {% block title %} Add calendar {% endblock %}
 
-{% block content_titles %}
-    <h1>Add a new calendar</h1>
-{% endblock %}
+{% set title_extent = 'add a new calendar' %}
 
 {% block content %}
-
 <form action="" method="post">
 {{ render_field(form.calendar_name) }}
 {{ render_field(form.calendar_description) }}

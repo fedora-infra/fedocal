@@ -1,7 +1,7 @@
 {% extends "master.html" %}
 {% from "_formhelpers.html" import render_field %}
 
-{% block title %} Add meeting {% endblock %}
+{% set title_extent = ('Add new meeting to "%s"') % calendar.calendar_name %}
 
 {% block head %}
     <link type="text/css" rel="stylesheet"
@@ -25,13 +25,6 @@
             });
         });
     </script>
-{% endblock %}
-
-{% block content_titles %}
-    <h1>
-        Add a new meeting to <span style="font-style:italic">
-        {{ calendar.calendar_name }}</span>
-    </h1>
 {% endblock %}
 
 {% block content %}

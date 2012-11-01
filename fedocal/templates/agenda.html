@@ -2,17 +2,6 @@
 
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
-{% block content_titles %}
-    <h1> Fedora Calendar </h1>
-
-    {% if calendar %}
-    <h2> {{ calendar.calendar_name }} </h2>
-    <p>
-        {{ calendar.calendar_description }}
-    </p>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
 
 {% if calendar %}

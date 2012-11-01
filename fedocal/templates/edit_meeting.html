@@ -26,12 +26,8 @@
     </script>
 {% endblock %}
 
-{% block content_titles %}
-    <h1>
-        Edit meeting of <span style="font-style:italic">
-        {{ meeting.calendar_name }}</span>
-    </h1>
-{% endblock %}
+
+{% set title_extent = ('Edit meeting "%s"') % meeting.calendar_name %}
 
 {% block content %}
 

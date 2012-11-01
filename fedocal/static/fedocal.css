@@ -1,9 +1,9 @@
 body {
-    padding: 0px;
+    padding: 0;
     background: url(html-bg.png)
-        repeat-x scroll 0 0px #FFFFFF;
+    repeat-x scroll 0 0 #FFF;
     height: 100%;
-    margin-bottom: 0px;
+    margin: 0;
     color: #2E3436;
     font-family: Cantarell,'Droid Sans','DejaVu Sans',Arial,sans-serif;
     font-size: 13px;
@@ -19,6 +19,36 @@ h4 {
 a {
     color: blue;
     text-decoration: none;
+}
+
+header {
+    color: white;
+    background: #426ead; /* Old browsers */
+    background: -moz-linear-gradient(top, #426ead 0%, #1e4a88 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#426ead), color-stop(100%,#1e4a88)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #426ead 0%,#1e4a88 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #426ead 0%,#1e4a88 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #426ead 0%,#1e4a88 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #426ead 0%,#1e4a88 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#426ead', endColorstr='#1e4a88',GradientType=0 ); /* IE6-9 */
+    padding: .5em;
+    margin-bottom: .5em;
+}
+
+header h1,
+header h2 {
+    margin:0;
+}
+
+header h1 span {
+    float: right;
+    color: rgba(255, 255, 255, .5);
+    font-size: 0.7em;
+    font-weight: normal;
+}
+
+#content {
+    margin: .5em;
 }
 
 #agenda, .my_meetings {

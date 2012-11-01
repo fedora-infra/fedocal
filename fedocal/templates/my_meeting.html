@@ -3,15 +3,14 @@
 
 {% block title %} {{ title }} {% endblock %}
 
-{% block content_titles %}
-    <h1> My Fedora meeting </h1>
-
-    <p>
-        Here below is the list of your meetings past and future.
-    </p>
-{% endblock %}
+{% set title_extent = 'My Fedora meetings' %}
 
 {% block content %}
+
+    <p>
+        Below is the list of your past and future meetings.
+    </p>
+
 
 <h4>Future meeting</h4>
 {% if single_meetings %}

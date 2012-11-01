@@ -83,7 +83,7 @@ class Meetingtests(Modeltests):
             date.today() + timedelta(days=1), time(14, 00), time(16, 00),
             'This is a test meeting at the same time',
             'test_calendar4',
-            None, None)
+            None, None, 'NA')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -93,7 +93,7 @@ class Meetingtests(Modeltests):
             date.today() + timedelta(days=1), time(14, 00), time(16, 00),
             'This is a second test meeting at the same time',
             'test_calendar4',
-            None, None)
+            None, None, 'EMEA')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -241,11 +241,12 @@ class Meetingtests(Modeltests):
             '"meeting_time_start": "19:00:00",\n  '\
             '"meeting_time_stop": "20:00:00",\n  '\
             '"meeting_information": "This is a test meeting",\n  '\
+            '"meeting_region": "None",\n  '\
             '"calendar_name": "test_calendar"\n'\
             '}' % date.today()
         self.assertEqual(obj.to_json(), exp)
 
-    def test_get_by_date_meeting(self):
+    def test_get_by_date(self):
         """ Test the query of a list of meetings between two dates. """
         self.test_init_meeting()
         week_day = date.today()
@@ -275,6 +276,42 @@ class Meetingtests(Modeltests):
                 week_start, week_stop)
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 5)
+
+    def test_get_by_date_and_region(self):
+        """ Test the query of a list of meetings between two dates. """
+        self.test_init_meeting()
+        week_day = date.today()
+        week_start = week_day - timedelta(days=week_day.weekday())
+        week_stop = week_day + timedelta(days=2)
+        cal = model.Calendar.by_id(self.session, 'test_calendar4')
+
+        obj = model.Meeting.get_by_date_and_region(self.session, cal,
+                week_start, week_stop, 'EMEA')
+
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 'test-meeting-st-2')
+        self.assertEqual(obj[0].meeting_manager, 'test')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a second test meeting at the same time')
+        self.assertEqual(obj[0].reminder, None)
+
+        obj = model.Meeting.get_by_date_and_region(self.session, cal,
+                week_start, week_stop, 'NA')
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 'test-meeting-st-1')
+        self.assertEqual(obj[0].meeting_manager, 'test')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a test meeting at the same time')
+        self.assertEqual(obj[0].reminder, None)
+
+        obj = model.Meeting.get_by_date_and_region(self.session, cal,
+                week_start, week_stop, 'APAC')
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 0)
 
     def test_get_future_meetings_of_recursion(self):
         """ Test the Meeting get_future_meetings_of_recursion function.

@@ -71,14 +71,17 @@ class Calendar(BASE):
     calendar_description = Column(String(500))
     calendar_manager_group = Column(String(100))  # 3 groups (3*32)
     calendar_multiple_meetings = Column(Boolean, default=False)
+    calendar_regional_meetings = Column(Boolean, default=False)
 
     def __init__(self, calendar_name, calendar_description,
-        calendar_manager_group, calendar_multiple_meetings=False):
+        calendar_manager_group, calendar_multiple_meetings=False,
+        calendar_regional_meetings=False):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
         self.calendar_description = calendar_description
         self.calendar_manager_group = calendar_manager_group
         self.calendar_multiple_meetings = calendar_multiple_meetings
+        self.calendar_regional_meetings = calendar_regional_meetings
 
     def __repr__(self):
         """ Representation of the Calendar object when printed.
@@ -138,10 +141,12 @@ class Meeting(BASE):
     recursion_id = Column(Integer, ForeignKey('recursivity.recursion_id'),
         nullable=True)
     recursion = relationship("Recursive")
+    meeting_region = Column(String(10), default=None)
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_time_start, meeting_time_stop,
-        meeting_information, calendar_name, reminder_id, recursion_id):
+        meeting_information, calendar_name, reminder_id, recursion_id,
+        meeting_region=None):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
@@ -152,6 +157,7 @@ class Meeting(BASE):
         self.calendar_name = calendar_name
         self.reminder_id = reminder_id
         self.recursion_id = recursion_id
+        self.meeting_region = meeting_region
 
     def __repr__(self):
         """ Representation of the Reminder object when printed.
@@ -179,6 +185,8 @@ class Meeting(BASE):
             self.meeting_time_stop)
         string = '%s\n  "meeting_information": "%s",' % (string,
             self.meeting_information)
+        string = '%s\n  "meeting_region": "%s",' % (string,
+            self.meeting_region)
         string = '%s\n  "calendar_name": "%s"' % (string,
             self.calendar_name)
         string = '%s\n}' % string
@@ -208,12 +216,15 @@ class Meeting(BASE):
             meeting.calendar_name = self.calendar_name
             meeting.reminder_id = self.reminder_id
             meeting.recursion_id = self.recursion_id
+            meeting.meeting_region = self.meeting_region
         else:
             meeting = Meeting(self.meeting_name, self.meeting_manager,
                 self.meeting_date, self.meeting_time_start,
                 self.meeting_time_stop, self.meeting_information,
                 self.calendar_name,
-                self.reminder_id, self.recursion_id)
+                self.reminder_id,
+                self.recursion_id,
+                self.meeting_region)
         return meeting
 
     @classmethod
@@ -291,6 +302,18 @@ class Meeting(BASE):
             (Meeting.calendar == calendar),
             (Meeting.meeting_date >= start_date),
             (Meeting.meeting_date < stop_date)).all()
+
+    @classmethod
+    def get_by_date_and_region(cls, session, calendar, start_date,
+        stop_date, region):
+        """ Retrieve the list of meetings in a region between two date.
+        We include the start date and exclude the stop date.
+        """
+        return session.query(cls).filter(and_
+            (Meeting.calendar == calendar),
+            (Meeting.meeting_date >= start_date),
+            (Meeting.meeting_date < stop_date),
+            (Meeting.meeting_region == region)).all()
 
     @classmethod
     def get_by_time(cls, session, calendar, meetingdate, start_time,

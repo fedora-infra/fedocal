@@ -385,12 +385,12 @@ def edit_meeting(meeting_id):
             meeting.meeting_manager = '%s,%s' % (
                 flask.g.fas_user.username, form.comanager.data)
             meeting.meeting_date = form.meeting_date.data
-            meeting.meeting_time_start = int(
-                form.meeting_time_start.data)
-            meeting.meeting_time_stop = int(
-                form.meeting_time_stop.data)
+            meeting.meeting_time_start = datetime.time(int(
+                    form.meeting_time_start.data))
+            meeting_time_stop=datetime.time(int(
+                    form.meeting_time_stop.data))
             meeting.meeting_information = form.information.data
-            meeting_region=form.meeting_region.data
+            meeting.meeting_region=form.meeting_region.data
 
             if form.remind_when.data and form.remind_who.data:
                 if meeting.reminder_id:

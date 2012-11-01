@@ -1,7 +1,7 @@
 {% extends "master.html" %}
 {% from "_formhelpers.html" import render_field %}
 
-{% block title %} {{ title }} {% endblock %}
+{% block title %} API {{ title }} {% endblock %}
 
 {% block content_titles %}
     <h1> API - Fedora Calendar </h1>
@@ -25,7 +25,7 @@
 </p>
 <p>
     <code>{{ url_for('api_date',
-        calendar='calendar_name', start_date='start_date',
+        calendar_name='calendar', start_date='start_date',
         end_date='end_date') }}</code>
 </p>
 
@@ -43,7 +43,7 @@
     optionnals meaning that you may call
 </p>
 <p>
-    <code>{{ url_for('api_date_default', calendar='calendar_name') }}</code>
+    <code>{{ url_for('api_date_default', calendar_name='calendar_name') }}</code>
 </p>
 <p>
     This will by default return you the coming six months.
@@ -57,9 +57,9 @@
     for a specific region, you will need to query
 </p>
 <p>
-    <code>{{ 
+    <code>{{
         url_for('api_place', region='region',
-        calendar='calendar_name', start_date='start_date',
+        calendar_name='calendar_name', start_date='start_date',
         end_date='end_date') }}</code>
 </p>
 
@@ -80,7 +80,7 @@
 </p>
 <p>
     <code>{{ url_for('api_place_default',
-        region='region', calendar='calendar_name') }}</code>
+        region='region', calendar_name='calendar_name') }}</code>
 </p>
 <p>
     This will by default return you the coming six months.

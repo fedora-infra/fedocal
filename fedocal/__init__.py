@@ -266,7 +266,7 @@ def add_meeting(calendar_name):
         elif bool(calendarobj.calendar_multiple_meetings) or \
             (bool(calendarobj.calendar_multiple_meetings) == False and \
             fedocallib.agenda_is_free(session,
-                calendar,
+                calendarobj,
                 form.meeting_date.data,
                 int(form.meeting_time_start.data),
                 int(form.meeting_time_stop.data)

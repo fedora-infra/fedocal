@@ -216,7 +216,9 @@ def add_calendar():
             form.calendar_name.data,
             form.calendar_description.data,
             form.calendar_manager_groups.data,
-            bool(form.calendar_multiple_meetings.data))
+            bool(form.calendar_multiple_meetings.data),
+            bool(form.calendar_regional_meetings.data),
+            )
         try:
             calendarobj.save(session)
             session.commit()
@@ -243,10 +245,9 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     form = forms.AddMeetingForm()
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    calendarobj = Calendar.by_id(session, calendar_name)
     if form.validate_on_submit():
-        session = fedocallib.create_session(
-            CONFIG.get('fedocal', 'db_url'))
-        calendarobj = Calendar.by_id(session, calendar_name)
         if not fedocallib.is_user_managing_in_calendar(session,
             calendarobj.calendar_name, flask.g.fas_user):
             flask.flash('You are not allowed to add a meeting to'\
@@ -271,16 +272,23 @@ def add_meeting(calendar_name):
                 int(form.meeting_time_start.data),
                 int(form.meeting_time_stop.data)
             )):
+            region = form.meeting_region.data
+            if not calendarobj.calendar_regional_meetings:
+                region = None
             manager = '%s,' % flask.g.fas_user.username
             meeting = Meeting(
-                form.meeting_name.data,
-                manager,
-                form.meeting_date.data,
-                datetime.time(int(form.meeting_time_start.data)),
-                datetime.time(int(form.meeting_time_stop.data)),
-                form.information.data,
-                calendarobj.calendar_name,
-                None, None)
+                meeting_name=form.meeting_name.data,
+                meeting_manager=manager,
+                meeting_date=form.meeting_date.data,
+                meeting_time_start=datetime.time(int(
+                    form.meeting_time_start.data)),
+                meeting_time_stop=datetime.time(int(
+                    form.meeting_time_stop.data)),
+                meeting_information=form.information.data,
+                calendar_name=calendarobj.calendar_name,
+                reminder_id=None,
+                recursion_id=None,
+                meeting_region=region)
             meeting.save(session)
             try:
                 session.flush()
@@ -288,7 +296,7 @@ def add_meeting(calendar_name):
                 print 'add_meeting:', err
                 flask.flash('Could not add this meeting to this calendar')
                 flask.render_template('add_meeting.html',
-                    calendar=calendar_name,  form=form)
+                    calendar=calendarobj,  form=form)
 
             if form.remind_when.data and form.remind_who.data:
                 reminder = Reminder(form.remind_when.data,
@@ -303,7 +311,7 @@ def add_meeting(calendar_name):
                     print 'add_meeting:', err
                     flask.flash('Could not add this reminder to this meeting')
                     flask.render_template('add_meeting.html',
-                        calendar=calendar_name,  form=form)
+                        calendar=calendarobj,  form=form)
 
             if form.frequency.data:
                 ends_date = form.end_repeats.data
@@ -323,7 +331,7 @@ def add_meeting(calendar_name):
                     flask.flash(
                         'Could not add this reminder to this meeting')
                     flask.render_template('add_meeting.html',
-                        calendar=calendar_name, form=form)
+                        calendar=calendarobj, form=form)
 
                 fedocallib.save_recursive_meeting(session, meeting)
 
@@ -333,17 +341,18 @@ def add_meeting(calendar_name):
                 flask.flash(
                     'Something went wrong while commiting to the DB.')
                 flask.render_template('add_meeting.html',
-                    calendar=calendar_name, form=form)
+                    calendar=calendarobj, form=form)
+
             flask.flash('Meeting added')
             return flask.redirect(flask.url_for('calendar',
-                calendar_name=calendar_name))
+                calendar_name=calendarobj.calendar_name))
         else:
             flask.flash(
                 'The start time you have entered is already occupied.')
             return flask.render_template('add_meeting.html',
-                calendar_name=calendar_name, form=form)
+                calendar=calendarobj, form=form)
     return flask.render_template('add_meeting.html',
-        calendar_name=calendar_name, form=form)
+        calendar=calendarobj, form=form)
 
 
 # CLA + 1
@@ -363,6 +372,7 @@ def edit_meeting(meeting_id):
             'you are not allowed to edit it.')
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(session, meeting_id)
+    calendarobj = Calendar.by_id(session, meeting.calendar_name)
     if not fedocallib.is_date_in_future(meeting.meeting_date,
         meeting.meeting_time_start.hour):
         flask.flash('This meeting has already occured, you may not '\
@@ -380,6 +390,7 @@ def edit_meeting(meeting_id):
             meeting.meeting_time_stop = int(
                 form.meeting_time_stop.data)
             meeting.meeting_information = form.information.data
+            meeting_region=form.meeting_region.data
 
             if form.remind_when.data and form.remind_who.data:
                 if meeting.reminder_id:
@@ -400,7 +411,8 @@ def edit_meeting(meeting_id):
                         flask.flash('Could not edit the reminder of '\
                             'this meeting')
                         return flask.render_template('edit_meeting.html',
-                            meeting=meeting, form=form)
+                            meeting=meeting, calendar=calendarobj,
+                            form=form)
             elif meeting.reminder_id:
                 try:
                     meeting.reminder.delete(session)
@@ -437,7 +449,8 @@ def edit_meeting(meeting_id):
                         flask.flash('Could not edit this recursivity '\
                             'of this meeting')
                         return flask.render_template('edit_meeting.html',
-                            meeting=meeting, form=form)
+                            meeting=meeting, calendar=calendarobj,
+                            form=form)
                     fedocallib.save_recursive_meeting(session, meeting)
             elif meeting.recursion_id:
                 try:
@@ -457,7 +470,7 @@ def edit_meeting(meeting_id):
     else:
         form = forms.AddMeetingForm(meeting=meeting)
     return flask.render_template('edit_meeting.html', meeting=meeting,
-        form=form)
+            calendar=calendarobj, form=form)
 
 
 @APP.route('/meeting/<int:meeting_id>', methods=('GET', 'POST'))

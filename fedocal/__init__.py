@@ -120,11 +120,11 @@ def calendar_fullday(calendar_name, year, month, day):
         week_start.month, week_start.day)
     auth_form = forms.LoginForm()
     admin = is_admin()
-    month = fedocallib.MONTH[week_start.month - 1]
+    month_name = fedocallib.MONTH[week_start.month - 1]
     return flask.render_template('agenda.html',
         calendar=calendarobj,
         calendars=calendars,
-        month=month,
+        month=month_name,
         weekdays=weekdays,
         meetings=meetings,
         next_week=next_week,

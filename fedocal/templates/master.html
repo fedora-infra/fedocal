@@ -11,15 +11,11 @@
 </head>
 <body>
 {% block content_titles %}
-    <header>
-    <h1><img alt="Fedora Calendar{% if title_extent is defined %} - {% endif %}" src="{{ url_for('static', filename='fedora-logo.png') }}" />{% if title_extent is defined %}<span>{{ title_extent }}</span>{% endif %}</h1>
-
-        {% if calendar %}
-        <h2> {{ calendar.calendar_name }} </h2>
-        <p>
-            {{ calendar.calendar_description }}
-        </p>
-        {% endif %}
+    <header id="mainheader">
+        <h1>
+            <img alt="Fedora Calendar{% if title_extent is defined %} - {% endif %}" src="{{ url_for('static', filename='fedora-logo.png') }}" />
+            {% if title_extent is defined %}<span>{{ title_extent }}</span>{% endif %}
+        </h1>
     </header>
 {% endblock %}
 

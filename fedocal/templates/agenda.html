@@ -3,23 +3,27 @@
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
 {% block content %}
-
+<section>
 {% if calendar %}
-<p>
-    <a href="{{url_for('calendar_fullday',
-        calendar_name=calendar.calendar_name, year=prev_week.year,
-        month=prev_week.month, day=prev_week.day)}}">
-         &lt;&lt; Previous week
-    </a> |
-    <a href="{{url_for('calendar', calendar_name=calendar.calendar_name)}}">
-         current week
-    </a> |
-    <a href="{{url_for('calendar_fullday',
-        calendar_name=calendar.calendar_name, year=next_week.year,
-        month=next_week.month, day=next_week.day)}}">
-        Next week &gt;&gt;
-    </a>
-</p>
+    <header>
+        <h2>{{ calendar.calendar_name }}</h2>
+        <p>{{ calendar.calendar_description }}</p>
+    </header>
+    <aside>
+        <a href="{{url_for('calendar_fullday',
+            calendar_name=calendar.calendar_name, year=prev_week.year,
+            month=prev_week.month, day=prev_week.day)}}">
+            &lt;&lt; Previous week
+        </a> |
+        <a href="{{url_for('calendar', calendar_name=calendar.calendar_name)}}">
+            current week
+        </a> |
+        <a href="{{url_for('calendar_fullday',
+            calendar_name=calendar.calendar_name, year=next_week.year,
+            month=next_week.month, day=next_week.day)}}">
+            Next week &gt;&gt;
+        </a>
+    </aside>
 {% endif %}
 <div id='agenda'>
     <table>

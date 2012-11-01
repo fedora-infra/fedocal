@@ -30,6 +30,16 @@ a {
     min-width: 800px;
 }
 
+.event {
+    display: block;
+    height: 100%;
+    padding:.1em .2em;
+    background-color:rgba(175, 221, 233, .8);
+    color: #333;
+    text-decoration: none;
+    border:1px solid #37abc8;
+}
+
 .my_meetings td {
     border-bottom: solid 1px grey;
     border-top: solid 1px grey;
@@ -38,13 +48,16 @@ a {
 
 #agenda td {
     min-width: 100px;
-    height: 20px;
-    border-bottom: solid 1px grey;
-    border-left: solid 1px grey;
+    height: 3em;
+    border: 1px solid #e6e6e6;
+    background-color: #f9f9f9;
+    padding: 0;
 }
 
 #agenda .time {
-    border-left: solid 0px;
+    border: none;
+    padding-right: .2em;
+    text-align: right;
 }
 
 .my_meetings .date {
@@ -69,8 +82,13 @@ a {
 }
 
 #agenda th {
-    border-bottom: 1px dotted black;
-    padding: 5px;
+    border: none;
+    padding: .1em;
+    color: #999;
+}
+
+#agenda th.today {
+    color: black;
 }
 
 #left-sidebar {

@@ -35,19 +35,19 @@
 <div id='agenda'>
     <table>
         <tr>
-            <th>{{ month }}</th>
+            <th class="time">{{ month }}</th>
             {% for day in weekdays %}
             <th> {{ day }}</th>
             {% endfor %}
         </tr>
         {% for time_entry in meetings |sort %}
         <tr>
-            <td class="time">{{ time_entry }}</td>
+            <th class="time">{{ time_entry }}</th>
             {% for meeting_list in meetings[time_entry] %}
                 {% if meeting_list %}
                 <td>
                     {% for meeting in meeting_list %}
-                    <a href="{{ url_for('view_meeting',
+                    <a class="event" href="{{ url_for('view_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         {{ meeting.meeting_name }}
                      </a>

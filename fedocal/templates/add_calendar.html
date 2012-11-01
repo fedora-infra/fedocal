@@ -14,8 +14,9 @@
 {{ render_field(form.calendar_description) }}
 {{ render_field(form.calendar_manager_groups) }}
 {{ render_field(form.calendar_multiple_meetings) }}
+{{ render_field(form.calendar_regional_meetings) }}
 <p class="buttons indent">
-    <input type="submit" class="submit positive" value="Log in">
+    <input type="submit" class="submit positive" value="Create">
     <input type="button" value="Cancel" onclick="history.back();">
 </p>
 {{ form.csrf_token }}

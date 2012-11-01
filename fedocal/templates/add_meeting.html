@@ -30,7 +30,7 @@
 {% block content_titles %}
     <h1>
         Add a new meeting to <span style="font-style:italic">
-        {{ calendar }}</span>
+        {{ calendar.calendar_name }}</span>
     </h1>
 {% endblock %}
 
@@ -43,6 +43,9 @@
 {{ render_field_in_row(form.meeting_time_start) }}
 {{ render_field_in_row(form.meeting_time_stop) }}
 {{ render_field_in_row(form.information) }}
+{% if calendar.calendar_regional_meetings %}
+{{ render_field_in_row(form.meeting_region) }}
+{% endif %}
     </table>
 
 <h4>Recursive event</h4>

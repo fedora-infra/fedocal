@@ -43,6 +43,9 @@
 {{ render_field_in_row(form.meeting_time_stop) }}
 {{ render_field_in_row(form.comanager) }}
 {{ render_field_in_row(form.information) }}
+{% if calendar.calendar_regional_meetings %}
+{{ render_field_in_row(form.meeting_region) }}
+{% endif %}
     </table>
 
 <h4>Recursive event</h4>

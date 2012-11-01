@@ -37,6 +37,8 @@ class AddCalendarForm(wtf.Form):
     calendar_manager_groups = wtf.TextField('Manager groups')
     calendar_multiple_meetings = wtf.BooleanField(
         'Agenda can have multiple meetings on the same day?')
+    calendar_regional_meetings = wtf.BooleanField(
+        'Meetings can regional?')
 
 
 class AddMeetingForm(wtf.Form):
@@ -58,6 +60,8 @@ class AddMeetingForm(wtf.Form):
     comanager = wtf.TextField('Co-manager')
 
     information = wtf.TextAreaField('Information')
+
+    meeting_region = wtf.TextField('Region')
 
     # Recursion
     frequency = wtf.SelectField('Repeat every',
@@ -110,6 +114,7 @@ class AddMeetingForm(wtf.Form):
             meeting_manager = meeting.meeting_manager.replace(
                         '%s,' % flask.g.fas_user.username, '')
             self.comanager.data = meeting_manager
+            self.meeting_region.data = meeting.meeting_region
             if meeting.recursion_id:
                 self.frequency.data = meeting.recursion.recursion_frequency
                 self.end_repeats.data = meeting.recursion.recursion_ends

@@ -232,6 +232,24 @@ def get_meetings_by_date(session, calendar, start_date, end_date):
         end_date)
 
 
+def get_meetings_by_date_and_region(session, calendar, start_date,
+    end_date, region):
+    """ Return a list of meetings which have or will occur in between
+    the two provided dates.
+
+    :arg session: the database session to use
+    :arg calendar: the name of the calendar of interest.
+    :arg start_date: the date from which we would like to retrieve the
+        meetings (this day is included in the selection).
+    :arg start_date: the date until which we would like to retrieve the
+        meetings (this day is excluded from the selection).
+    :arg region: the region in which the meetings should occur.
+    """
+    calendar = Calendar.by_id(session, calendar)
+    return Meeting.get_by_date_and_region(session, calendar, start_date,
+        end_date, region)
+
+
 def is_date_in_future(indate, start_time):
     """ Return whether the date is in the future or the past.
 

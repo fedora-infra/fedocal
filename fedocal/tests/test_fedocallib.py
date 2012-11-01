@@ -650,6 +650,52 @@ class Fedocallibtests(Modeltests):
                 'Another test meeting', 'Test meeting with reminder'])
             self.assertEqual(meeting.meeting_manager, 'pingou')
 
+    def test_get_meetings_by_date_and_region(self):
+        """ Test the get_meetings_by_date_and_region function. """
+        self.__setup_meeting()
+        obj = fedocallib.get_meetings_by_date_and_region(
+            self.session,
+            'test_calendar4',
+            date.today(),
+            date.today() + timedelta(days=2),
+            'EMEA'
+            )
+
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 'test-meeting-st-2')
+        self.assertEqual(obj[0].meeting_manager, 'test')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a second test meeting at the same time')
+        self.assertEqual(obj[0].reminder, None)
+
+        obj = fedocallib.get_meetings_by_date_and_region(
+            self.session,
+            'test_calendar4',
+            date.today(),
+            date.today() + timedelta(days=2),
+            'NA'
+            )
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 'test-meeting-st-1')
+        self.assertEqual(obj[0].meeting_manager, 'test')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a test meeting at the same time')
+        self.assertEqual(obj[0].reminder, None)
+
+        obj = fedocallib.get_meetings_by_date_and_region(
+            self.session,
+            'test_calendar4',
+            date.today(),
+            date.today() + timedelta(days=2),
+            'APAC'
+            )
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 0)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

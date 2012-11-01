@@ -10,6 +10,7 @@
         <p>{{ calendar.calendar_description }}</p>
     </header>
     <aside>
+        {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
         <a href="{{url_for('calendar_fullday',
             calendar_name=calendar.calendar_name, year=prev_week.year,
             month=prev_week.month, day=prev_week.day)}}">

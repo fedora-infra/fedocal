@@ -43,6 +43,8 @@ import fedocallib as fedocallib
 from fedocallib.model import (Calendar, Meeting, Reminder,
     Recursive)
 
+import calendar as pycalendar
+
 CONFIG = ConfigParser.ConfigParser()
 if os.path.exists('/etc/fedocal.cfg'):
     CONFIG.readfp(open('/etc/fedocal.cfg'))
@@ -121,6 +123,8 @@ def calendar_fullday(calendar_name, year, month, day):
     auth_form = forms.LoginForm()
     admin = is_admin()
     month_name = fedocallib.MONTH[week_start.month - 1]
+    htmlcal = pycalendar.HTMLCalendar()
+    curmonth_cal = htmlcal.formatmonth(week_start.year, week_start.month)
     return flask.render_template('agenda.html',
         calendar=calendarobj,
         calendars=calendars,
@@ -130,6 +134,7 @@ def calendar_fullday(calendar_name, year, month, day):
         next_week=next_week,
         prev_week=prev_week,
         auth_form=auth_form,
+        curmonth_cal=curmonth_cal,
         admin=admin)
 
 

@@ -9,8 +9,7 @@
         <h2>{{ calendar.calendar_name }}</h2>
         <p>{{ calendar.calendar_description }}</p>
     </header>
-    <aside>
-        {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
+    <nav id="weeks">
         <a href="{{url_for('calendar_fullday',
             calendar_name=calendar.calendar_name, year=prev_week.year,
             month=prev_week.month, day=prev_week.day)}}">
@@ -24,7 +23,7 @@
             month=next_week.month, day=next_week.day)}}">
             Next week &gt;&gt;
         </a>
-    </aside>
+    </nav>
 {% endif %}
 <div id='agenda'>
     <table>

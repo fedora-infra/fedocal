@@ -49,14 +49,18 @@ header h1 span {
 }
 
 section header,
-section aside {
+section aside,
+section nav {
     display: inline-block;
     margin-right: 2em;
     vertical-align: middle;
 }
 
 #content {
+    position: relative;
     margin: .5em;
+    /* for the menu */
+    padding-left: 210px;
 }
 
 #agenda {
@@ -133,13 +137,14 @@ section aside {
     color: black;
 }
 
-#left-sidebar {
-    display: inline;
+#mainmenu {
     width: 200px;
     margin-right: 0;
-    float: right;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-#left-sidebar li {
+#mainmenu li {
     margin-left: 0px;
 }

@@ -52,7 +52,6 @@ section header,
 section aside,
 section nav {
     display: inline-block;
-    margin-right: 2em;
     vertical-align: middle;
 }
 
@@ -74,6 +73,7 @@ section nav {
 #agenda table, .my_meetings table {
     border-collapse:collapse;
     min-width: 790px;
+    width: 100%;
 }
 
 .event {
@@ -104,6 +104,7 @@ section nav {
     border: none;
     padding-right: .2em;
     text-align: right;
+    width: 7em;
 }
 
 .my_meetings .date {
@@ -147,4 +148,8 @@ section nav {
 
 #mainmenu li {
     margin-left: 0px;
+}
+
+#weeks {
+    float:right;
 }

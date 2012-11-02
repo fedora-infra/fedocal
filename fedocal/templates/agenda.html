@@ -2,6 +2,12 @@
 
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
+{% block head %}
+    <link type="text/css" rel="stylesheet"
+        href="{{ url_for('static',
+            filename='flick/jquery-ui-1.9.1.custom.css')}}" />
+{% endblock %}
+
 {% block content %}
 <section>
 {% if calendar %}
@@ -41,7 +47,8 @@
                 <td>
                     {% for meeting in meeting_list %}
                     <a class="event" href="{{ url_for('view_meeting',
-                        meeting_id=meeting.meeting_id) }}">
+                        meeting_id=meeting.meeting_id) }}"
+                        id="meeting_{{ meeting.meeting_id }}">
                         {{ meeting.meeting_name }}
                      </a>
                      {% if not loop.last %}
@@ -59,3 +66,38 @@
 </div>
 
 {% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='jquery-ui-1.9.1.custom.min.js') }}">
+</script>
+<script type="text/javascript">
+    $(function(){
+        $('.event').click(function(){
+            var _id = $(this).attr('id');
+            var _meetId = _id.replace('meeting_', '');
+            $.ajax({
+                url: '/meeting/' + _meetId + '/0',
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $('<div title="Meeting details" id="show_meeting">' + res + '</div>');
+                    _elt.dialog({
+                        height: 350,
+                        width: '50%',
+                        modal: true
+                    });
+                },
+                error: function() {
+                    alert('Unable to retrieve selected meeting!');
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+{% endblock %}
+

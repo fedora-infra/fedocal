@@ -36,10 +36,9 @@
             <ul class="checkmark-list">
                 <li><a href="{{url_for('index')}}">Home</a></li>
             </ul>
-            <h4>Calendars</h4>
             {% if calendar %}
+            <h4>Calendars</h4>
                 {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
-            {% endif %}
             <ul class="checkmark-list">
                 {% for calendar in calendars %}
                 <li>
@@ -50,6 +49,7 @@
                 </li>
                 {% endfor %}
             </ul>
+            {% endif %}
             <h4> User </h4>
             {% if not g.fas_user %}
                 <form action="{{ url_for('auth_login') }}" method="post">

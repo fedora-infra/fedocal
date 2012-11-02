@@ -43,6 +43,32 @@ The dependency list is therefore:
 - `python-kitchen`_
 
 
+Running a development instance:
+-------------------------------
+
+Clone the source::
+
+ git clone https://github.com/pypingou/fedocal.git
+
+
+Copy the configuration file::
+
+ cp fedocal.cfg.sample fedocal.cfg
+
+Adjust the configuration file (secret key, database URL, admin group...)
+
+
+Create the database scheme::
+
+ python fedocal/fedocallib/model.py
+
+
+Run the server::
+ python fedocal/__init__.py
+
+You should be able to access the server at http://localhost:5000
+
+
 Deploying this project:
 -----------------------
 
@@ -55,19 +81,23 @@ Instruction to deploy this application is available on the
 
 Below is the approach I took to deploy the instance on a local (test) machine.
 
-Retrieve
-the sources::
+
+Retrieve the sources::
 
  cd /srv/
  git clone <repo>
  cd fedocal
 
-Copy the
-configuration file::
+
+Copy the configuration file::
 
  cp fedocal.cfg.sample fedocal.cfg
 
 Adjust the configuration file (secret key, database URL, admin group...)
+
+Create the database scheme::
+
+ python fedocal/fedocallib/model.py
 
 
 Then configure apache::

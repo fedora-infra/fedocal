@@ -73,7 +73,7 @@ section nav {
 
 #agenda table, .my_meetings table {
     border-collapse:collapse;
-    min-width: 800px;
+    min-width: 790px;
 }
 
 .event {

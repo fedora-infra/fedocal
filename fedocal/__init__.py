@@ -267,8 +267,8 @@ def add_meeting(calendar_name):
             int(form.meeting_time_stop.data):
             flask.flash('The start time you have entered is later than'\
                 ' the stop time.')
-            return flask.redirect(flask.url_for('add_meeting',
-                calendar=calendarobj.calendar_name))
+            flask.render_template('add_meeting.html',
+                    calendar=calendarobj,  form=form)
         elif bool(calendarobj.calendar_multiple_meetings) or \
             (bool(calendarobj.calendar_multiple_meetings) == False and \
             fedocallib.agenda_is_free(session,
@@ -300,7 +300,7 @@ def add_meeting(calendar_name):
             except Exception, err:
                 print 'add_meeting:', err
                 flask.flash('Could not add this meeting to this calendar')
-                flask.render_template('add_meeting.html',
+                return flask.render_template('add_meeting.html',
                     calendar=calendarobj,  form=form)
 
             if form.remind_when.data and form.remind_who.data:
@@ -315,7 +315,7 @@ def add_meeting(calendar_name):
                 except Exception, err:
                     print 'add_meeting:', err
                     flask.flash('Could not add this reminder to this meeting')
-                    flask.render_template('add_meeting.html',
+                    return flask.render_template('add_meeting.html',
                         calendar=calendarobj,  form=form)
 
             if form.frequency.data:

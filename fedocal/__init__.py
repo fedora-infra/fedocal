@@ -484,6 +484,15 @@ def view_meeting(meeting_id):
 
     :arg meeting_id: the identifier of the meeting to visualize.
     """
+    return view_meeting_page(meeting_id, True)
+
+
+@APP.route('/meeting/<int:meeting_id>/<int:full>', methods=('GET', 'POST'))
+def view_meeting_page(meeting_id, full):
+    """ View a specific meeting given its identifier.
+
+    :arg meeting_id: the identifier of the meeting to visualize.
+    """
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     meeting = Meeting.by_id(session, meeting_id)
     if not meeting:
@@ -491,9 +500,10 @@ def view_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     calendars = Calendar.get_all(session)
     auth_form = forms.LoginForm()
-    return flask.render_template('view_meeting.html', meeting=meeting,
-        calendars=calendars, title=meeting.meeting_name,
-        auth_form=auth_form)
+    print full
+    return flask.render_template('view_meeting.html', full=full,
+            meeting=meeting, calendars=calendars,
+            title=meeting.meeting_name, auth_form=auth_form)
 
 
 @APP.route('/meeting/delete/<int:meeting_id>', methods=('GET', 'POST'))

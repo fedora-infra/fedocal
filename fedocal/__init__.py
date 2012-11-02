@@ -500,7 +500,6 @@ def view_meeting_page(meeting_id, full):
         return flask.redirect(flask.url_for('index'))
     calendars = Calendar.get_all(session)
     auth_form = forms.LoginForm()
-    print full
     return flask.render_template('view_meeting.html', full=full,
             meeting=meeting, calendars=calendars,
             title=meeting.meeting_name, auth_form=auth_form)

@@ -7,24 +7,6 @@
     <link type="text/css" rel="stylesheet"
         href="{{ url_for('static',
             filename='flick/jquery-ui-1.8.23.custom.css')}}" />
-    <script type="text/javascript"
-        src="{{ url_for('static',
-            filename='jquery-1.8.0.min.js') }}">
-    </script>
-    <script type="text/javascript"
-        src="{{ url_for('static',
-            filename='jquery-ui-1.8.23.custom.min.js') }}">
-    </script>
-    <script type="text/javascript">
-        $(function(){
-            $('#meeting_date').datepicker({
-                dateFormat: "yy-mm-dd",
-            });
-            $('#end_repeats').datepicker({
-                dateFormat: "yy-mm-dd",
-            });
-        });
-    </script>
 {% endblock %}
 
 {% block content %}
@@ -62,4 +44,22 @@
     <input type="button" value="Cancel" onclick="history.back();">
 {{ form.csrf_token }}
 </form>
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='jquery-ui-1.8.23.custom.min.js') }}">
+</script>
+<script type="text/javascript">
+    $(function(){
+        $('#meeting_date').datepicker({
+            dateFormat: "yy-mm-dd",
+        });
+        $('#end_repeats').datepicker({
+            dateFormat: "yy-mm-dd",
+        });
+    });
+</script>
 {% endblock %}

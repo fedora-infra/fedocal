@@ -88,7 +88,7 @@ def index():
             admin=admin)
 
 
-@APP.route('/<calendar_name>')
+@APP.route('/<calendar_name>/')
 def calendar(calendar_name):
     """ Display the current week for a specific calendar.
 
@@ -99,7 +99,7 @@ def calendar(calendar_name):
         day=None)
 
 
-@APP.route('/<calendar_name>/<int:year>/<int:month>/<int:day>')
+@APP.route('/<calendar_name>/<int:year>/<int:month>/<int:day>/')
 def calendar_fullday(calendar_name, year, month, day):
     """ Display the week of a specific date for a specified calendar.
 
@@ -179,7 +179,7 @@ def my_meetings():
         admin=admin)
 
 
-@APP.route('/login', methods=('GET', 'POST'))
+@APP.route('/login/', methods=('GET', 'POST'))
 def auth_login():
     """ Method to log into the application. """
     if flask.g.fas_user:
@@ -194,7 +194,7 @@ def auth_login():
     return flask.redirect(flask.url_for('index'))
 
 
-@APP.route('/logout')
+@APP.route('/logout/')
 def auth_logout():
     """ Method to log out from the application. """
     if not flask.g.fas_user:
@@ -205,7 +205,7 @@ def auth_logout():
 
 
 # CLA + 1 (and admin)
-@APP.route('/calendar/add', methods=('GET', 'POST'))
+@APP.route('/calendar/add/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def add_calendar():
     """ Add a calendar to the database.
@@ -238,7 +238,7 @@ def add_calendar():
 
 
 # CLA + 1
-@APP.route('/<calendar_name>/add', methods=('GET', 'POST'))
+@APP.route('/<calendar_name>/add/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def add_meeting(calendar_name):
     """ Add a meeting to the database.
@@ -361,7 +361,7 @@ def add_meeting(calendar_name):
 
 
 # CLA + 1
-@APP.route('/meeting/edit/<int:meeting_id>', methods=('GET', 'POST'))
+@APP.route('/meeting/edit/<int:meeting_id>/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def edit_meeting(meeting_id):
     """ Edit a specific meeting based on the meeting identifier.
@@ -478,7 +478,7 @@ def edit_meeting(meeting_id):
             calendar=calendarobj, form=form)
 
 
-@APP.route('/meeting/<int:meeting_id>', methods=('GET', 'POST'))
+@APP.route('/meeting/<int:meeting_id>/', methods=('GET', 'POST'))
 def view_meeting(meeting_id):
     """ View a specific meeting given its identifier.
 
@@ -487,7 +487,7 @@ def view_meeting(meeting_id):
     return view_meeting_page(meeting_id, True)
 
 
-@APP.route('/meeting/<int:meeting_id>/<int:full>', methods=('GET', 'POST'))
+@APP.route('/meeting/<int:meeting_id>/<int:full>/', methods=('GET', 'POST'))
 def view_meeting_page(meeting_id, full):
     """ View a specific meeting given its identifier.
 
@@ -505,7 +505,7 @@ def view_meeting_page(meeting_id, full):
             title=meeting.meeting_name, auth_form=auth_form)
 
 
-@APP.route('/meeting/delete/<int:meeting_id>', methods=('GET', 'POST'))
+@APP.route('/meeting/delete/<int:meeting_id>/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def delete_meeting(meeting_id):
     """ Delete a specific meeting given its identifier.

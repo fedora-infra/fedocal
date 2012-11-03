@@ -36,48 +36,61 @@
         {% block content %}{% endblock %}
 
         <aside id="mainmenu">
+            {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
             <ul class="checkmark-list">
                 <li><a href="{{url_for('index')}}">Home</a></li>
             </ul>
+            <div id="accordion">
             {% if calendar %}
             <h4>Calendars</h4>
-                {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
-            <ul class="checkmark-list">
+            <ul id="calendars_menu" class="checkmark-list">
                 {% for calendar in calendars %}
                 <li>
                     <a href="{{url_for('calendar',
                         calendar_name=calendar.calendar_name)}}">
                         {{ calendar.calendar_name }}
                     </a>
+                    <ul>
+                        {% if g.fas_user %}
+                        <li>
+                            <a href="{{ url_for('add_meeting',
+                                calendar_name=calendar.calendar_name) }}">Add a meeting</a>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a href="#">iCal export</a>
+                        </li>
+                        <li>
+                            <a href="#">Contact admin</a>
+                        </li>
+                        </li>
+                    </ul>
                 </li>
                 {% endfor %}
             </ul>
             {% endif %}
             <h4> User </h4>
+            <div>
             {% if not g.fas_user %}
                 <form action="{{ url_for('auth_login') }}" method="post">
                     <p>Log in using your <a href="{{ config.FAS_BASE_URL }}">
-                        Fedora Accounts System</a> account.
+                        <abbr title="Fedora Accounts System">FAS</abbr></a> account.
                     </p>
                     {{ render_field(auth_form.username) }}
                     {{ render_field(auth_form.password) }}
                     <p class="buttons indent">
-                        <input type="submit" class="submit positive" value="Log in">
+                        <input type="submit" class="submit positive button" value="Log in">
                     </p>
                     {{ auth_form.csrf_token }}
                 </form>
             {% else %}
                 <p> Welcome, {{ g.fas_user.username }}</p>
                 <ul class="checkmark-list">
-                    {% if calendar %}
-                    <li><a href="{{ url_for('add_meeting',
-                        calendar_name=calendar.calendar_name) }}"> Add a meeting </a>
-                    </li>
-                    {% endif %}
                     <li><a href="{{ url_for('my_meetings') }}"> Manage your meeting </a></li>
                     <li><a href="{{ url_for('auth_logout') }}"> Log-out </a></li>
                 </ul>
             {% endif %}
+            </div>
             {% if admin %}
                 <h4> Admin </h4>
                 <ul>
@@ -86,8 +99,8 @@
                     </li>
                 </ul>
             {% endif %}
+            </div>
         </aside>
-    </div>
         <footer>
             <a href="#">Fedocal</a> - <a href="#">License</a> - <a href="{{ url_for('api') }}">API</a> - <a href="#">Author</a> - <a href="#">Website</a>
         </footer>
@@ -97,6 +110,16 @@
     <script type="text/javascript"
         src="{{ url_for('static',
             filename='jquery-1.8.0.min.js') }}">
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            $('#calendars_menu').menu();
+            $('.button').button();
+            $('#accordion').accordion({
+                heightStyle: 'content',
+                collapsible: true
+            });
+        });
     </script>
     {% endblock %}
 </body>

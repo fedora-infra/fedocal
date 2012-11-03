@@ -172,3 +172,12 @@ section nav {
 #weeks {
     float:right;
 }
+
+/** Menu */
+.ui-menu-item ul {
+    margin-left: 2px;
+}
+
+.ui-menu-item {
+    white-space: nowrap;
+}

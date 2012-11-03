@@ -45,6 +45,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from fedocallib import model
 
+DB_PATH = '%s/test.db' %(os.path.dirname(
+                                    os.path.abspath(__file__)))
+
 
 class Modeltests(unittest.TestCase):
     """ Model tests. """
@@ -56,7 +59,13 @@ class Modeltests(unittest.TestCase):
 
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
-        self.session = model.create_tables('sqlite:///:memory:')
+        self.session = model.create_tables('sqlite:///%s' % DB_PATH)
+
+    def tearDown(self):
+        """ Remove the test.db database if there is one. """
+        if os.path.exists(DB_PATH):
+            os.unlink(DB_PATH)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Modeltests)

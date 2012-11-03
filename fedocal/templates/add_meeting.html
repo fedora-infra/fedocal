@@ -3,12 +3,6 @@
 
 {% set title_extent = ('Add new meeting to "%s"') % calendar.calendar_name %}
 
-{% block head %}
-    <link type="text/css" rel="stylesheet"
-        href="{{ url_for('static',
-            filename='flick/jquery-ui-1.9.1.custom.css')}}" />
-{% endblock %}
-
 {% block content %}
 
 <form action="" method="post">

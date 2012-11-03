@@ -7,6 +7,9 @@
     <title>{% block title %}{% endblock %} - Fedocal</title>
     <link rel="stylesheet" type="text/css" media="screen"
         href="{{ url_for('static', filename='fedocal.css') }}" />
+    <link type="text/css" rel="stylesheet"
+        href="{{ url_for('static',
+            filename='fedocal/jquery-ui-1.9.1.custom.css')}}" />
     {% block head %}{% endblock %}
 </head>
 <body>

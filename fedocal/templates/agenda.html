@@ -2,12 +2,6 @@
 
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
-{% block head %}
-    <link type="text/css" rel="stylesheet"
-        href="{{ url_for('static',
-            filename='flick/jquery-ui-1.9.1.custom.css')}}" />
-{% endblock %}
-
 {% block content %}
 <section>
 {% if calendar %}

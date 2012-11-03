@@ -2,13 +2,6 @@
 
 {% block title %} Edit meeting {% endblock %}
 
-{% block head %}
-    <link type="text/css" rel="stylesheet"
-        href="{{ url_for('static',
-            filename='flick/jquery-ui-1.9.1.custom.css')}}" />
-{% endblock %}
-
-
 {% set title_extent = ('Edit meeting "%s"') % meeting.calendar_name %}
 
 {% block content %}

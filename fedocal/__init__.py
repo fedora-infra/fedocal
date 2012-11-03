@@ -46,7 +46,7 @@ from fedocallib.model import (Calendar, Meeting, Reminder,
 import calendar as pycalendar
 
 CONFIG = ConfigParser.ConfigParser()
-if os.path.exists('/etc/fedocal.cfg'):
+if os.path.exists('/etc/fedocal.cfg'):  # pragma: no cover
     CONFIG.readfp(open('/etc/fedocal.cfg'))
 else:
     CONFIG.readfp(open(os.path.join(os.path.dirname(
@@ -702,6 +702,6 @@ def api_place(region, calendar_name, start_date, end_date):
     return flask.Response(output)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     APP.debug = True
     APP.run()

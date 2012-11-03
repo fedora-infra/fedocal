@@ -115,7 +115,7 @@ and put in this file::
 Then create the file /var/www/wsgi/fedocal.wsgi with::
 
  import sys
- sys.path.insert(0, '/mnt/fedocal/')
+ sys.path.insert(0, '/srv/fedocal/')
  
  import fedocal
  application = fedocal.APP

@@ -216,18 +216,18 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
     return meetings
 
 
-def get_meetings_by_date(session, calendar, start_date, end_date):
+def get_meetings_by_date(session, calendar_name, start_date, end_date):
     """ Return a list of meetings which have or will occur in between
     the two provided dates.
 
     :arg session: the database session to use
-    :arg calendar: the name of the calendar of interest.
+    :arg calendar_name: the name of the calendar of interest.
     :arg start_date: the date from which we would like to retrieve the
         meetings (this day is included in the selection).
     :arg start_date: the date until which we would like to retrieve the
         meetings (this day is excluded from the selection).
     """
-    calendar = Calendar.by_id(session, calendar)
+    calendar = Calendar.by_id(session, calendar_name)
     return Meeting.get_by_date(session, calendar, start_date,
         end_date)
 

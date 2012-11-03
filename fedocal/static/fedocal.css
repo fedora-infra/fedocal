@@ -21,7 +21,7 @@ a {
     text-decoration: none;
 }
 
-header#mainheader {
+header#mainheader, footer {
     color: white;
     background: #426ead; /* Old browsers */
     background: -moz-linear-gradient(top, #426ead 0%, #1e4a88 100%); /* FF3.6+ */
@@ -33,6 +33,25 @@ header#mainheader {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#426ead', endColorstr='#1e4a88',GradientType=0 ); /* IE6-9 */
     padding: .5em;
     margin-bottom: .5em;
+}
+
+footer a {
+    color: white;
+    display: inline-block;
+    padding: .3em 1em;
+}
+
+footer a:hover {
+    background-color: rgba(255, 255, 255, .2);
+}
+
+footer {
+    padding: .2em .5em;
+    text-align: center;
+    margin: 0;
+    left: 0;
+    right:0;
+    /*box-shadow: 0 5px 5px -3px black;*/
 }
 
 header h1,

@@ -396,7 +396,8 @@ class Recursive(BASE):
 
     __tablename__ = 'recursivity'
     recursion_id = Column(Integer, primary_key=True)
-    recursion_frequency = Column(Enum('7', '14'), nullable=False)
+    recursion_frequency = Column(Enum('7', '14'), nullable=False,
+        name='recursion_frequency')
     recursion_start = Column(Date, nullable=False,
         default=datetime.utcnow().date())
     recursion_ends = Column(Date,
@@ -437,7 +438,7 @@ class Reminder(BASE):
     __tablename__ = 'reminders'
     reminder_id = Column(Integer, primary_key=True)
     reminder_offset = Column(Enum('H-12', 'H-24', 'H-48', 'H-168'),
-        nullable=False)
+        nullable=False, name='reminder_offset')
     reminder_to = Column(String(500), nullable=False)
     reminder_text = Column(Text)
 

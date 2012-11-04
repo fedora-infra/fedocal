@@ -353,14 +353,14 @@ def delete_recursive_meeting(session, meeting):
     :arg meeting: the Meeting object from which are removed all further
         meetings.
     """
-    today = datetime.utcnow()
+    today = date.today()
     if not meeting.recursion_frequency \
-            or meeting.recursion_ends < today.date():
+            or meeting.recursion_ends < today:
         return
     else:
-        meeting.recursion_ends = today.date()
+        meeting.recursion_ends = today
         meeting.save(session)
-        session.commit(meeting)
+        session.commit()
 
 
 def _generate_date_rounded_to_the_hour(meetingdate, offset):

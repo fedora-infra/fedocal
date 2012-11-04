@@ -355,6 +355,22 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
+    def test_delete_recursive_meeting(self):
+        """ Test the delete_recursive_meeting function. """
+        self.__setup_meeting()
+        meeting = model.Meeting.by_id(self.session, 6)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'Another test meeting2')
+        self.assertEqual(meeting.recursion_ends,
+            TODAY + timedelta(days=90))
+
+        fedocallib.delete_recursive_meeting(self.session, meeting)
+
+        meeting = model.Meeting.by_id(self.session, 6)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'Another test meeting2')
+        self.assertEqual(meeting.recursion_ends, date.today())
+
     def test_agenda_is_free(self):
         """ Test the agenda_is_free function. """
         self.__setup_meeting()

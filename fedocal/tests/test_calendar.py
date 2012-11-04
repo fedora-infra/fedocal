@@ -65,6 +65,13 @@ class Calendartests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        obj = model.Calendar('test_calendar3',
+            'This is the third test calendar',
+            'packager', True)
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
         obj = model.Calendar('test_calendar4',
             'This is yet another test calendar',
             'packager', True)
@@ -115,9 +122,11 @@ class Calendartests(Modeltests):
         self.test_init_calendar()
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 3)
+        self.assertEqual(len(obj), 4)
         self.assertEqual(obj[0].calendar_name, 'test_calendar')
         self.assertEqual(obj[1].calendar_name, 'test_calendar2')
+        self.assertEqual(obj[2].calendar_name, 'test_calendar3')
+        self.assertEqual(obj[3].calendar_name, 'test_calendar4')
 
     def test_get_all_calendar_empty_db(self):
         """ Test the Calendar get_all function when the DB is empty. """

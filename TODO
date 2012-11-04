@@ -1,6 +1,7 @@
 - Unit-tests, unit-tests and more unit-tests
 
 - Add documentation on how to install/deploy it
+  - Port to Flask configuration management
 - Add setup.py
 - Add license
 - Complete the code documentation

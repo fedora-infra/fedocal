@@ -27,6 +27,7 @@ from sqlalchemy.orm import sessionmaker
 from week import Week
 from model import Calendar, Reminder, Meeting
 
+import calendar as pycalendar
 
 MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
         'August', 'September', 'October', 'November', 'December']
@@ -512,3 +513,9 @@ def add_meetings_to_vcal(ical, meetings):
     """
     for meeting in meetings:
         add_meeting_to_vcal(ical, meeting)
+
+def getHtmlMonthlyCal():
+    htmlcal = pycalendar.HTMLCalendar()
+    curdate = date.today()
+    curmonth_cal_nf = htmlcal.formatmonth(curdate.year, curdate.month)
+    return curmonth_cal_nf

@@ -58,7 +58,8 @@
                         </li>
                         {% endif %}
                         <li>
-                            <a href="#">iCal export</a>
+                            <a href="{{url_for('ical_out',
+                calendar_name=calendar.calendar_name)}}">iCal export</a>
                         </li>
                         <li>
                             <a href="#">Contact admin</a>

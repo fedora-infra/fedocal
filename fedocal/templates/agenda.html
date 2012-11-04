@@ -82,9 +82,9 @@
         $('.event').click(function(){
             var _id = $(this).attr('id');
             var _meetId = _id.replace('meeting_', '');
-            var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0','/');
+            var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
             $.ajax({
-                url: _url + _meetId + '/0',
+                url: _url + _meetId + '/0/',
                 type: 'GET',
                 dataType: 'html',
                 success: function(res) {

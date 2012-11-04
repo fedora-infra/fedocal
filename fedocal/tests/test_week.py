@@ -47,7 +47,7 @@ from fedocallib import model
 from fedocallib import week
 
 from tests import Modeltests
-from test_meeting import Meetingtests
+from test_meeting import Meetingtests, TODAY
 
 
 class Weektests(Modeltests):
@@ -69,32 +69,29 @@ class Weektests(Modeltests):
     def test_init_week(self):
         """ Test the Week init function. """
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        today = date.today()
-        end_date = today + timedelta(days=7)
-        weekobj = week.Week(self.session, calendar, today)
+        end_date = TODAY + timedelta(days=7)
+        weekobj = week.Week(self.session, calendar, TODAY)
 
         self.assertNotEqual(weekobj, None)
-        self.assertEqual(weekobj.start_date, today)
+        self.assertEqual(weekobj.start_date, TODAY)
         self.assertEqual(weekobj.stop_date, end_date)
-        self.assertEqual(len(weekobj.meetings), 2)
+        self.assertEqual(len(weekobj.meetings), 4)
 
     def test_repr_week(self):
         """ Test if the week string representation is correct. """
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        today = date.today()
-        end_date = today + timedelta(days=7)
-        weekobj = week.Week(self.session, calendar, today)
+        end_date = TODAY + timedelta(days=7)
+        weekobj = week.Week(self.session, calendar, TODAY)
 
         self.assertNotEqual(weekobj, None)
         self.assertEqual(str(weekobj), "<Week('%s' from '%s' to '%s')>" % (
-            calendar.calendar_name, today, end_date))
+            calendar.calendar_name, TODAY, end_date))
 
     def test_meeting_in_week(self):
         """ Test that the meetings in the week are correct function. """
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        today = date.today()
-        end_date = today + timedelta(days=7)
-        weekobj = week.Week(self.session, calendar, today)
+        end_date = TODAY + timedelta(days=7)
+        weekobj = week.Week(self.session, calendar, TODAY)
 
         # Test the meeting in the week
         self.assertNotEqual(weekobj, None)

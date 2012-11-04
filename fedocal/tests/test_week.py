@@ -75,7 +75,7 @@ class Weektests(Modeltests):
         self.assertNotEqual(weekobj, None)
         self.assertEqual(weekobj.start_date, TODAY)
         self.assertEqual(weekobj.stop_date, end_date)
-        self.assertEqual(len(weekobj.meetings), 4)
+        self.assertEqual(len(weekobj.meetings), 2)
 
     def test_repr_week(self):
         """ Test if the week string representation is correct. """

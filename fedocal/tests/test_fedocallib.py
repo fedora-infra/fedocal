@@ -154,14 +154,14 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(week.calendar.calendar_name, 'test_calendar')
         self.assertNotEqual(week.meetings, None)
         self.assertEqual(len(week.meetings), 2)
-        self.assertEqual(week.meetings[1].meeting_name,
-            'Another test meeting2')
-        self.assertEqual(week.meetings[1].meeting_information,
-            'This is a test meeting with recursion2')
         self.assertEqual(week.meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
         self.assertEqual(week.meetings[0].meeting_information,
             'This is a test meeting')
+        self.assertEqual(week.meetings[1].meeting_name,
+            'Another test meeting2')
+        self.assertEqual(week.meetings[1].meeting_information,
+            'This is a test meeting with recursion2')
 
     def test_get_week_empty(self):
         """ Test the get_week function with no meetings. """
@@ -319,8 +319,8 @@ class Fedocallibtests(Modeltests):
         """ Test the get_future_single_meeting_of_user function on a
         empty meeting table. """
         self.__setup_calendar()
-        meetings = fedocallib.get_future_single_meeting_of_user(self.session,
-            'pingou')
+        meetings = fedocallib.get_future_single_meeting_of_user(
+            self.session, 'pingou')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
@@ -328,17 +328,21 @@ class Fedocallibtests(Modeltests):
     def test_get_future_regular_meeting_of_user(self):
         """ Test the get_future_regular_meeting_of_user function. """
         self.__setup_meeting()
-        meetings = fedocallib.get_future_regular_meeting_of_user(self.session,
-            'pingou')
+        meetings = fedocallib.get_future_regular_meeting_of_user(
+            self.session, 'pingou')
         self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 2)
+        self.assertEqual(len(meetings), 3)
         self.assertEqual(meetings[0].meeting_name,
-            'Another test meeting')
+            'Another test meeting2')
         self.assertEqual(meetings[0].meeting_information,
-            'This is a test meeting with recursion')
+            'This is a test meeting with recursion2')
         self.assertEqual(meetings[1].meeting_name,
-            'Test meeting with reminder and recursion')
+            'Another test meeting')
         self.assertEqual(meetings[1].meeting_information,
+            'This is a test meeting with recursion')
+        self.assertEqual(meetings[2].meeting_name,
+            'Test meeting with reminder and recursion')
+        self.assertEqual(meetings[2].meeting_information,
             'This is a test meeting with recursion and reminder')
 
     def test_get_future_regular_meeting_of_user_empty(self):

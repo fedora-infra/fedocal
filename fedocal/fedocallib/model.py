@@ -19,6 +19,7 @@ import pkg_resources
 
 from datetime import datetime
 from datetime import date
+from datetime import timedelta
 
 from sqlalchemy import (
     Boolean,
@@ -265,11 +266,13 @@ class Meeting(BASE):
             (Meeting.meeting_date < stop_date)).all()
 
     @classmethod
-    def get_active_regular_meeting(cls, session, end_date):
+    def get_active_regular_meeting(cls, session, start_date, end_date):
         """ Retrieve the list of meetings with a recursion which
-        end_date is not past the provided end_date.
+        end_date is not past the provided end_date and starting before
+        the end of the time considered.
         """
         meetings = session.query(cls).filter(and_
+                (Meeting.meeting_date <= end_date),
                 (Meeting.recursion_ends >= end_date),
                 (Meeting.recursion_frequency != None)
             ).order_by(Meeting.meeting_date).all()
@@ -323,13 +326,13 @@ class Meeting(BASE):
 
     @classmethod
     def get_future_regular_meeting_of_user(cls, session, username,
-        end_date=date.today()):
+        start_date=date.today()):
         """ Retrieve the list of meetings which specified username
         is among the managers and which end date is older or egual to
         specified one (which by default is today).
         """
         meetings = session.query(cls).filter(and_
-                (Meeting.recursion_ends >= end_date),
+                (Meeting.recursion_ends >= start_date),
                 (Meeting.recursion_frequency != None),
                 (Meeting.meeting_manager.like('%%%s%%' % username))
             ).order_by(Meeting.meeting_date).all()

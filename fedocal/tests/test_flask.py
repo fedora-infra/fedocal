@@ -156,7 +156,7 @@ class Flasktests(Modeltests):
         """ Test the view_meeting function. """
         self.__setup_db()
 
-        rv = self.app.get('/meeting/3/')
+        rv = self.app.get('/meeting/4/')
         self.assertEqual(rv.status_code, 200)
         self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
             in rv.data)
@@ -169,7 +169,7 @@ class Flasktests(Modeltests):
         """ Test the view_meeting_page function. """
         self.__setup_db()
 
-        rv = self.app.get('/meeting/3/1/')
+        rv = self.app.get('/meeting/4/1/')
         self.assertEqual(rv.status_code, 200)
         self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
             in rv.data)
@@ -178,7 +178,7 @@ class Flasktests(Modeltests):
         self.assertTrue('This is a test meeting at the same time' in
             rv.data)
 
-        rv = self.app.get('/meeting/3/0/')
+        rv = self.app.get('/meeting/4/0/')
         self.assertEqual(rv.status_code, 200)
         self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
             not in rv.data)

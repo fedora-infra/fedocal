@@ -109,7 +109,7 @@ class Fedocallibtests(Modeltests):
         self.__setup_calendar()
         calendars = fedocallib.get_calendars(self.session)
         self.assertNotEqual(calendars, None)
-        self.assertEqual(len(calendars), 3)
+        self.assertEqual(len(calendars), 4)
         self.assertEqual(calendars[0].calendar_name, 'test_calendar')
         self.assertEqual(calendars[0].calendar_manager_group,
             'fi-apprentice')
@@ -358,7 +358,7 @@ class Fedocallibtests(Modeltests):
     def test_delete_recursive_meeting(self):
         """ Test the delete_recursive_meeting function. """
         self.__setup_meeting()
-        meeting = model.Meeting.by_id(self.session, 6)
+        meeting = model.Meeting.by_id(self.session, 7)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Another test meeting2')
         self.assertEqual(meeting.recursion_ends,
@@ -366,10 +366,28 @@ class Fedocallibtests(Modeltests):
 
         fedocallib.delete_recursive_meeting(self.session, meeting)
 
-        meeting = model.Meeting.by_id(self.session, 6)
+        meeting = model.Meeting.by_id(self.session, 7)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Another test meeting2')
         self.assertEqual(meeting.recursion_ends, date.today())
+
+    def test_delete_recursive_meeting_past(self):
+        """ Test the delete_recursive_meeting for past end_datefunction.
+        """
+        self.__setup_meeting()
+        meeting = model.Meeting.by_id(self.session, 3)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'test-meeting3')
+        self.assertEqual(meeting.recursion_ends,
+            TODAY - timedelta(days=7))
+
+        fedocallib.delete_recursive_meeting(self.session, meeting)
+
+        meeting = model.Meeting.by_id(self.session, 3)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'test-meeting3')
+        self.assertEqual(meeting.recursion_ends,
+            TODAY - timedelta(days=7))
 
     def test_agenda_is_free(self):
         """ Test the agenda_is_free function. """
@@ -399,17 +417,17 @@ class Fedocallibtests(Modeltests):
         self.assertFalse(fedocallib.is_user_managing_in_calendar(
             self.session, 'test_calendar', user))
 
-        calendar = model.Calendar('test_calendar3',
-                    'This is a test calendar2', '')
+        calendar = model.Calendar('test_calendar30',
+                    'This is a test calendar30', '')
         calendar.save(self.session)
         self.session.commit()
 
         user = FakeUser(['packager', 'infrastructure'])
         self.assertTrue(fedocallib.is_user_managing_in_calendar(
-            self.session, 'test_calendar3', user))
+            self.session, 'test_calendar30', user))
         user = FakeUser([])
         self.assertTrue(fedocallib.is_user_managing_in_calendar(
-            self.session, 'test_calendar3', user))
+            self.session, 'test_calendar30', user))
 
     def test_retrieve_meeting_to_remind(self):
         """ Test the retrieve_meeting_to_remind function. """

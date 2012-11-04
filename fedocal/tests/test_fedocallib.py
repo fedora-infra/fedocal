@@ -703,7 +703,7 @@ class Fedocallibtests(Modeltests):
         'cellpadding="0" cellspacing="0" class="month">\n<tr><th '\
         'colspan="7" class="month">'))
         self.assertTrue(output.endswith('<td class="noday">&nbsp;</td>'\
-        '<td class="noday">&nbsp;</td></tr>\n</table>\n')
+        '<td class="noday">&nbsp;</td></tr>\n</table>\n'))
 
 
 if __name__ == '__main__':

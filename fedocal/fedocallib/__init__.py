@@ -27,7 +27,7 @@ from sqlalchemy.orm import sessionmaker
 from week import Week
 from model import Calendar, Reminder, Meeting
 
-import calendar as pycalendar
+from fedora_calendar import FedocalCalendar
 
 MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
         'August', 'September', 'October', 'November', 'December']
@@ -528,6 +528,7 @@ def get_html_monthly_cal(month = None, year = None):
         if month is None:
             month = curdate.month
 
-    htmlcal = pycalendar.HTMLCalendar()
+    htmlcal = FedocalCalendar()
     curmonth_cal_nf = htmlcal.formatmonth(year, month)
+
     return curmonth_cal_nf

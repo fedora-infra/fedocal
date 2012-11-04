@@ -49,7 +49,7 @@ from fedocallib import model
 from tests import Modeltests
 
 result_201211_html = """
-<table border="0" cellpadding="0" cellspacing="0" class="month">
+<table class="month">
 <tr><th colspan="7" class="month">November 2012</th></tr>
 <tr><th class="mon">Mon</th><th class="tue">Tue</th><th class="wed">Wed</th><th class="thu">Thu</th><th class="fri">Fri</th><th class="sat">Sat</th><th class="sun">Sun</th></tr>
 <tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td><td class="sat">3</td><td class="sun">4</td></tr>

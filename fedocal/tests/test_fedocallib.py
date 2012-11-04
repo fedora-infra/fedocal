@@ -78,18 +78,23 @@ class Fedocallibtests(Modeltests):
     """ Fedocallib tests. """
 
     def __setup_calendar(self):
+        """ Set up basic calendar information. """
         from test_calendar import Calendartests
         cal = Calendartests('test_init_calendar')
         cal.session = self.session
         cal.test_init_calendar()
 
     def __setup_meeting(self):
+        """ Set up basic calendar information and add some meetings in
+        them. """
         from test_meeting import Meetingtests
         meeting = Meetingtests('test_init_meeting')
         meeting.session = self.session
         meeting.test_init_meeting()
 
     def __setup_meeting_today(self):
+        """ Set up basic calendar information and add some meetings in
+        them (at the date of today). """
         import test_meeting
         test_meeting.TODAY = date.today()
         self.__setup_meeting()

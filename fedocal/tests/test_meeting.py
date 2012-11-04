@@ -59,12 +59,13 @@ class Meetingtests(Modeltests):
         caltest.session = self.session
         caltest.test_init_calendar()
         obj = model.Meeting(
-            'Fedora-fr-test-meeting', 'pingou, shaiton',
-            TODAY, time(19, 00), time(20, 00),
-            'This is a test meeting',
-            'test_calendar',
-            None,
-            None)
+            meeting_name='Fedora-fr-test-meeting',
+            meeting_manager='pingou, shaiton',
+            meeting_date=TODAY,
+            meeting_time_start=time(19, 00),
+            meeting_time_stop=time(20, 00),
+            meeting_information='This is a test meeting',
+            calendar_name='test_calendar')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -77,6 +78,21 @@ class Meetingtests(Modeltests):
             meeting_time_stop=time(16, 00),
             meeting_information='This is another test meeting',
             calendar_name='test_calendar')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        # Meeting with end_recursion in the past
+        obj = model.Meeting(
+            meeting_name='test-meeting3',
+            meeting_manager='test2',
+            meeting_date=TODAY - timedelta(days=16),
+            meeting_time_start=time(14, 00),
+            meeting_time_stop=time(16, 00),
+            meeting_information='Test meeting with past end_recursion.',
+            calendar_name='test_calendar3',
+            recursion_frequency=7,
+            recursion_ends=TODAY - timedelta(days=7))
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)

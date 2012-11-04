@@ -265,6 +265,17 @@ class Meeting(BASE):
             (Meeting.meeting_date < stop_date)).all()
 
     @classmethod
+    def get_active_regular_meeting(cls, session, end_date):
+        """ Retrieve the list of meetings with a recursion which
+        end_date is not past the provided end_date.
+        """
+        meetings = session.query(cls).filter(and_
+                (Meeting.recursion_ends >= end_date),
+                (Meeting.recursion_frequency != None)
+            ).order_by(Meeting.meeting_date).all()
+        return meetings
+
+    @classmethod
     def get_by_date_and_region(cls, session, calendar, start_date,
         stop_date, region):
         """ Retrieve the list of meetings in a region between two date.
@@ -300,10 +311,10 @@ class Meeting(BASE):
 
     @classmethod
     def get_future_single_meeting_of_user(cls, session, username,
-        start_date):
+        start_date=date.today()):
         """ Retrieve the list of meetings which specified username
         is among the managers and which date is newer or egual than the
-        specified one.
+        specified one (which defaults to today).
         """
         return session.query(cls).filter(and_
             (Meeting.meeting_date >= start_date),
@@ -312,13 +323,13 @@ class Meeting(BASE):
 
     @classmethod
     def get_future_regular_meeting_of_user(cls, session, username,
-        start_date):
+        end_date=date.today()):
         """ Retrieve the list of meetings which specified username
-        is among the managers and which date is newer or egual than the
-        specified one.
+        is among the managers and which end date is older or egual to
+        specified one (which by default is today).
         """
         meetings = session.query(cls).filter(and_
-                (Meeting.meeting_date >= start_date),
+                (Meeting.recursion_ends >= end_date),
                 (Meeting.recursion_frequency != None),
                 (Meeting.meeting_manager.like('%%%s%%' % username))
             ).order_by(Meeting.meeting_date).all()

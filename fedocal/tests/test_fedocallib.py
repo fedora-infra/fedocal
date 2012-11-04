@@ -697,7 +697,13 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(len(obj), 0)
 
     def test_get_html_monthly_cal(self):
-        self.assertEqual('string' in output)
+        """ Test the get_html_monthly_call function. """
+        output = fedocallib.get_html_monthly_cal()
+        self.assertTrue(output.startswith('<table border="0" '\
+        'cellpadding="0" cellspacing="0" class="month">\n<tr><th '\
+        'colspan="7" class="month">'))
+        self.assertTrue(output.endswith('<td class="noday">&nbsp;</td>'\
+        '<td class="noday">&nbsp;</td></tr>\n</table>\n')
 
 
 if __name__ == '__main__':

@@ -124,7 +124,8 @@ def calendar_fullday(calendar_name, year, month, day):
     admin = is_admin()
     month_name = fedocallib.MONTH[week_start.month - 1]
     htmlcal = pycalendar.HTMLCalendar()
-    curmonth_cal = htmlcal.formatmonth(week_start.year, week_start.month)
+    curdate = datetime.date.today()
+    curmonth_cal = htmlcal.formatmonth(curdate.year, curdate.month)
     return flask.render_template('agenda.html',
         calendar=calendarobj,
         calendars=calendars,

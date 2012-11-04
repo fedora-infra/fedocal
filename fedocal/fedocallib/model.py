@@ -135,18 +135,19 @@ class Meeting(BASE):
     meeting_time_start = Column(Time, default=datetime.utcnow().time())
     meeting_time_stop = Column(Time, default=datetime.utcnow().time())
     meeting_information = Column(Text)
+    meeting_region = Column(String(10), default=None)
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
         nullable=True)
     reminder = relationship("Reminder")
-    recursion_id = Column(Integer, ForeignKey('recursivity.recursion_id'),
-        nullable=True)
-    recursion = relationship("Recursive")
-    meeting_region = Column(String(10), default=None)
+
+    recursion_frequency = Column(Integer, nullable=True, default=None)
+    recursion_ends = Column(Date, nullable=True, default=None)
 
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_time_start, meeting_time_stop,
-        meeting_information, calendar_name, reminder_id, recursion_id,
-        meeting_region=None):
+        meeting_information, calendar_name, reminder_id=None,
+        meeting_region=None, recursion_frequency=None,
+        recursion_ends=None):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
@@ -156,8 +157,9 @@ class Meeting(BASE):
         self.meeting_information = meeting_information
         self.calendar_name = calendar_name
         self.reminder_id = reminder_id
-        self.recursion_id = recursion_id
         self.meeting_region = meeting_region
+        self.recursion_frequency = recursion_frequency
+        self.recursion_ends = recursion_ends
 
     def __repr__(self):
         """ Representation of the Reminder object when printed.
@@ -215,16 +217,18 @@ class Meeting(BASE):
             meeting.meeting_time_stop = self.meeting_time_stop
             meeting.calendar_name = self.calendar_name
             meeting.reminder_id = self.reminder_id
-            meeting.recursion_id = self.recursion_id
             meeting.meeting_region = self.meeting_region
+            meeting.recursion_frequency = self.recursion_frequency
+            meeting.recursion_ends = self.recursion_ends
         else:
             meeting = Meeting(self.meeting_name, self.meeting_manager,
                 self.meeting_date, self.meeting_time_start,
                 self.meeting_time_stop, self.meeting_information,
                 self.calendar_name,
                 self.reminder_id,
-                self.recursion_id,
-                self.meeting_region)
+                self.meeting_region,
+                self.recursion_frequency,
+                self.recursion_ends)
         return meeting
 
     @classmethod
@@ -234,49 +238,6 @@ class Meeting(BASE):
         :return None if no calendar matched this identifier.
         """
         return session.query(cls).get(identifier)
-
-    @classmethod
-    def get_future_meetings_of_recursion(cls, session, meeting):
-        """ Return the list of meetings which are in the future and
-        associated with a specific recursivity.
-        """
-        return session.query(cls).filter(and_
-            (Meeting.calendar == meeting.calendar),
-            (Meeting.meeting_date >= meeting.meeting_date),
-            (Meeting.recursion == meeting.recursion)).all()
-
-    @classmethod
-    def get_last_meeting_of_recursion(cls, session, meeting):
-        """ Return the last meeting (by date) of associated with this
-        recursion identifier."""
-        try:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == meeting.calendar),
-                (Meeting.recursion == meeting.recursion)
-                ).order_by(Meeting.meeting_date.desc()).limit(1).one()
-        except NoResultFound:
-            return None
-
-    @classmethod
-    def get_meetings_past_end_of_recursion(cls, session, meeting):
-        """ Return the list of meetings which are associated with a
-        specific recursivity but are later than the end of the
-        recursion.
-        """
-        return session.query(cls).filter(and_
-            (Meeting.calendar == meeting.calendar),
-            (Meeting.meeting_date > meeting.recursion.recursion_ends),
-            (Meeting.recursion == meeting.recursion)).all()
-
-    @classmethod
-    def get_meetings_of_recursion(cls, session, meeting):
-        """ Return the list of meetings which are associated with a
-        specific recursion.
-        """
-        return session.query(cls).filter(and_
-            (Meeting.calendar == meeting.calendar),
-            (Meeting.meeting_date > meeting.meeting_date),
-            (Meeting.recursion == meeting.recursion)).all()
 
     @classmethod
     def get_managers(cls, session, identifier):
@@ -346,7 +307,7 @@ class Meeting(BASE):
         """
         return session.query(cls).filter(and_
             (Meeting.meeting_date >= start_date),
-            (Meeting.recursion == None),
+            (Meeting.recursion_frequency == None),
             (Meeting.meeting_manager.like('%%%s%%' % username))).all()
 
     @classmethod
@@ -356,18 +317,11 @@ class Meeting(BASE):
         is among the managers and which date is newer or egual than the
         specified one.
         """
-        recursive_meetings = session.query(distinct(cls.recursion_id)
-            ).filter(and_
+        meetings = session.query(cls).filter(and_
                 (Meeting.meeting_date >= start_date),
-                (Meeting.recursion != None),
+                (Meeting.recursion_frequency != None),
                 (Meeting.meeting_manager.like('%%%s%%' % username))
-            ).all()
-        meetings = []
-        for recursive_meeting in recursive_meetings:
-            meetings.extend(session.query(cls).filter(and_
-                (Meeting.meeting_date >= start_date),
-                (Meeting.recursion_id == recursive_meeting[0])
-                ).order_by(Meeting.meeting_date).limit(4).all())
+            ).order_by(Meeting.meeting_date).all()
         return meetings
 
     @classmethod
@@ -385,47 +339,6 @@ class Meeting(BASE):
                 (Meeting.meeting_date == start_date),
                 (Meeting.meeting_time_start == start_time),
                 (Meeting.reminder_id.in_(reminders))).all()
-
-
-class Recursive(BASE):
-    """ recursivity table.
-
-    Store the information about the recursivity that can be set to a
-    meeting.
-    """
-
-    __tablename__ = 'recursivity'
-    recursion_id = Column(Integer, primary_key=True)
-    recursion_frequency = Column(Enum('7', '14',
-        name='recursion_frequency'), nullable=False)
-    recursion_start = Column(Date, nullable=False,
-        default=datetime.utcnow().date())
-    recursion_ends = Column(Date,
-        default=date(2121, 12, 31), nullable=False)
-
-    def __init__(self, recursion_frequency, recursion_ends):
-        """ Constructor instanciating the defaults values. """
-        self.recursion_frequency = recursion_frequency
-        self.recursion_ends = recursion_ends
-
-    def __repr__(self):
-        """ Representation of the Reminder object when printed.
-        """
-        return "<Recursion(From '%s' to '%s' every '%s')>" % (
-            self.recursion_start, self.recursion_ends,
-            self.recursion_frequency)
-
-    def save(self, session):
-        """ Save the object into the database. """
-        session.add(self)
-
-    @classmethod
-    def by_id(cls, session, identifier):
-        """ Retrieve a Reminder object from the database based on its
-        identifier.
-        :return None if no calendar matched this identifier.
-        """
-        return session.query(cls).get(identifier)
 
 
 class Reminder(BASE):

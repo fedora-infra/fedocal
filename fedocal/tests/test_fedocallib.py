@@ -48,7 +48,7 @@ import fedocallib
 from fedocallib import model
 from tests import Modeltests
 
-result_201211_html = """
+RESULT_201211_HTML = """
 <table class="month">
 <tr><th colspan="7" class="month">November 2012</th></tr>
 <tr><th class="mon">Mon</th><th class="tue">Tue</th><th class="wed">Wed</th><th class="thu">Thu</th><th class="fri">Fri</th><th class="sat">Sat</th><th class="sun">Sun</th></tr>
@@ -59,6 +59,9 @@ result_201211_html = """
 <tr><td class="mon">26</td><td class="tue">27</td><td class="wed">28</td><td class="thu">29</td><td class="fri">30</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td></tr>
 </table>
 """
+TODAY = fedocallib.get_start_week(date.today().year, date.today().month,
+    date.today().day) + timedelta(days=2)
+
 
 class FakeUser(object):
     """ Fake user used to test the fedocallib library. """
@@ -85,6 +88,11 @@ class Fedocallibtests(Modeltests):
         meeting = Meetingtests('test_init_meeting')
         meeting.session = self.session
         meeting.test_init_meeting()
+
+    def __setup_meeting_today(self):
+        import test_meeting
+        test_meeting.TODAY = date.today()
+        self.__setup_meeting()
 
     def test_create_session(self):
         """ Test the create_session function. """
@@ -191,7 +199,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(cnt, 6)
         self.assertEqual(meetings['15:16'][0], None)
 
-        new_day = date.today() + timedelta(days=10)
+        new_day = TODAY + timedelta(days=10)
         meetings = fedocallib.get_meetings(self.session, calendar,
             new_day.year, new_day.month, new_day.day)
         self.assertNotEqual(meetings, None)
@@ -269,16 +277,17 @@ class Fedocallibtests(Modeltests):
 
     def test_get_past_meeting_of_user(self):
         """ Test the get_past_meeting_of_user function. """
-        self.__setup_meeting()
+        self.__setup_meeting_today()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
             'pingou')
         self.assertNotEqual(meetings, None)
+        # The output is either 2 or 0 depending on the day the test runs
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
         obj = model.Meeting(
             'A past test meeting', 'pingou',
-            date.today() - timedelta(days=1), time(12, 00), time(13, 00),
+            TODAY - timedelta(days=1), time(12, 00), time(13, 00),
             'This is a past test meeting',
             'test_calendar', None, None)
         obj.save(self.session)
@@ -347,16 +356,16 @@ class Fedocallibtests(Modeltests):
         self.__setup_meeting()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertTrue(fedocallib.agenda_is_free(self.session, cal,
-            date.today(), 10, 11))
+            TODAY, 10, 11))
         self.assertFalse(fedocallib.agenda_is_free(self.session, cal,
-            date.today(), 19, 20))
+            TODAY, 19, 20))
 
     def test_agenda_is_free_empty(self):
         """ Test the agenda_is_free function. """
         self.__setup_calendar()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertTrue(fedocallib.agenda_is_free(self.session, cal,
-            date.today(), 10, 11))
+            TODAY, 10, 11))
 
     def test_is_user_managing_in_calendar(self):
         """ Test the is_user_managing_in_calendar function. """
@@ -381,216 +390,6 @@ class Fedocallibtests(Modeltests):
         user = FakeUser([])
         self.assertTrue(fedocallib.is_user_managing_in_calendar(
             self.session, 'test_calendar3', user))
-
-    def test_save_recursive_meeting(self):
-        """ Test the save_recursive_meeting function. """
-        self.__setup_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meeting = model.Meeting.by_id(self.session, 6)
-
-        for delta_day in [7, 14, 21]:
-            newdate = date.today() + timedelta(days=delta_day)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(new_meeting, [])
-            self.assertEqual(len(new_meeting), 0)
-
-        fedocallib.save_recursive_meeting(self.session, meeting)
-
-        for delta_day in [7, 14, 21]:
-            newdate = date.today() + timedelta(days=7)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name,
-                'Another test meeting2')
-
-    def test_save_recursive_meeting_empty(self):
-        """ Test the save_recursive_meeting function when
-        there is no recursion attached to the meeting. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meeting = model.Meeting.by_id(self.session, 1)
-
-        fedocallib.save_recursive_meeting(self.session,
-            meeting)
-
-    def test_update_recursive_meeting(self):
-        """ Test the update_recursive_meeting function. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-
-        newdate = date.today() + timedelta(days=21)
-        meeting = model.Meeting.get_by_date(self.session, calendar,
-            newdate, newdate + timedelta(days=1))[0]
-        meeting.meeting_name = 'A new name'
-
-        fedocallib.update_recursive_meeting(self.session, meeting)
-
-        # The first three weeks are un-touched
-        for delta_day in [0, 7, 14]:
-            newdate = date.today() + timedelta(days=7)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name,
-                'Another test meeting2')
-
-        # The followings week have been updated
-        for delta_day in [21, 28, 35]:
-            newdate = date.today() + timedelta(days=delta_day)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name, 'A new name')
-
-    def test_update_recursive_meeting_empty(self):
-        """ Test the update_recursive_meeting function when
-        there is no recursion attached to the meeting. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meeting = model.Meeting.by_id(self.session, 1)
-
-        fedocallib.update_recursive_meeting(self.session,
-            meeting)
-
-    def test_delete_recursive_meeting(self):
-        """ Test the delete_recursive_meeting function. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-
-        newdate = date.today() + timedelta(days=21)
-        meeting = model.Meeting.get_by_date(self.session, calendar,
-            newdate, newdate + timedelta(days=1))[0]
-        fedocallib.delete_recursive_meeting(self.session, meeting)
-
-        # The first three weeks are un-touched
-        for delta_day in [0, 7, 14]:
-            newdate = date.today() + timedelta(days=7)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name,
-                'Another test meeting2')
-
-        # The followings week have been removed
-        for delta_day in [21, 28, 35]:
-            newdate = date.today() + timedelta(days=delta_day)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 0)
-            self.assertEqual(new_meeting, [])
-
-    def test_delete_recursive_meeting_empty(self):
-        """ Test the delete_recursive_meeting function when
-        there is no recursion attached to the meeting. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meeting = model.Meeting.by_id(self.session, 1)
-
-        fedocallib.delete_recursive_meeting(self.session,
-            meeting)
-
-    def test_delete_recursive_meeting_after_end(self):
-        """ Test the delete_recursive_meeting_after_end function. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-
-        newdate = date.today() + timedelta(days=21)
-        meeting = model.Meeting.get_by_date(self.session, calendar,
-            newdate, newdate + timedelta(days=1))[0]
-        meeting.recursion.recursion_ends = date.today() + \
-            timedelta(days=20)
-
-        fedocallib.delete_recursive_meeting_after_end(self.session, meeting)
-
-        # The first three weeks are un-touched
-        for delta_day in [0, 7, 14]:
-            newdate = date.today() + timedelta(days=7)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name,
-                'Another test meeting2')
-
-        # The followings week have been removed
-        for delta_day in [21, 28, 35]:
-            newdate = date.today() + timedelta(days=delta_day)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 0)
-            self.assertEqual(new_meeting, [])
-
-    def test_add_recursive_meeting_after_end(self):
-        """ Test the add_recursive_meeting_after_end function. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-
-        # The first three weeks are un-touched
-        for delta_day in [0, 7, 14, 46]:
-            newdate = date.today() + timedelta(days=7)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name,
-                'Another test meeting2')
-
-        # The followings weeks do not exists yet
-        for delta_day in [63, 70, 77]:
-            newdate = date.today() + timedelta(days=delta_day)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 0)
-            self.assertEqual(new_meeting, [])
-
-        # Update the end date of the recursion
-        newdate = date.today() + timedelta(days=21)
-        meeting = model.Meeting.get_by_date(self.session, calendar,
-            newdate, newdate + timedelta(days=1))[0]
-        meeting.recursion.recursion_ends = date.today() + \
-            timedelta(days=80)
-
-        fedocallib.add_recursive_meeting_after_end(self.session, meeting)
-
-        # The first three weeks are un-touched
-        for delta_day in [0, 7, 14, 46]:
-            newdate = date.today() + timedelta(days=7)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name,
-                'Another test meeting2')
-
-        # The followings week have been added
-        for delta_day in [63, 70, 77]:
-            newdate = date.today() + timedelta(days=delta_day)
-            new_meeting = model.Meeting.get_by_date(self.session, calendar,
-                newdate, newdate + timedelta(days=1))
-            self.assertNotEqual(new_meeting, None)
-            self.assertEqual(len(new_meeting), 1)
-            self.assertEqual(new_meeting[0].meeting_name,
-                'Another test meeting2')
-
-    def test_add_recursive_meeting_after_end_empty(self):
-        """ Test the add_recursive_meeting_after_end function when
-        there is no recursion attached to the meeting. """
-        self.test_save_recursive_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meeting = model.Meeting.by_id(self.session, 1)
-
-        fedocallib.add_recursive_meeting_after_end(self.session,
-            meeting)
 
     def test_retrieve_meeting_to_remind(self):
         """ Test the retrieve_meeting_to_remind function. """
@@ -652,8 +451,8 @@ class Fedocallibtests(Modeltests):
         self.__setup_meeting()
         meetings = fedocallib.get_meetings_by_date(self.session,
             'test_calendar',
-            date.today() + timedelta(days=10),
-            date.today() + timedelta(days=12)
+            TODAY + timedelta(days=10),
+            TODAY + timedelta(days=12)
             )
         self.assertEqual(len(meetings), 3)
         for meeting in meetings:
@@ -667,8 +466,8 @@ class Fedocallibtests(Modeltests):
         obj = fedocallib.get_meetings_by_date_and_region(
             self.session,
             'test_calendar4',
-            date.today(),
-            date.today() + timedelta(days=2),
+            TODAY,
+            TODAY + timedelta(days=2),
             'EMEA'
             )
 
@@ -684,8 +483,8 @@ class Fedocallibtests(Modeltests):
         obj = fedocallib.get_meetings_by_date_and_region(
             self.session,
             'test_calendar4',
-            date.today(),
-            date.today() + timedelta(days=2),
+            TODAY,
+            TODAY + timedelta(days=2),
             'NA'
             )
         self.assertNotEqual(obj, None)
@@ -700,8 +499,8 @@ class Fedocallibtests(Modeltests):
         obj = fedocallib.get_meetings_by_date_and_region(
             self.session,
             'test_calendar4',
-            date.today(),
-            date.today() + timedelta(days=2),
+            TODAY,
+            TODAY + timedelta(days=2),
             'APAC'
             )
         self.assertNotEqual(obj, None)
@@ -710,7 +509,7 @@ class Fedocallibtests(Modeltests):
     def test_get_html_monthly_cal(self):
         """ Test the get_html_monthly_call function. """
         output = fedocallib.get_html_monthly_cal(11, 2012)
-        self.assertEqual(output.strip(), result_201211_html.strip())
+        self.assertEqual(output.strip(), RESULT_201211_HTML.strip())
 
 
 if __name__ == '__main__':

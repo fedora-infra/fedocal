@@ -696,6 +696,9 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 0)
 
+    def test_get_html_monthly_cal(self):
+        self.assertEqual('string' in output)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

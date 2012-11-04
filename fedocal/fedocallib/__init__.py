@@ -514,7 +514,7 @@ def add_meetings_to_vcal(ical, meetings):
     for meeting in meetings:
         add_meeting_to_vcal(ical, meeting)
 
-def getHtmlMonthlyCal():
+def get_html_monthly_cal():
     htmlcal = pycalendar.HTMLCalendar()
     curdate = date.today()
     curmonth_cal_nf = htmlcal.formatmonth(curdate.year, curdate.month)

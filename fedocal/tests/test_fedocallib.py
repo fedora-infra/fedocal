@@ -48,6 +48,17 @@ import fedocallib
 from fedocallib import model
 from tests import Modeltests
 
+result_201211_html = """
+<table border="0" cellpadding="0" cellspacing="0" class="month">
+<tr><th colspan="7" class="month">November 2012</th></tr>
+<tr><th class="mon">Mon</th><th class="tue">Tue</th><th class="wed">Wed</th><th class="thu">Thu</th><th class="fri">Fri</th><th class="sat">Sat</th><th class="sun">Sun</th></tr>
+<tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td><td class="sat">3</td><td class="sun">4</td></tr>
+<tr><td class="mon">5</td><td class="tue">6</td><td class="wed">7</td><td class="thu">8</td><td class="fri">9</td><td class="sat">10</td><td class="sun">11</td></tr>
+<tr><td class="mon">12</td><td class="tue">13</td><td class="wed">14</td><td class="thu">15</td><td class="fri">16</td><td class="sat">17</td><td class="sun">18</td></tr>
+<tr><td class="mon">19</td><td class="tue">20</td><td class="wed">21</td><td class="thu">22</td><td class="fri">23</td><td class="sat">24</td><td class="sun">25</td></tr>
+<tr><td class="mon">26</td><td class="tue">27</td><td class="wed">28</td><td class="thu">29</td><td class="fri">30</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td></tr>
+</table>
+"""
 
 class FakeUser(object):
     """ Fake user used to test the fedocallib library. """
@@ -698,12 +709,8 @@ class Fedocallibtests(Modeltests):
 
     def test_get_html_monthly_cal(self):
         """ Test the get_html_monthly_call function. """
-        output = fedocallib.get_html_monthly_cal()
-        self.assertTrue(output.startswith('<table border="0" '\
-        'cellpadding="0" cellspacing="0" class="month">\n<tr><th '\
-        'colspan="7" class="month">'))
-        self.assertTrue(output.endswith('<td class="noday">&nbsp;</td>'\
-        '<td class="noday">&nbsp;</td></tr>\n</table>\n'))
+        output = fedocallib.get_html_monthly_cal(11, 2012)
+        self.assertEqual(output.strip(), result_201211_html.strip())
 
 
 if __name__ == '__main__':

@@ -40,8 +40,7 @@ from flask_fas import FAS, cla_plus_one_required
 
 import forms as forms
 import fedocallib as fedocallib
-from fedocallib.model import (Calendar, Meeting, Reminder,
-    Recursive)
+from fedocallib.model import (Calendar, Meeting, Reminder)
 
 CONFIG = ConfigParser.ConfigParser()
 if os.path.exists('/etc/fedocal.cfg'):  # pragma: no cover
@@ -250,6 +249,12 @@ def add_meeting(calendar_name):
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendarobj = Calendar.by_id(session, calendar_name)
     if form.validate_on_submit():
+        print fedocallib.agenda_is_free(session,
+                calendarobj,
+                form.meeting_date.data,
+                int(form.meeting_time_start.data),
+                int(form.meeting_time_stop.data)
+            )
         if not fedocallib.is_user_managing_in_calendar(session,
             calendarobj.calendar_name, flask.g.fas_user):
             flask.flash('You are not allowed to add a meeting to'\
@@ -267,17 +272,24 @@ def add_meeting(calendar_name):
             flask.render_template('add_meeting.html',
                     calendar=calendarobj,  form=form)
         elif bool(calendarobj.calendar_multiple_meetings) or \
-            (bool(calendarobj.calendar_multiple_meetings) == False and \
+            (not bool(calendarobj.calendar_multiple_meetings) and \
             fedocallib.agenda_is_free(session,
                 calendarobj,
                 form.meeting_date.data,
                 int(form.meeting_time_start.data),
                 int(form.meeting_time_stop.data)
             )):
-            region = form.meeting_region.data
-            if not calendarobj.calendar_regional_meetings:
-                region = None
+
             manager = '%s,' % flask.g.fas_user.username
+            end_date = form.end_repeats.data
+            if not end_date and form.frequency.data:
+                end_date = datetime.date(2025, 12, 31)
+            frequency = form.frequency.data
+            if not frequency:
+                frequency = None
+            region = form.meeting_region.data
+            if not calendarobj.calendar_regional_meetings or not region:
+                region = None
             meeting = Meeting(
                 meeting_name=form.meeting_name.data,
                 meeting_manager=manager,
@@ -289,8 +301,9 @@ def add_meeting(calendar_name):
                 meeting_information=form.information.data,
                 calendar_name=calendarobj.calendar_name,
                 reminder_id=None,
-                recursion_id=None,
-                meeting_region=region)
+                meeting_region=region,
+                recursion_frequency=frequency,
+                recursion_ends=end_date)
             meeting.save(session)
             try:
                 session.flush()
@@ -314,28 +327,6 @@ def add_meeting(calendar_name):
                     flask.flash('Could not add this reminder to this meeting')
                     return flask.render_template('add_meeting.html',
                         calendar=calendarobj,  form=form)
-
-            if form.frequency.data:
-                ends_date = form.end_repeats.data
-                if not ends_date:
-                    ends_date = datetime.date(2121, 12, 31)
-                recursion = Recursive(
-                    recursion_frequency=form.frequency.data,
-                    recursion_ends=ends_date
-                    )
-                recursion.save(session)
-                try:
-                    session.flush()
-                    meeting.recursion = recursion
-                    session.flush()
-                except Exception, err:
-                    print 'add_meeting:', err
-                    flask.flash(
-                        'Could not add this reminder to this meeting')
-                    flask.render_template('add_meeting.html',
-                        calendar=calendarobj, form=form)
-
-                fedocallib.save_recursive_meeting(session, meeting)
 
             try:
                 session.commit()
@@ -392,7 +383,21 @@ def edit_meeting(meeting_id):
             meeting_time_stop=datetime.time(int(
                     form.meeting_time_stop.data))
             meeting.meeting_information = form.information.data
-            meeting.meeting_region=form.meeting_region.data
+
+            region = form.meeting_region.data
+            if not region:
+                region = None
+            meeting.meeting_region=region
+
+            frequency = form.frequency.data
+            if not frequency:
+                frequency = None
+            meeting.recursion_frequency = frequency
+
+            ends_date = form.end_repeats.data
+            if not ends_date:
+                ends_date = datetime.date(2025, 12, 31)
+            meeting.recursion_ends = ends_date
 
             if form.remind_when.data and form.remind_who.data:
                 if meeting.reminder_id:
@@ -420,46 +425,8 @@ def edit_meeting(meeting_id):
                     meeting.reminder.delete(session)
                 except Exception, err:
                     print 'edit_meeting:', err
+
             meeting.save(session)
-
-            if form.frequency.data and form.recursive_edit.data:
-                ends_date = form.end_repeats.data
-                if not ends_date:
-                    ends_date = datetime.date(2025, 12, 31)
-                if meeting.recursion_id:
-                    meeting.recursion.recursion_frequency = form.frequency.data
-                    meeting.recursion.recursion_ends = ends_date
-                    meeting.recursion.save(session)
-                    fedocallib.delete_recursive_meeting_after_end(
-                        session, meeting)
-                    fedocallib.update_recursive_meeting(
-                        session, meeting)
-                    fedocallib.add_recursive_meeting_after_end(
-                        session, meeting)
-                else:
-                    recursion = Recursive(
-                        recursion_frequency=form.frequency.data,
-                        recursion_ends=ends_date
-                        )
-                    recursion.save(session)
-                    try:
-                        session.flush()
-                        meeting.recursion = recursion
-                        session.flush()
-                    except Exception, err:
-                        print 'add_meeting:', err
-                        flask.flash('Could not edit this recursivity '\
-                            'of this meeting')
-                        return flask.render_template('edit_meeting.html',
-                            meeting=meeting, calendar=calendarobj,
-                            form=form)
-                    fedocallib.save_recursive_meeting(session, meeting)
-            elif meeting.recursion_id:
-                try:
-                    meeting.recursion.delete(session)
-                except Exception, err:
-                    print 'edit_meeting:', err
-
             session.commit()
         except Exception, err:
             print 'edit_meeting:',  err

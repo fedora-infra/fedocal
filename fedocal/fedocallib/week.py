@@ -14,6 +14,7 @@ See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
 
+from datetime import date
 from datetime import timedelta
 from model import Meeting
 
@@ -40,6 +41,15 @@ class Week(object):
         """
         self.meetings = Meeting.get_by_date(self.session, self.calendar,
             self.start_date, self.stop_date)
+
+        for meeting in Meeting.get_active_regular_meeting(self.session,
+            self.start_date):
+            for delta in range(0, 7):
+                day = self.start_date + timedelta(days=delta)
+                if ((meeting.meeting_date - day).days %
+                        meeting.recursion_frequency) == 0:
+                    if meeting not in self.meetings:
+                        self.meetings.append(meeting)
 
     def __repr__(self):
         """ Representation of the Week object when printed.

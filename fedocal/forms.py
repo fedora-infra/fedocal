@@ -85,9 +85,6 @@ class AddMeetingForm(wtf.Form):
     remind_who = wtf.TextField('Send reminder to',
         [wtf.validators.Email(), wtf.validators.optional()])
 
-    # Recursive edit
-    recursive_edit = wtf.BooleanField('Yes I want to edit all the meetings')
-
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
         if a meeting is set using the meeting keyword, then fill the
@@ -115,9 +112,9 @@ class AddMeetingForm(wtf.Form):
                         '%s,' % flask.g.fas_user.username, '')
             self.comanager.data = meeting_manager
             self.meeting_region.data = meeting.meeting_region
-            if meeting.recursion_id:
-                self.frequency.data = meeting.recursion.recursion_frequency
-                self.end_repeats.data = meeting.recursion.recursion_ends
+            print meeting.recursion_frequency
+            self.frequency.data = meeting.recursion_frequency
+            self.end_repeats.data = meeting.recursion_ends
             if meeting.reminder_id:
                 self.remind_when.data = meeting.reminder.reminder_offset
                 self.remind_who.data = meeting.reminder.reminder_to

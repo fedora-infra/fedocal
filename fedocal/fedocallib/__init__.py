@@ -289,7 +289,7 @@ def get_future_single_meeting_of_user(session, username):
         past meetings for.
     """
     meetings = Meeting.get_future_single_meeting_of_user(session,
-        username, datetime.utcnow())
+        username, date.today())
     return meetings
 
 
@@ -302,7 +302,7 @@ def get_future_regular_meeting_of_user(session, username):
         past meetings for.
     """
     meetings = Meeting.get_future_regular_meeting_of_user(session,
-        username, datetime.utcnow())
+        username, date.today())
     return meetings
 
 

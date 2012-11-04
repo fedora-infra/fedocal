@@ -4,6 +4,6 @@ secret_key=<The web application secret key>
 # url to the database server:
 ;db_url=mysql://user:pass@host/db_name
 ;db_url=postgres://user:pass@host/db_name
-db_url=sqlite:///db_dev
+db_url=sqlite:////tmp/fedocal_dev.sqlite
 # The FAS group in which the admin of fedocal are
 admin_group=fedocal_admin

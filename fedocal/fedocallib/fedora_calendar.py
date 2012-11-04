@@ -15,9 +15,11 @@ license.
 """
 
 from calendar import HTMLCalendar
-from datetime import date
 
 class FedocalCalendar(HTMLCalendar):
+    """ Improve Python's HTMLCalendar object adding
+    html validation and some features 'locally required'
+    """
 
     def formatmonth(self, theyear, themonth, withyear=True):
         """

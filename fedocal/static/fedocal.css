@@ -74,7 +74,7 @@ section nav {
     vertical-align: middle;
 }
 
-section > header {
+#content section > header {
     margin-left: -200px; /* Left align with menu */
     margin-bottom: .5em;
 }

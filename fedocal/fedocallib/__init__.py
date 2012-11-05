@@ -268,41 +268,49 @@ def is_date_in_future(indate, start_time):
         return True
 
 
-def get_past_meeting_of_user(session, username):
+def get_past_meeting_of_user(session, username, from_date=date.today()):
     """ Return all past meeting which specified username is among the
     managers.
     :arg session: the database session to use
     :arg username: the FAS user name that you would like to have the
         past meetings for.
+    :arg from_date: the date from which the futur meetings should be
+        retrieved. Defaults to today
     """
     meetings = Meeting.get_past_meeting_of_user(session, username,
-        date.today())
+        from_date)
     return meetings
 
 
-def get_future_single_meeting_of_user(session, username):
+def get_future_single_meeting_of_user(session, username,
+    from_date=date.today()):
     """ Return all future meeting which specified username is among the
     managers.
 
     :arg session: the database session to use
     :arg username: the FAS user name that you would like to have the
         past meetings for.
+    :arg from_date: the date from which the futur meetings should be
+        retrieved. Defaults to today
     """
     meetings = Meeting.get_future_single_meeting_of_user(session,
-        username, date.today())
+        username, from_date)
     return meetings
 
 
-def get_future_regular_meeting_of_user(session, username):
+def get_future_regular_meeting_of_user(session, username,
+    from_date=date.today()):
     """ Return all future recursive meeting which specified username is
     among the managers.
 
     :arg session: the database session to use
     :arg username: the FAS user name that you would like to have the
         past meetings for.
+    :arg from_date: the date from which the futur meetings should be
+        retrieved. Defaults to today
     """
     meetings = Meeting.get_future_regular_meeting_of_user(session,
-        username, date.today())
+        username, from_date)
     return meetings
 
 

@@ -55,11 +55,11 @@ APP = flask.Flask(__name__)
 # set up FAS
 FAS = FAS(APP)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
+SESSION = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
 
 @APP.context_processor
 def inject_calendars():
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    calendars = Calendar.get_all(session)
+    calendars = Calendar.get_all(SESSION)
 
     return dict(calendars=calendars)
 
@@ -78,8 +78,7 @@ def index():
     """ Displays the index page with containing the first calendar (by
     order of creation and if any) for the current week.
     """
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    calendars = Calendar.get_all(session)
+    calendars = Calendar.get_all(SESSION)
     if calendars:
         return calendar(calendars[0].calendar_name)
     else:
@@ -112,11 +111,10 @@ def calendar_fullday(calendar_name, year, month, day):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    calendarobj = Calendar.by_id(session, calendar_name)
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
-    meetings = fedocallib.get_meetings(session, calendarobj, year,
+    meetings = fedocallib.get_meetings(SESSION, calendarobj, year,
         month, day)
     next_week = fedocallib.get_next_week(week_start.year,
         week_start.month, week_start.day)
@@ -148,8 +146,7 @@ def ical_out(calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meetings = fedocallib.get_meetings_by_date(session, calendar_name,
+    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
         startd, endd)
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
@@ -164,12 +161,11 @@ def my_meetings():
     involved, either because you created them or because someone gave
     you manager rights to the meeting.
     """
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    regular_meetings = fedocallib.get_future_regular_meeting_of_user(session,
+    regular_meetings = fedocallib.get_future_regular_meeting_of_user(SESSION,
         flask.g.fas_user.username)
-    single_meetings = fedocallib.get_future_single_meeting_of_user(session,
+    single_meetings = fedocallib.get_future_single_meeting_of_user(SESSION,
         flask.g.fas_user.username)
-    past_meetings = fedocallib.get_past_meeting_of_user(session,
+    past_meetings = fedocallib.get_past_meeting_of_user(SESSION,
         flask.g.fas_user.username)
     admin = is_admin()
     return flask.render_template('my_meeting.html',
@@ -214,8 +210,6 @@ def add_calendar():
         return flask.redirect(flask.url_for('index'))
     form = forms.AddCalendarForm()
     if form.validate_on_submit():
-        session = fedocallib.create_session(
-            CONFIG.get('fedocal', 'db_url'))
         calendarobj = Calendar(
             form.calendar_name.data,
             form.calendar_description.data,
@@ -224,8 +218,8 @@ def add_calendar():
             bool(form.calendar_regional_meetings.data),
             )
         try:
-            calendarobj.save(session)
-            session.commit()
+            calendarobj.save(SESSION)
+            SESSION.commit()
         except Exception, err:
             print err
             flask.flash('Could not add this calendar to the database')
@@ -249,16 +243,15 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     form = forms.AddMeetingForm()
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    calendarobj = Calendar.by_id(session, calendar_name)
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
     if form.validate_on_submit():
-        print fedocallib.agenda_is_free(session,
+        print fedocallib.agenda_is_free(SESSION,
                 calendarobj,
                 form.meeting_date.data,
                 int(form.meeting_time_start.data),
                 int(form.meeting_time_stop.data)
             )
-        if not fedocallib.is_user_managing_in_calendar(session,
+        if not fedocallib.is_user_managing_in_calendar(SESSION,
             calendarobj.calendar_name, flask.g.fas_user):
             flask.flash('You are not allowed to add a meeting to'\
                 ' this calendar')
@@ -276,7 +269,7 @@ def add_meeting(calendar_name):
                     calendar=calendarobj,  form=form)
         elif bool(calendarobj.calendar_multiple_meetings) or \
             (not bool(calendarobj.calendar_multiple_meetings) and \
-            fedocallib.agenda_is_free(session,
+            fedocallib.agenda_is_free(SESSION,
                 calendarobj,
                 form.meeting_date.data,
                 int(form.meeting_time_start.data),
@@ -307,9 +300,9 @@ def add_meeting(calendar_name):
                 meeting_region=region,
                 recursion_frequency=frequency,
                 recursion_ends=end_date)
-            meeting.save(session)
+            meeting.save(SESSION)
             try:
-                session.flush()
+                SESSION.flush()
             except Exception, err:
                 print 'add_meeting:', err
                 flask.flash('Could not add this meeting to this calendar')
@@ -320,11 +313,11 @@ def add_meeting(calendar_name):
                 reminder = Reminder(form.remind_when.data,
                                     form.remind_who.data,
                                     None)
-                reminder.save(session)
+                reminder.save(SESSION)
                 try:
-                    session.flush()
+                    SESSION.flush()
                     meeting.reminder = reminder
-                    session.flush()
+                    SESSION.flush()
                 except Exception, err:
                     print 'add_meeting:', err
                     flask.flash('Could not add this reminder to this meeting')
@@ -332,7 +325,7 @@ def add_meeting(calendar_name):
                         calendar=calendarobj,  form=form)
 
             try:
-                session.commit()
+                SESSION.commit()
             except Exception, err:
                 flask.flash(
                     'Something went wrong while commiting to the DB.')
@@ -361,14 +354,13 @@ def edit_meeting(meeting_id):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     if not flask.g.fas_user.username in \
-        Meeting.get_managers(session, meeting_id):
+        Meeting.get_managers(SESSION, meeting_id):
         flask.flash('You are not one of the manager of this meeting, '\
             'you are not allowed to edit it.')
         return flask.redirect(flask.url_for('index'))
-    meeting = Meeting.by_id(session, meeting_id)
-    calendarobj = Calendar.by_id(session, meeting.calendar_name)
+    meeting = Meeting.by_id(SESSION, meeting_id)
+    calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
     if not fedocallib.is_date_in_future(meeting.meeting_date,
         meeting.meeting_time_start.hour):
         flask.flash('This meeting has already occured, you may not '\
@@ -406,16 +398,16 @@ def edit_meeting(meeting_id):
                 if meeting.reminder_id:
                     meeting.reminder.reminder_offset = form.remind_when.data
                     meeting.reminder.reminder_to = form.remind_who.data
-                    meeting.reminder.save(session)
+                    meeting.reminder.save(SESSION)
                 else:
                     reminder = Reminder(form.remind_when.data,
                                     form.remind_who.data,
                                     None)
-                    reminder.save(session)
+                    reminder.save(SESSION)
                     try:
-                        session.flush()
+                        SESSION.flush()
                         meeting.reminder = reminder
-                        session.flush()
+                        SESSION.flush()
                     except Exception, err:
                         print 'edit_meeting:', err
                         flask.flash('Could not edit the reminder of '\
@@ -425,12 +417,12 @@ def edit_meeting(meeting_id):
                             form=form)
             elif meeting.reminder_id:
                 try:
-                    meeting.reminder.delete(session)
+                    meeting.reminder.delete(SESSION)
                 except Exception, err:
                     print 'edit_meeting:', err
 
-            meeting.save(session)
-            session.commit()
+            meeting.save(SESSION)
+            SESSION.commit()
         except Exception, err:
             print 'edit_meeting:',  err
             flask.flash('Could not update this meeting.')
@@ -460,8 +452,7 @@ def view_meeting_page(meeting_id, full):
 
     :arg meeting_id: the identifier of the meeting to visualize.
     """
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meeting = Meeting.by_id(session, meeting_id)
+    meeting = Meeting.by_id(SESSION, meeting_id)
     if not meeting:
         flask.flash('No meeting could be found for this identifier')
         return flask.redirect(flask.url_for('index'))
@@ -480,18 +471,17 @@ def delete_meeting(meeting_id):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meeting = Meeting.by_id(session, meeting_id)
-    calendars = Calendar.get_all(session)
+    meeting = Meeting.by_id(SESSION, meeting_id)
+    calendars = Calendar.get_all(SESSION)
     deleteform = forms.DeleteMeetingForm()
     if deleteform.validate_on_submit():
         if deleteform.confirm_delete.data:
             if deleteform.confirm_futher_delete.data:
-                fedocallib.delete_recursive_meeting(session, meeting)
+                fedocallib.delete_recursive_meeting(SESSION, meeting)
             else:
-                meeting.delete(session)
+                meeting.delete(SESSION)
             try:
-                session.commit()
+                SESSION.commit()
             except Exception, err:
                 print 'edit_meeting:',  err
                 flask.flash('Could not update this meeting.')
@@ -527,8 +517,7 @@ def api_date_default(calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meetings = fedocallib.get_meetings_by_date(session, calendar_name,
+    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
         startd, endd)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'
@@ -573,8 +562,7 @@ def api_date(calendar_name, start_date, end_date):
             '"Date format invalid: %s"}' % error
         return flask.Response(output)
 
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meetings = fedocallib.get_meetings_by_date(session, calendar_name,
+    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
         startd, endd)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'
@@ -603,8 +591,7 @@ def api_place_default(region, calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meetings = fedocallib.get_meetings_by_date_and_region(session,
+    meetings = fedocallib.get_meetings_by_date_and_region(SESSION,
         calendar_name, startd, endd, region)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'
@@ -651,8 +638,7 @@ def api_place(region, calendar_name, start_date, end_date):
             '"Date format invalid: %s"}' % error
         return flask.Response(output)
 
-    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
-    meetings = fedocallib.get_meetings_by_date_and_region(session,
+    meetings = fedocallib.get_meetings_by_date_and_region(SESSION,
         calendar_name, startd, endd, region)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'

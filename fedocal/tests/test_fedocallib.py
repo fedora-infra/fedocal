@@ -46,7 +46,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import fedocallib
 from fedocallib import model
-from tests import Modeltests
+from tests import Modeltests, TODAY
 
 RESULT_201211_HTML = """
 <table class="month">
@@ -59,8 +59,6 @@ RESULT_201211_HTML = """
 <tr><td class="mon">26</td><td class="tue">27</td><td class="wed">28</td><td class="thu">29</td><td class="fri">30</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td></tr>
 </table>
 """
-TODAY = fedocallib.get_start_week(date.today().year, date.today().month,
-    date.today().day) + timedelta(days=2)
 
 
 class FakeUser(object):
@@ -91,13 +89,6 @@ class Fedocallibtests(Modeltests):
         meeting = Meetingtests('test_init_meeting')
         meeting.session = self.session
         meeting.test_init_meeting()
-
-    def __setup_meeting_today(self):
-        """ Set up basic calendar information and add some meetings in
-        them (at the date of today). """
-        import test_meeting
-        test_meeting.TODAY = date.today()
-        self.__setup_meeting()
 
     def test_create_session(self):
         """ Test the create_session function. """
@@ -282,11 +273,10 @@ class Fedocallibtests(Modeltests):
 
     def test_get_past_meeting_of_user(self):
         """ Test the get_past_meeting_of_user function. """
-        self.__setup_meeting_today()
+        self.__setup_meeting()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
-            'pingou')
+            'pingou', TODAY)
         self.assertNotEqual(meetings, None)
-        # The output is either 2 or 0 depending on the day the test runs
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
@@ -298,7 +288,7 @@ class Fedocallibtests(Modeltests):
         obj.save(self.session)
         self.session.commit()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
-            'pingou')
+            'pingou', TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 1)
         self.assertEqual(meetings[0].meeting_name, 'A past test meeting')
@@ -309,15 +299,19 @@ class Fedocallibtests(Modeltests):
         """ Test the get_future_single_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(self.session,
-            'pingou')
+            'pingou', TODAY)
         self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 2)
-        self.assertEqual(meetings[0].meeting_name, 'test-meeting2')
+        self.assertEqual(len(meetings), 3)
+        self.assertEqual(meetings[0].meeting_name,
+            'Fedora-fr-test-meeting')
         self.assertEqual(meetings[0].meeting_information,
-            'This is another test meeting')
-        self.assertEqual(meetings[1].meeting_name,
-            'Test meeting with reminder')
+            'This is a test meeting')
+        self.assertEqual(meetings[1].meeting_name, 'test-meeting2')
         self.assertEqual(meetings[1].meeting_information,
+            'This is another test meeting')
+        self.assertEqual(meetings[2].meeting_name,
+            'Test meeting with reminder')
+        self.assertEqual(meetings[2].meeting_information,
             'This is a test meeting with reminder')
 
     def test_get_future_single_meeting_of_user_empty(self):
@@ -334,7 +328,7 @@ class Fedocallibtests(Modeltests):
         """ Test the get_future_regular_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_future_regular_meeting_of_user(
-            self.session, 'pingou')
+            self.session, 'pingou', TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 3)
         self.assertEqual(meetings[0].meeting_name,
@@ -476,16 +470,18 @@ class Fedocallibtests(Modeltests):
         calendar = vobject.iCalendar()
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(
-            self.session, 'pingou')
+            self.session, 'pingou', TODAY)
         self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 2)
+        self.assertEqual(len(meetings), 3)
 
         fedocallib.add_meetings_to_vcal(calendar, meetings)
         cnt = 0
         for event in calendar.vevent_list:
             self.assertTrue(event.summary.value in [
-                'Test meeting with reminder', 'test-meeting2'])
-            self.assertEqual(event.organizer.value, 'pingou')
+                'Fedora-fr-test-meeting', 'Test meeting with reminder',
+                'test-meeting2'])
+            self.assertTrue(event.organizer.value in [
+                'pingou', 'pingou, shaiton'])
             cnt = cnt + 1
         self.assertEqual(cnt, len(meetings))
 

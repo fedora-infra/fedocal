@@ -9,13 +9,13 @@
 {% if calendar %}
     <header>
         <h2>
-            {{ calendar.calendar_name }}
             <a href="{{url_for('ical_out',
                 calendar_name=calendar.calendar_name)}}">
                 <img src="{{url_for('static', filename='calendar.png')}}"
                     alt="iCal feed"
                     title="Add this calendar to your agenda"/>
             </a>
+            {{ calendar.calendar_name }}
         </h2>
         <p>{{ calendar.calendar_description }}</p>
     </header>

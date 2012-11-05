@@ -73,10 +73,6 @@
 
 {% block jscripts %}
 {{ super() }}
-<script type="text/javascript"
-    src="{{ url_for('static',
-        filename='jquery-ui-1.9.1.custom.min.js') }}">
-</script>
 <script type="text/javascript">
     $(function(){
         $('.event').click(function(){

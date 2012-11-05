@@ -13,8 +13,8 @@
 {{ render_field(form.calendar_multiple_meetings) }}
 {{ render_field(form.calendar_regional_meetings) }}
 <p class="buttons indent">
-    <input type="submit" class="submit positive" value="Create">
-    <input type="button" value="Cancel" onclick="history.back();">
+    <input type="submit" class="submit positive button" value="Create">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
 </p>
 {{ form.csrf_token }}
 </form>

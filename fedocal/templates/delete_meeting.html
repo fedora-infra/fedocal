@@ -32,8 +32,8 @@ meetings as well)</p>
 {{ render_field_invert(form.confirm_futher_delete) }}
 {% endif %}
 <p class="buttons indent">
-    <input type="submit" class="submit positive" value="Delete">
-    <input type="button" value="Cancel" onclick="history.back();">
+    <input type="submit" class="submit positive button" value="Delete">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
 </p>
 {{ form.csrf_token }}
 </form>

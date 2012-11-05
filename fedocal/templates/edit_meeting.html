@@ -44,8 +44,8 @@ affect all the meetings related.
 {% endif %}
 
 <p class="buttons indent">
-    <input type="submit" class="submit positive" value="Edit">
-    <input type="button" value="Cancel" onclick="history.back();">
+    <input type="submit" class="submit positive button" value="Edit">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
 </p>
 {{ form.csrf_token }}
 </form>
@@ -53,10 +53,6 @@ affect all the meetings related.
 
 {% block jscripts %}
 {{ super() }}
-<script type="text/javascript"
-    src="{{ url_for('static',
-        filename='jquery-ui-1.9.1.custom.min.js') }}">
-</script>
 <script type="text/javascript">
     $(function(){
         $('#meeting_date').datepicker({

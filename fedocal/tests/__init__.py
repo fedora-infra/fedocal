@@ -43,11 +43,13 @@ from sqlalchemy.exc import IntegrityError
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from fedocallib import model
+from fedocallib import model, get_start_week
 
 DB_PATH = '%s/test.db' %(os.path.dirname(
                                     os.path.abspath(__file__)))
 
+TODAY = get_start_week(date.today().year, date.today().month,
+    date.today().day) + timedelta(days=2)
 
 class Modeltests(unittest.TestCase):
     """ Model tests. """

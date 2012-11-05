@@ -37,9 +37,9 @@
 
         <aside id="mainmenu">
             {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
-            <ul class="checkmark-list">
-                <li><a href="{{url_for('index')}}">Home</a></li>
-            </ul>
+            <h4 id="home" class="ui-corner-all ui-helper-reset">
+                <a href="{{url_for('index')}}">Home</a>
+            </h4>
             <div id="accordion">
             <h4>Calendars</h4>
             <ul id="calendars_menu" class="checkmark-list">

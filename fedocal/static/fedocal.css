@@ -185,3 +185,33 @@ section nav {
 .ui-menu-item {
     white-space: nowrap;
 }
+
+#home {
+    cursor: pointer;
+    position: relative;
+    margin-top: 2px;
+    padding: .5em .5em .5em 2.2em;
+    border: 1px solid #dddddd;
+    background-color: #fff;
+    background-image: url("calendar-small.png"), url(fedocal/images/ui-bg_highlight-soft_100_f6f6f6_1x100.png);
+    background-position: .5em 50%, 50% 50%;
+    background-repeat: no-repeat, repeat-x;
+    color: #3C6EB4;
+    font-size: 1.1em;
+    font-family: Helvetica,Arial,sans-serif;
+}
+
+#home:hover {
+    border: 1px solid #3c6eb4;
+    background-color: #3c6eb4;
+    background-image: url("calendar-small.png"), url(fedocal/images/ui-bg_highlight-soft_25_3c6eb4_1x100.png);
+    color: #fff;
+}
+
+#home a {
+    color: #3C6EB4;
+}
+
+#home:hover a {
+    color: #fff;
+}

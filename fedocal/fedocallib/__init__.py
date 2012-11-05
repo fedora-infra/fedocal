@@ -208,7 +208,7 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
                 start_time = '0%i' % start_time
             if len(str(stop_time)) == 1:
                 stop_time = '0%i' % stop_time
-            key = '%s:%s' % (start_time, stop_time)
+            key = '%sh - %sh' % (start_time, stop_time)
             day = meeting.meeting_date.weekday()
             if key in meetings:
                 if meetings[key][day]:

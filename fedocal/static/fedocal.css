@@ -77,6 +77,13 @@ section nav {
 #content section > header {
     margin-left: -200px; /* Left align with menu */
     margin-bottom: .5em;
+    background: url(calendar.png) 0 50% no-repeat;
+    padding-left: 40px;
+    color: #666;
+}
+
+#content section > header p {
+    font-style: italic;
 }
 
 #content {
@@ -214,4 +221,23 @@ section nav {
 
 #home:hover a {
     color: #fff;
+}
+
+table.month {
+    margin: 0 auto;
+    border-collapse: collapse;
+    margin-bottom: .5em;
+}
+
+table.month td {
+    text-align: center;
+    border: 1px solid #e6e6e6;
+    color: #808080;
+    font-weight: bold;
+    padding: .2em;
+    background-color: #fff;
+}
+
+table.month td.noday {
+    background-color: #f9f9f9;
 }

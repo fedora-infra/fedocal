@@ -11,9 +11,6 @@
         <h2>
             <a href="{{url_for('ical_out',
                 calendar_name=calendar.calendar_name)}}">
-                <img src="{{url_for('static', filename='calendar.png')}}"
-                    alt="iCal feed"
-                    title="Add this calendar to your agenda"/>
             </a>
             {{ calendar.calendar_name }}
         </h2>
@@ -38,7 +35,7 @@
 <div id='agenda'>
     <table>
         <tr>
-            <th class="time">{{ month }}</th>
+            <th></th>
             {% for day in weekdays %}
             <th> {{ day }}</th>
             {% endfor %}

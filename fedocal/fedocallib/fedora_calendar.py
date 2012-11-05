@@ -31,8 +31,8 @@ class FedocalCalendar(HTMLCalendar):
         a('\n')
         a(self.formatmonthname(theyear, themonth, withyear=withyear))
         a('\n')
-        a(self.formatweekheader())
-        a('\n')
+        #a(self.formatweekheader())
+        #a('\n')
         for week in self.monthdays2calendar(theyear, themonth):
             a(self.formatweek(week))
             a('\n')

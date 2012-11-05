@@ -191,7 +191,7 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
     meetings = {}
     cnt = 1
     for hour in HOURS[:-1]:
-        key = '%s:%s' % (hour, HOURS[cnt])
+        key = '%sh - %sh' % (hour, HOURS[cnt])
         meetings[key] = [None for cnt2 in range(0, 7)]
         cnt = cnt + 1
     for meeting in week.meetings:

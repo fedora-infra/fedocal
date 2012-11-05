@@ -264,7 +264,7 @@ def add_meeting(calendar_name):
             form.meeting_time_start.data):
             flask.flash('The date you entered is in the past')
             return flask.redirect(flask.url_for('add_meeting',
-                calendar=calendarobj.calendar_name))
+                calendar_name=calendarobj.calendar_name))
         elif int(form.meeting_time_start.data) > \
             int(form.meeting_time_stop.data):
             flask.flash('The start time you have entered is later than'\

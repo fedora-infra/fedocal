@@ -41,7 +41,6 @@
                 <li><a href="{{url_for('index')}}">Home</a></li>
             </ul>
             <div id="accordion">
-            {% if calendar %}
             <h4>Calendars</h4>
             <ul id="calendars_menu" class="checkmark-list">
                 {% for calendar in calendars %}
@@ -68,7 +67,6 @@
                 </li>
                 {% endfor %}
             </ul>
-            {% endif %}
             <h4> User </h4>
             <div>
             {% if not g.fas_user %}

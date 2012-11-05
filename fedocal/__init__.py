@@ -56,6 +56,12 @@ APP = flask.Flask(__name__)
 FAS = FAS(APP)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
 
+@APP.context_processor
+def inject_calendars():
+    session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+    calendars = Calendar.get_all(session)
+
+    return dict(calendars=calendars)
 
 def is_admin():
     """ Return wether the user is admin for this application or not. """
@@ -108,7 +114,6 @@ def calendar_fullday(calendar_name, year, month, day):
     """
     session = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
     calendarobj = Calendar.by_id(session, calendar_name)
-    calendars = Calendar.get_all(session)
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
     meetings = fedocallib.get_meetings(session, calendarobj, year,
@@ -123,7 +128,6 @@ def calendar_fullday(calendar_name, year, month, day):
     curmonth_cal = fedocallib.get_html_monthly_cal()
     return flask.render_template('agenda.html',
         calendar=calendarobj,
-        calendars=calendars,
         month=month_name,
         weekdays=weekdays,
         meetings=meetings,
@@ -167,9 +171,8 @@ def my_meetings():
         flask.g.fas_user.username)
     past_meetings = fedocallib.get_past_meeting_of_user(session,
         flask.g.fas_user.username)
-    calendars = Calendar.get_all(session)
     admin = is_admin()
-    return flask.render_template('my_meeting.html', calendars=calendars,
+    return flask.render_template('my_meeting.html',
         title='My meeting', regular_meetings=regular_meetings,
         single_meetings=single_meetings, pas_meetings=past_meetings,
         admin=admin)
@@ -462,10 +465,9 @@ def view_meeting_page(meeting_id, full):
     if not meeting:
         flask.flash('No meeting could be found for this identifier')
         return flask.redirect(flask.url_for('index'))
-    calendars = Calendar.get_all(session)
     auth_form = forms.LoginForm()
     return flask.render_template('view_meeting.html', full=full,
-            meeting=meeting, calendars=calendars,
+            meeting=meeting,
             title=meeting.meeting_name, auth_form=auth_form)
 
 

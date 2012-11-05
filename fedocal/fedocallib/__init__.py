@@ -23,6 +23,7 @@ from datetime import timedelta
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
 
 from week import Week
 from model import Calendar, Reminder, Meeting
@@ -53,7 +54,8 @@ def create_session(db_url, debug=False, pool_recycle=3600):
     """
     engine = create_engine(db_url, echo=debug, pool_recycle=pool_recycle)
     session = sessionmaker(bind=engine)
-    return session()
+    scopedsession = scoped_session(session)
+    return scopedsession()
 
 
 def get_calendars(session):

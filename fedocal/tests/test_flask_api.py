@@ -44,7 +44,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import fedocal
 import fedocal.fedocallib as fedocallib
-from fedocal.tests import Modeltests, DB_PATH
+from fedocal.tests import Modeltests, DB_PATH, TODAY
 from test_fedocallib import FakeUser
 
 
@@ -109,19 +109,18 @@ class FlaskApitests(Modeltests):
 
     def test_api_date(self):
         """ Test the api_date function. """
-        today = date.today()
-        end_date = today + timedelta(days=11)
-        rv = self.app.get('/api/date/foobar/%s/%s' %(today, end_date))
+        end_date = TODAY + timedelta(days=11)
+        rv = self.app.get('/api/date/foobar/%s/%s' %(TODAY, end_date))
         self.assertEqual(rv.status_code, 301)
 
-        rv = self.app.get('/api/date/foobar/%s/%s/' %(today, end_date))
+        rv = self.app.get('/api/date/foobar/%s/%s/' %(TODAY, end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         self.__setup_db()
 
-        rv = self.app.get('/api/date/test_calendar/%s/%s/' %(today,
+        rv = self.app.get('/api/date/test_calendar/%s/%s/' %(TODAY,
             end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in rv.data)
@@ -131,8 +130,8 @@ class FlaskApitests(Modeltests):
             rv.data)
         self.assertEqual(rv.data.count('meeting_name'), 4)
 
-        end_date = today + timedelta(days=2)
-        rv = self.app.get('/api/date/test_calendar4/%s/%s/' %(today,
+        end_date = TODAY + timedelta(days=2)
+        rv = self.app.get('/api/date/test_calendar4/%s/%s/' %(TODAY,
             end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in rv.data)
@@ -167,13 +166,12 @@ class FlaskApitests(Modeltests):
 
     def test_api_place(self):
         """ Test the api_place function. """
-        today = date.today()
-        end_date = today + timedelta(days=2)
-        rv = self.app.get('/api/place/EMEA/foobar/%s/%s' %(today,
+        end_date = TODAY + timedelta(days=2)
+        rv = self.app.get('/api/place/EMEA/foobar/%s/%s' %(TODAY,
             end_date))
         self.assertEqual(rv.status_code, 301)
 
-        rv = self.app.get('/api/place/EMEA/foobar/%s/%s/' %(today,
+        rv = self.app.get('/api/place/EMEA/foobar/%s/%s/' %(TODAY,
             end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.data,
@@ -182,33 +180,33 @@ class FlaskApitests(Modeltests):
         self.__setup_db()
 
         rv = self.app.get('/api/place/APAC/test_calendar4/%s/%s/' %(
-            today, end_date))
+            TODAY, end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         rv = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
-            today, end_date))
+            TODAY, end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in rv.data)
         self.assertEqual(rv.data.count('meeting_name'), 1)
 
         rv = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
-            today, end_date))
+            TODAY, end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in rv.data)
         self.assertEqual(rv.data.count('meeting_name'), 1)
 
-        end_date = today + timedelta(days=1)
+        end_date = TODAY + timedelta(days=1)
 
         rv = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
-            today, end_date))
+            TODAY, end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         rv = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
-            today, end_date))
+            TODAY, end_date))
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.data,
             '{ "retrieval": "notok", "meeting": []}')

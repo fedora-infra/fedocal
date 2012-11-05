@@ -64,7 +64,7 @@ class Flasktests(Modeltests):
         super(Flasktests, self).setUp()
 
         fedocal.APP.config['TESTING'] = True
-        fedocal.CONFIG.set('fedocal', 'db_url',
+        fedocal.SESSION = fedocallib.create_session(
             'sqlite:///%s' % DB_PATH)
         self.app = fedocal.APP.test_client()
 

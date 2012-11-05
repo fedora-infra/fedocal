@@ -6,16 +6,23 @@
 {% set title_extent = 'add a new calendar' %}
 
 {% block content %}
-<form action="" method="post">
-{{ render_field(form.calendar_name) }}
-{{ render_field(form.calendar_description) }}
-{{ render_field(form.calendar_manager_groups) }}
-{{ render_field(form.calendar_multiple_meetings) }}
-{{ render_field(form.calendar_regional_meetings) }}
-<p class="buttons indent">
-    <input type="submit" class="submit positive button" value="Create">
-    <input type="button" value="Cancel" class="button" onclick="history.back();">
-</p>
-{{ form.csrf_token }}
-</form>
+<section>
+    <header>
+        <h2>New calendar</h2>
+        <p>Please enter your calendar details in the above form.</p>
+    </header>
+
+    <form action="" method="post">
+        {{ render_field(form.calendar_name) }}
+        {{ render_field(form.calendar_description) }}
+        {{ render_field(form.calendar_manager_groups) }}
+        {{ render_field(form.calendar_multiple_meetings) }}
+        {{ render_field(form.calendar_regional_meetings) }}
+        <p class="buttons indent">
+            <input type="submit" class="submit positive button" value="Create">
+            <input type="button" value="Cancel" class="button" onclick="history.back();">
+            {{ form.csrf_token }}
+        </p>
+    </form>
+</section>
 {% endblock %}

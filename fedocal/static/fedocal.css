@@ -74,15 +74,16 @@ section nav {
     vertical-align: middle;
 }
 
+section > header {
+    margin-left: -200px; /* Left align with menu */
+    margin-bottom: .5em;
+}
+
 #content {
     position: relative;
     margin: .5em;
     /* for the menu */
     padding-left: 210px;
-}
-
-#agenda {
-    margin-top: .5em;
 }
 
 #agenda, .my_meetings {
@@ -139,8 +140,11 @@ section nav {
     width: 150px;
 }
 
-.my_meetings .button {
-    width: 50px;
+.my_meetings .buttons {
+    width: 1%;
+    white-space: nowrap;
+    text-align: center;
+    padding: .1em .2em;
 }
 
 .my_meetings img {
@@ -161,7 +165,7 @@ section nav {
     width: 200px;
     margin-right: 0;
     position: absolute;
-    top: 0;
+    top: 70px;
     left: 0;
 }
 

@@ -5,50 +5,55 @@
 {% set title_extent = ('Edit meeting "%s"') % meeting.calendar_name %}
 
 {% block content %}
+<section>
 
-<form action="" method="post">
-    <table>
-{{ render_field_in_row(form.meeting_name) }}
-{{ render_field_in_row(form.meeting_date) }}
-{{ render_field_in_row(form.meeting_time_start) }}
-{{ render_field_in_row(form.meeting_time_stop) }}
-{{ render_field_in_row(form.comanager) }}
-{{ render_field_in_row(form.information) }}
-{% if calendar.calendar_regional_meetings %}
-{{ render_field_in_row(form.meeting_region) }}
-{% endif %}
-    </table>
+    <header>
+        <h2>New meeting</h2>
+        <p>Please enter your meeting details in the above form.</p>
+    </header>
 
-<h4>Recursive event</h4>
-<p>If this is a regular meeting this is where you want to set it as so.</p>
-<table>
-{{ render_field_in_row(form.frequency) }}
-{{ render_field_in_row(form.end_repeats,
-    after='Leave empty if there is no end date for the repeat.') }}
-</table>
+    <form action="" method="post">
+        <table>
+            {{ render_field_in_row(form.meeting_name) }}
+            {{ render_field_in_row(form.meeting_date) }}
+            {{ render_field_in_row(form.meeting_time_start) }}
+            {{ render_field_in_row(form.meeting_time_stop) }}
+            {{ render_field_in_row(form.comanager) }}
+            {{ render_field_in_row(form.information) }}
+            {% if calendar.calendar_regional_meetings %}
+                {{ render_field_in_row(form.meeting_region) }}
+            {% endif %}
+        </table>
 
-<h4>Reminder</h4>
-<p>You may want fedocal to send an email to a mailing list of your choices.
-</p>
-<p>Note that fedocal will send the reminder in your name.</p>
-<table>
-{{ render_field_in_row(form.remind_when) }}
-{{ render_field_in_row(form.remind_who) }}
-</table>
+        <h4>Recursive event</h4>
+        <p>If this is a regular meeting this is where you want to set it as so.</p>
+        <table>
+            {{ render_field_in_row(form.frequency) }}
+            {{ render_field_in_row(form.end_repeats,
+                after='Leave empty if there is no end date for the repeat.') }}
+        </table>
 
-{% if meeting.recursion_frequency %}
-<h4>Edit all?</h4>
-<p>This meeting is a recursive meeting, your changes will
-affect all the meetings related.
-</p>
-{% endif %}
+        <h4>Reminder</h4>
+        <p>You may want fedocal to send an email to a mailing list of your choices.</p>
+        <p>Note that fedocal will send the reminder in your name.</p>
+        <table>
+            {{ render_field_in_row(form.remind_when) }}
+            {{ render_field_in_row(form.remind_who) }}
+        </table>
 
-<p class="buttons indent">
-    <input type="submit" class="submit positive button" value="Edit">
-    <input type="button" value="Cancel" class="button" onclick="history.back();">
-</p>
-{{ form.csrf_token }}
-</form>
+        {% if meeting.recursion_frequency %}
+            <h4>Edit all?</h4>
+            <p>This meeting is a recursive meeting, your changes will
+            affect all the meetings related.</p>
+        {% endif %}
+
+        <p class="buttons indent">
+            <input type="submit" class="submit positive button" value="Edit">
+            <input type="button" value="Cancel" class="button" onclick="history.back();">
+            {{ form.csrf_token }}
+        </p>
+    </form>
+</section>
 {% endblock %}
 
 {% block jscripts %}

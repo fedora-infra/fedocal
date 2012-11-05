@@ -86,7 +86,7 @@
             {% else %}
                 <p> Welcome, {{ g.fas_user.username }}</p>
                 <ul class="checkmark-list">
-                    <li><a href="{{ url_for('my_meetings') }}"> Manage your meeting </a></li>
+                    <li><a href="{{ url_for('my_meetings') }}"> Manage your meetings </a></li>
                     <li><a href="{{ url_for('auth_logout') }}"> Log-out </a></li>
                 </ul>
             {% endif %}

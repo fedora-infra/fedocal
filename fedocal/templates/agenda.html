@@ -19,16 +19,14 @@
     <nav id="weeks">
         <a href="{{url_for('calendar_fullday',
             calendar_name=calendar.calendar_name, year=prev_week.year,
-            month=prev_week.month, day=prev_week.day)}}">
-            &lt;&lt; Previous week
-        </a> |
-        <a href="{{url_for('calendar', calendar_name=calendar.calendar_name)}}">
-            current week
-        </a> |
+            month=prev_week.month, day=prev_week.day)}}" class="button">
+            &lt
+        </a>
+        {{ weekdays | WeekHeading }}
         <a href="{{url_for('calendar_fullday',
             calendar_name=calendar.calendar_name, year=next_week.year,
-            month=next_week.month, day=next_week.day)}}">
-            Next week &gt;&gt;
+            month=next_week.month, day=next_week.day)}}" class="button">
+            &gt;
         </a>
     </nav>
 {% endif %}
@@ -37,7 +35,7 @@
         <tr>
             <th></th>
             {% for day in weekdays %}
-            <th> {{ day }}</th>
+            <th> {{ day.strftime('%A %d') }}</th>
             {% endfor %}
         </tr>
         {% for time_entry in meetings |sort %}

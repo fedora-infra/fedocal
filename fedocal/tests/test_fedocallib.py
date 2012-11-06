@@ -170,8 +170,9 @@ class Fedocallibtests(Modeltests):
 
     def test_get_week_days(self):
         """ Test the get_week_days function. """
-        expectdays = ['Monday 01', 'Tuesday 02', 'Wednesday 03',
-            'Thursday 04', 'Friday 05', 'Saturday 06', 'Sunday 07']
+        expectdays = [date(2012, 10, 1), date(2012, 10, 2),
+            date(2012, 10, 3), date(2012, 10, 4), date(2012, 10, 5),
+            date(2012, 10, 6), date(2012, 10, 7)]
         days = fedocallib.get_week_days(2012, 10, 3)
         self.assertNotEqual(days, None)
         self.assertEqual(days, expectdays)

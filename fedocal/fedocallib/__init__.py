@@ -167,8 +167,7 @@ def get_week_days(year=None, month=None, day=None):
     weekdays = []
     for i in range(0, 7):
         curday = week_start + timedelta(days=i)
-        curday_txt = curday.strftime('%A %d')
-        weekdays.append(curday_txt)
+        weekdays.append(curday)
     return weekdays
 
 

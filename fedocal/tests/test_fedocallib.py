@@ -547,15 +547,27 @@ class Fedocallibtests(Modeltests):
     def test_get_html_monthly_cal(self):
         """ Test the get_html_monthly_call function. """
         today = date.today()
-        output = fedocallib.get_html_monthly_cal(today.month, today.year)
+        output = fedocallib.get_html_monthly_cal(today.day,today.month,
+            today.year)
+        # Handle the today css class
         expected_output = RESULT_CALENDAR_HTML.replace(
             'class="%s">%s' % (today.strftime('%a').lower(), today.day),
             'class="%s today">%s'% (today.strftime('%a').lower(), today.day))
+        # Handle the change of month
         expected_output = expected_output.replace(
             'class="month">November 2012</th>',
             'class="month">%s %s</th>' % (today.strftime('%B'),
                 today.year))
-        self.assertEqual(output.strip(), expected_output.strip())
+        # Handle the current_week css class
+        expected_output = expected_output.split('\n')
+        cnt = 0
+        while cnt < len(expected_output):
+            if '>%s</td>' % today.day in expected_output[cnt]:
+                expected_output[cnt] = expected_output[cnt].replace(
+                    '<tr>', '<tr class="current_week">')
+            cnt = cnt + 1
+        self.assertEqual(output.strip(),
+            "\n".join(expected_output).strip())
 
 
 if __name__ == '__main__':

@@ -114,6 +114,7 @@ def calendar_fullday(calendar_name, year, month, day):
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
+    day_index = fedocallib.get_week_day_index(year, month, day)
     meetings = fedocallib.get_meetings(SESSION, calendarobj, year,
         month, day)
     next_week = fedocallib.get_next_week(week_start.year,
@@ -129,6 +130,7 @@ def calendar_fullday(calendar_name, year, month, day):
         calendar=calendarobj,
         month=month_name,
         weekdays=weekdays,
+        day_index=day_index,
         meetings=meetings,
         next_week=next_week,
         prev_week=prev_week,

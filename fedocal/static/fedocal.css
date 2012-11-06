@@ -134,6 +134,10 @@ section nav {
     width: 7em;
 }
 
+#agenda .today {
+    background-color: #fff7da;
+}
+
 .my_meetings .date {
     border-left: solid 0px;
     width: 100px;

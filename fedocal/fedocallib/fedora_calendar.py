@@ -52,7 +52,7 @@ class FedocalCalendar(HTMLCalendar):
             if day == cur_date.day \
                 and self.month == cur_date.month \
                 and self.year == cur_date.year:
-                return '<td class="%s, today">%s</td>' % (
+                return '<td class="%s today">%s</td>' % (
                     self.cssclasses[weekday], link_day)
             else:
                 return '<td class="%s">%s</td>' % (

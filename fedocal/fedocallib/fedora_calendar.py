@@ -24,13 +24,14 @@ class FedocalCalendar(HTMLCalendar):
     html validation and some features 'locally required'
     """
 
-    def __init__(self, year, month, calendar_name=None):
+    def __init__(self, year, month, day, calendar_name=None):
         """ Constructor.
         Stores the year and the month asked.
         """
         super(FedocalCalendar, self).__init__()
         self.year = year
         self.month = month
+        self.day = day
         self.calendar_name = calendar_name
 
     def formatday(self, day, weekday):
@@ -56,6 +57,20 @@ class FedocalCalendar(HTMLCalendar):
                 return '<td class="%s">%s</td>' % (
                     self.cssclasses[weekday], link_day)
 
+    def formatweek(self, theweek, current=False):
+        """ Return a complete week as a table row.
+
+        :kwarg current: a boolean stating wether this is the current
+            week or not (the current week will have the css class:
+            current_week)
+        """
+        s = ''.join(self.formatday(d, wd) for (d, wd) in theweek)
+        if current:
+            return '<tr class="current_week">%s</tr>' % s
+        else:
+            return '<tr>%s</tr>' % s
+
+
     def formatmonth(self, withyear=True):
         """
         Return a formatted month as a html valid table.
@@ -69,7 +84,11 @@ class FedocalCalendar(HTMLCalendar):
         #a(self.formatweekheader())
         #a('\n')
         for week in self.monthdays2calendar(self.year, self.month):
-            a(self.formatweek(week))
+            days = [item[0] for item in week]
+            if self.day in days:
+                a(self.formatweek(week, current=True))
+            else:
+                a(self.formatweek(week))
             a('\n')
         a('</table>')
         a('\n')

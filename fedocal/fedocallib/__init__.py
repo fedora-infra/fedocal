@@ -452,23 +452,27 @@ def add_meetings_to_vcal(ical, meetings):
     for meeting in meetings:
         add_meeting_to_vcal(ical, meeting)
 
-def get_html_monthly_cal(month=None, year=None, calendar_name=None):
+def get_html_monthly_cal(day=None, month=None, year=None,
+    calendar_name=None):
     """ Display a monthly calendar as HTML.
 
-    :kwarg month: optionnal month. Defaults to current month
+    :kwarg day: optionnal day (as int). Defaults to current day
+    :kwarg month: optionnal month (as int). Defaults to current month
     :kwarg year: optionnal year. Defaults to current year.
     :kwarg calendar_name: the name of the calendar to which the links
         should point.
     """
-    if year is None or month is None:
-        curdate = date.today()
-        if year is None:
-            year = curdate.year
+    cur_date = date.today()
+    if not year:
+        year = cur_date.year
 
-        if month is None:
-            month = curdate.month
+    if not month:
+        month = cur_date.month
 
-    htmlcal = FedocalCalendar(year=year, month=month,
+    if not day:
+        day = cur_date.day
+
+    htmlcal = FedocalCalendar(day=day, year=year, month=month,
         calendar_name=calendar_name)
     curmonth_cal_nf = htmlcal.formatmonth()
 

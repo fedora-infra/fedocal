@@ -241,3 +241,9 @@ table.month td {
 table.month td.noday {
     background-color: #f9f9f9;
 }
+
+table.month td.today{
+    background-color: #fff7da;
+    border: 1px solid #000;
+    color: #000;
+}

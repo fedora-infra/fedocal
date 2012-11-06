@@ -48,7 +48,7 @@ import fedocallib
 from fedocallib import model
 from tests import Modeltests, TODAY
 
-RESULT_201211_HTML = """
+RESULT_CALENDAR_HTML = """
 <table class="month">
 <tr><th colspan="7" class="month">November 2012</th></tr>
 <tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td><td class="sat">3</td><td class="sun">4</td></tr>
@@ -546,8 +546,16 @@ class Fedocallibtests(Modeltests):
 
     def test_get_html_monthly_cal(self):
         """ Test the get_html_monthly_call function. """
-        output = fedocallib.get_html_monthly_cal(11, 2012)
-        self.assertEqual(output.strip(), RESULT_201211_HTML.strip())
+        today = date.today()
+        output = fedocallib.get_html_monthly_cal(today.month, today.year)
+        expected_output = RESULT_CALENDAR_HTML.replace(
+            'class="%s">%s' % (today.strftime('%a').lower(), today.day),
+            'class="%s, today">%s'% (today.strftime('%a').lower(), today.day))
+        expected_output = expected_output.replace(
+            'class="month">November 2012</th>',
+            'class="month">%s %s</th>' % (today.strftime('%B'),
+                today.year))
+        self.assertEqual(output.strip(), expected_output.strip())
 
 
 if __name__ == '__main__':

@@ -63,6 +63,16 @@ def inject_calendars():
 
     return dict(calendars=calendars)
 
+
+@APP.template_filter('WeekHeading')
+def reverse_filter(weekdays):
+    """ Template filter returning the heading string which is located in
+    between the two navigation buttons on the agenda template.
+    """
+    return "%s - %s" % (weekdays[0].strftime('%d %b'),
+        weekdays[-1].strftime('%d %b %Y'))
+
+
 def is_admin():
     """ Return wether the user is admin for this application or not. """
     if not flask.g.fas_user:

@@ -238,6 +238,14 @@ table.month td {
     background-color: #fff;
 }
 
+table.month a{
+    color: #808080;
+}
+
+table.month .today a{
+    color: #000;
+}
+
 table.month td.noday {
     background-color: #f9f9f9;
 }

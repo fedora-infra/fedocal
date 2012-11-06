@@ -16,6 +16,7 @@ license.
 
 from datetime import date
 from calendar import HTMLCalendar
+import flask
 
 
 class FedocalCalendar(HTMLCalendar):
@@ -27,16 +28,20 @@ class FedocalCalendar(HTMLCalendar):
         """
         Return a day as a table cell.
         """
+        ## TODO: Fix the links so that they point to something that
+        # makes sense
         cur_date = date.today()
         if day == 0:
             return '<td class="noday">&nbsp;</td>'  # day outside month
         else:
             if day == cur_date.day:
-                return '<td class="%s, today">%d</td>' % (
-                    self.cssclasses[weekday], day)
+                return '<td class="%s, today"><a href="%s">%d</a></td>' % (
+                    self.cssclasses[weekday], flask.url_for('index'),
+                    day)
             else:
-                return '<td class="%s">%d</td>' % (
-                    self.cssclasses[weekday], day)
+                return '<td class="%s"><a href="%s">%d</a></td>' % (
+                    self.cssclasses[weekday], flask.url_for('index'),
+                    day)
 
     def formatmonth(self, theyear, themonth, withyear=True):
         """

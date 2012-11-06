@@ -24,6 +24,15 @@ class FedocalCalendar(HTMLCalendar):
     html validation and some features 'locally required'
     """
 
+    def __init__(self, year, month, calendar_name=None):
+        """ Constructor.
+        Stores the year and the month asked.
+        """
+        super(FedocalCalendar, self).__init__()
+        self.year = year
+        self.month = month
+        self.calendar_name = calendar_name
+
     def formatday(self, day, weekday):
         """
         Return a day as a table cell.
@@ -34,16 +43,22 @@ class FedocalCalendar(HTMLCalendar):
         if day == 0:
             return '<td class="noday">&nbsp;</td>'  # day outside month
         else:
-            if day == cur_date.day:
-                return '<td class="%s, today"><a href="%s">%d</a></td>' % (
-                    self.cssclasses[weekday], flask.url_for('index'),
-                    day)
+            link_day = day
+            if self.calendar_name:
+                link_day= '<a href="%s">%d</a>' % (flask.url_for(
+                        'calendar_fullday',
+                        calendar_name=self.calendar_name, year=self.year,
+                        month=self.month, day=day), day)
+            if day == cur_date.day \
+                and self.month == cur_date.month \
+                and self.year == cur_date.year:
+                return '<td class="%s, today">%s</td>' % (
+                    self.cssclasses[weekday], link_day)
             else:
-                return '<td class="%s"><a href="%s">%d</a></td>' % (
-                    self.cssclasses[weekday], flask.url_for('index'),
-                    day)
+                return '<td class="%s">%s</td>' % (
+                    self.cssclasses[weekday], link_day)
 
-    def formatmonth(self, theyear, themonth, withyear=True):
+    def formatmonth(self, withyear=True):
         """
         Return a formatted month as a html valid table.
         """
@@ -51,11 +66,11 @@ class FedocalCalendar(HTMLCalendar):
         a = v.append
         a('<table class="month">')
         a('\n')
-        a(self.formatmonthname(theyear, themonth, withyear=withyear))
+        a(self.formatmonthname(self.year, self.month, withyear=withyear))
         a('\n')
         #a(self.formatweekheader())
         #a('\n')
-        for week in self.monthdays2calendar(theyear, themonth):
+        for week in self.monthdays2calendar(self.year, self.month):
             a(self.formatweek(week))
             a('\n')
         a('</table>')

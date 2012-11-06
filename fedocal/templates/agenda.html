@@ -47,7 +47,7 @@
                 {% if meeting_list %}
                 <td>
                     {% for meeting in meeting_list %}
-                    <a class="event" href="{{ url_for('view_meeting',
+                    <a class="event meeting_{{ meeting.meeting_id }}" href="{{ url_for('view_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         {{ meeting.meeting_name }}
                      </a>
@@ -72,8 +72,8 @@
 <script type="text/javascript">
     $(function(){
         $('.event').click(function(){
-            var _id = $(this).attr('id');
-            var _meetId = _id.replace('meeting_', '');
+            var _cls = $(this).attr('class');
+            var _meetId = _cls.replace('event meeting_', '');
             var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
             $.ajax({
                 url: _url + _meetId + '/0/',

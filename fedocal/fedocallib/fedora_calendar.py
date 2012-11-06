@@ -14,12 +14,29 @@ See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
 
+from datetime import date
 from calendar import HTMLCalendar
+
 
 class FedocalCalendar(HTMLCalendar):
     """ Improve Python's HTMLCalendar object adding
     html validation and some features 'locally required'
     """
+
+    def formatday(self, day, weekday):
+        """
+        Return a day as a table cell.
+        """
+        cur_date = date.today()
+        if day == 0:
+            return '<td class="noday">&nbsp;</td>'  # day outside month
+        else:
+            if day == cur_date.day:
+                return '<td class="%s, today">%d</td>' % (
+                    self.cssclasses[weekday], day)
+            else:
+                return '<td class="%s">%d</td>' % (
+                    self.cssclasses[weekday], day)
 
     def formatmonth(self, theyear, themonth, withyear=True):
         """

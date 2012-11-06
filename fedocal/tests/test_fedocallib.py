@@ -550,7 +550,7 @@ class Fedocallibtests(Modeltests):
         output = fedocallib.get_html_monthly_cal(today.month, today.year)
         expected_output = RESULT_CALENDAR_HTML.replace(
             'class="%s">%s' % (today.strftime('%a').lower(), today.day),
-            'class="%s, today">%s'% (today.strftime('%a').lower(), today.day))
+            'class="%s today">%s'% (today.strftime('%a').lower(), today.day))
         expected_output = expected_output.replace(
             'class="month">November 2012</th>',
             'class="month">%s %s</th>' % (today.strftime('%B'),

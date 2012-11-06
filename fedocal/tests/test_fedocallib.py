@@ -170,8 +170,8 @@ class Fedocallibtests(Modeltests):
 
     def test_get_week_days(self):
         """ Test the get_week_days function. """
-        expectdays = ['Monday 1', 'Tuesday 2', 'Wednesday 3',
-            'Thursday 4', 'Friday 5', 'Saturday 6', 'Sunday 7']
+        expectdays = ['Monday 01', 'Tuesday 02', 'Wednesday 03',
+            'Thursday 04', 'Friday 05', 'Saturday 06', 'Sunday 07']
         days = fedocallib.get_week_days(2012, 10, 3)
         self.assertNotEqual(days, None)
         self.assertEqual(days, expectdays)
@@ -568,6 +568,15 @@ class Fedocallibtests(Modeltests):
             cnt = cnt + 1
         self.assertEqual(output.strip(),
             "\n".join(expected_output).strip())
+
+    def test_get_week_day_index(self):
+        """ Test the get_week_day_index function. """
+        output = fedocallib.get_week_day_index(year=2012, month=11,
+            day=6)
+        self.assertEqual(output, 2)
+        today = date.today()
+        output = fedocallib.get_week_day_index()
+        self.assertEqual(output, today.isoweekday())
 
 
 if __name__ == '__main__':

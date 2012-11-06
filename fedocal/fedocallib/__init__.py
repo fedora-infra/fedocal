@@ -30,11 +30,6 @@ from model import Calendar, Reminder, Meeting
 
 from fedora_calendar import FedocalCalendar
 
-MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-        'August', 'September', 'October', 'November', 'December']
-
-WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
-        'Saturday', 'Sunday']
 
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
         '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
@@ -160,6 +155,7 @@ def get_week_days(year=None, month=None, day=None):
 
     This function provides the 'Day date' string used at the header of
     the agenda table.
+
     :kwarg year: year to consider when searching a week.
     :kwarg month: month to consider when searching a week.
     :kwarg day: day to consider when searching a week.
@@ -171,9 +167,32 @@ def get_week_days(year=None, month=None, day=None):
     weekdays = []
     for i in range(0, 7):
         curday = week_start + timedelta(days=i)
-        curday_txt = "%s %s" % (WEEK[curday.weekday()], curday.day)
+        curday_txt = curday.strftime('%A %d')
         weekdays.append(curday_txt)
     return weekdays
+
+
+def get_week_day_index(year=None, month=None, day=None):
+    """ For a specified date, find the index of this day in the week.
+
+    This function provides the 'Day index' string used to highlight the
+    current day in the calendar view.
+
+    :kwarg year: year to consider when searching a week.
+    :kwarg month: month to consider when searching a week.
+    :kwarg day: day to consider when searching a week.
+    :return a list of 'Day date' string corresponding to the week asked
+        either based on the current utc date or based on the information
+        specified.
+    """
+    today = date.today()
+    if not year:
+        year = today.year
+    if not month:
+        month = today.month
+    if not day:
+        day = today.day
+    return date(year, month, day).isoweekday()
 
 
 def get_meetings(session, calendar, year=None, month=None, day=None):

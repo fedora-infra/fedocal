@@ -16,6 +16,7 @@ license.
 
 from datetime import date
 from calendar import HTMLCalendar
+from calendar import month_name
 import flask
 
 
@@ -69,6 +70,19 @@ class FedocalCalendar(HTMLCalendar):
             return '<tr class="current_week">%s</tr>' % s
         else:
             return '<tr>%s</tr>' % s
+
+
+    def formatmonthname(self, theyear, themonth, withyear=True):
+        """
+        Return a month name as a table row.
+        """
+        if withyear:
+            s = '%s %s' % (month_name[themonth], theyear)
+        else:
+            s = '%s' % month_name[themonth]
+        prev_month_lnk = '<a class="button" href="#"><</a>'
+        next_month_lnk = '<a class="button" href="#">></a>'
+        return '<tr><th colspan="7" class="month">%s %s %s</th></tr>' % (prev_month_lnk, s, next_month_lnk)
 
 
     def formatmonth(self, withyear=True):

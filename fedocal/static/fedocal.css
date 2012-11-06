@@ -135,7 +135,7 @@ section nav {
 }
 
 #agenda .today {
-    background-color: #fff7da;
+    background-color: rgba(255, 246, 213, .4);
 }
 
 .my_meetings .date {
@@ -255,10 +255,28 @@ table.month td.noday {
 }
 
 table.month td.today{
-    background-color: #fff7da;
+    background-color: rgba(255, 246, 213, .8);
     border-color: #000;
     border-width: 1px;
     /* ugly hack to work with table collapsed borders */
     border-style: double solid solid double;
     color: #000;
+}
+
+th.month {
+    color: #666;
+    padding-bottom: .4em;
+}
+
+th.month a {
+    color: #4d4d4d;
+    display: inline-block;
+}
+
+th.month a:hover {
+    color: #fff;
+}
+
+th.month .ui-button-text {
+    padding: 0 .5em;
 }

@@ -50,7 +50,7 @@ from tests import Modeltests, TODAY
 
 RESULT_CALENDAR_HTML = """
 <table class="month">
-<tr><th colspan="7" class="month">November 2012</th></tr>
+<tr><th colspan="7" class="month"><a class="button" href="#"><</a> November 2012 <a class="button" href="#">></a></th></tr>
 <tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td><td class="sat">3</td><td class="sun">4</td></tr>
 <tr><td class="mon">5</td><td class="tue">6</td><td class="wed">7</td><td class="thu">8</td><td class="fri">9</td><td class="sat">10</td><td class="sun">11</td></tr>
 <tr><td class="mon">12</td><td class="tue">13</td><td class="wed">14</td><td class="thu">15</td><td class="fri">16</td><td class="sat">17</td><td class="sun">18</td></tr>
@@ -555,8 +555,8 @@ class Fedocallibtests(Modeltests):
             'class="%s today">%s'% (today.strftime('%a').lower(), today.day))
         # Handle the change of month
         expected_output = expected_output.replace(
-            'class="month">November 2012</th>',
-            'class="month">%s %s</th>' % (today.strftime('%B'),
+            'class="month"><a class="button" href="#"><</a> November 2012 <a class="button" href="#">></a></th>',
+            'class="month"><a class="button" href="#"><</a> %s %s <a class="button" href="#">></a></th>' % (today.strftime('%B'),
                 today.year))
         # Handle the current_week css class
         expected_output = expected_output.split('\n')

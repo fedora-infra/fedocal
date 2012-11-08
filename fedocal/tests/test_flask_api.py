@@ -34,9 +34,6 @@ import unittest
 import sys
 import os
 
-from datetime import date
-from datetime import time
-from datetime import datetime
 from datetime import timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(
@@ -45,7 +42,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import fedocal
 import fedocal.fedocallib as fedocallib
 from fedocal.tests import Modeltests, DB_PATH, TODAY
-from test_fedocallib import FakeUser
 
 
 class FlaskApitests(Modeltests):
@@ -70,159 +66,159 @@ class FlaskApitests(Modeltests):
 
     def test_api(self):
         """ Test the index function. """
-        rv = self.app.get('/api')
-        self.assertEqual(rv.status_code, 301)
+        output = self.app.get('/api')
+        self.assertEqual(output.status_code, 301)
 
-        rv = self.app.get('/api/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('<title> API   - Fedocal</title>' in rv.data)
-        self.assertTrue('<h1>API documentation</h1>' in rv.data)
+        output = self.app.get('/api/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<title> API   - Fedocal</title>' in output.data)
+        self.assertTrue('<h1>API documentation</h1>' in output.data)
         self.assertTrue('<code>/api/date/calendar_name/</code>' \
-            in rv.data)
+            in output.data)
         self.assertTrue('<code>/api/place/region/calendar_name/</code>' \
-            in rv.data)
+            in output.data)
 
     def test_api_date_default(self):
         """ Test the api_date_default function. """
-        rv = self.app.get('/api/date/foobar')
-        self.assertEqual(rv.status_code, 301)
+        output = self.app.get('/api/date/foobar')
+        self.assertEqual(output.status_code, 301)
 
-        rv = self.app.get('/api/date/foobar/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        output = self.app.get('/api/date/foobar/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         self.__setup_db()
 
-        rv = self.app.get('/api/date/test_calendar/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
+        output = self.app.get('/api/date/test_calendar/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertTrue(' "meeting_manager": "pingou, shaiton",' in \
-            rv.data)
-        self.assertTrue('"meeting_name": "test-meeting2"' in rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 6)
+            output.data)
+        self.assertTrue('"meeting_name": "test-meeting2"' in output.data)
+        self.assertEqual(output.data.count('meeting_name'), 6)
 
-        rv = self.app.get('/api/date/test_calendar4/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 2)
+        output = self.app.get('/api/date/test_calendar4/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
+        self.assertEqual(output.data.count('meeting_name'), 2)
 
     def test_api_date(self):
         """ Test the api_date function. """
         end_date = TODAY + timedelta(days=11)
-        rv = self.app.get('/api/date/foobar/%s/%s' %(TODAY, end_date))
-        self.assertEqual(rv.status_code, 301)
+        output = self.app.get('/api/date/foobar/%s/%s' %(TODAY, end_date))
+        self.assertEqual(output.status_code, 301)
 
-        rv = self.app.get('/api/date/foobar/%s/%s/' %(TODAY, end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        output = self.app.get('/api/date/foobar/%s/%s/' %(TODAY, end_date))
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         self.__setup_db()
 
-        rv = self.app.get('/api/date/test_calendar/%s/%s/' %(TODAY,
+        output = self.app.get('/api/date/test_calendar/%s/%s/' %(TODAY,
             end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertTrue(' "meeting_manager": "pingou, shaiton",' in \
-            rv.data)
+            output.data)
         self.assertTrue('"meeting_name": "Another test meeting2",' in \
-            rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 4)
+            output.data)
+        self.assertEqual(output.data.count('meeting_name'), 4)
 
         end_date = TODAY + timedelta(days=2)
-        rv = self.app.get('/api/date/test_calendar4/%s/%s/' %(TODAY,
+        output = self.app.get('/api/date/test_calendar4/%s/%s/' %(TODAY,
             end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 2)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
+        self.assertEqual(output.data.count('meeting_name'), 2)
 
     def test_api_place_default(self):
         """ Test the api_place_default function. """
-        rv = self.app.get('/api/place/EMEA/foobar')
-        self.assertEqual(rv.status_code, 301)
+        output = self.app.get('/api/place/EMEA/foobar')
+        self.assertEqual(output.status_code, 301)
 
-        rv = self.app.get('/api/place/EMEA/foobar/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        output = self.app.get('/api/place/EMEA/foobar/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         self.__setup_db()
 
-        rv = self.app.get('/api/place/APAC/test_calendar4/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        output = self.app.get('/api/place/APAC/test_calendar4/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
-        rv = self.app.get('/api/place/NA/test_calendar4/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 1)
+        output = self.app.get('/api/place/NA/test_calendar4/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
+        self.assertEqual(output.data.count('meeting_name'), 1)
 
-        rv = self.app.get('/api/place/EMEA/test_calendar4/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 1)
+        output = self.app.get('/api/place/EMEA/test_calendar4/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
+        self.assertEqual(output.data.count('meeting_name'), 1)
 
     def test_api_place(self):
         """ Test the api_place function. """
         end_date = TODAY + timedelta(days=2)
-        rv = self.app.get('/api/place/EMEA/foobar/%s/%s' %(TODAY,
+        output = self.app.get('/api/place/EMEA/foobar/%s/%s' %(TODAY,
             end_date))
-        self.assertEqual(rv.status_code, 301)
+        self.assertEqual(output.status_code, 301)
 
-        rv = self.app.get('/api/place/EMEA/foobar/%s/%s/' %(TODAY,
+        output = self.app.get('/api/place/EMEA/foobar/%s/%s/' %(TODAY,
             end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         self.__setup_db()
 
-        rv = self.app.get('/api/place/APAC/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/APAC/test_calendar4/%s/%s/' %(
             TODAY, end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
-        rv = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
             TODAY, end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 1)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
+        self.assertEqual(output.data.count('meeting_name'), 1)
 
-        rv = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
             TODAY, end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in rv.data)
-        self.assertEqual(rv.data.count('meeting_name'), 1)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "ok"' in output.data)
+        self.assertEqual(output.data.count('meeting_name'), 1)
 
         end_date = TODAY + timedelta(days=1)
 
-        rv = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
             TODAY, end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
-        rv = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
             TODAY, end_date))
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
     def test_api_date_place_error(self):
         """ Test the api_date and api_place functions with wrongly
         formated input. """
-        rv = self.app.get('/api/date/foobar/2000-01/2000-02/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        output = self.app.get('/api/date/foobar/2000-01/2000-02/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": [], "error": '\
             '"Date format invalid"}')
 
-        rv = self.app.get('/api/place/EMEA/foobar/2000-01/2000-02/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.data,
+        output = self.app.get('/api/place/EMEA/foobar/2000-01/2000-02/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": [], "error": '\
             '"Date format invalid"}')
 

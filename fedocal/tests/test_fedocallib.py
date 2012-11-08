@@ -80,6 +80,7 @@ class FakeUser(object):
         """
         self.groups = groups
 
+
 # pylint: disable=R0904
 class Fedocallibtests(Modeltests):
     """ Fedocallib tests. """

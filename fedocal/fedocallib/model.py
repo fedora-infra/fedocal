@@ -130,7 +130,7 @@ class Meeting(BASE):
     calendar_name = Column(String(80), ForeignKey('calendars.calendar_name'),
         nullable=False)
     calendar = relationship("Calendar")
-    meeting_manager = Column(String(160))  ##5 person max (32 * 5)
+    meeting_manager = Column(String(160))  # 5 person max (32 * 5)
     meeting_date = Column(Date, default=datetime.utcnow().date())
     meeting_date_end = Column(Date, default=datetime.utcnow().date())
     meeting_time_start = Column(Time, default=datetime.utcnow().time())

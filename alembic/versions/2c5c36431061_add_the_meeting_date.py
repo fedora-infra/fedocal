@@ -18,7 +18,7 @@ import datetime
 def upgrade():
     ''' Add the meeting_date_end column to the meetings table '''
     op.add_column('meetings', sa.Column('meeting_date_end', sa.Date,
-				default=datetime.utcnow().date())
+				default=datetime.utcnow().date()))
 
 
 def downgrade():

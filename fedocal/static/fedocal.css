@@ -251,6 +251,10 @@ table.month .today a{
     color: #000;
 }
 
+table.month .current_week td {
+    background-color: #ffcc69;
+}
+
 table.month td.noday {
     background-color: #f9f9f9;
 }

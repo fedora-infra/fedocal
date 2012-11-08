@@ -40,12 +40,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from fedocallib.fedora_calendar import FedocalCalendar
-from tests import Modeltests, DB_PATH
+from tests import Modeltests
 
 
 class FedocalCalendartests(Modeltests):
     """ fedora_calendar application tests. """
-
 
     def test_formatday(self):
         """ Test the formatday function. """
@@ -87,7 +86,6 @@ class FedocalCalendartests(Modeltests):
 
     def test_formatmonth(self):
         """ Test the formatmonth function. """
-        today = date.today()
         cal = FedocalCalendar(2012, 1, 10)
         self.assertEqual(cal.formatmonth(),
             '<table class="month">\n<tr><th colspan="7" class="month">'\

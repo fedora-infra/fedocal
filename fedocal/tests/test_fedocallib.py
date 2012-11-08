@@ -281,10 +281,14 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings, [])
 
         obj = model.Meeting(
-            'A past test meeting', 'pingou',
-            TODAY - timedelta(days=1), time(12, 00), time(13, 00),
-            'This is a past test meeting',
-            'test_calendar', None, None)
+            meeting_name='A past test meeting',
+            meeting_manager='pingou',
+            meeting_date=TODAY - timedelta(days=1),
+            meeting_date_end=TODAY - timedelta(days=1),
+            meeting_time_start=time(12, 00),
+            meeting_time_stop=time(13, 00),
+            meeting_information='This is a past test meeting',
+            calendar_name='test_calendar')
         obj.save(self.session)
         self.session.commit()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
@@ -438,12 +442,15 @@ class Fedocallibtests(Modeltests):
         time_start = datetime.utcnow() + timedelta(hours=12)
         time_end = datetime.utcnow() + timedelta(hours=13)
         meeting = model.Meeting(
-            'Test meeting with reminder', 'pingou',
-            time_start.date(),
-            time(time_start.hour, 00), time(time_end.hour, 00),
-            'This is a test meeting with reminder',
-            'test_calendar',
-            remobj.reminder_id, None)
+            meeting_name='Test meeting with reminder',
+            meeting_manager='pingou',
+            meeting_date=time_start.date(),
+            meeting_date_end=time_start.date(),
+            meeting_time_start=time(time_start.hour, 00),
+            meeting_time_stop=time(time_end.hour, 00),
+            meeting_information='This is a test meeting with reminder',
+            calendar_name='test_calendar',
+            reminder_id=remobj.reminder_id)
         meeting.save(self.session)
         self.session.commit()
 

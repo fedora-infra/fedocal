@@ -160,9 +160,10 @@ def calendar_fullday(calendar_name, year, month, day):
     month_name = week_start.strftime('%B')
 
     day_index = None
-    today=datetime.date.today()
+    today = datetime.date.today()
     if today > week_start and today < week_start + datetime.timedelta(days=7):
-        day_index = fedocallib.get_week_day_index(today.year, today.month, today.day)
+        day_index = fedocallib.get_week_day_index(today.year,
+            today.month, today.day)
 
     curmonth_cal = fedocallib.get_html_monthly_cal(year=year,
         month=month, calendar_name=calendar_name)

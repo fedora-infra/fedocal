@@ -490,6 +490,7 @@ def add_meetings_to_vcal(ical, meetings):
     for meeting in meetings:
         add_meeting_to_vcal(ical, meeting)
 
+
 def get_html_monthly_cal(day=None, month=None, year=None,
     calendar_name=None):
     """ Display a monthly calendar as HTML.

@@ -132,6 +132,7 @@ section nav {
     padding-right: .2em;
     text-align: right;
     width: 7em;
+    vertical-align: top;
 }
 
 #agenda .today {

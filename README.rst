@@ -25,11 +25,14 @@ Dependencies:
 .. _python-vobject: http://vobject.skyhouseconsulting.com/
 .. _iCal: http://en.wikipedia.org/wiki/ICalendar
 .. _python-kitchen: http://packages.python.org/kitchen/
+.. _alembic: https://bitbucket.org/zzzeek/alembic
+.. _python-alembic: http://pypi.python.org/pypi/alembic
 
 This project is a `Flask`_ application. The calendars and meetings are
 stored into a relational database using `SQLAlchemy`_ as Object Relational
-Mapper (ORM). fedocal provides an `iCal`_ feed for each calendar and relies
-on `python-vobject`_ for this.
+Mapper (ORM) and `alembic`_ to handle database scheme changes.
+fedocal provides an `iCal`_ feed for each calendar and relies on
+`python-vobject`_ for this.
 
 
 The dependency list is therefore:
@@ -41,6 +44,7 @@ The dependency list is therefore:
 - `python-sqlalchemy`_
 - `python-vobject`_
 - `python-kitchen`_
+- `python-alembic`_
 
 
 Running a development instance:
@@ -134,6 +138,27 @@ has all the dependencies correctly set.
 To run them::
 
  ./run_tests.sh
+
+
+Database changes:
+-----------------
+.. _alembic tutorial: http://alembic.readthedocs.org/en/latest/tutorial.html
+
+The database changes are handled via `alembic`.
+
+
+If you are deploying fedocal for the first time, you will not need this,
+however, if you already have a running fedocal but the database scheme
+is not up to date, then you will have to run::
+
+
+ alembic upgrade head
+
+.. note:: If this is the first time you are running ``alembic``, you will
+   need to setup the ``sqlalchemy.url`` variable in the tile ``alembic.ini``.
+
+
+If you are a developer, you probably want to have a look at the `alembic tutorial`_
 
 
 License:

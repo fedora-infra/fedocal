@@ -73,6 +73,10 @@ def reverse_filter(weekdays):
         weekdays[-1].strftime('%d %b %Y'))
 
 
+@APP.teardown_request
+def shutdown_session(exception=None):
+    SESSION.remove()
+
 def is_admin():
     """ Return wether the user is admin for this application or not. """
     if not flask.g.fas_user:

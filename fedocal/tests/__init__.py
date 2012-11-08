@@ -51,6 +51,7 @@ DB_PATH = '%s/test.db' % (os.path.dirname(
 TODAY = get_start_week(date.today().year, date.today().month,
     date.today().day) + timedelta(days=2)
 
+
 class Modeltests(unittest.TestCase):
     """ Model tests. """
 

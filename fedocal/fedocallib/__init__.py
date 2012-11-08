@@ -48,9 +48,8 @@ def create_session(db_url, debug=False, pool_recycle=3600):
     :return a Session that can be used to query the database.
     """
     engine = create_engine(db_url, echo=debug, pool_recycle=pool_recycle)
-    session = sessionmaker(bind=engine)
-    scopedsession = scoped_session(session)
-    return scopedsession()
+    scopedsession = scoped_session(sessionmaker(bind=engine))
+    return scopedsession
 
 
 def get_calendars(session):

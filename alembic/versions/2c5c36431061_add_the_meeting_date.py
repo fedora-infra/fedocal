@@ -12,7 +12,7 @@ down_revision = None
 
 from alembic import op
 import sqlalchemy as sa
-import datetime
+from datetime import datetime
 
 
 def upgrade():

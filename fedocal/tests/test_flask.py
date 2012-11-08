@@ -35,9 +35,6 @@ import sys
 import os
 
 from datetime import date
-from datetime import time
-from datetime import datetime
-from datetime import timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..', '..'))
@@ -45,11 +42,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import fedocal
 import fedocal.fedocallib as fedocallib
 from fedocal.tests import Modeltests, DB_PATH
-from test_fedocallib import FakeUser
 
 
 class Flasktests(Modeltests):
     """ Flask application tests. """
+
+    session = None
 
     def __setup_db(self):
         """ Add a calendar and some meetings so that we can play with
@@ -70,122 +68,121 @@ class Flasktests(Modeltests):
 
     def test_index_empty(self):
         """ Test the index function. """
-        rv = self.app.get('/')
-        self.assertEqual(rv.status_code, 200)
+        output = self.app.get('/')
+        self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>   - Fedocal</title>' in rv.data)
+            '<title>   - Fedocal</title>' in output.data)
 
     def test_index(self):
         """ Test the index function. """
         self.__setup_db()
 
-        rv = self.app.get('/')
-        self.assertEqual(rv.status_code, 200)
+        output = self.app.get('/')
+        self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in rv.data)
-        self.assertTrue(' <a href="/test_calendar/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar2/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar4/">' in rv.data)
+            '<title> test_calendar  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
     def test_calendar(self):
         """ Test the calendar function. """
         self.__setup_db()
 
-        rv = self.app.get('/test_calendar')
-        self.assertEqual(rv.status_code, 301)
+        output = self.app.get('/test_calendar')
+        self.assertEqual(output.status_code, 301)
 
-        rv = self.app.get('/test_calendar', follow_redirects=True)
-        self.assertEqual(rv.status_code, 200)
+        output = self.app.get('/test_calendar', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in rv.data)
-        self.assertTrue(' <a href="/test_calendar/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar2/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar4/">' in rv.data)
+            '<title> test_calendar  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
-        rv = self.app.get('/test_calendar2/')
-        self.assertEqual(rv.status_code, 200)
+        output = self.app.get('/test_calendar2/')
+        self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar2  - Fedocal</title>' in rv.data)
-        self.assertTrue(' <a href="/test_calendar/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar2/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar4/">' in rv.data)
+            '<title> test_calendar2  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
     def test_calendar_fullday(self):
         """ Test the calendar_fullday function. """
         self.__setup_db()
 
         today = date.today()
-        rv = self.app.get('/test_calendar/%s/%s/%s/' % (today.year,
+        output = self.app.get('/test_calendar/%s/%s/%s/' % (today.year,
             today.month, today.day))
-        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in rv.data)
-        self.assertTrue(' <a href="/test_calendar/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar2/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar4/">' in rv.data)
+            '<title> test_calendar  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
-        rv = self.app.get('/test_calendar/%s/%s/%s' % (today.year,
+        output = self.app.get('/test_calendar/%s/%s/%s' % (today.year,
             today.month, today.day))
-        self.assertEqual(rv.status_code, 301)
+        self.assertEqual(output.status_code, 301)
 
-        rv = self.app.get('/test_calendar/%s/%s/%s/' % (today.year,
+        output = self.app.get('/test_calendar/%s/%s/%s/' % (today.year,
             today.month, today.day), follow_redirects=True)
-        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in rv.data)
-        self.assertTrue(' <a href="/test_calendar/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar2/">' in rv.data)
-        self.assertTrue(' <a href="/test_calendar4/">' in rv.data)
+            '<title> test_calendar  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
     def test_ical_out(self):
         """ Test the ical_out function. """
         self.__setup_db()
 
-        today = date.today()
-        rv = self.app.get('/ical/test_calendar/')
-        self.assertEqual(rv.status_code, 200)
-        self.assertTrue('BEGIN:VCALENDAR' in rv.data)
-        self.assertTrue('SUMMARY:test-meeting2' in rv.data)
+        output = self.app.get('/ical/test_calendar/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('BEGIN:VCALENDAR' in output.data)
+        self.assertTrue('SUMMARY:test-meeting2' in output.data)
         self.assertTrue('DESCRIPTION:This is a test meeting with '\
-            'recursion' in rv.data)
-        self.assertTrue('ORGANIZER:pingou' in rv.data)
-        self.assertEqual(rv.data.count('BEGIN:VEVENT'), 6)
-        self.assertEqual(rv.data.count('END:VEVENT'), 6)
+            'recursion' in output.data)
+        self.assertTrue('ORGANIZER:pingou' in output.data)
+        self.assertEqual(output.data.count('BEGIN:VEVENT'), 6)
+        self.assertEqual(output.data.count('END:VEVENT'), 6)
 
     def test_view_meeting(self):
         """ Test the view_meeting function. """
         self.__setup_db()
 
-        rv = self.app.get('/meeting/4/')
-        self.assertEqual(rv.status_code, 200)
+        output = self.app.get('/meeting/4/')
+        self.assertEqual(output.status_code, 200)
         self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
-            in rv.data)
+            in output.data)
         self.assertTrue('<h4> Meeting: test-meeting-st-1</h4>' \
-            in rv.data)
+            in output.data)
         self.assertTrue('This is a test meeting at the same time' in
-            rv.data)
+            output.data)
 
     def test_view_meeting_page(self):
         """ Test the view_meeting_page function. """
         self.__setup_db()
 
-        rv = self.app.get('/meeting/4/1/')
-        self.assertEqual(rv.status_code, 200)
+        output = self.app.get('/meeting/4/1/')
+        self.assertEqual(output.status_code, 200)
         self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
-            in rv.data)
+            in output.data)
         self.assertTrue('<h4> Meeting: test-meeting-st-1</h4>' \
-            in rv.data)
+            in output.data)
         self.assertTrue('This is a test meeting at the same time' in
-            rv.data)
+            output.data)
 
-        rv = self.app.get('/meeting/4/0/')
-        self.assertEqual(rv.status_code, 200)
+        output = self.app.get('/meeting/4/0/')
+        self.assertEqual(output.status_code, 200)
         self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
-            not in rv.data)
+            not in output.data)
         self.assertTrue('<h4> Meeting: test-meeting-st-1</h4>' \
-            in rv.data)
+            in output.data)
         self.assertTrue('This is a test meeting at the same time' in
-            rv.data)
+            output.data)
 
 
 if __name__ == '__main__':

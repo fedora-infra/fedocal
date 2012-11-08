@@ -48,18 +48,28 @@ import fedocallib
 from fedocallib import model
 from tests import Modeltests, TODAY
 
-RESULT_CALENDAR_HTML = """
-<table class="month">
-<tr><th colspan="7" class="month"><a class="button" href="#"><</a> November 2012 <a class="button" href="#">></a></th></tr>
-<tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td><td class="sat">3</td><td class="sun">4</td></tr>
-<tr><td class="mon">5</td><td class="tue">6</td><td class="wed">7</td><td class="thu">8</td><td class="fri">9</td><td class="sat">10</td><td class="sun">11</td></tr>
-<tr><td class="mon">12</td><td class="tue">13</td><td class="wed">14</td><td class="thu">15</td><td class="fri">16</td><td class="sat">17</td><td class="sun">18</td></tr>
-<tr><td class="mon">19</td><td class="tue">20</td><td class="wed">21</td><td class="thu">22</td><td class="fri">23</td><td class="sat">24</td><td class="sun">25</td></tr>
-<tr><td class="mon">26</td><td class="tue">27</td><td class="wed">28</td><td class="thu">29</td><td class="fri">30</td><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td></tr>
-</table>
-"""
+RESULT_CALENDAR_HTML = '<table class="month">\n'\
+'<tr><th colspan="7" class="month"><a class="button" href="#"><'\
+'</a> November 2012 <a class="button" href="#">></a></th></tr>\n'\
+'<tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td '\
+'class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td>'\
+'<td class="sat">3</td><td class="sun">4</td></tr>\n'\
+'<tr><td class="mon">5</td><td class="tue">6</td><td class="wed">7'\
+'</td><td class="thu">8</td><td class="fri">9</td><td class="sat">10'\
+'</td><td class="sun">11</td></tr>\n'\
+'<tr><td class="mon">12</td><td class="tue">13</td><td class="wed">14'\
+'</td><td class="thu">15</td><td class="fri">16</td><td class="sat">17'\
+'</td><td class="sun">18</td></tr>\n'\
+'<tr><td class="mon">19</td><td class="tue">20</td><td class="wed">21'\
+'</td><td class="thu">22</td><td class="fri">23</td><td class="sat">24'\
+'</td><td class="sun">25</td></tr>\n'\
+'<tr><td class="mon">26</td><td class="tue">27</td><td class="wed">28'\
+'</td><td class="thu">29</td><td class="fri">30</td><td class="noday">'\
+'&nbsp;</td><td class="noday">&nbsp;</td></tr>\n'\
+'</table>'
 
 
+# pylint: disable=R0903
 class FakeUser(object):
     """ Fake user used to test the fedocallib library. """
 
@@ -70,9 +80,11 @@ class FakeUser(object):
         """
         self.groups = groups
 
-
+# pylint: disable=R0904
 class Fedocallibtests(Modeltests):
     """ Fedocallib tests. """
+
+    session = None
 
     def __setup_calendar(self):
         """ Set up basic calendar information. """
@@ -177,6 +189,7 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(days, None)
         self.assertEqual(days, expectdays)
 
+    # pylint: disable=R0912
     def test_get_meetings(self):
         """ Test the get_meetings function. """
         self.__setup_meeting()
@@ -226,6 +239,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(cnt, 6)
         self.assertEqual(meetings['19h00'][0], None)
 
+    # pylint: disable=C0103
     def test_get_meetings_with_multiple_same_time(self):
         """ Test the get_meetings function when there are several
         meetings at the same time. """
@@ -299,6 +313,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings[0].meeting_information,
             'This is a past test meeting')
 
+    # pylint: disable=C0103
     def test_get_future_single_meeting_of_user(self):
         """ Test the get_future_single_meeting_of_user function. """
         self.__setup_meeting()
@@ -318,6 +333,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings[2].meeting_information,
             'This is a test meeting with reminder')
 
+    # pylint: disable=C0103
     def test_get_future_single_meeting_of_user_empty(self):
         """ Test the get_future_single_meeting_of_user function on a
         empty meeting table. """
@@ -328,6 +344,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
+    # pylint: disable=C0103
     def test_get_future_regular_meeting_of_user(self):
         """ Test the get_future_regular_meeting_of_user function. """
         self.__setup_meeting()
@@ -348,6 +365,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings[2].meeting_information,
             'This is a test meeting with recursion and reminder')
 
+    # pylint: disable=C0103
     def test_get_future_regular_meeting_of_user_empty(self):
         """ Test the get_future_regular_meeting_of_user function on a
         empty meeting table. """
@@ -374,6 +392,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_name, 'Another test meeting2')
         self.assertEqual(meeting.recursion_ends, date.today())
 
+    # pylint: disable=C0103
     def test_delete_recursive_meeting_past(self):
         """ Test the delete_recursive_meeting for past end_datefunction.
         """
@@ -408,10 +427,10 @@ class Fedocallibtests(Modeltests):
         self.assertTrue(fedocallib.agenda_is_free(self.session, cal,
             TODAY, 10, 11))
 
+    # pylint: disable=C0103
     def test_is_user_managing_in_calendar(self):
         """ Test the is_user_managing_in_calendar function. """
         self.__setup_calendar()
-        cal = model.Calendar.by_id(self.session, 'test_calendar')
         user = FakeUser(['packager', 'fi-apprentice'])
         self.assertTrue(fedocallib.is_user_managing_in_calendar(
             self.session, 'test_calendar', user))
@@ -462,6 +481,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings[0].meeting_information,
             'This is a test meeting with reminder')
 
+    # pylint: disable=C0103
     def test_retrieve_meeting_to_remind_empty(self):
         """ Test the retrieve_meeting_to_remind function on an empty
         meeting table. """
@@ -506,6 +526,7 @@ class Fedocallibtests(Modeltests):
                 'Another test meeting', 'Test meeting with reminder'])
             self.assertEqual(meeting.meeting_manager, 'pingou')
 
+    # pylint: disable=C0103
     def test_get_meetings_by_date_and_region(self):
         """ Test the get_meetings_by_date_and_region function. """
         self.__setup_meeting()
@@ -555,17 +576,20 @@ class Fedocallibtests(Modeltests):
     def test_get_html_monthly_cal(self):
         """ Test the get_html_monthly_call function. """
         today = date.today()
-        output = fedocallib.get_html_monthly_cal(today.day,today.month,
+        output = fedocallib.get_html_monthly_cal(today.day, today.month,
             today.year)
         # Handle the today css class
         expected_output = RESULT_CALENDAR_HTML.replace(
             'class="%s">%s' % (today.strftime('%a').lower(), today.day),
-            'class="%s today">%s'% (today.strftime('%a').lower(), today.day))
+            'class="%s today">%s' % (today.strftime('%a').lower(),
+                today.day))
         # Handle the change of month
         expected_output = expected_output.replace(
-            'class="month"><a class="button" href="#"><</a> November 2012 <a class="button" href="#">></a></th>',
-            'class="month"><a class="button" href="#"><</a> %s %s <a class="button" href="#">></a></th>' % (today.strftime('%B'),
-                today.year))
+            'class="month"><a class="button" href="#"><</a> '\
+            'November 2012 <a class="button" href="#">></a></th>',
+            'class="month"><a class="button" href="#"><</a> %s %s '\
+            '<a class="button" href="#">></a></th>' % (
+                today.strftime('%B'), today.year))
         # Handle the current_week css class
         expected_output = expected_output.split('\n')
         cnt = 0

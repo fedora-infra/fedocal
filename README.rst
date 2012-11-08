@@ -27,12 +27,14 @@ Dependencies:
 .. _python-kitchen: http://packages.python.org/kitchen/
 .. _alembic: https://bitbucket.org/zzzeek/alembic
 .. _python-alembic: http://pypi.python.org/pypi/alembic
+.. _pytz: http://pytz.sourceforge.net/
 
 This project is a `Flask`_ application. The calendars and meetings are
 stored into a relational database using `SQLAlchemy`_ as Object Relational
 Mapper (ORM) and `alembic`_ to handle database scheme changes.
 fedocal provides an `iCal`_ feed for each calendar and relies on
-`python-vobject`_ for this.
+`python-vobject`_ for this. Finally, `pytz`_ is used to handle the timezone
+changes.
 
 
 The dependency list is therefore:
@@ -45,6 +47,7 @@ The dependency list is therefore:
 - `python-vobject`_
 - `python-kitchen`_
 - `python-alembic`_
+- `pytz`_
 
 
 Running a development instance:

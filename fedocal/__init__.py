@@ -293,10 +293,14 @@ def add_meeting(calendar_name):
             region = form.meeting_region.data
             if not calendarobj.calendar_regional_meetings or not region:
                 region = None
+            meeting_end_date = form.meeting_date_end.data
+            if not meeting_end_date:
+                meeting_end_date = form.meeting_date.date
             meeting = Meeting(
                 meeting_name=form.meeting_name.data,
                 meeting_manager=manager,
                 meeting_date=form.meeting_date.data,
+                meeting_date_end=meeting_end_date,
                 meeting_time_start=datetime.time(int(
                     form.meeting_time_start.data)),
                 meeting_time_stop=datetime.time(int(
@@ -380,6 +384,10 @@ def edit_meeting(meeting_id):
             meeting.meeting_manager = '%s,%s' % (
                 flask.g.fas_user.username, form.comanager.data)
             meeting.meeting_date = form.meeting_date.data
+            meeting_end_date = form.meeting_date_end.data
+            if not meeting_end_date:
+                meeting_end_date = form.meeting_date.date
+            meeting.meeting_end_date = meeting_end_date
             meeting.meeting_time_start = datetime.time(int(
                     form.meeting_time_start.data))
             meeting_time_stop=datetime.time(int(

@@ -133,6 +133,7 @@ class Meeting(BASE):
     calendar = relationship("Calendar")
     meeting_manager = Column(String(160))  ##5 person max (32 * 5)
     meeting_date = Column(Date, default=datetime.utcnow().date())
+    meeting_date_end = Column(Date, default=datetime.utcnow().date())
     meeting_time_start = Column(Time, default=datetime.utcnow().time())
     meeting_time_stop = Column(Time, default=datetime.utcnow().time())
     meeting_information = Column(Text)
@@ -145,7 +146,8 @@ class Meeting(BASE):
     recursion_ends = Column(Date, nullable=True, default=None)
 
     def __init__(self, meeting_name, meeting_manager,
-        meeting_date, meeting_time_start, meeting_time_stop,
+        meeting_date, meeting_date_end,
+        meeting_time_start, meeting_time_stop,
         meeting_information, calendar_name, reminder_id=None,
         meeting_region=None, recursion_frequency=None,
         recursion_ends=None):
@@ -153,6 +155,7 @@ class Meeting(BASE):
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
         self.meeting_date = meeting_date
+        self.meeting_date_end = meeting_date_end
         self.meeting_time_start = meeting_time_start
         self.meeting_time_stop = meeting_time_stop
         self.meeting_information = meeting_information
@@ -182,6 +185,8 @@ class Meeting(BASE):
             self.meeting_manager)
         string = '%s\n  "meeting_date": "%s",' % (string,
             self.meeting_date)
+        string = '%s\n  "meeting_date_end": "%s",' % (string,
+            self.meeting_date_end)
         string = '%s\n  "meeting_time_start": "%s",' % (string,
             self.meeting_time_start)
         string = '%s\n  "meeting_time_stop": "%s",' % (string,
@@ -223,8 +228,9 @@ class Meeting(BASE):
             meeting.recursion_ends = self.recursion_ends
         else:
             meeting = Meeting(self.meeting_name, self.meeting_manager,
-                self.meeting_date, self.meeting_time_start,
-                self.meeting_time_stop, self.meeting_information,
+                self.meeting_date, self.meeting_date_end,
+                self.meeting_time_start, self.meeting_time_stop,
+                self.meeting_information,
                 self.calendar_name,
                 self.reminder_id,
                 self.meeting_region,

@@ -47,6 +47,8 @@ class AddMeetingForm(wtf.Form):
         [wtf.validators.Required()])
 
     meeting_date = wtf.DateField('Date', [wtf.validators.Required()])
+    meeting_date_end = wtf.DateField('End date',
+        [wtf.validators.optional()])
 
     meeting_time_start = wtf.SelectField('Start time',
         [wtf.validators.Required()],
@@ -104,6 +106,7 @@ class AddMeetingForm(wtf.Form):
 
             self.meeting_name.data = meeting.meeting_name
             self.meeting_date.data = meeting.meeting_date
+            self.meeting_date_end.data = meeting.meeting_date_end
             self.meeting_time_start.data = start_hour
             self.meeting_time_stop.data = stop_hour
             self.information.data = meeting.meeting_information

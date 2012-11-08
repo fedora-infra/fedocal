@@ -47,13 +47,11 @@ from tests import Modeltests, TODAY
 from test_calendar import Calendartests
 
 
+# pylint: disable=R0904
 class Meetingtests(Modeltests):
     """ Meeting tests. """
 
-    def __init__(self):
-        """ Constructor. """
-        super(Meetingtests, self).__init__()
-        self.session = None
+    session = None
 
     def test_init_meeting(self):
         """ Test the Meeting init function. """

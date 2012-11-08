@@ -106,17 +106,17 @@ class FlaskApitests(Modeltests):
     def test_api_date(self):
         """ Test the api_date function. """
         end_date = TODAY + timedelta(days=11)
-        output = self.app.get('/api/date/foobar/%s/%s' %(TODAY, end_date))
+        output = self.app.get('/api/date/foobar/%s/%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 301)
 
-        output = self.app.get('/api/date/foobar/%s/%s/' %(TODAY, end_date))
+        output = self.app.get('/api/date/foobar/%s/%s/' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
         self.__setup_db()
 
-        output = self.app.get('/api/date/test_calendar/%s/%s/' %(TODAY,
+        output = self.app.get('/api/date/test_calendar/%s/%s/' % (TODAY,
             end_date))
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
@@ -127,7 +127,7 @@ class FlaskApitests(Modeltests):
         self.assertEqual(output.data.count('meeting_name'), 4)
 
         end_date = TODAY + timedelta(days=2)
-        output = self.app.get('/api/date/test_calendar4/%s/%s/' %(TODAY,
+        output = self.app.get('/api/date/test_calendar4/%s/%s/' % (TODAY,
             end_date))
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
@@ -163,11 +163,11 @@ class FlaskApitests(Modeltests):
     def test_api_place(self):
         """ Test the api_place function. """
         end_date = TODAY + timedelta(days=2)
-        output = self.app.get('/api/place/EMEA/foobar/%s/%s' %(TODAY,
+        output = self.app.get('/api/place/EMEA/foobar/%s/%s' % (TODAY,
             end_date))
         self.assertEqual(output.status_code, 301)
 
-        output = self.app.get('/api/place/EMEA/foobar/%s/%s/' %(TODAY,
+        output = self.app.get('/api/place/EMEA/foobar/%s/%s/' % (TODAY,
             end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
@@ -175,19 +175,19 @@ class FlaskApitests(Modeltests):
 
         self.__setup_db()
 
-        output = self.app.get('/api/place/APAC/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/APAC/test_calendar4/%s/%s/' % (
             TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
-        output = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/NA/test_calendar4/%s/%s/' % (
             TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 1)
 
-        output = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' % (
             TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
@@ -195,13 +195,13 @@ class FlaskApitests(Modeltests):
 
         end_date = TODAY + timedelta(days=1)
 
-        output = self.app.get('/api/place/NA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/NA/test_calendar4/%s/%s/' % (
             TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
-        output = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' %(
+        output = self.app.get('/api/place/EMEA/test_calendar4/%s/%s/' % (
             TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,

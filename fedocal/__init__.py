@@ -59,6 +59,10 @@ SESSION = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
 
 @APP.context_processor
 def inject_calendars():
+    """ With this decorator we add the list of all the calendars
+    available to all the function, so the variable calendars is available
+    in all templates.
+    """
     calendars = Calendar.get_all(SESSION)
 
     return dict(calendars=calendars)
@@ -75,8 +79,11 @@ def reverse_filter(weekdays):
 
 @APP.teardown_request
 def shutdown_session(exception=None):
+    """ Remove the DB session at the end of each request. """
     SESSION.remove()
 
+
+## Local function
 def is_admin():
     """ Return wether the user is admin for this application or not. """
     if not flask.g.fas_user:
@@ -87,6 +94,16 @@ def is_admin():
     return False
 
 
+def get_timezone():
+    """ Return the user's timezone, default to UTC. """
+    tzone = 'UTC'
+    if flask.g.fas_user:
+        if flask.g.fas_user['timezone']:
+            tzone = flask.g.fas_user['timezone']
+    return tzone
+
+
+## Flask application
 @APP.route('/')
 def index():
     """ Displays the index page with containing the first calendar (by
@@ -129,8 +146,9 @@ def calendar_fullday(calendar_name, year, month, day):
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
     day_index = fedocallib.get_week_day_index(year, month, day)
+    tzone = get_timezone()
     meetings = fedocallib.get_meetings(SESSION, calendarobj, year,
-        month, day)
+        month, day, tzone=tzone)
     next_week = fedocallib.get_next_week(week_start.year,
         week_start.month, week_start.day)
     prev_week = fedocallib.get_previous_week(week_start.year,
@@ -146,6 +164,7 @@ def calendar_fullday(calendar_name, year, month, day):
         weekdays=weekdays,
         day_index=day_index,
         meetings=meetings,
+        tzone=tzone,
         next_week=next_week,
         prev_week=prev_week,
         auth_form=auth_form,
@@ -260,6 +279,7 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     form = forms.AddMeetingForm()
+    tzone = get_timezone()
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if form.validate_on_submit():
         if not fedocallib.is_user_managing_in_calendar(SESSION,
@@ -271,13 +291,14 @@ def add_meeting(calendar_name):
             form.meeting_time_start.data):
             flask.flash('The date you entered is in the past')
             return flask.redirect(flask.url_for('add_meeting',
-                calendar_name=calendarobj.calendar_name))
+                calendar_name=calendarobj.calendar_name, form=form,
+                tzone=tzone))
         elif int(form.meeting_time_start.data) > \
             int(form.meeting_time_stop.data):
             flask.flash('The start time you have entered is later than'\
                 ' the stop time.')
             flask.render_template('add_meeting.html',
-                    calendar=calendarobj,  form=form)
+                    calendar=calendarobj, form=form, tzone=tzone)
         elif bool(calendarobj.calendar_multiple_meetings) or \
             (not bool(calendarobj.calendar_multiple_meetings) and \
             fedocallib.agenda_is_free(SESSION,
@@ -299,16 +320,24 @@ def add_meeting(calendar_name):
                 region = None
             meeting_end_date = form.meeting_date_end.data
             if not meeting_end_date:
-                meeting_end_date = form.meeting_date.date
+                meeting_end_date = form.meeting_date.data
+            
+            tzone = get_timezone()
+            meeting_time_start = fedocallib.convert_time(
+                datetime.datetime(2000, 1, 1,
+                    int(form.meeting_time_start.data), 0),
+                tzone, 'UTC')
+            meeting_time_stop = fedocallib.convert_time(
+                datetime.datetime(2000, 1, 1,
+                    int(form.meeting_time_stop.data), 0),
+                tzone, 'UTC')
             meeting = Meeting(
                 meeting_name=form.meeting_name.data,
                 meeting_manager=manager,
                 meeting_date=form.meeting_date.data,
                 meeting_date_end=meeting_end_date,
-                meeting_time_start=datetime.time(int(
-                    form.meeting_time_start.data)),
-                meeting_time_stop=datetime.time(int(
-                    form.meeting_time_stop.data)),
+                meeting_time_start=meeting_time_start.time(),
+                meeting_time_stop=meeting_time_stop.time(),
                 meeting_information=form.information.data,
                 calendar_name=calendarobj.calendar_name,
                 reminder_id=None,
@@ -322,7 +351,7 @@ def add_meeting(calendar_name):
                 print 'add_meeting:', err
                 flask.flash('Could not add this meeting to this calendar')
                 return flask.render_template('add_meeting.html',
-                    calendar=calendarobj,  form=form)
+                    calendar=calendarobj, form=form, tzone=tzone)
 
             if form.remind_when.data and form.remind_who.data:
                 reminder = Reminder(form.remind_when.data,
@@ -337,7 +366,7 @@ def add_meeting(calendar_name):
                     print 'add_meeting:', err
                     flask.flash('Could not add this reminder to this meeting')
                     return flask.render_template('add_meeting.html',
-                        calendar=calendarobj,  form=form)
+                        calendar=calendarobj, form=form, tzone=tzone)
 
             try:
                 SESSION.commit()
@@ -345,7 +374,7 @@ def add_meeting(calendar_name):
                 flask.flash(
                     'Something went wrong while commiting to the DB.')
                 flask.render_template('add_meeting.html',
-                    calendar=calendarobj, form=form)
+                    calendar=calendarobj, form=form, tzone=tzone)
 
             flask.flash('Meeting added')
             return flask.redirect(flask.url_for('calendar',
@@ -354,9 +383,9 @@ def add_meeting(calendar_name):
             flask.flash(
                 'The start time you have entered is already occupied.')
             return flask.render_template('add_meeting.html',
-                calendar=calendarobj, form=form)
+                calendar=calendarobj, form=form, tzone=tzone)
     return flask.render_template('add_meeting.html',
-        calendar=calendarobj, form=form)
+        calendar=calendarobj, form=form, tzone=tzone)
 
 
 # CLA + 1

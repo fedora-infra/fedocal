@@ -15,6 +15,7 @@ license.
 """
 
 import vobject
+import pytz
 
 from datetime import datetime
 from datetime import date
@@ -34,6 +35,21 @@ from fedora_calendar import FedocalCalendar
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
         '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
         '20', '21', '22', '23', '24']
+
+
+def convert_time(timeobj, tzfrom, tzto):
+    """ Convert a given datetime object from a specified timezone to
+    the other specified.
+
+    :arg timeobj: a datetime object to convert
+    :arg tzfrom: the timezone from which to convert
+    :arg tzto: the timezone to which to convert
+    """
+    timez_from = pytz.timezone(tzfrom)
+    timez_to = pytz.timezone(tzto)
+    timeobj_from = timez_from.localize(timeobj)
+    timeobj_to = timeobj_from.astimezone(timez_to)
+    return timeobj_to
 
 
 def create_session(db_url, debug=False, pool_recycle=3600):
@@ -193,7 +209,8 @@ def get_week_day_index(year=None, month=None, day=None):
     return date(year, month, day).isoweekday()
 
 
-def get_meetings(session, calendar, year=None, month=None, day=None):
+def get_meetings(session, calendar, year=None, month=None, day=None,
+    tzone='UTC'):
     """ Return a hash of {time: [meeting]} for the asked week. The week
     is returned based either on the current utc week or based on the
     information provided.
@@ -203,14 +220,15 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
     :kwarg year: year to consider when searching a week.
     :kwarg month: month to consider when searching a week.
     :kwarg day: day to consider when searching a week.
+    :kwarg tzone: the timezone in which the meetings should be displayed
+        defaults to UTC.
     """
     week = get_week(session, calendar, year, month, day)
     meetings = {}
-    cnt = 1
+    fmt = '%Hh%M'
     for hour in HOURS[:-1]:
-        key = '%sh - %sh' % (hour, HOURS[cnt])
+        key = '%sh00' % (hour)
         meetings[key] = [None for cnt2 in range(0, 7)]
-        cnt = cnt + 1
     for meeting in week.meetings:
         start = meeting.meeting_time_start.hour
         stop = meeting.meeting_time_stop.hour
@@ -220,12 +238,10 @@ def get_meetings(session, calendar, year=None, month=None, day=None):
         cnt = 0
         for item in order:
             start_time = start + item
-            stop_time = stop - invorder[cnt]
-            if len(str(start_time)) == 1:
-                start_time = '0%i' % start_time
-            if len(str(stop_time)) == 1:
-                stop_time = '0%i' % stop_time
-            key = '%sh - %sh' % (start_time, stop_time)
+            key = convert_time(
+                    datetime(2000, 01, 01, int(start_time), 0, 0),
+                    'UTC',
+                    tzone).strftime(fmt)
             day = meeting.meeting_date.weekday()
             if key in meetings:
                 if meetings[key][day]:

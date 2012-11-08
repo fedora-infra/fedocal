@@ -33,7 +33,7 @@
 <div id='agenda'>
     <table>
         <tr>
-            <th></th>
+            <th>{{ tzone }} time</th>
             {% for day in weekdays %}
             <th> {{ day.strftime('%A %d') }}</th>
             {% endfor %}

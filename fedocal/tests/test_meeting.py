@@ -284,12 +284,13 @@ class Meetingtests(Modeltests):
             '"meeting_name": "Fedora-fr-test-meeting",\n  '\
             '"meeting_manager": "pingou, shaiton",\n  '\
             '"meeting_date": "%s",\n  '\
+            '"meeting_date_end": "%s",\n  '\
             '"meeting_time_start": "19:00:00",\n  '\
             '"meeting_time_stop": "20:00:00",\n  '\
             '"meeting_information": "This is a test meeting",\n  '\
             '"meeting_region": "None",\n  '\
             '"calendar_name": "test_calendar"\n'\
-            '}' % TODAY
+            '}' % (TODAY, TODAY)
         self.assertEqual(obj.to_json(), exp)
 
     def test_get_by_date(self):

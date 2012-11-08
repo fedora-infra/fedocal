@@ -57,6 +57,7 @@ FAS = FAS(APP)
 APP.secret_key = CONFIG.get('fedocal', 'secret_key')
 SESSION = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
 
+
 @APP.context_processor
 def inject_calendars():
     """ With this decorator we add the list of all the calendars
@@ -77,6 +78,7 @@ def reverse_filter(weekdays):
         weekdays[-1].strftime('%d %b %Y'))
 
 
+# pylint: disable=W0613
 @APP.teardown_request
 def shutdown_session(exception=None):
     """ Remove the DB session at the end of each request. """
@@ -132,6 +134,7 @@ def calendar(calendar_name):
         day=None)
 
 
+# pylint: disable=R0914
 @APP.route('/<calendar_name>/<int:year>/<int:month>/<int:day>/')
 def calendar_fullday(calendar_name, year, month, day):
     """ Display the week of a specific date for a specified calendar.
@@ -221,6 +224,7 @@ def auth_login():
     if flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     form = forms.LoginForm()
+    # pylint: disable=E1101
     if form.validate_on_submit():
         if FAS.login(form.username.data, form.password.data):
             flask.flash('Welcome, %s' % flask.g.fas_user.username)
@@ -250,6 +254,7 @@ def add_calendar():
     if not flask.g.fas_user or not is_admin():
         return flask.redirect(flask.url_for('index'))
     form = forms.AddCalendarForm()
+    # pylint: disable=E1101
     if form.validate_on_submit():
         calendarobj = Calendar(
             form.calendar_name.data,
@@ -261,6 +266,7 @@ def add_calendar():
         try:
             calendarobj.save(SESSION)
             SESSION.commit()
+        # pylint: disable=W0703
         except Exception, err:
             print err
             flask.flash('Could not add this calendar to the database')
@@ -271,6 +277,7 @@ def add_calendar():
     return flask.render_template('add_calendar.html', form=form)
 
 
+# pylint: disable=R0915,R0912,R0911
 # CLA + 1
 @APP.route('/<calendar_name>/add/', methods=('GET', 'POST'))
 @cla_plus_one_required
@@ -286,6 +293,7 @@ def add_meeting(calendar_name):
     form = forms.AddMeetingForm()
     tzone = get_timezone()
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    # pylint: disable=E1101
     if form.validate_on_submit():
         if not fedocallib.is_user_managing_in_calendar(SESSION,
             calendarobj.calendar_name, flask.g.fas_user):
@@ -326,7 +334,7 @@ def add_meeting(calendar_name):
             meeting_end_date = form.meeting_date_end.data
             if not meeting_end_date:
                 meeting_end_date = form.meeting_date.data
-            
+
             tzone = get_timezone()
             meeting_time_start = fedocallib.convert_time(
                 datetime.datetime(2000, 1, 1,
@@ -352,6 +360,7 @@ def add_meeting(calendar_name):
             meeting.save(SESSION)
             try:
                 SESSION.flush()
+            # pylint: disable=W0703
             except Exception, err:
                 print 'add_meeting:', err
                 flask.flash('Could not add this meeting to this calendar')
@@ -367,6 +376,7 @@ def add_meeting(calendar_name):
                     SESSION.flush()
                     meeting.reminder = reminder
                     SESSION.flush()
+                # pylint: disable=W0703
                 except Exception, err:
                     print 'add_meeting:', err
                     flask.flash('Could not add this reminder to this meeting')
@@ -375,6 +385,7 @@ def add_meeting(calendar_name):
 
             try:
                 SESSION.commit()
+            # pylint: disable=W0703
             except Exception, err:
                 flask.flash(
                     'Something went wrong while commiting to the DB.')
@@ -393,6 +404,7 @@ def add_meeting(calendar_name):
         calendar=calendarobj, form=form, tzone=tzone)
 
 
+# pylint: disable=R0915,R0912,R0911
 # CLA + 1
 @APP.route('/meeting/edit/<int:meeting_id>/', methods=('GET', 'POST'))
 @cla_plus_one_required
@@ -416,6 +428,7 @@ def edit_meeting(meeting_id):
             'change it anymore')
         return flask.redirect(flask.url_for('index'))
     form = forms.AddMeetingForm()
+    # pylint: disable=E1101
     if form.validate_on_submit():
         try:
             meeting.meeting_name = form.meeting_name.data
@@ -428,14 +441,14 @@ def edit_meeting(meeting_id):
             meeting.meeting_end_date = meeting_end_date
             meeting.meeting_time_start = datetime.time(int(
                     form.meeting_time_start.data))
-            meeting_time_stop=datetime.time(int(
+            meeting.meeting_time_stop = datetime.time(int(
                     form.meeting_time_stop.data))
             meeting.meeting_information = form.information.data
 
             region = form.meeting_region.data
             if not region:
                 region = None
-            meeting.meeting_region=region
+            meeting.meeting_region = region
 
             frequency = form.frequency.data
             if not frequency:
@@ -461,6 +474,7 @@ def edit_meeting(meeting_id):
                         SESSION.flush()
                         meeting.reminder = reminder
                         SESSION.flush()
+                    # pylint: disable=W0703
                     except Exception, err:
                         print 'edit_meeting:', err
                         flask.flash('Could not edit the reminder of '\
@@ -471,11 +485,13 @@ def edit_meeting(meeting_id):
             elif meeting.reminder_id:
                 try:
                     meeting.reminder.delete(SESSION)
+                # pylint: disable=W0703
                 except Exception, err:
                     print 'edit_meeting:', err
 
             meeting.save(SESSION)
             SESSION.commit()
+        # pylint: disable=W0703
         except Exception, err:
             print 'edit_meeting:',  err
             flask.flash('Could not update this meeting.')
@@ -527,6 +543,7 @@ def delete_meeting(meeting_id):
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendars = Calendar.get_all(SESSION)
     deleteform = forms.DeleteMeetingForm()
+    # pylint: disable=E1101
     if deleteform.validate_on_submit():
         if deleteform.confirm_delete.data:
             if deleteform.confirm_futher_delete.data:
@@ -535,6 +552,7 @@ def delete_meeting(meeting_id):
                 meeting.delete(SESSION)
             try:
                 SESSION.commit()
+            # pylint: disable=W0703
             except Exception, err:
                 print 'edit_meeting:',  err
                 flask.flash('Could not update this meeting.')

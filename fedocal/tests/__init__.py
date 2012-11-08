@@ -45,7 +45,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from fedocallib import model, get_start_week
 
-DB_PATH = '%s/test.db' %(os.path.dirname(
+DB_PATH = '%s/test.db' % (os.path.dirname(
                                     os.path.abspath(__file__)))
 
 TODAY = get_start_week(date.today().year, date.today().month,
@@ -59,10 +59,12 @@ class Modeltests(unittest.TestCase):
         unittest.TestCase.__init__(self, method_name)
         self.session = None
 
+    # pylint: disable=C0103
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
         self.session = model.create_tables('sqlite:///%s' % DB_PATH)
 
+    # pylint: disable=C0103
     def tearDown(self):
         """ Remove the test.db database if there is one. """
         if os.path.exists(DB_PATH):

@@ -209,6 +209,7 @@ def get_week_day_index(year=None, month=None, day=None):
     return date(year, month, day).isoweekday()
 
 
+# pylint: disable=R0913,R0914
 def get_meetings(session, calendar, year=None, month=None, day=None,
     tzone='UTC'):
     """ Return a hash of {time: [meeting]} for the asked week. The week
@@ -228,6 +229,7 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
     fmt = '%Hh%M'
     for hour in HOURS[:-1]:
         key = '%sh00' % (hour)
+        # pylint: disable=W0612
         meetings[key] = [None for cnt2 in range(0, 7)]
     for meeting in week.meetings:
         start = meeting.meeting_time_start.hour
@@ -317,6 +319,7 @@ def get_past_meeting_of_user(session, username, from_date=date.today()):
     return meetings
 
 
+# pylint: disable=C0103
 def get_future_single_meeting_of_user(session, username,
     from_date=date.today()):
     """ Return all future meeting which specified username is among the
@@ -333,6 +336,7 @@ def get_future_single_meeting_of_user(session, username,
     return meetings
 
 
+# pylint: disable=C0103
 def get_future_regular_meeting_of_user(session, username,
     from_date=date.today()):
     """ Return all future recursive meeting which specified username is
@@ -406,6 +410,7 @@ def delete_recursive_meeting(session, meeting):
         session.commit()
 
 
+# pylint: disable=C0103
 def _generate_date_rounded_to_the_hour(meetingdate, offset):
     """ For a given date, return a new date to which the given offset in
     hours has been added and the time rounded to the hour.

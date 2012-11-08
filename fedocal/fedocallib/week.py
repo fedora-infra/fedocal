@@ -14,11 +14,11 @@ See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
 
-from datetime import date
 from datetime import timedelta
 from model import Meeting
 
 
+# pylint: disable=R0903
 class Week(object):
     """ This class represents a week for in a specific calendar with
     all its meetings.

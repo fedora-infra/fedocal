@@ -34,7 +34,6 @@ import unittest
 import sys
 import os
 
-from datetime import date
 from datetime import time
 from datetime import timedelta
 
@@ -50,6 +49,11 @@ from test_calendar import Calendartests
 
 class Meetingtests(Modeltests):
     """ Meeting tests. """
+
+    def __init__(self):
+        """ Constructor. """
+        super(Meetingtests, self).__init__()
+        self.session = None
 
     def test_init_meeting(self):
         """ Test the Meeting init function. """
@@ -120,7 +124,8 @@ class Meetingtests(Modeltests):
             meeting_date_end=TODAY + timedelta(days=1),
             meeting_time_start=time(14, 00),
             meeting_time_stop=time(16, 00),
-            meeting_information='This is a second test meeting at the same time',
+            meeting_information='This is a second test meeting at the'\
+                ' same time',
             calendar_name='test_calendar4',
             meeting_region='EMEA')
         obj.save(self.session)
@@ -187,7 +192,8 @@ class Meetingtests(Modeltests):
             meeting_date_end=TODAY + timedelta(days=12),
             meeting_time_start=time(10, 00),
             meeting_time_stop=time(11, 00),
-            meeting_information='This is a test meeting with recursion and reminder',
+            meeting_information='This is a test meeting with recursion'\
+                ' and reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id,
             recursion_frequency=7,
@@ -425,6 +431,7 @@ class Meetingtests(Modeltests):
         self.assertEqual(meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
 
+    # pylint: disable=C0103
     def test_get_past_meeting_of_user_fail(self):
         """ Test the Meeting get_past_meeting_of_user function when
         the user does not exists or there is nothing on that day. """
@@ -441,6 +448,7 @@ class Meetingtests(Modeltests):
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
+    # pylint: disable=C0103
     def test_get_future_single_meeting_of_user(self):
         """ Test the Meeting get_future_single_meeting_of_user function.
         """
@@ -456,6 +464,7 @@ class Meetingtests(Modeltests):
         self.assertEqual(meetings[2].meeting_name,
             'Test meeting with reminder')
 
+    # pylint: disable=C0103
     def test_get_future_single_meeting_of_user_fail(self):
         """ Test the Meeting get_future_single_meeting_of_user function
         when there is no such user or the date has simply nothing
@@ -473,6 +482,7 @@ class Meetingtests(Modeltests):
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
+    # pylint: disable=C0103
     def test_get_future_regular_meeting_of_user(self):
         """ Test the Meeting get_future_regular_meeting_of_user function.
         """
@@ -488,6 +498,7 @@ class Meetingtests(Modeltests):
         self.assertEqual(meetings[2].meeting_name,
             'Test meeting with reminder and recursion')
 
+    # pylint: disable=C0103
     def test_get_future_regular_meeting_of_user_fail(self):
         """ Test the Meeting get_future_regular_meeting_of_user function
         when the user does not exist or the date has simply nothing
@@ -505,6 +516,7 @@ class Meetingtests(Modeltests):
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
+    # pylint: disable=C0103
     def test_get_meeting_with_reminder(self):
         """ Test the Meeting get_meeting_with_reminder function. """
         self.test_init_meeting()

@@ -19,14 +19,12 @@ import pkg_resources
 
 from datetime import datetime
 from datetime import date
-from datetime import timedelta
 
 from sqlalchemy import (
     Boolean,
     create_engine,
     Column,
     Date,
-    distinct,
     Enum,
     ForeignKey,
     Integer,
@@ -37,7 +35,6 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relation as relationship
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import and_
 
 BASE = declarative_base()
@@ -74,6 +71,7 @@ class Calendar(BASE):
     calendar_multiple_meetings = Column(Boolean, default=False)
     calendar_regional_meetings = Column(Boolean, default=False)
 
+    # pylint: disable=R0913
     def __init__(self, calendar_name, calendar_description,
         calendar_manager_group, calendar_multiple_meetings=False,
         calendar_regional_meetings=False):
@@ -119,6 +117,7 @@ class Calendar(BASE):
         return session.query(cls).all()
 
 
+# pylint: disable=R0902
 class Meeting(BASE):
     """ Meetings table.
 
@@ -145,6 +144,7 @@ class Meeting(BASE):
     recursion_frequency = Column(Integer, nullable=True, default=None)
     recursion_ends = Column(Date, nullable=True, default=None)
 
+    # pylint: disable=R0913
     def __init__(self, meeting_name, meeting_manager,
         meeting_date, meeting_date_end,
         meeting_time_start, meeting_time_stop,
@@ -272,7 +272,7 @@ class Meeting(BASE):
             (Meeting.meeting_date < stop_date)).all()
 
     @classmethod
-    def get_active_regular_meeting(cls, session, start_date, end_date):
+    def get_active_regular_meeting(cls, session, end_date):
         """ Retrieve the list of meetings with a recursion which
         end_date is not past the provided end_date and starting before
         the end of the time considered.
@@ -284,6 +284,7 @@ class Meeting(BASE):
             ).order_by(Meeting.meeting_date).all()
         return meetings
 
+    # pylint: disable=R0913
     @classmethod
     def get_by_date_and_region(cls, session, calendar, start_date,
         stop_date, region):
@@ -318,6 +319,7 @@ class Meeting(BASE):
             (Meeting.meeting_date < start_date),
             (Meeting.meeting_manager.like('%%%s%%' % username))).all()
 
+    # pylint: disable=C0103
     @classmethod
     def get_future_single_meeting_of_user(cls, session, username,
         start_date=date.today()):
@@ -330,6 +332,7 @@ class Meeting(BASE):
             (Meeting.recursion_frequency == None),
             (Meeting.meeting_manager.like('%%%s%%' % username))).all()
 
+    # pylint: disable=C0103
     @classmethod
     def get_future_regular_meeting_of_user(cls, session, username,
         start_date=date.today()):

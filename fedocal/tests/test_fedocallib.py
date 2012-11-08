@@ -184,7 +184,7 @@ class Fedocallibtests(Modeltests):
         meetings = fedocallib.get_meetings(self.session, calendar)
         self.assertNotEqual(meetings, None)
         cnt = 0
-        for meeting in meetings['19h - 20h']:
+        for meeting in meetings['19h00']:
             if meeting is not None:
                 for meet in meeting:
                     self.assertTrue(meet.meeting_name in
@@ -193,14 +193,14 @@ class Fedocallibtests(Modeltests):
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
-        self.assertEqual(meetings['15h - 16h'][0], None)
+        self.assertEqual(meetings['15h00'][0], None)
 
         new_day = TODAY + timedelta(days=10)
         meetings = fedocallib.get_meetings(self.session, calendar,
             new_day.year, new_day.month, new_day.day)
         self.assertNotEqual(meetings, None)
         cnt = 0
-        for meeting in meetings['14h - 15h']:
+        for meeting in meetings['14h00']:
             if meeting is not None:
                 for meet in meeting:
                     self.assertEqual(meet.meeting_name, 'test-meeting2')
@@ -208,7 +208,7 @@ class Fedocallibtests(Modeltests):
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
         cnt = 0
-        for meeting in meetings['15h - 16h']:
+        for meeting in meetings['15h00']:
             if meeting is not None:
                 for meet in meeting:
                     self.assertEqual(meet.meeting_name, 'test-meeting2')
@@ -216,7 +216,7 @@ class Fedocallibtests(Modeltests):
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
         cnt = 0
-        for meeting in meetings['02h - 03h']:
+        for meeting in meetings['02h00']:
             if meeting is not None:
                 for meet in meeting:
                     self.assertEqual(meet.meeting_name,
@@ -224,7 +224,7 @@ class Fedocallibtests(Modeltests):
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
-        self.assertEqual(meetings['19h - 20h'][0], None)
+        self.assertEqual(meetings['19h00'][0], None)
 
     def test_get_meetings_with_multiple_same_time(self):
         """ Test the get_meetings function when there are several
@@ -233,7 +233,7 @@ class Fedocallibtests(Modeltests):
         calendar = model.Calendar.by_id(self.session, 'test_calendar4')
         meetings = fedocallib.get_meetings(self.session, calendar)
         cnt = 0
-        for meeting in meetings['14h - 15h']:
+        for meeting in meetings['14h00']:
             if meeting is not None:
                 for meet in meeting:
                     self.assertTrue(meet.meeting_name in
@@ -242,7 +242,7 @@ class Fedocallibtests(Modeltests):
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
         cnt = 0
-        for meeting in meetings['15h - 16h']:
+        for meeting in meetings['15h00']:
             if meeting is not None:
                 for meet in meeting:
                     self.assertTrue(meet.meeting_name in

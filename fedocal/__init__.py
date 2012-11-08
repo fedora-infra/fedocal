@@ -258,12 +258,6 @@ def add_meeting(calendar_name):
     form = forms.AddMeetingForm()
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if form.validate_on_submit():
-        print fedocallib.agenda_is_free(SESSION,
-                calendarobj,
-                form.meeting_date.data,
-                int(form.meeting_time_start.data),
-                int(form.meeting_time_stop.data)
-            )
         if not fedocallib.is_user_managing_in_calendar(SESSION,
             calendarobj.calendar_name, flask.g.fas_user):
             flask.flash('You are not allowed to add a meeting to'\

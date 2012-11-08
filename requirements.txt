@@ -7,5 +7,5 @@ Flask-wtf
 vobject
 kitchen
 python-fedora
-pyzt
+pytz
 python-alembic

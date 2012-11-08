@@ -166,7 +166,7 @@ def calendar_fullday(calendar_name, year, month, day):
             today.month, today.day)
 
     curmonth_cal = fedocallib.get_html_monthly_cal(year=year,
-        month=month, calendar_name=calendar_name)
+        month=month, day=day, calendar_name=calendar_name)
     return flask.render_template('agenda.html',
         calendar=calendarobj,
         month=month_name,

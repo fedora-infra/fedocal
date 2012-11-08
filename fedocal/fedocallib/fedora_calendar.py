@@ -45,7 +45,7 @@ class FedocalCalendar(HTMLCalendar):
         else:
             link_day = day
             if self.calendar_name:
-                link_day= '<a href="%s">%d</a>' % (flask.url_for(
+                link_day = '<a href="%s">%d</a>' % (flask.url_for(
                         'calendar_fullday',
                         calendar_name=self.calendar_name, year=self.year,
                         month=self.month, day=day), day)
@@ -58,6 +58,7 @@ class FedocalCalendar(HTMLCalendar):
                 return '<td class="%s">%s</td>' % (
                     self.cssclasses[weekday], link_day)
 
+    # pylint: disable=W0221
     def formatweek(self, theweek, current=False):
         """ Return a complete week as a table row.
 
@@ -65,45 +66,45 @@ class FedocalCalendar(HTMLCalendar):
             week or not (the current week will have the css class:
             current_week)
         """
-        s = ''.join(self.formatday(d, wd) for (d, wd) in theweek)
+        string = ''.join(self.formatday(d, wd) for (d, wd) in theweek)
         if current:
-            return '<tr class="current_week">%s</tr>' % s
+            return '<tr class="current_week">%s</tr>' % string
         else:
-            return '<tr>%s</tr>' % s
-
+            return '<tr>%s</tr>' % string
 
     def formatmonthname(self, theyear, themonth, withyear=True):
         """
         Return a month name as a table row.
         """
         if withyear:
-            s = '%s %s' % (month_name[themonth], theyear)
+            string = '%s %s' % (month_name[themonth], theyear)
         else:
-            s = '%s' % month_name[themonth]
+            string = '%s' % month_name[themonth]
         prev_month_lnk = '<a class="button" href="#"><</a>'
         next_month_lnk = '<a class="button" href="#">></a>'
-        return '<tr><th colspan="7" class="month">%s %s %s</th></tr>' % (prev_month_lnk, s, next_month_lnk)
+        return '<tr><th colspan="7" class="month">%s %s %s</th></tr>' % (
+            prev_month_lnk, string, next_month_lnk)
 
-
+    # pylint: disable=W0221
     def formatmonth(self, withyear=True):
         """
         Return a formatted month as a html valid table.
         """
-        v = []
-        a = v.append
-        a('<table class="month">')
-        a('\n')
-        a(self.formatmonthname(self.year, self.month, withyear=withyear))
-        a('\n')
-        #a(self.formatweekheader())
-        #a('\n')
+        values = []
+        item = values.append
+        item('<table class="month">')
+        item('\n')
+        item(self.formatmonthname(self.year, self.month, withyear=withyear))
+        item('\n')
+        #item(self.formatweekheader())
+        #item('\n')
         for week in self.monthdays2calendar(self.year, self.month):
-            days = [item[0] for item in week]
+            days = [day[0] for day in week]
             if self.day in days:
-                a(self.formatweek(week, current=True))
+                item(self.formatweek(week, current=True))
             else:
-                a(self.formatweek(week))
-            a('\n')
-        a('</table>')
-        a('\n')
-        return ''.join(v)
+                item(self.formatweek(week))
+            item('\n')
+        item('</table>')
+        item('\n')
+        return ''.join(values)

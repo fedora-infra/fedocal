@@ -8,4 +8,4 @@ vobject
 kitchen
 python-fedora
 pytz
-python-alembic
+alembic

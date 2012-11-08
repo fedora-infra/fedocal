@@ -145,7 +145,6 @@ def calendar_fullday(calendar_name, year, month, day):
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
-    day_index = fedocallib.get_week_day_index(year, month, day)
     tzone = get_timezone()
     meetings = fedocallib.get_meetings(SESSION, calendarobj, year,
         month, day, tzone=tzone)
@@ -156,6 +155,12 @@ def calendar_fullday(calendar_name, year, month, day):
     auth_form = forms.LoginForm()
     admin = is_admin()
     month_name = week_start.strftime('%B')
+
+    day_index = None
+    today=datetime.date.today()
+    if today > week_start and today < week_start + datetime.timedelta(days=7):
+        day_index = fedocallib.get_week_day_index(today.year, today.month, today.day)
+
     curmonth_cal = fedocallib.get_html_monthly_cal(year=year,
         month=month, calendar_name=calendar_name)
     return flask.render_template('agenda.html',

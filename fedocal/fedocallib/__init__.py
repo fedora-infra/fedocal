@@ -253,7 +253,6 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
                     datetime(2000, 01, 01, int(start_time), 30, 0),
                     'UTC',
                     tzone).strftime(fmt)]:
-                print key
                 if key in meetings:
                     if meetings[key][day]:
                         meetings[key][day].append(meeting)

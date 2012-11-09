@@ -14,6 +14,7 @@ See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
 
+
 # pylint: disable=R0903
 class FedocalException(Exception):
     """ Exception thrown when a user is not allowed to perform a specific

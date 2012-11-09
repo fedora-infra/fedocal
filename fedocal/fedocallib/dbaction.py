@@ -21,12 +21,13 @@ import fedocallib
 import model
 
 
-def add_reminder(session, remind_when, remind_who):
+def add_reminder(session, remind_when, remind_who, reminder_text=None):
     """ Logic to add a reminder to the database.
     """
-    reminder = model.Reminder(remind_when,
-                        remind_who,
-                        None)
+    reminder = model.Reminder(
+                        reminder_offset=remind_when,
+                        reminder_to=remind_who,
+                        reminder_text=None)
     reminder.save(session)
     session.flush()
     return reminder
@@ -53,15 +54,6 @@ def add_meeting(session, meeting_name, meeting_manager,
 
     if not meeting_date_end:
         meeting_date_end = meeting_date
-
-    meeting_time_start = fedocallib.convert_time(
-        datetime(2000, 1, 1,
-            meeting_time_start.hour, meeting_time_start.minute),
-        tzone, 'UTC')
-    meeting_time_stop = fedocallib.convert_time(
-        datetime(2000, 1, 1,
-            meeting_time_start.hour, meeting_time_start.minute),
-        tzone, 'UTC')
 
     meeting = model.Meeting(
         meeting_name=meeting_name,

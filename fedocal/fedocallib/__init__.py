@@ -244,16 +244,21 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
         cnt = 0
         for item in order:
             start_time = start + item
-            key = convert_time(
+            day = meeting.meeting_date.weekday()
+            for key in [convert_time(
                     datetime(2000, 01, 01, int(start_time), 0, 0),
                     'UTC',
-                    tzone).strftime(fmt)
-            day = meeting.meeting_date.weekday()
-            if key in meetings:
-                if meetings[key][day]:
-                    meetings[key][day].append(meeting)
-                else:
-                    meetings[key][day] = [meeting]
+                    tzone).strftime(fmt),
+                    convert_time(
+                    datetime(2000, 01, 01, int(start_time), 30, 0),
+                    'UTC',
+                    tzone).strftime(fmt)]:
+                print key
+                if key in meetings:
+                    if meetings[key][day]:
+                        meetings[key][day].append(meeting)
+                    else:
+                        meetings[key][day] = [meeting]
             cnt = cnt + 1
     return meetings
 

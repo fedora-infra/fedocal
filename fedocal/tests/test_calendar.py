@@ -74,7 +74,7 @@ class Calendartests(Modeltests):
 
         obj = model.Calendar('test_calendar4',
             'This is yet another test calendar',
-            'packager', True)
+            'packager', True, True)
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)

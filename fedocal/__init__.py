@@ -34,6 +34,7 @@ import os
 import datetime
 from urlparse import urljoin, urlparse
 import vobject
+from sqlalchemy.exc import SQLAlchemyError
 
 import flask
 from flask_fas import FAS, cla_plus_one_required
@@ -41,6 +42,7 @@ from flask_fas import FAS, cla_plus_one_required
 import forms as forms
 import fedocallib as fedocallib
 import fedocallib.dbaction
+from fedocallib.exceptions import FedocalException
 from fedocallib.model import (Calendar, Meeting, Reminder)
 
 CONFIG = ConfigParser.ConfigParser()
@@ -297,90 +299,37 @@ def add_meeting(calendar_name):
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     # pylint: disable=E1101
     if form.validate_on_submit():
-        if not fedocallib.is_user_managing_in_calendar(SESSION,
-            calendarobj.calendar_name, flask.g.fas_user):
-            flask.flash('You are not allowed to add a meeting to'\
-                ' this calendar')
-            return flask.redirect(flask.url_for('index'))
-
-        if not fedocallib.is_date_in_future(form.meeting_date.data,
-            form.meeting_time_start.data):
-            flask.flash('The date you entered is in the past')
-            return flask.redirect(flask.url_for('add_meeting',
-                calendar_name=calendarobj.calendar_name, form=form,
+        try:
+            fedocallib.add_meeting(session=SESSION,
+                calendarobj=calendarobj,
+                fas_user=flask.g.fas_user,
+                meeting_name=form.meeting_name.data,
+                meeting_date=form.meeting_date.data,
+                # meeting_date_end,
+                meeting_time_start=form.meeting_time_start.data,
+                meeting_time_stop=form.meeting_time_stop.data,
+                comanager=form.comanager.data,
+                meeting_information=form.information.data,
+                meeting_region=form.meeting_region.data,
+                tzone=get_timezone(),
+                frequency=form.frequency.data,
+                end_repeats=form.end_repeats.data,
+                remind_when=form.remind_when.data,
+                remind_who=form.remind_who.data)
+        except FedocalException:
+            flask.redirect(flask.url_for('add_meeting',
+                calendar=calendarobj, form=form,
                 tzone=tzone))
-
-        if int(form.meeting_time_start.data) > \
-            int(form.meeting_time_stop.data):
-            flask.flash('The start time you have entered is later than'\
-                ' the stop time.')
-            flask.render_template('add_meeting.html',
-                    calendar=calendarobj, form=form, tzone=tzone)
-
-        if bool(calendarobj.calendar_multiple_meetings) or \
-            (not bool(calendarobj.calendar_multiple_meetings) and \
-            fedocallib.agenda_is_free(SESSION,
-                calendarobj,
-                form.meeting_date.data,
-                int(form.meeting_time_start.data),
-                int(form.meeting_time_stop.data)
-            )):
-
-            reminder = None
-            if form.remind_when.data and form.remind_who.data:
-                try:
-                    reminder = dbaction.add_reminder(session=session,
-                        remind_when=form.remind_when.data,
-                        remind_who=form.remind_who.data)
-                except SQLAlchemyError, err:
-                    print 'add_reminder:', err
-                    flask.flash('Could not add this reminder to this meeting')
-                    return flask.render_template('add_meeting.html',
-                        calendar=calendarobj, form=form, tzone=tzone)
-
-            reminder_id = None
-            if reminder:
-                reminder_id = reminder.reminder_id
-
-            try:
-                reminder = dbaction.add_meeting(session=session,
-                    meeting_name=form.meeting_name.data,
-                    meeting_manager='%s,' % flask.g.fas_user.username,
-                    meeting_date=form.meeting_date.data,
-                    meeting_date_end=None,
-                    meeting_time_start=datetime.time(int(
-                        form.meeting_time_start.data), 0),
-                    meeting_time_stop=datetime.time(int(
-                        form.meeting_time_stop.data), 0),
-                    meeting_information=form.meeting_information.data,
-                    calendar=calendarobj,
-                    reminder_id=reminder_id,
-                    meeting_region=form.meeting_region.data,
-                    recursion_frequency=form.frequency.data,
-                    recursion_ends=form.end_repeats.data,
-                    tzone=get_timezone())
-            except SQLAlchemyError, err:
-                print 'add_meeting:', err
-                flask.flash('Could not add this meeting to this calendar')
-                return flask.render_template('add_meeting.html',
-                    calendar=calendarobj, form=form, tzone=tzone)
-
-            try:
-                SESSION.commit()
-            except SQLAlchemyError, err:
-                flask.flash(
-                    'Something went wrong while commiting to the DB.')
-                flask.render_template('add_meeting.html',
-                    calendar=calendarobj, form=form, tzone=tzone)
-
-            flask.flash('Meeting added')
-            return flask.redirect(flask.url_for('calendar',
-                calendar_name=calendarobj.calendar_name))
-        else:
-            flask.flash(
-                'The start time you have entered is already occupied.')
+        except SQLAlchemyError, err:
+            print 'add_meeting:', err
+            flask.flash('Could not add this meeting to this calendar')
             return flask.render_template('add_meeting.html',
                 calendar=calendarobj, form=form, tzone=tzone)
+
+        flask.flash('Meeting added')
+        return flask.redirect(flask.url_for('calendar',
+            calendar_name=calendarobj.calendar_name))
+
     return flask.render_template('add_meeting.html',
         calendar=calendarobj, form=form, tzone=tzone)
 

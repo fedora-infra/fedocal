@@ -127,16 +127,21 @@ section nav {
     padding: 0;
 }
 
+#agenda td.empty {
+    background-color: transparent;
+    border: none;
+}
+
 #agenda .time {
     border: none;
     padding-right: .2em;
     text-align: right;
     width: 7em;
-    vertical-align: top;
 }
 
 #agenda .today {
-    background-color: rgba(255, 246, 213, .4);
+    background-color: #FFF6D5;
+    vertical-align: middle;
 }
 
 .my_meetings .date {
@@ -260,7 +265,7 @@ table.month td.noday {
 }
 
 table.month td.today{
-    background-color: rgba(255, 246, 213, .8);
+    background-color: #FFF6D5;
     border-color: #000;
     border-width: 1px;
     /* ugly hack to work with table collapsed borders */

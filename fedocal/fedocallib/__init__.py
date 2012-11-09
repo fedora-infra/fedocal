@@ -27,10 +27,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
-from fedocallib.week import Week
-from fedocallib.model import Calendar, Reminder, Meeting
-import fedocallib.dbaction as dbaction
-from fedocallib.exceptions import UserNotAllowed, InvalidMeeting
+from week import Week
+from model import Calendar, Reminder, Meeting
+import dbaction as dbaction
+from exceptions import UserNotAllowed, InvalidMeeting
 
 from fedora_calendar import FedocalCalendar
 

@@ -40,7 +40,11 @@
         </tr>
         {% for time_entry in meetings |sort %}
         <tr>
+            {% if time_entry.endswith('00') %}
             <th class="time">{{ time_entry }}</th>
+            {% else %}
+            <th></th>
+            {% endif %}
             {% for meeting_list in meetings[time_entry] %}
                 {% if loop.index == day_index %}
                 <td class="today">

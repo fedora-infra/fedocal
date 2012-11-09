@@ -228,9 +228,10 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
     meetings = {}
     fmt = '%Hh%M'
     for hour in HOURS[:-1]:
-        key = '%sh00' % (hour)
-        # pylint: disable=W0612
-        meetings[key] = [None for cnt2 in range(0, 7)]
+        for key in ['%sh00', '%sh30']:
+            key = key % (hour)
+            # pylint: disable=W0612
+            meetings[key] = [None for cnt2 in range(0, 7)]
     for meeting in week.meetings:
         start = meeting.meeting_time_start.hour
         stop = meeting.meeting_time_stop.hour

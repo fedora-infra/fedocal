@@ -613,12 +613,13 @@ class Fedocallibtests(Modeltests):
         output = fedocallib.get_week_day_index()
         self.assertEqual(output, today.isoweekday())
 
+    # pylint: disable=R0915
     def test_add_meeting(self):
         """ Test the add_meeting function. """
         self.__setup_calendar()
         calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertNotEqual(calendarobj, None)
-        
+
         self.assertRaises(AttributeError, fedocallib.add_meeting,
             self.session, calendarobj, None,
             None, None,
@@ -662,7 +663,6 @@ class Fedocallibtests(Modeltests):
             None, None)
         self.session.rollback()
 
-
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
@@ -688,7 +688,6 @@ class Fedocallibtests(Modeltests):
         self.assertTrue(meeting.meeting_time_stop.strftime('%H') == '08' or
             meeting.meeting_time_stop.strftime('%H') == '09')
         self.session.flush()
-
 
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
@@ -727,7 +726,6 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_name, 'Name')
         self.assertEqual(meeting.meeting_manager, 'username,pingou')
         self.assertEqual(meeting.meeting_information, 'Information')
-
 
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,

@@ -115,7 +115,6 @@ class AddMeetingForm(wtf.Form):
                         '%s,' % flask.g.fas_user.username, '')
             self.comanager.data = meeting_manager
             self.meeting_region.data = meeting.meeting_region
-            print meeting.recursion_frequency
             self.frequency.data = meeting.recursion_frequency
             self.end_repeats.data = meeting.recursion_ends
             if meeting.reminder_id:

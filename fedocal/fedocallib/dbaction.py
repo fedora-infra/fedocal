@@ -16,8 +16,6 @@ license.
 """
 
 from datetime import date
-from datetime import datetime
-import fedocallib
 import model
 
 
@@ -39,8 +37,7 @@ def add_meeting(session, meeting_name, meeting_manager,
         meeting_time_start, meeting_time_stop,
         meeting_information, calendarobj, reminder_id=None,
         meeting_region=None,
-        recursion_frequency=None, recursion_ends=None,
-        tzone='UTC'):
+        recursion_frequency=None, recursion_ends=None):
     """ Logic to add a meeting to the database.
     """
 

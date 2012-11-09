@@ -598,7 +598,6 @@ def add_meeting(session, calendarobj, fas_user,
         reminder_id=reminder_id,
         meeting_region=meeting_region,
         recursion_frequency=frequency,
-        recursion_ends=end_repeats,
-        tzone=tzone)
+        recursion_ends=end_repeats)
 
     session.commit()

@@ -23,11 +23,14 @@ from datetime import time
 from datetime import timedelta
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
-from week import Week
-from model import Calendar, Reminder, Meeting
+from fedocallib.week import Week
+from fedocallib.model import Calendar, Reminder, Meeting
+import fedocallib.dbaction as dbaction
+from fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 
 from fedora_calendar import FedocalCalendar
 
@@ -517,3 +520,81 @@ def get_html_monthly_cal(day=None, month=None, year=None,
     curmonth_cal_nf = htmlcal.formatmonth()
 
     return curmonth_cal_nf
+
+
+# pylint: disable=R0913,R0914
+def add_meeting(session, calendarobj, fas_user,
+    meeting_name, meeting_date,  # meeting_date_end,
+    meeting_time_start, meeting_time_stop, comanager,
+    meeting_information,
+    meeting_region, tzone,
+    frequency, end_repeats,
+    remind_when, remind_who):
+    """ When a user wants to add a meeting to the database, we need to
+    perform a number of test first checking that the input is valid
+    and then add the desired meeting.
+    """
+    if not is_user_managing_in_calendar(session,
+        calendarobj.calendar_name, fas_user):
+        raise UserNotAllowed('You are not allowed to add'\
+            ' a meeting to this calendar')
+
+    if not is_date_in_future(meeting_date, meeting_time_start):
+        raise InvalidMeeting('The date you entered is in '\
+            'the past')
+
+    if int(meeting_time_start) > \
+        int(meeting_time_stop):
+        raise InvalidMeeting(
+            'The start time of your meeting is later than the stop time.')
+
+    meeting_time_start = convert_time(
+        datetime(2000, 1, 1, int(meeting_time_start), 0),
+        tzone, 'UTC')
+    meeting_time_stop = convert_time(
+        datetime(2000, 1, 1, int(meeting_time_stop), 0),
+        tzone, 'UTC')
+
+    free_time = agenda_is_free(session, calendarobj,
+            meeting_date, meeting_time_start.hour,
+            meeting_time_stop.hour)
+
+    if not bool(calendarobj.calendar_multiple_meetings) and \
+        not bool(free_time):
+        raise InvalidMeeting(
+            'The start time you have entered is already occupied.')
+
+    reminder = None
+    if remind_when and remind_who:
+        try:
+            reminder = dbaction.add_reminder(session=session,
+                remind_when=remind_when,
+                remind_who=remind_who)
+        except SQLAlchemyError, err:
+            print 'add_reminder:', err
+            raise SQLAlchemyError(err)
+
+    reminder_id = None
+    if reminder:
+        reminder_id = reminder.reminder_id
+
+    managers = '%s,' % fas_user.username
+    if comanager:
+        managers = managers + comanager
+
+    dbaction.add_meeting(session=session,
+        meeting_name=meeting_name,
+        meeting_manager=managers,
+        meeting_date=meeting_date,
+        meeting_date_end=None,
+        meeting_time_start=meeting_time_start,
+        meeting_time_stop=meeting_time_stop,
+        meeting_information=meeting_information,
+        calendarobj=calendarobj,
+        reminder_id=reminder_id,
+        meeting_region=meeting_region,
+        recursion_frequency=frequency,
+        recursion_ends=end_repeats,
+        tzone=tzone)
+
+    session.commit()

@@ -570,7 +570,7 @@ def add_meeting(session, calendarobj, fas_user,
             reminder = dbaction.add_reminder(session=session,
                 remind_when=remind_when,
                 remind_who=remind_who)
-        except SQLAlchemyError, err:
+        except SQLAlchemyError, err:  # pragma: no cover
             print 'add_reminder:', err
             raise SQLAlchemyError(err)
 

@@ -80,8 +80,33 @@ class FedocalCalendar(HTMLCalendar):
             string = '%s %s' % (month_name[themonth], theyear)
         else:
             string = '%s' % month_name[themonth]
-        prev_month_lnk = '<a class="button" href="#"><</a>'
-        next_month_lnk = '<a class="button" href="#">></a>'
+
+        prev_month = self.month - 1
+        prev_year = self.year
+        if prev_month == 0:
+            prev_month = 12
+            prev_year = prev_year - 1
+
+        prev_month_lnk = '<a class="button" href="%s"><</a>' % flask.url_for(
+            'calendar_fullday',
+            calendar_name=self.calendar_name,
+            year=prev_year,
+            month=prev_month,
+            day=1
+        )
+
+        next_month = self.month
+        next_year = self.year + next_month / 12
+        next_month = next_month % 12 + 1
+
+        next_month_lnk = '<a class="button" href="%s">></a>' % flask.url_for(
+            'calendar_fullday',
+            calendar_name=self.calendar_name,
+            year=next_year,
+            month=next_month,
+            day=1
+        )
+
         return '<tr><th colspan="7" class="month">%s %s %s</th></tr>' % (
             prev_month_lnk, string, next_month_lnk)
 

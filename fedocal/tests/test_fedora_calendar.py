@@ -76,21 +76,16 @@ class FedocalCalendartests(Modeltests):
         today = date.today()
         cal = FedocalCalendar(today.year, today.month, today.day)
         self.assertEqual(cal.formatmonthname(2012, 4),
-            '<tr><th colspan="7" class="month"><a class="button" '\
-            'href="#"><</a> April 2012 <a class="button" href="#">>'\
-            '</a></th></tr>')
+            '<tr><th colspan="7" class="month"> April 2012 </th></tr>')
         self.assertEqual(cal.formatmonthname(2012, 4, False),
-            '<tr><th colspan="7" class="month"><a class="button" '\
-            'href="#"><</a> April <a class="button" href="#">>'\
-            '</a></th></tr>')
+            '<tr><th colspan="7" class="month"> April </th></tr>')
 
     def test_formatmonth(self):
         """ Test the formatmonth function. """
         cal = FedocalCalendar(2012, 1, 10)
         self.assertEqual(cal.formatmonth(),
-            '<table class="month">\n<tr><th colspan="7" class="month">'\
-            '<a class="button" href="#"><</a> January 2012 <a '\
-            'class="button" href="#">></a></th></tr>\n<tr><td '\
+            '<table class="month">\n<tr><th colspan="7" class="month"> '\
+            'January 2012 </th></tr>\n<tr><td '\
             'class="noday">&nbsp;</td><td class="noday">&nbsp;'\
             '</td><td class="noday">&nbsp;</td><td class="noday">'\
             '&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">'\
@@ -116,8 +111,7 @@ class FedocalCalendartests(Modeltests):
 
         self.assertEqual(cal.formatmonth(False),
             '<table class="month">\n<tr><th colspan="7" class="month">'\
-            '<a class="button" href="#"><</a> January <a '\
-            'class="button" href="#">></a></th></tr>\n<tr><td '\
+            ' January </th></tr>\n<tr><td '\
             'class="noday">&nbsp;</td><td class="noday">&nbsp;'\
             '</td><td class="noday">&nbsp;</td><td class="noday">'\
             '&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">'\

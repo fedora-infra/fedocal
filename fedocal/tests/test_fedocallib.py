@@ -50,8 +50,7 @@ from fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 from tests import Modeltests, TODAY
 
 RESULT_CALENDAR_HTML = '<table class="month">\n'\
-'<tr><th colspan="7" class="month"><a class="button" href="#"><'\
-'</a> November 2012 <a class="button" href="#">></a></th></tr>\n'\
+'<tr><th colspan="7" class="month"> November 2012 </th></tr>\n'\
 '<tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td '\
 'class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td>'\
 '<td class="sat">3</td><td class="sun">4</td></tr>\n'\

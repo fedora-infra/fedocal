@@ -34,8 +34,6 @@ import unittest
 import sys
 import os
 
-from datetime import date
-from datetime import time
 from datetime import timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(
@@ -48,6 +46,7 @@ from tests import Modeltests
 from test_meeting import Meetingtests, TODAY
 
 
+# pylint: disable=C0103
 class Weektests(Modeltests):
     """ Week tests. """
 
@@ -88,7 +87,6 @@ class Weektests(Modeltests):
     def test_meeting_in_week(self):
         """ Test that the meetings in the week are correct function. """
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        end_date = TODAY + timedelta(days=7)
         weekobj = week.Week(self.session, calendar, TODAY)
 
         # Test the meeting in the week

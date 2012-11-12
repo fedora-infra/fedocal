@@ -10,5 +10,5 @@ build
 .project
 .pydevproject
 .coverage
-fedocal/fedocal.cfg
 alembic.ini
+_build/

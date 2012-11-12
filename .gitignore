@@ -12,3 +12,4 @@ build
 .coverage
 alembic.ini
 _build/
+pylint.out

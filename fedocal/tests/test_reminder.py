@@ -34,10 +34,6 @@ import unittest
 import sys
 import os
 
-from datetime import date
-from datetime import time
-from datetime import timedelta
-
 from sqlalchemy.exc import IntegrityError
 
 sys.path.insert(0, os.path.join(os.path.dirname(
@@ -47,6 +43,7 @@ from fedocallib import model
 from tests import Modeltests
 
 
+# pylint: disable=C0103
 class Remindertests(Modeltests):
     """ Reminder tests. """
 

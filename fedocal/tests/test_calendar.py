@@ -34,8 +34,6 @@ import unittest
 import sys
 import os
 
-from sqlalchemy.exc import IntegrityError
-
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 

@@ -44,6 +44,7 @@ import fedocal.fedocallib as fedocallib
 from fedocal.tests import Modeltests, DB_PATH, TODAY
 
 
+# pylint: disable=E1103
 class FlaskApitests(Modeltests):
     """ Flask application API tests. """
 

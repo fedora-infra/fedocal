@@ -102,6 +102,7 @@ class Calendartests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(obj, ['fi-apprentice'])
 
+    # pylint: disable=C0103
     def test_get_manager_groups_inexistant_calendar(self):
         """ Test the Calendar get_manager_groups function for a non
         existant Calendar.

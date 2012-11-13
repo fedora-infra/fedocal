@@ -4,14 +4,15 @@ Usage
 Users
 -----
 
-Fedocal has basically two levels for the users
-- administrators
-- users
+Fedocal has basically two levels for the users:
+
+ - administrators
+ - users
 
 Administrators
 ~~~~~~~~~~~~~~
 
-Administrators are people with an account on the 
+Administrators are people with an account on the
 `Fedora account system (FAS) <https://admin.fedoraproject.org/accounts/>`_ and
 belong the administrator group as set in the :doc:`configuration`.
 
@@ -31,11 +32,11 @@ every contributor should sign to contribute to Fedora.
 Create calendar
 ---------------
 
-After loging in, if you are in the administrator group, you will see an
+After logging in, if you are in the administrator group, you will see an
 ``Admin`` entry in the left menu containing a link to ``Create calendar``.
 Use this link to create a calendar.
 
-The form to fill ask for:
+The form to will ask for:
 
 - ``calendar name``: the name of the calendar as used in the link and as title
   for this calendar.
@@ -43,16 +44,16 @@ The form to fill ask for:
   This description will also show up on the page of the calendar and should
   thus not be too long.
 - ``calendar managers group``: the name of the
-  `FAS <https://admin.fedoraproject.org/accounts/>`_ 
-  group to which should belong people that will manage the calendar
+  `FAS <https://admin.fedoraproject.org/accounts/>`_
+  group to which people should belong that will manage the calendar
   (ie: create meetings).
 - ``multiple meetings``: by default a calendar does not allow someone to create
   a meeting or an event on a specific date if there is already something
   planned at that time that day. By turning on this option, the calendar will
   become less strict and allow multiple meetings at the same time on the same
-  day. This option should remain off for calendar handling for example IRC
-  meetings, while it should be turned off for calendar handling for example
-  Ambassadors events which can occurs the same day at different location in the
+  day. This option should remain off for calendars handling for example IRC
+  meetings.  It should be turned on for calendar handling for example
+  Ambassadors events can occur on the same day at different locations in the
   world.
 - ``region meetings``: by default, you can not associate a meeting with a region,
   by turning on this option you can. This allows to "tag" a meeting or an event

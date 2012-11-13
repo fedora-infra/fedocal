@@ -6,8 +6,8 @@ Fedocal is a web based calendar application for Fedora.
 
 A number of groups in Fedora are using a calendar to coordinate their work,
 and at the moment the only tool at their disposition is the 
-`wiki <http://fedoraproject.org/wiki>`_ with all the challenge of formatting
-properly tables in the mediawiki syntax.
+`wiki <http://fedoraproject.org/wiki>`_ with all the challenge of properly
+formatting tables in the mediawiki syntax.
 
 
 This project aims at providing a single place where these different calendars
@@ -18,10 +18,10 @@ the `fedora-meeting irc calendar
 which are either hardly maintained or plain un-readable.
 
 
-Additionnaly, a number of groups are sending reminders for their meeting, this
-is true for the regional ambassadors, the board, or the infrastructure meetings
-this application aims at automating this process in order to take this task off
-the shoulders of fellow contributors.
+Additionally, a number of groups are sending reminders for their meeting, this
+is true for the regional ambassadors, the board, and the infrastructure
+meetings.  This application aims at automating this process in order to take
+this task off the shoulders of fellow contributors.
 
 Resources:
 

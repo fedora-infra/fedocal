@@ -40,21 +40,25 @@ The form to will ask for:
 
 - ``calendar name``: the name of the calendar as used in the link and as title
   for this calendar.
+
 - ``calendar description``: a short description of what the calendar is used for.
   This description will also show up on the page of the calendar and should
   thus not be too long.
+
 - ``calendar managers group``: the name of the
   `FAS <https://admin.fedoraproject.org/accounts/>`_
   group to which people should belong that will manage the calendar
   (ie: create meetings).
+
 - ``multiple meetings``: by default a calendar does not allow someone to create
   a meeting or an event on a specific date if there is already something
   planned at that time that day. By turning on this option, the calendar will
   become less strict and allow multiple meetings at the same time on the same
   day. This option should remain off for calendars handling for example IRC
   meetings.  It should be turned on for calendar handling for example
-  Ambassadors events can occur on the same day at different locations in the
-  world.
+  Ambassadors events where mutiple events can occur on the same day at
+  different locations in the world.
+
 - ``region meetings``: by default, you can not associate a meeting with a region,
   by turning on this option you can. This allows to "tag" a meeting or an event
   as concerning a specfic region and thus allows someone to check out only

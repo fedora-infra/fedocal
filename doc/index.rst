@@ -26,7 +26,7 @@ this task off the shoulders of fellow contributors.
 Resources:
 
 - `Home page <http://fedorahosted.org/fedocal/>`_
-- `Documentation <>`_
+- `Documentation <http://fedocal.rtfd.org/>`_
 - `Git repository <http://git.fedorahosted.org/git/fedocal>`_
 - `Discussion mailing-list
   <https://lists.fedorahosted.org/mailman/listinfo/fedocal>`_

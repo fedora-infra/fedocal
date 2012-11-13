@@ -645,9 +645,9 @@ class Fedocallibtests(Modeltests):
             None, None,
             None, None)
 
-        self.assertRaises(AttributeError, fedocallib.add_meeting,
+        self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
-            None, TODAY - timedelta(days=1),
+            None, TODAY - timedelta(days=4),
             9, 10, None,
             None, None, None,
             None, None,

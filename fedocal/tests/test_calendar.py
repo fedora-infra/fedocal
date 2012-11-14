@@ -46,29 +46,43 @@ class Calendartests(Modeltests):
 
     def test_init_calendar(self):
         """ Test the Calendar init function. """
-        obj = model.Calendar('test_calendar', 'This is a test calendar',
-            'fi-apprentice', False)
+        obj = model.Calendar(
+            calendar_name='test_calendar',
+            calendar_contact='test@example.com',
+            calendar_description='This is a test calendar',
+            calendar_manager_group='fi-apprentice',
+            calendar_multiple_meetings=False)
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        obj = model.Calendar('test_calendar2',
-            'This is another test calendar',
-            'packager', True)
+        obj = model.Calendar(
+            calendar_name='test_calendar2',
+            calendar_contact='test2@example.com',
+            calendar_description='This is another test calendar',
+            calendar_manager_group='packager',
+            calendar_multiple_meetings=True)
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        obj = model.Calendar('test_calendar3',
-            'This is the third test calendar',
-            'packager', True)
+        obj = model.Calendar(
+            calendar_name='test_calendar3',
+            calendar_contact='test3@example.com',
+            calendar_description='This is the third test calendar',
+            calendar_manager_group='packager',
+            calendar_multiple_meetings=True)
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        obj = model.Calendar('test_calendar4',
-            'This is yet another test calendar',
-            'packager', True, True)
+        obj = model.Calendar(
+            calendar_name='test_calendar4',
+            calendar_contact='test4@example.com',
+            calendar_description='This is yet another test calendar',
+            calendar_manager_group='packager',
+            calendar_multiple_meetings=True,
+            calendar_regional_meetings=True)
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)

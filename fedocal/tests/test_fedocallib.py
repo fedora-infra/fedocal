@@ -441,8 +441,11 @@ class Fedocallibtests(Modeltests):
         self.assertFalse(fedocallib.is_user_managing_in_calendar(
             self.session, 'test_calendar', user))
 
-        calendar = model.Calendar('test_calendar30',
-                    'This is a test calendar30', '')
+        calendar = model.Calendar(
+            calendar_name='test_calendar30',
+            calendar_contact='test30@example.com',
+            calendar_description='This is a test calendar30',
+            calendar_manager_group='')
         calendar.save(self.session)
         self.session.commit()
 

@@ -33,6 +33,8 @@ class AddCalendarForm(wtf.Form):
     """ Form used to create a new calendar. """
     calendar_name = wtf.TextField('Calendar',
         [wtf.validators.Required()])
+    calendar_contact = wtf.TextField('Contact email',
+        [wtf.validators.Required()])
     calendar_description = wtf.TextField('Description')
     calendar_manager_groups = wtf.TextField('Manager groups')
     calendar_multiple_meetings = wtf.BooleanField(

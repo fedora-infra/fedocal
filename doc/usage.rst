@@ -41,6 +41,11 @@ The form to will ask for:
 - ``calendar name``: the name of the calendar as used in the link and as title
   for this calendar.
 
+- ``calendar contact``: an address email that will be publish as contact point
+  for this calendar. This is not linked to :ref:`reminders` but it is more
+  aimed at providing an email to people wanted to obtain information about a
+  specific calendar.
+
 - ``calendar description``: a short description of what the calendar is used for.
   This description will also show up on the page of the calendar and should
   thus not be too long.

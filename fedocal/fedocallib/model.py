@@ -66,17 +66,19 @@ class Calendar(BASE):
 
     __tablename__ = 'calendars'
     calendar_name = Column(String(80), primary_key=True)
+    calendar_contact = Column(String(80))
     calendar_description = Column(String(500))
     calendar_manager_group = Column(String(100))  # 3 groups (3*32)
     calendar_multiple_meetings = Column(Boolean, default=False)
     calendar_regional_meetings = Column(Boolean, default=False)
 
     # pylint: disable=R0913
-    def __init__(self, calendar_name, calendar_description,
+    def __init__(self, calendar_name, calendar_contact, calendar_description,
         calendar_manager_group, calendar_multiple_meetings=False,
         calendar_regional_meetings=False):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
+        self.calendar_contact = calendar_contact
         self.calendar_description = calendar_description
         self.calendar_manager_group = calendar_manager_group
         self.calendar_multiple_meetings = calendar_multiple_meetings

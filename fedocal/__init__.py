@@ -261,11 +261,14 @@ def add_calendar():
     # pylint: disable=E1101
     if form.validate_on_submit():
         calendarobj = Calendar(
-            form.calendar_name.data,
-            form.calendar_description.data,
-            form.calendar_manager_groups.data,
-            bool(form.calendar_multiple_meetings.data),
-            bool(form.calendar_regional_meetings.data),
+            calendar_name=form.calendar_name.data,
+            calendar_contact=form.calendar_contact.data,
+            calendar_description=form.calendar_description.data,
+            calendar_manager_group=form.calendar_manager_groups.data,
+            calendar_multiple_meetings=bool(
+                form.calendar_multiple_meetings.data),
+            calendar_regional_meetings=bool(
+                form.calendar_regional_meetings.data),
             )
         try:
             calendarobj.save(SESSION)

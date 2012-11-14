@@ -74,6 +74,8 @@ you need and when you are done, send the patch either by email or via the trac.
 
 The workflow would therefore be something like:
 
+::
+
    git branch <my_shiny_feature>
    git checkout <my_shiny_feature>
    <work>

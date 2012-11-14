@@ -238,6 +238,8 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
     for meeting in week.meetings:
         start = meeting.meeting_time_start.hour
         stop = meeting.meeting_time_stop.hour
+        if meeting.meeting_time_stop.minute == 59:
+            stop = stop + 1
         order = range(0, stop - start)
         invorder = order[:]
         invorder.reverse()
@@ -555,8 +557,13 @@ def add_meeting(session, calendarobj, fas_user,
     meeting_time_start = convert_time(
         datetime(2000, 1, 1, int(meeting_time_start), 0),
         tzone, 'UTC')
+    tsp_hour = int(meeting_time_stop)
+    tsp_minute = 0
+    if tsp_hour == 24:
+        tsp_hour = 23
+        tsp_minute = 59
     meeting_time_stop = convert_time(
-        datetime(2000, 1, 1, int(meeting_time_stop), 0),
+        datetime(2000, 1, 1, tsp_hour, tsp_minute),
         tzone, 'UTC')
 
     free_time = agenda_is_free(session, calendarobj,

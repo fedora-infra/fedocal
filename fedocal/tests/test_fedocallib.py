@@ -241,6 +241,20 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(cnt, 6)
         self.assertEqual(meetings['19h00'][0], None)
 
+        new_day = TODAY + timedelta(days=20)
+        meetings = fedocallib.get_meetings(self.session, calendar,
+            new_day.year, new_day.month, new_day.day)
+        self.assertNotEqual(meetings, None)
+        cnt = 0
+        for meeting in meetings['23h00']:
+            if meeting is not None:
+                for meet in meeting:
+                    self.assertEqual(meet.meeting_name,
+                        'test-meeting23h59')
+            else:
+                cnt = cnt + 1
+        self.assertEqual(cnt, 6)
+
     # pylint: disable=C0103
     def test_get_meetings_with_multiple_same_time(self):
         """ Test the get_meetings function when there are several
@@ -320,7 +334,7 @@ class Fedocallibtests(Modeltests):
         """ Test the get_future_single_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(self.session,
-            'pingou', TODAY)
+            'pingou,', TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 3)
         self.assertEqual(meetings[0].meeting_name,
@@ -381,7 +395,7 @@ class Fedocallibtests(Modeltests):
     def test_delete_recursive_meeting(self):
         """ Test the delete_recursive_meeting function. """
         self.__setup_meeting()
-        meeting = model.Meeting.by_id(self.session, 7)
+        meeting = model.Meeting.by_id(self.session, 8)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Another test meeting2')
         self.assertEqual(meeting.recursion_ends,
@@ -389,7 +403,7 @@ class Fedocallibtests(Modeltests):
 
         fedocallib.delete_recursive_meeting(self.session, meeting)
 
-        meeting = model.Meeting.by_id(self.session, 7)
+        meeting = model.Meeting.by_id(self.session, 8)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Another test meeting2')
         self.assertEqual(meeting.recursion_ends, date.today())
@@ -399,7 +413,7 @@ class Fedocallibtests(Modeltests):
         """ Test the delete_recursive_meeting for past end_datefunction.
         """
         self.__setup_meeting()
-        meeting = model.Meeting.by_id(self.session, 3)
+        meeting = model.Meeting.by_id(self.session, 4)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'test-meeting3')
         self.assertEqual(meeting.recursion_ends,
@@ -407,7 +421,7 @@ class Fedocallibtests(Modeltests):
 
         fedocallib.delete_recursive_meeting(self.session, meeting)
 
-        meeting = model.Meeting.by_id(self.session, 3)
+        meeting = model.Meeting.by_id(self.session, 4)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'test-meeting3')
         self.assertEqual(meeting.recursion_ends,
@@ -502,7 +516,7 @@ class Fedocallibtests(Modeltests):
         calendar = vobject.iCalendar()
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(
-            self.session, 'pingou', TODAY)
+            self.session, 'pingou,', TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 3)
 
@@ -513,7 +527,7 @@ class Fedocallibtests(Modeltests):
                 'Fedora-fr-test-meeting', 'Test meeting with reminder',
                 'test-meeting2'])
             self.assertTrue(event.organizer.value in [
-                'pingou', 'pingou, shaiton'])
+                'pingou,', 'pingou, shaiton,'])
             cnt = cnt + 1
         self.assertEqual(cnt, len(meetings))
 
@@ -529,7 +543,7 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings:
             self.assertTrue(meeting.meeting_name in ['test-meeting2',
                 'Another test meeting', 'Test meeting with reminder'])
-            self.assertEqual(meeting.meeting_manager, 'pingou')
+            self.assertEqual(meeting.meeting_manager, 'pingou,')
 
     # pylint: disable=C0103
     def test_get_meetings_by_date_and_region(self):
@@ -546,7 +560,7 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
         self.assertEqual(obj[0].meeting_name, 'test-meeting-st-2')
-        self.assertEqual(obj[0].meeting_manager, 'test')
+        self.assertEqual(obj[0].meeting_manager, 'test,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
         self.assertEqual(obj[0].meeting_information,
             'This is a second test meeting at the same time')
@@ -562,7 +576,7 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
         self.assertEqual(obj[0].meeting_name, 'test-meeting-st-1')
-        self.assertEqual(obj[0].meeting_manager, 'test')
+        self.assertEqual(obj[0].meeting_manager, 'test,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
         self.assertEqual(obj[0].meeting_information,
             'This is a test meeting at the same time')
@@ -815,14 +829,29 @@ class Fedocallibtests(Modeltests):
             'Information', 'EMEA', 'Europe/Paris',
             7, date.today() + timedelta(days=28),
             'H-12', 'test@example.org')
-        meeting = model.Meeting.by_id(self.session, 8)
+        meeting = model.Meeting.by_id(self.session, 9)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Name')
         self.assertEqual(meeting.meeting_manager, 'username,pingou')
         self.assertEqual(meeting.meeting_information, 'Information')
         self.assertEqual(meeting.meeting_region, 'EMEA')
         self.assertEqual(meeting.recursion_frequency, 7)
-        self.assertEqual(meeting.reminder, None)
+        self.assertEqual(meeting.reminder.reminder_offset, 'H-12')
+        self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
+
+        fedocallib.add_meeting(
+            self.session, calendarobj, fasuser,
+            'Name23h59', date.today() + timedelta(days=1),
+            23, 24, None,
+            'Information', 'EMEA', 'Europe/Paris',
+            None, None,
+            None, None)
+        meeting = model.Meeting.by_id(self.session, 10)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'Name23h59')
+        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_information, 'Information')
+        self.assertEqual(meeting.meeting_time_stop.minute, 59)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

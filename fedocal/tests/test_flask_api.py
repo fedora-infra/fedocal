@@ -94,10 +94,10 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/date/test_calendar/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
-        self.assertTrue(' "meeting_manager": "pingou, shaiton",' in \
+        self.assertTrue(' "meeting_manager": "pingou, shaiton,",' in \
             output.data)
         self.assertTrue('"meeting_name": "test-meeting2"' in output.data)
-        self.assertEqual(output.data.count('meeting_name'), 6)
+        self.assertEqual(output.data.count('meeting_name'), 7)
 
         output = self.app.get('/api/date/test_calendar4/')
         self.assertEqual(output.status_code, 200)
@@ -121,7 +121,7 @@ class FlaskApitests(Modeltests):
             end_date))
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
-        self.assertTrue(' "meeting_manager": "pingou, shaiton",' in \
+        self.assertTrue(' "meeting_manager": "pingou, shaiton,",' in \
             output.data)
         self.assertTrue('"meeting_name": "Another test meeting2",' in \
             output.data)

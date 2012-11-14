@@ -95,7 +95,7 @@ class Weektests(Modeltests):
         self.assertEqual(weekobj.meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
         self.assertEqual(weekobj.meetings[0].meeting_manager,
-            'pingou, shaiton')
+            'pingou, shaiton,')
         self.assertEqual(weekobj.meetings[0].calendar.calendar_name,
             'test_calendar')
         self.assertEqual(weekobj.meetings[0].calendar.calendar_description,
@@ -107,7 +107,7 @@ class Weektests(Modeltests):
         self.assertEqual(weekobj.meetings[1].meeting_name,
             'Another test meeting2')
         self.assertEqual(weekobj.meetings[1].meeting_manager,
-            'pingou')
+            'pingou,')
         self.assertEqual(weekobj.meetings[1].meeting_information,
             'This is a test meeting with recursion2')
 

@@ -124,5 +124,37 @@ This iCal is read-only and can be found at::
 Reminders
 ---------
 
+When creating a meeting you can set the option to send a reminder. You will be
+asked for:
+
+- ``when`` to send the reminder
+- ``who`` to send the reminder to
+
+The reminder is sent in the name of the person who created the meeting.
+
+.. note:: when sending the reminder to a mailing-list, make sure that the
+          person that created the meeting is registered to the list in order
+          for the reminder to be allowed.
+
+The reminder will be formated as such:
+
+subject:
+
+::
+
+ [Fedocal] Reminder meeting : <meeting name>
+
+
+content:
+
+::
+
+ Dear all,
+
+ You are kindly invited to the meeting : 
+    <meeting name> on <meetin date> from <starting time> to <ending time>
+
+ The meeting will be about:
+  <meeting description>
 
 

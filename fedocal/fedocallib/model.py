@@ -254,14 +254,11 @@ class Meeting(BASE):
         """ Return the list of managers for a given meeting.
         """
         meeting = Meeting.by_id(session, identifier)
-        if not meeting or not meeting.meeting_manager:
-            managers = []
-        else:
-            if ',' in meeting.meeting_manager:
-                managers = [item.strip()
-                    for item in meeting.meeting_manager.split(',')]
-            else:
-                managers = [meeting.meeting_manager]
+        managers = []
+        if meeting and meeting.meeting_manager:
+            for item in meeting.meeting_manager.split(','):
+                if item.strip():
+                    managers.append(item.strip())
         return managers
 
     @classmethod

@@ -135,5 +135,16 @@ handled via `alembic <http://pypi.python.org/pypi/alembic>`_.
 
 
 See the `alembic tutorial
-<http://alembic.readthedocs.org/en/latest/tutorial.html>`_ for more information
-on how to make a revision to the database schema.
+<http://alembic.readthedocs.org/en/latest/tutorial.html>`_ for complete
+information on how to make a revision to the database schema.
+
+
+The basic idea is to create a revision using (in the top folder):
+
+::
+  alembic revision -m "<description of the change>"
+
+Then edit the file generated in alembic/versions/ to add the correct command
+for upgrade and downgrade (for example: ``op.add_column``, ``op.drop_column``,
+``op.create_table``, ``op.drop_table``).
+

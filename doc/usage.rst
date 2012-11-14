@@ -72,6 +72,62 @@ The form to will ask for:
 Create meeting
 --------------
 
+After logging in with your `FAS account
+<https://admin.fedoraproject.org/accounts/>`_ you can create a meeting in one
+of the available calendar. 
+
+
+When creating a meeting you will have to fill the form asking for:
+
+- ``meeting name``: this is the name of the meeting has presented in main
+  calendar as well as by email.
+
+- ``meetin date``: the date at which the meeting will occur. If you use a
+  browser with javascript enable you will have a pop-up enabling to choose
+  the date in a calendar. Otherwise, you will have to provide the date using
+  the format: ``yyyy-mm-dd``.
+
+- ``meeting start time``: the time at which the meeting starts. At the moment
+  you are only proposed with full hour times, we are working on allowing the
+  half-hours.
+
+- ``meeting start time``: the time at which the meeting stops. At the moment
+  you are only proposed with full hour times, we are working on allowing the
+  half-hours.
+
+- ``co-manager``: by default the person creating the meeting is the manager of
+  the meeting. However, sometime you want to allow someone else to manage
+  the meeting as well. This field allows you to provide a comma separated
+  list of people you trust to manage the meeting with you.
+
+- ``meeting information``: this is a free-text field containing as much 
+  information as you wish about the meeting.
+
+- ``meeting region``: when the calendar supports it, you may associate your
+  meeting with a world region (APAC, EMEA, LATAM, NA)
+
+- ``meeting frequency``: for recursive meetings, you can set here the recursion
+  frequency (7 days or 14 days).
+
+- ``meeting recursion ends``: you may want to specify when the recursivity for
+  this meeting should end (for example at the next election). If left empty a
+  default end date will be used (in this case: 2025-12-31)
+
+- ``remdind when``: you may want to set a reminder for your meeting this field
+  allows you to specify when this reminder should be sent: 12 hours before, 24
+  hours before, 48 hours before or 7 days before the start of the meeting.
+
+
+  See the :ref:`reminders` section below for more information about the
+  reminders.
+
+- ``remind who``: this field allows you to specify the email addresses to which
+  the reminder should be sent. Each email addresses should be separated by a
+  coma.
+
+  See the :ref:`reminders` section below for more information about the
+  reminders.
+
 
 Edit meeting
 ------------
@@ -120,6 +176,8 @@ This iCal is read-only and can be found at::
 
  http://<url to fedocal>/ical/<calendar name>/
 
+
+.. _reminders:
 
 Reminders
 ---------

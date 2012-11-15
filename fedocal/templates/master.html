@@ -61,9 +61,13 @@
                 calendar_name=calendar.calendar_name)}}"
                                 title="Add this calendar to your agenda">iCal export</a>
                         </li>
+                        {% if calendar.calendar_contact %}
                         <li>
-                            <a href="#">Contact admin</a>
+                            <a href="mailto:{{calendar.calendar_contact}}">
+                                Contact admin
+                            </a>
                         </li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% endfor %}

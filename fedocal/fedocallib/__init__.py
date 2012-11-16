@@ -236,31 +236,36 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
             # pylint: disable=W0612
             meetings[key] = [None for cnt2 in range(0, 7)]
     for meeting in week.meetings:
-        start = meeting.meeting_time_start.hour
-        stop = meeting.meeting_time_stop.hour
-        if meeting.meeting_time_stop.minute == 59:
-            stop = stop + 1
-        order = range(0, stop - start)
-        invorder = order[:]
-        invorder.reverse()
-        cnt = 0
-        for item in order:
-            start_time = start + item
+        start_minute = meeting.meeting_time_start.minute
+        stop_minute = meeting.meeting_time_stop.minute
+        if start_minute != 0 and start_minute != 30:
+            if start_minute - 30 > 0:
+                start_minute = 30
+            else:
+                start_minute = 0
+        if stop_minute != 0 and stop_minute != 30:
+            if stop_minute - 30 > 0:
+                stop_minute = 30
+            else:
+                stop_minute = 0
+        startdt = datetime(2000, 01, 01, meeting.meeting_time_start.hour,
+            start_minute, 0)
+        stopdt = datetime(2000, 01, 01, meeting.meeting_time_stop.hour,
+            stop_minute, 0)
+
+        startdt = convert_time(startdt, 'UTC', tzone)
+        stopdt = convert_time(stopdt, 'UTC', tzone)
+
+        t_time = startdt
+        while t_time < stopdt:
             day = meeting.meeting_date.weekday()
-            for key in [convert_time(
-                    datetime(2000, 01, 01, int(start_time), 0, 0),
-                    'UTC',
-                    tzone).strftime(fmt),
-                    convert_time(
-                    datetime(2000, 01, 01, int(start_time), 30, 0),
-                    'UTC',
-                    tzone).strftime(fmt)]:
-                if key in meetings:
-                    if meetings[key][day]:
-                        meetings[key][day].append(meeting)
-                    else:
-                        meetings[key][day] = [meeting]
-            cnt = cnt + 1
+            key = t_time.strftime(fmt)
+            if key in meetings:
+                if meetings[key][day]:
+                    meetings[key][day].append(meeting)
+                else:
+                    meetings[key][day] = [meeting]
+            t_time = t_time + timedelta(minutes=30)
     return meetings
 
 
@@ -364,7 +369,7 @@ def get_future_regular_meeting_of_user(session, username,
 
 
 def agenda_is_free(session, calendar, meeting_date,
-    time_start, time_stop):
+    time_start):
     """Check if there is already someting planned in this agenda at that
     time.
 
@@ -372,10 +377,9 @@ def agenda_is_free(session, calendar, meeting_date,
     :arg calendar: the name of the calendar of interest.
     :arg meeting_date: the date of the meeting (as Datetime object)
     :arg time_start: the time at which the meeting starts (as int)
-    :arg time_stop: the time at which the meeting stops (as int)
     """
     meetings = Meeting.get_by_time(session, calendar, meeting_date,
-        time(time_start), time(time_stop))
+        time_start)
     if not meetings:
         return True
     else:
@@ -549,26 +553,21 @@ def add_meeting(session, calendarobj, fas_user,
         raise InvalidMeeting('The date you entered is in '\
             'the past')
 
-    if int(meeting_time_start) > \
-        int(meeting_time_stop):
+    if meeting_time_start > meeting_time_stop:
         raise InvalidMeeting(
             'The start time of your meeting is later than the stop time.')
 
     meeting_time_start = convert_time(
-        datetime(2000, 1, 1, int(meeting_time_start), 0),
+        datetime(2000, 1, 1, meeting_time_start.hour,
+            meeting_time_start.minute),
         tzone, 'UTC')
-    tsp_hour = int(meeting_time_stop)
-    tsp_minute = 0
-    if tsp_hour == 24:
-        tsp_hour = 23
-        tsp_minute = 59
     meeting_time_stop = convert_time(
-        datetime(2000, 1, 1, tsp_hour, tsp_minute),
+        datetime(2000, 1, 1, meeting_time_stop.hour,
+            meeting_time_stop.minute),
         tzone, 'UTC')
 
     free_time = agenda_is_free(session, calendarobj,
-            meeting_date, meeting_time_start.hour,
-            meeting_time_stop.hour)
+            meeting_date, meeting_time_start.time())
 
     if not bool(calendarobj.calendar_multiple_meetings) and \
         not bool(free_time):

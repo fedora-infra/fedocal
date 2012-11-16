@@ -319,10 +319,11 @@ def add_meeting(calendar_name):
                 end_repeats=form.end_repeats.data,
                 remind_when=form.remind_when.data,
                 remind_who=form.remind_who.data)
-        except FedocalException:
-            flask.redirect(flask.url_for('add_meeting',
+        except FedocalException, err:
+            flask.flash(err)
+            return flask.render_template('add_meeting.html',
                 calendar=calendarobj, form=form,
-                tzone=tzone))
+                tzone=tzone)
         except SQLAlchemyError, err:
             print 'add_meeting:', err
             flask.flash('Could not add this meeting to this calendar')
@@ -370,12 +371,10 @@ def edit_meeting(meeting_id):
             meeting.meeting_date = form.meeting_date.data
             meeting_end_date = form.meeting_date_end.data
             if not meeting_end_date:
-                meeting_end_date = form.meeting_date.date
+                meeting_end_date = form.meeting_date.data
             meeting.meeting_end_date = meeting_end_date
-            meeting.meeting_time_start = datetime.time(int(
-                    form.meeting_time_start.data))
-            meeting.meeting_time_stop = datetime.time(int(
-                    form.meeting_time_stop.data))
+            meeting.meeting_time_start = form.meeting_time_start.data
+            meeting.meeting_time_stop = form.meeting_time_stop.data
             meeting.meeting_information = form.information.data
 
             region = form.meeting_region.data

@@ -25,8 +25,21 @@
 
 import flask
 from flask.ext import wtf
+from datetime import time
 
 from fedocallib import HOURS
+
+
+def validate_time(form, field):
+    """ Validate if the data set in the given field is a valid time. """
+    import re
+    if not re.match('\d?\d:\d\d?', field.data):
+        raise ValidationError('Time must be of type "HH:MM"')
+    time_data = field.data.split(':')
+    try:
+        field.data = time(int(time_data[0]), int(time_data[1]))
+    except ValueError:
+        raise ValidationError('Time must be of type "HH:MM"')
 
 
 class AddCalendarForm(wtf.Form):
@@ -52,15 +65,12 @@ class AddMeetingForm(wtf.Form):
     meeting_date_end = wtf.DateField('End date',
         [wtf.validators.optional()])
 
-    meeting_time_start = wtf.SelectField('Start time',
-        [wtf.validators.Required()],
-        choices=[(hour, hour) for hour in HOURS]
-        )
+    meeting_time_start = wtf.TextField('Start time',
+        [wtf.validators.Required(), validate_time])
 
-    meeting_time_stop = wtf.SelectField('Stop time',
-        [wtf.validators.Required()],
-        choices=[(hour, hour) for hour in HOURS]
-        )
+    meeting_time_stop = wtf.TextField('Stop time',
+        [wtf.validators.Required(), validate_time])
+
     comanager = wtf.TextField('Co-manager')
 
     information = wtf.TextAreaField('Information')
@@ -97,20 +107,11 @@ class AddMeetingForm(wtf.Form):
         super(AddMeetingForm, self).__init__(*args, **kwargs)
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']
-            if meeting.meeting_time_start.hour < 10:
-                start_hour = "0%s" % str(meeting.meeting_time_start.hour)
-            else:
-                start_hour = str(meeting.meeting_time_start.hour)
-            if meeting.meeting_time_stop.hour < 10:
-                stop_hour = "0%s" % str(meeting.meeting_time_stop.hour)
-            else:
-                stop_hour = str(meeting.meeting_time_stop.hour)
-
             self.meeting_name.data = meeting.meeting_name
             self.meeting_date.data = meeting.meeting_date
             self.meeting_date_end.data = meeting.meeting_date_end
-            self.meeting_time_start.data = start_hour
-            self.meeting_time_stop.data = stop_hour
+            self.meeting_time_start.data = meeting.meeting_time_start
+            self.meeting_time_stop.data = meeting.meeting_time_stop
             self.information.data = meeting.meeting_information
             # You are not allowed to remove yourself from the managers.
             meeting_manager = meeting.meeting_manager.replace(

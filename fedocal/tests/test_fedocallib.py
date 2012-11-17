@@ -199,12 +199,11 @@ class Fedocallibtests(Modeltests):
         meetings = fedocallib.get_meetings(self.session, calendar)
         self.assertNotEqual(meetings, None)
         cnt = 0
-        for meeting in meetings['19h00']:
+        for meeting in meetings['20h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertTrue(meet.meeting_name in
-                        ['Fedora-fr-test-meeting',
-                            'Another test meeting2'])
+                    self.assertEqual(meet.meeting_name,
+                        'Fedora-fr-test-meeting')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -432,16 +431,16 @@ class Fedocallibtests(Modeltests):
         self.__setup_meeting()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertTrue(fedocallib.agenda_is_free(self.session, cal,
-            TODAY, 10, 11))
+            TODAY, time(10, 0), time(11, 0)))
         self.assertFalse(fedocallib.agenda_is_free(self.session, cal,
-            TODAY, 19, 20))
+            TODAY, time(20, 0), time(21, 0)))
 
     def test_agenda_is_free_empty(self):
         """ Test the agenda_is_free function. """
         self.__setup_calendar()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertTrue(fedocallib.agenda_is_free(self.session, cal,
-            TODAY, 10, 11))
+            TODAY, time(10, 0), time(11, 0)))
 
     # pylint: disable=C0103
     def test_is_user_managing_in_calendar(self):
@@ -639,7 +638,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(AttributeError, fedocallib.add_meeting,
             self.session, calendarobj, None,
             None, None,
-            9, 10, None,
+            time(9, 0), time(10, 0), None,
             None, None, None,
             None, None,
             None, None)
@@ -648,7 +647,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(UserNotAllowed, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
             None, None,
-            9, 10, None,
+            time(9, 0), time(10, 0), None,
             None, None, None,
             None, None,
             None, None)
@@ -657,7 +656,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(TypeError, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
             None, None,
-            9, 10, None,
+            time(9, 0), time(10, 0), None,
             None, None, None,
             None, None,
             None, None)
@@ -665,7 +664,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
             None, TODAY - timedelta(days=4),
-            9, 10, None,
+            time(9, 0), time(10, 0), None,
             None, None, None,
             None, None,
             None, None)
@@ -673,7 +672,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(IntegrityError, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
             None, date.today() + timedelta(days=1),
-            9, 10, None,
+            time(9, 0), time(10, 0), None,
             None, None, 'Europe/Paris',
             None, None,
             None, None)
@@ -682,7 +681,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            10, 9, None,
+            time(10, 0), time(9, 0), None,
             None, None, 'Europe/Paris',
             None, None,
             None, None)
@@ -691,7 +690,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            9, 10, None,
+            time(9, 0), time(10, 0), None,
             None, None, 'Europe/Paris',
             None, None,
             None, None)
@@ -708,7 +707,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            9, 10, None,
+            time(9, 0), time(10, 0), None,
             None, None, 'Europe/Paris',
             None, None,
             None, None)
@@ -716,7 +715,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            10, 11, 'pingou',
+            time(10, 0), time(11, 0), 'pingou',
             None, None, 'Europe/Paris',
             None, None,
             None, None)
@@ -733,7 +732,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            11, 12, 'pingou',
+            time(11, 00), time(12, 0), 'pingou',
             'Information', None, 'Europe/Paris',
             None, None,
             None, None)
@@ -746,7 +745,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            13, 14, 'pingou',
+            time(13, 0), time(14, 0), 'pingou',
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
             None, None)
@@ -763,7 +762,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            9, 10, 'pingou',
+            time(9, 0), time(10, 0), 'pingou',
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
             None, None)
@@ -777,7 +776,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            10, 11, 'pingou',
+            time(10, 0), time(11, 0), 'pingou',
             'Information', 'EMEA', 'Europe/Paris',
             7, None,
             None, None)
@@ -792,7 +791,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            11, 12, 'pingou',
+            time(11, 0), time(12, 0), 'pingou',
             'Information', 'EMEA', 'Europe/Paris',
             7, date.today() + timedelta(days=28),
             None, None)
@@ -809,7 +808,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            12, 13, 'pingou',
+            time(12, 0), time(13, 0), 'pingou',
             'Information', 'EMEA', 'Europe/Paris',
             7, date.today() + timedelta(days=28),
             '', 'test@example.org')
@@ -825,7 +824,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name', date.today() + timedelta(days=1),
-            13, 14, 'pingou',
+            time(13, 0), time(14, 0), 'pingou',
             'Information', 'EMEA', 'Europe/Paris',
             7, date.today() + timedelta(days=28),
             'H-12', 'test@example.org')
@@ -842,7 +841,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
             'Name23h59', date.today() + timedelta(days=1),
-            23, 24, None,
+            time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
             None, None)

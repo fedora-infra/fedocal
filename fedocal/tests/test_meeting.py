@@ -61,8 +61,8 @@ class Meetingtests(Modeltests):
             meeting_manager='pingou, shaiton,',
             meeting_date=TODAY,
             meeting_date_end=TODAY,
-            meeting_time_start=time(19, 00),
-            meeting_time_stop=time(20, 00),
+            meeting_time_start=time(19, 45),
+            meeting_time_stop=time(20, 45),
             meeting_information='This is a test meeting',
             calendar_name='test_calendar')
         obj.save(self.session)
@@ -74,8 +74,8 @@ class Meetingtests(Modeltests):
             meeting_manager='pingou,',
             meeting_date=TODAY + timedelta(days=10),
             meeting_date_end=TODAY + timedelta(days=10),
-            meeting_time_start=time(14, 00),
-            meeting_time_stop=time(16, 00),
+            meeting_time_start=time(14, 15),
+            meeting_time_stop=time(16, 15),
             meeting_information='This is another test meeting',
             calendar_name='test_calendar')
         obj.save(self.session)
@@ -101,8 +101,8 @@ class Meetingtests(Modeltests):
             meeting_manager='test2,',
             meeting_date=TODAY - timedelta(days=16),
             meeting_date_end=TODAY - timedelta(days=16),
-            meeting_time_start=time(14, 00),
-            meeting_time_stop=time(16, 00),
+            meeting_time_start=time(14, 45),
+            meeting_time_stop=time(16, 35),
             meeting_information='Test meeting with past end_recursion.',
             calendar_name='test_calendar3',
             recursion_frequency=7,
@@ -300,8 +300,8 @@ class Meetingtests(Modeltests):
             '"meeting_manager": "pingou, shaiton,",\n  '\
             '"meeting_date": "%s",\n  '\
             '"meeting_date_end": "%s",\n  '\
-            '"meeting_time_start": "19:00:00",\n  '\
-            '"meeting_time_stop": "20:00:00",\n  '\
+            '"meeting_time_start": "19:45:00",\n  '\
+            '"meeting_time_stop": "20:45:00",\n  '\
             '"meeting_information": "This is a test meeting",\n  '\
             '"meeting_region": "None",\n  '\
             '"calendar_name": "test_calendar"\n'\

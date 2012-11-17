@@ -45,20 +45,13 @@ import fedocallib.dbaction
 from fedocallib.exceptions import FedocalException
 from fedocallib.model import (Calendar, Meeting, Reminder)
 
-CONFIG = ConfigParser.ConfigParser()
-if os.path.exists('/etc/fedocal.cfg'):  # pragma: no cover
-    CONFIG.readfp(open('/etc/fedocal.cfg'))
-else:
-    CONFIG.readfp(open(os.path.join(os.path.dirname(
-        os.path.abspath(__file__)),
-        'fedocal.cfg')))
-
 # Create the application.
 APP = flask.Flask(__name__)
 # set up FAS
 FAS = FAS(APP)
-APP.secret_key = CONFIG.get('fedocal', 'secret_key')
-SESSION = fedocallib.create_session(CONFIG.get('fedocal', 'db_url'))
+APP.config.from_object('fedocal.default_config')
+APP.config.from_envvar('FEDOCAL_CONFIG')
+SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
 
 @APP.context_processor
@@ -94,7 +87,7 @@ def is_admin():
     if not flask.g.fas_user:
         return False
     else:
-        if CONFIG.get('fedocal', 'admin_group') in flask.g.fas_user.groups:
+        if APP.config['ADMIN_GROUP'] in flask.g.fas_user.groups:
             return True
 
 

@@ -193,8 +193,7 @@ class Flasktests(Modeltests):
         with app.test_request_context():
             flask.g.fas_user = None
             self.assertFalse(fedocal.is_admin())
-            flask.g.fas_user = FakeUser(fedocal.CONFIG.get('fedocal',
-                'admin_group'))
+            flask.g.fas_user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
             self.assertTrue(fedocal.is_admin())
 
     def test_get_timezone(self):
@@ -202,8 +201,7 @@ class Flasktests(Modeltests):
         app = flask.Flask('fedocal')
 
         with app.test_request_context():
-            flask.g.fas_user = FakeUser(fedocal.CONFIG.get('fedocal',
-                'admin_group'))
+            flask.g.fas_user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
             self.assertEqual(fedocal.get_timezone(), 'Europe/Paris')
 
 

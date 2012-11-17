@@ -1,2 +1,2 @@
 #!/bin/bash
-PYTHONPATH=fedocal nosetests --with-coverage --cover-package=fedocal
+FEDOCAL_CONFIG=tests/fedocal_test.cfg PYTHONPATH=fedocal nosetests --with-coverage --cover-package=fedocal

@@ -96,7 +96,6 @@ def is_admin():
     else:
         if CONFIG.get('fedocal', 'admin_group') in flask.g.fas_user.groups:
             return True
-    return False
 
 
 def get_timezone():

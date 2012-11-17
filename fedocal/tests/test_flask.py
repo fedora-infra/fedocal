@@ -30,6 +30,7 @@
 __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 
+import flask
 import unittest
 import sys
 import os
@@ -41,7 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import fedocal
 import fedocal.fedocallib as fedocallib
-from fedocal.tests import Modeltests, DB_PATH
+from fedocal.tests import Modeltests, DB_PATH, FakeUser
 
 
 # pylint: disable=E1103
@@ -184,6 +185,26 @@ class Flasktests(Modeltests):
             in output.data)
         self.assertTrue('This is a test meeting at the same time' in
             output.data)
+
+    def test_is_admin(self):
+        """ Test the is_admin function. """
+        app = flask.Flask('fedocal')
+
+        with app.test_request_context():
+            flask.g.fas_user = None
+            self.assertFalse(fedocal.is_admin())
+            flask.g.fas_user = FakeUser(fedocal.CONFIG.get('fedocal',
+                'admin_group'))
+            self.assertTrue(fedocal.is_admin())
+
+    def test_get_timezone(self):
+        """ Test the get_timezone. """
+        app = flask.Flask('fedocal')
+
+        with app.test_request_context():
+            flask.g.fas_user = FakeUser(fedocal.CONFIG.get('fedocal',
+                'admin_group'))
+            self.assertEqual(fedocal.get_timezone(), 'Europe/Paris')
 
 
 if __name__ == '__main__':

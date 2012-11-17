@@ -298,15 +298,26 @@ class Meeting(BASE):
             (Meeting.meeting_region == region)).all()
 
     @classmethod
-    def get_by_time(cls, session, calendar, meetingdate, start_time):
+    def get_by_time(cls, session, calendar, meetingdate, start_time,
+        stop_time):
         """ Retrieve the list of meetings for a given date and between
         two times.
         """
         return session.query(cls).filter(and_
             (Meeting.calendar == calendar),
             (Meeting.meeting_date == meetingdate),
-            (Meeting.meeting_time_start <= start_time),
-            (Meeting.meeting_time_stop > start_time)).all()
+            (Meeting.meeting_time_start >= start_time),
+            (Meeting.meeting_time_stop <= stop_time)).all()
+
+    @classmethod
+    def at_time(cls, session, calendar, meetingdate, t_time):
+        """ Returns the meeting occuring at this specifict time point.
+        """
+        return session.query(cls).filter(and_
+            (Meeting.calendar == calendar),
+            (Meeting.meeting_date == meetingdate),
+            (Meeting.meeting_time_start <= t_time),
+            (Meeting.meeting_time_stop > t_time)).all()
 
     @classmethod
     def get_past_meeting_of_user(cls, session, username, start_date):

@@ -1,0 +1,2 @@
+
+FEDOCAL_CONFIG=../fedocal.cfg python runserver.py

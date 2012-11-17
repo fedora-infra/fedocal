@@ -47,7 +47,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import fedocallib
 from fedocallib import model
 from fedocallib.exceptions import UserNotAllowed, InvalidMeeting
-from tests import Modeltests, TODAY
+from tests import Modeltests, TODAY, FakeUser
 
 RESULT_CALENDAR_HTML = '<table class="month">\n'\
 '<tr><th colspan="7" class="month"> November 2012 </th></tr>\n'\
@@ -67,19 +67,6 @@ RESULT_CALENDAR_HTML = '<table class="month">\n'\
 '</td><td class="thu">29</td><td class="fri">30</td><td class="noday">'\
 '&nbsp;</td><td class="noday">&nbsp;</td></tr>\n'\
 '</table>'
-
-
-# pylint: disable=R0903
-class FakeUser(object):
-    """ Fake user used to test the fedocallib library. """
-
-    def __init__(self, groups):
-        """ Constructor.
-        :arg groups: list of the groups in which this fake user is
-            supposed to be.
-        """
-        self.groups = groups
-        self.username = 'username'
 
 
 # pylint: disable=R0904

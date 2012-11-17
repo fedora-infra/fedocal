@@ -70,6 +70,40 @@ class Modeltests(unittest.TestCase):
             os.unlink(DB_PATH)
 
 
+class FakeGroup(object):
+    """ Fake object used to make the FakeUser object closer to the
+    expectations.
+    """
+
+    def __init__(self, name):
+        """ Constructor.
+        :arg name: the name given to the name attribute of this object.
+        """
+        self.name = name
+        self.group_type = 'cla'
+
+
+# pylint: disable=R0903
+class FakeUser(object):
+    """ Fake user used to test the fedocallib library. """
+
+    def __init__(self, groups, username='username'):
+        """ Constructor.
+        :arg groups: list of the groups in which this fake user is
+            supposed to be.
+        """
+        self.groups = groups
+        self.username = username
+        self.name = username
+        self.approved_memberships = [FakeGroup('packager'),
+            FakeGroup('cla_done')]
+        self.dic = {}
+        self.dic['timezone'] = 'Europe/Paris'
+
+    def __getitem__(self, key):
+        return self.dic[key]
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Modeltests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

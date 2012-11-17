@@ -369,7 +369,7 @@ def get_future_regular_meeting_of_user(session, username,
 
 
 def agenda_is_free(session, calendar, meeting_date,
-    time_start):
+    time_start, time_stop):
     """Check if there is already someting planned in this agenda at that
     time.
 
@@ -377,9 +377,12 @@ def agenda_is_free(session, calendar, meeting_date,
     :arg calendar: the name of the calendar of interest.
     :arg meeting_date: the date of the meeting (as Datetime object)
     :arg time_start: the time at which the meeting starts (as int)
+    :arg time_stop: the time at which the meeting stops (as int)
     """
-    meetings = Meeting.get_by_time(session, calendar, meeting_date,
+    meetings = Meeting.at_time(session, calendar, meeting_date,
         time_start)
+    meetings.extend(Meeting.at_time(session, calendar, meeting_date,
+        time_stop))
     if not meetings:
         return True
     else:
@@ -567,12 +570,13 @@ def add_meeting(session, calendarobj, fas_user,
         tzone, 'UTC')
 
     free_time = agenda_is_free(session, calendarobj,
-            meeting_date, meeting_time_start.time())
+            meeting_date, meeting_time_start.time(),
+            meeting_time_stop.time())
 
     if not bool(calendarobj.calendar_multiple_meetings) and \
         not bool(free_time):
         raise InvalidMeeting(
-            'The start time you have entered is already occupied.')
+            'The start or end time you have entered is already occupied.')
 
     reminder = None
     if remind_when and remind_who:

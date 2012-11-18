@@ -35,17 +35,17 @@ Find the sample configuration file::
 
   rpm -ql fedocal |grep fedocal.cfg.sample
 
-Copy this file into ``/etc/`` with the name ``fedocal.cfg``::
+Copy this file into (for example) ``/etc/`` with the name ``fedocal.cfg``::
 
   cp /path/to/fedocal.cfg.sample /etc/fedocal.cfg
 
 Find the file used to create the database::
 
-  rpm -ql fedocal |grep model.py
+  rpm -ql fedocal |grep createdb.py
 
 Create the database scheme::
 
-   python path/to/fedocal/fedocallib/model.py
+   FEDOCAL_CONFIG=/etc/fedocal/cfg python path/to/createdb.py
 
 Set up the WSGI as described below.
 
@@ -73,6 +73,8 @@ and put in this file::
 
 Then create the file /var/www/wsgi/fedocal.wsgi with::
 
+ import os
+ os.environ['FEDOCAL_CONFIG'] = '/etc/fedocal.cfg'
  
  import fedocal
  application = fedocal.APP
@@ -84,6 +86,10 @@ Then create the file /var/www/wsgi/fedocal.wsgi with::
             sys.path.insert(0, '/srv/fedocal/')
 
          Adapt the path to your configuration
+
+
+.. seealso:: Within the sources of fedocal is a ``fedocal.wsgi`` which
+             can be used as a template for your own wsgi.
  
 
 Then restart apache and you should be able to access the website on

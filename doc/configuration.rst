@@ -29,9 +29,9 @@ to the database.
 
 Examples URLs are::
 
-  db_url=mysql://user:pass@host/db_name
-  db_url=postgres://user:pass@host/db_name
-  db_url=sqlite:////full/path/to/database.sqlite
+  DB_URL=mysql://user:pass@host/db_name
+  DB_URL=postgres://user:pass@host/db_name
+  DB_URL=sqlite:////full/path/to/database.sqlite
 
 
 The admin group

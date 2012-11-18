@@ -29,11 +29,11 @@ See :doc:`configuration` for more detailed information about the configuration.
 
 Create the database scheme::
 
-  python fedocal/fedocallib/model.py
+  ./createdb
 
 Run the server::
 
-  python fedocal/__init__.py
+  ./runserver
 
 You should be able to access the server at http://localhost:5000
 
@@ -122,6 +122,13 @@ by alone, allowing easier debugging of the tests. For example:
 
   python fedocal/tests/test_week.py
 
+.. note:: In order to have the coverage information you might have to
+          install ``python-coverage``
+
+          ::
+
+            yum install python-coverage
+
 
 Database changes
 ----------------
@@ -142,6 +149,7 @@ information on how to make a revision to the database schema.
 The basic idea is to create a revision using (in the top folder):
 
 ::
+
   alembic revision -m "<description of the change>"
 
 Then edit the file generated in alembic/versions/ to add the correct command

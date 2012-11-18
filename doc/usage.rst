@@ -92,13 +92,13 @@ When creating a meeting you will have to fill the form asking for:
   the date in a calendar. Otherwise, you will have to provide the date using
   the format: ``yyyy-mm-dd``.
 
-- ``meeting start time``: the time at which the meeting starts. At the moment
-  you are only proposed with full hour times, we are working on allowing the
-  half-hours.
+- ``meeting start time``: the time at which the meeting starts. It can be
+  any time although the calendar will only displays half-hour time slots.
+  It should be of the format: ``HH:MM``.
 
-- ``meeting start time``: the time at which the meeting stops. At the moment
-  you are only proposed with full hour times, we are working on allowing the
-  half-hours.
+- ``meeting stop time``: the time at which the meeting stops. It can be
+  any time although the calendar will only displays half-hour time slots.
+  It should be of the format: ``HH:MM``.
 
 - ``co-manager``: by default the person creating the meeting is the manager of
   the meeting. However, sometime you want to allow someone else to manage
@@ -132,6 +132,14 @@ When creating a meeting you will have to fill the form asking for:
 
   See the :ref:`reminders` section below for more information about the
   reminders.
+
+
+.. note:: After the text field where to enter the times will be the
+   timezone in which those times should be entered. This timezone is
+   retrieved from your account on the `FAS
+   <https://admin.fedoraproject.org/accounts/>`_, otherwise the timezone
+   is `UTC <http://en.wikipedia.org/wiki/Coordinated_Universal_Time>`_.
+
 
 
 Edit meeting

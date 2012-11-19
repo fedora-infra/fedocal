@@ -6,7 +6,7 @@ From sources
 
 Clone the source::
 
- git clone https://github.com/pypingou/fedocal.git
+ git clone http://git.fedorahosted.org/git/fedocal.git
 
 
 Copy the configuration file::

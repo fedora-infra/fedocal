@@ -34,4 +34,4 @@ ADMIN_GROUP = 'fedocal_admin'
 
 # The address of the SMTP server used to send the reminders emails
 # via the cron job.
-SMTP_SERVER='localhost'
+SMTP_SERVER = 'localhost'

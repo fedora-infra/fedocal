@@ -46,3 +46,15 @@ fedocal instance.
 See :doc:`usage` for details explanations on the different administration layer
 of fedocal.
 
+
+The SMTP server address
+-----------------------
+
+Fedocal sends reminder emails for the meeting for which it has been asked.
+This tasks is performed by an hourly cron job.
+The ``SMTP_SERVER`` field in the configuration file refers to the address
+of the `SMTP <http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol>`
+server to use to send these reminders.
+
+
+This field defaults to ``SMTP_SERVER='localhost'``.

@@ -26,8 +26,9 @@
 import flask
 from flask.ext import wtf
 from datetime import time
+from datetime import datetime
 
-from fedocallib import HOURS
+import fedocallib
 
 
 def validate_time(form, field):
@@ -107,11 +108,28 @@ class AddMeetingForm(wtf.Form):
         super(AddMeetingForm, self).__init__(*args, **kwargs)
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']
+            tzone = 'UTC'
+            if 'tzone' in kwargs:
+                tzone = kwargs['tzone']
+
+            # Convert time to user's timezone
+            startdt = datetime(meeting.meeting_date.year,
+                meeting.meeting_date.month, meeting.meeting_date.day,
+                meeting.meeting_time_start.hour,
+                meeting.meeting_time_start.minute, 0)
+            stopdt = datetime(meeting.meeting_date.year,
+                meeting.meeting_date.month, meeting.meeting_date.day,
+                meeting.meeting_time_stop.hour,
+                meeting.meeting_time_stop.minute, 0)
+
+            startdt = fedocallib.convert_time(startdt, 'UTC', tzone)
+            stopdt = fedocallib.convert_time(stopdt, 'UTC', tzone)
+
             self.meeting_name.data = meeting.meeting_name
-            self.meeting_date.data = meeting.meeting_date
+            self.meeting_date.data = startdt.date()
             self.meeting_date_end.data = meeting.meeting_date_end
-            self.meeting_time_start.data = meeting.meeting_time_start
-            self.meeting_time_stop.data = meeting.meeting_time_stop
+            self.meeting_time_start.data = startdt.time()
+            self.meeting_time_stop.data = stopdt.time()
             self.information.data = meeting.meeting_information
             # You are not allowed to remove yourself from the managers.
             meeting_manager = meeting.meeting_manager.replace(

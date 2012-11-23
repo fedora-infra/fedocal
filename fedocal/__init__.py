@@ -347,84 +347,52 @@ def edit_meeting(meeting_id):
             'you are not allowed to edit it.')
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
-    calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
     if not fedocallib.is_date_in_future(meeting.meeting_date,
         meeting.meeting_time_start.hour):
         flask.flash('This meeting has already occured, you may not '\
             'change it anymore')
-        return flask.redirect(flask.url_for('index'))
+    calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
+    tzone = get_timezone()
     form = forms.AddMeetingForm()
     # pylint: disable=E1101
     if form.validate_on_submit():
         try:
-            meeting.meeting_name = form.meeting_name.data
-            meeting.meeting_manager = '%s,%s' % (
-                flask.g.fas_user.username, form.comanager.data)
-            meeting.meeting_date = form.meeting_date.data
-            meeting_end_date = form.meeting_date_end.data
-            if not meeting_end_date:
-                meeting_end_date = form.meeting_date.data
-            meeting.meeting_end_date = meeting_end_date
-            meeting.meeting_time_start = form.meeting_time_start.data
-            meeting.meeting_time_stop = form.meeting_time_stop.data
-            meeting.meeting_information = form.information.data
-
-            region = form.meeting_region.data
-            if not region:
-                region = None
-            meeting.meeting_region = region
-
-            frequency = form.frequency.data
-            if not frequency:
-                frequency = None
-            meeting.recursion_frequency = frequency
-
-            ends_date = form.end_repeats.data
-            if not ends_date:
-                ends_date = datetime.date(2025, 12, 31)
-            meeting.recursion_ends = ends_date
-
-            if form.remind_when.data and form.remind_who.data:
-                if meeting.reminder_id:
-                    meeting.reminder.reminder_offset = form.remind_when.data
-                    meeting.reminder.reminder_to = form.remind_who.data
-                    meeting.reminder.save(SESSION)
-                else:
-                    reminder = Reminder(form.remind_when.data,
-                                    form.remind_who.data,
-                                    None)
-                    reminder.save(SESSION)
-                    try:
-                        SESSION.flush()
-                        meeting.reminder = reminder
-                        SESSION.flush()
-                    except SQLAlchemyError, err:
-                        print 'edit_meeting:', err
-                        flask.flash('Could not edit the reminder of '\
-                            'this meeting')
-                        return flask.render_template('edit_meeting.html',
-                            meeting=meeting, calendar=calendarobj,
-                            form=form)
-            elif meeting.reminder_id:
-                try:
-                    meeting.reminder.delete(SESSION)
-                except SQLAlchemyError, err:
-                    print 'edit_meeting:', err
-
-            meeting.save(SESSION)
-            SESSION.commit()
+            fedocallib.edit_meeting(session=SESSION,
+                meeting=meeting,
+                calendarobj=calendarobj,
+                fas_user=flask.g.fas_user,
+                meeting_name=form.meeting_name.data,
+                meeting_date=form.meeting_date.data,
+                # meeting_date_end,
+                meeting_time_start=form.meeting_time_start.data,
+                meeting_time_stop=form.meeting_time_stop.data,
+                comanager=form.comanager.data,
+                meeting_information=form.information.data,
+                meeting_region=form.meeting_region.data,
+                tzone=get_timezone(),
+                frequency=form.frequency.data,
+                end_repeats=form.end_repeats.data,
+                remind_when=form.remind_when.data,
+                remind_who=form.remind_who.data)
+        except FedocalException, err:
+            flask.flash(err)
+            return flask.render_template('edit_meeting.html',
+                meeting=meeting, calendar=calendarobj, form=form,
+                tzone=tzone)
         except SQLAlchemyError, err:
             print 'edit_meeting:',  err
             flask.flash('Could not update this meeting.')
-            return flask.redirect(flask.url_for('edit_meeting',
-                meeting_id=meeting_id))
+            return flask.render_template('edit_meeting.html',
+                meeting=meeting, calendar=calendarobj, form=form,
+                tzone=tzone)
+
         flask.flash('Meeting updated')
         return flask.redirect(flask.url_for('view_meeting',
             meeting_id=meeting_id))
     else:
-        form = forms.AddMeetingForm(meeting=meeting)
+        form = forms.AddMeetingForm(meeting=meeting, tzone=get_timezone())
     return flask.render_template('edit_meeting.html', meeting=meeting,
-            calendar=calendarobj, form=form)
+            calendar=calendarobj, form=form, tzone=tzone)
 
 
 @APP.route('/meeting/<int:meeting_id>/', methods=('GET', 'POST'))

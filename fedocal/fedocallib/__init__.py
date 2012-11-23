@@ -236,29 +236,41 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
             # pylint: disable=W0612
             meetings[key] = [None for cnt2 in range(0, 7)]
     for meeting in week.meetings:
-        start_minute = meeting.meeting_time_start.minute
-        stop_minute = meeting.meeting_time_stop.minute
-        if start_minute != 0 and start_minute != 30:
-            if start_minute - 30 > 0:
-                start_minute = 30
-            else:
-                start_minute = 0
-        if stop_minute != 0 and stop_minute != 30:
-            if stop_minute - 30 > 0:
-                stop_minute = 30
-            else:
-                stop_minute = 0
-        startdt = datetime(2000, 01, 01, meeting.meeting_time_start.hour,
-            start_minute, 0)
-        stopdt = datetime(2000, 01, 01, meeting.meeting_time_stop.hour,
-            stop_minute, 0)
+
+        start_delta = 0
+        if meeting.meeting_time_start.minute  < 15:
+            start_delta = meeting.meeting_time_start.minute - 30
+        elif 15 <= meeting.meeting_time_start.minute  <= 45:
+            start_delta = 30 - meeting.meeting_time_start.minute
+        elif meeting.meeting_time_start.minute > 45:
+            start_delta = 60 - meeting.meeting_time_start.minute
+
+        stop_delta = 0
+        if meeting.meeting_time_stop.minute  < 15:
+            stop_delta = meeting.meeting_time_stop.minute - 30
+        elif 15 <= meeting.meeting_time_stop.minute  <= 45:
+            stop_delta = 30 - meeting.meeting_time_stop.minute
+        elif meeting.meeting_time_stop.minute > 45:
+            stop_delta = 60 - meeting.meeting_time_stop.minute
+
+        startdt = datetime(meeting.meeting_date.year,
+            meeting.meeting_date.month, meeting.meeting_date.day,
+            meeting.meeting_time_start.hour,
+            meeting.meeting_time_start.minute, 0) + timedelta(
+                minutes=start_delta)
+        stopdt = datetime(meeting.meeting_date.year,
+            meeting.meeting_date.month, meeting.meeting_date.day,
+            meeting.meeting_time_stop.hour,
+            meeting.meeting_time_stop.minute, 0) + timedelta(
+                minutes=stop_delta)
 
         startdt = convert_time(startdt, 'UTC', tzone)
         stopdt = convert_time(stopdt, 'UTC', tzone)
 
+
         t_time = startdt
         while t_time < stopdt:
-            day = meeting.meeting_date.weekday()
+            day = startdt.weekday()
             key = t_time.strftime(fmt)
             if key in meetings:
                 if meetings[key][day]:
@@ -561,11 +573,13 @@ def add_meeting(session, calendarobj, fas_user,
             'The start time of your meeting is later than the stop time.')
 
     meeting_time_start = convert_time(
-        datetime(2000, 1, 1, meeting_time_start.hour,
+        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+            meeting_time_start.hour,
             meeting_time_start.minute),
         tzone, 'UTC')
     meeting_time_stop = convert_time(
-        datetime(2000, 1, 1, meeting_time_stop.hour,
+        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+            meeting_time_stop.hour,
             meeting_time_stop.minute),
         tzone, 'UTC')
 
@@ -599,7 +613,7 @@ def add_meeting(session, calendarobj, fas_user,
     dbaction.add_meeting(session=session,
         meeting_name=meeting_name,
         meeting_manager=managers,
-        meeting_date=meeting_date,
+        meeting_date=meeting_time_start.date(),
         meeting_date_end=None,
         meeting_time_start=meeting_time_start,
         meeting_time_stop=meeting_time_stop,
@@ -610,4 +624,89 @@ def add_meeting(session, calendarobj, fas_user,
         recursion_frequency=frequency,
         recursion_ends=end_repeats)
 
+    session.commit()
+
+def edit_meeting(session, meeting, calendarobj, fas_user,
+    meeting_name, meeting_date,  # meeting_date_end,
+    meeting_time_start, meeting_time_stop, comanager,
+    meeting_information,
+    meeting_region, tzone,
+    frequency, end_repeats,
+    remind_when, remind_who):
+    """ When a user wants to edit a meeting to the database, we need to
+    perform a number of test first checking that the input is valid
+    and then edit the desired meeting.
+    """
+    if not is_user_managing_in_calendar(session,
+        calendarobj.calendar_name, fas_user):
+        raise UserNotAllowed('You are not allowed to add'\
+            ' a meeting to this calendar')
+
+    if not is_date_in_future(meeting_date, meeting_time_start):
+        raise InvalidMeeting('The date you entered is in '\
+            'the past')
+
+    if meeting_time_start > meeting_time_stop:
+        raise InvalidMeeting(
+            'The start time of your meeting is later than the stop time.')
+
+    meeting_time_start = convert_time(
+        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+            meeting_time_start.hour,
+            meeting_time_start.minute),
+        tzone, 'UTC')
+    meeting_time_stop = convert_time(
+        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+            meeting_time_stop.hour,
+            meeting_time_stop.minute),
+        tzone, 'UTC')
+
+    meeting.meeting_name = meeting_name
+    meeting.meeting_manager = '%s,' % fas_user.username
+    if comanager:
+        meeting.meeting_manager = '%s%s,' % (meeting.meeting_manager,
+            comanager)
+
+    meeting.meeting_date = meeting_time_start.date()
+    meeting_end_date = None # meeting_date_end
+    if not meeting_end_date:
+        meeting_end_date = meeting_time_start.date()
+    meeting.meeting_end_date = meeting_end_date
+    meeting.meeting_time_start = meeting_time_start.time()
+    meeting.meeting_time_stop = meeting_time_stop.time()
+    meeting.meeting_information = meeting_information
+
+    region = meeting_region
+    if not region:
+        region = None
+    meeting.meeting_region = region
+
+    frequency = frequency
+    if not frequency:
+        frequency = None
+    meeting.recursion_frequency = frequency
+
+    ends_date = end_repeats
+    if not ends_date:
+        ends_date = date(2025, 12, 31)
+    meeting.recursion_ends = ends_date
+
+    if remind_when and remind_who:
+        if meeting.reminder_id:
+            meeting.reminder.reminder_offset = remind_when
+            meeting.reminder.reminder_to = remind_who
+            meeting.reminder.save(session)
+        else:
+            reminder = Reminder(remind_when,
+                            remind_who,
+                            None)
+            reminder.save(session)
+            session.flush()
+            meeting.reminder = reminder
+            session.flush()
+    elif meeting.reminder_id:
+        meeting.reminder.delete(session)
+        meeting.reminder_id = None
+
+    meeting.save(session)
     session.commit()

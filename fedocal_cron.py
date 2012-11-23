@@ -33,10 +33,9 @@ import os
 
 from email.mime.text import MIMEText
 
-import sys
-sys.path.insert(0, 'fedocal')
+import fedocal
+import fedocal.fedocallib as fedocallib
 
-from fedocal import fedocallib
 
 def send_reminder_meeting(meeting):
     """ This function sends the actual reminder of a given meeting.
@@ -67,17 +66,18 @@ Please note:
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP('localhost')
+    s = smtplib.SMTP(fedocal.APP.config['SMTP_SERVER'])
     s.sendmail(from_email,
                 meeting.reminder.reminder_to,
                 msg.as_string())
     s.quit()
 
 
-def send_reminder(db_url):
+def send_reminder():
     """ Retrieve all the meeting for which we should send a reminder and
     do it.
     """
+    db_url = fedocal.APP.config['DB_URL']
     session = fedocallib.create_session(db_url)
     meetings = fedocallib.retrieve_meeting_to_remind(session)
     for meeting in meetings:
@@ -85,16 +85,4 @@ def send_reminder(db_url):
 
 
 if __name__ == '__main__':
-    sys.argv.append('fedocal/fedocal.cfg')
-    config = ConfigParser.ConfigParser()
-    if len(sys.argv) == 1:
-        if os.path.exists('/etc/fedocal.cfg'):
-            config.readfp(open('/etc/fedocal.cfg'))
-        else:
-            print 'No config file found in /etc or specified to the cron.'
-    elif len(sys.argv) == 2:
-        if os.path.exists(sys.argv[1]):
-            config.readfp(open(sys.argv[1]))
-        else:
-            print 'Config file specified to the cron could not be found.'
-    send_reminder(config.get('fedocal', 'db_url'))
+    send_reminder()

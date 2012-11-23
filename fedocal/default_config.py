@@ -30,3 +30,8 @@ DB_URL = 'sqlite:////tmp/fedocal_dev.sqlite'
 
 # The FAS group in which the admin of fedocal are
 ADMIN_GROUP = 'fedocal_admin'
+
+
+# The address of the SMTP server used to send the reminders emails
+# via the cron job.
+SMTP_SERVER='localhost'

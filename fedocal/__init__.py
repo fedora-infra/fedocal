@@ -414,6 +414,21 @@ def view_meeting_page(meeting_id, full):
     if not meeting:
         flask.flash('No meeting could be found for this identifier')
         return flask.redirect(flask.url_for('index'))
+    meeting_start = fedocallib.convert_time(
+        datetime.datetime(meeting.meeting_date.year,
+            meeting.meeting_date.month, meeting.meeting_date.day,
+            meeting.meeting_time_start.hour,
+            meeting.meeting_time_start.minute),
+        'UTC', get_timezone())
+    meeting_stop = fedocallib.convert_time(
+        datetime.datetime(meeting.meeting_date.year,
+            meeting.meeting_date.month, meeting.meeting_date.day,
+            meeting.meeting_time_stop.hour,
+            meeting.meeting_time_stop.minute),
+        'UTC', get_timezone())
+    meeting.meeting_date = meeting_start.date()
+    meeting.meeting_time_start = meeting_start.time()
+    meeting.meeting_time_stop = meeting_stop.time()
     auth_form = forms.LoginForm()
     return flask.render_template('view_meeting.html', full=full,
             meeting=meeting,

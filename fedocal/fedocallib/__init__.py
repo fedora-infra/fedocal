@@ -263,10 +263,9 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
             # pylint: disable=W0612
             meetings[key] = [None for cnt2 in range(0, 7)]
     for meeting in week.meetings:
-
         start_delta = 0
         if meeting.meeting_time_start.minute  < 15:
-            start_delta = meeting.meeting_time_start.minute - 30
+            start_delta = - meeting.meeting_time_start.minute
         elif 15 <= meeting.meeting_time_start.minute  <= 45:
             start_delta = 30 - meeting.meeting_time_start.minute
         elif meeting.meeting_time_start.minute > 45:
@@ -274,7 +273,7 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
 
         stop_delta = 0
         if meeting.meeting_time_stop.minute  < 15:
-            stop_delta = meeting.meeting_time_stop.minute - 30
+            stop_delta = - meeting.meeting_time_stop.minute
         elif 15 <= meeting.meeting_time_stop.minute  <= 45:
             stop_delta = 30 - meeting.meeting_time_stop.minute
         elif meeting.meeting_time_stop.minute > 45:
@@ -285,19 +284,21 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
             meeting.meeting_time_start.hour,
             meeting.meeting_time_start.minute, 0) + timedelta(
                 minutes=start_delta)
+        startdt = convert_time(startdt, 'UTC', tzone)
+
         stopdt = datetime(meeting.meeting_date.year,
             meeting.meeting_date.month, meeting.meeting_date.day,
             meeting.meeting_time_stop.hour,
             meeting.meeting_time_stop.minute, 0) + timedelta(
                 minutes=stop_delta)
-
-        startdt = convert_time(startdt, 'UTC', tzone)
         stopdt = convert_time(stopdt, 'UTC', tzone)
 
+        if stopdt < startdt:
+            stopdt = stopdt + timedelta(days=1)
 
         t_time = startdt
         while t_time < stopdt:
-            day = startdt.weekday()
+            day = t_time.weekday()
             key = t_time.strftime(fmt)
             if key in meetings:
                 if meetings[key][day]:

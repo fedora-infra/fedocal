@@ -56,7 +56,7 @@ class Meetingtests(Modeltests):
         caltest = Calendartests('test_init_calendar')
         caltest.session = self.session
         caltest.test_init_calendar()
-        obj = model.Meeting(
+        obj = model.Meeting(  #1
             meeting_name='Fedora-fr-test-meeting',
             meeting_manager='pingou, shaiton,',
             meeting_date=TODAY,
@@ -69,7 +69,7 @@ class Meetingtests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        obj = model.Meeting(
+        obj = model.Meeting(  #2
             meeting_name='test-meeting2',
             meeting_manager='pingou,',
             meeting_date=TODAY + timedelta(days=10),
@@ -82,7 +82,7 @@ class Meetingtests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        obj = model.Meeting(
+        obj = model.Meeting(  #3
             meeting_name='test-meeting23h59',
             meeting_manager='pingou23h,',
             meeting_date=TODAY + timedelta(days=20),
@@ -96,7 +96,7 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj, None)
 
         # Meeting with end_recursion in the past
-        obj = model.Meeting(
+        obj = model.Meeting(  #4
             meeting_name='test-meeting3',
             meeting_manager='test2,',
             meeting_date=TODAY - timedelta(days=16),
@@ -112,7 +112,7 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj, None)
 
         # Two meetings at the same time
-        obj = model.Meeting(
+        obj = model.Meeting(  #5
             meeting_name='test-meeting-st-1',
             meeting_manager='test,',
             meeting_date=TODAY + timedelta(days=1),
@@ -126,7 +126,7 @@ class Meetingtests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        obj = model.Meeting(
+        obj = model.Meeting(  #6
             meeting_name='test-meeting-st-2',
             meeting_manager='test,',
             meeting_date=TODAY + timedelta(days=1),
@@ -142,7 +142,7 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj, None)
 
         # Meeting with a recursion
-        obj = model.Meeting(
+        obj = model.Meeting(  #7
             meeting_name='Another test meeting',
             meeting_manager='pingou,',
             meeting_date=TODAY + timedelta(days=10),
@@ -154,7 +154,7 @@ class Meetingtests(Modeltests):
             recursion_frequency=7,
             recursion_ends=TODAY + timedelta(days=90))
         obj.save(self.session)
-        obj = model.Meeting(
+        obj = model.Meeting(  #8
             meeting_name='Another test meeting2',
             meeting_manager='pingou,',
             meeting_date=TODAY,
@@ -174,7 +174,7 @@ class Meetingtests(Modeltests):
             'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()
-        obj = model.Meeting(
+        obj = model.Meeting(  #9
             meeting_name='Test meeting with reminder',
             meeting_manager='pingou,',
             meeting_date=TODAY + timedelta(days=11),
@@ -194,7 +194,7 @@ class Meetingtests(Modeltests):
             'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()
-        obj = model.Meeting(
+        obj = model.Meeting(  #10
             meeting_name='Test meeting with reminder and recursion',
             meeting_manager='pingou,',
             meeting_date=TODAY + timedelta(days=12),

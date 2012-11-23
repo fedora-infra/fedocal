@@ -20,9 +20,9 @@
     <h4> Meeting: {{ meeting.meeting_name}}</h4>
 
     <ul>
-        <li>Date: {{ meeting.meeting_date }} UTC</li>
-        <li>Starting time: {{ meeting.meeting_time_start }} UTC</li>
-        <li>Ending time: {{ meeting.meeting_time_stop }} UTC</li>
+        <li>Date: {{ meeting.meeting_date }} </li>
+        <li>Starting time: {{ meeting.meeting_time_start }} {{tzone}}</li>
+        <li>Ending time: {{ meeting.meeting_time_stop }} {{tzone}}</li>
     </ul>
 
     <pre>

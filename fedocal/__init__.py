@@ -201,17 +201,18 @@ def my_meetings():
     involved, either because you created them or because someone gave
     you manager rights to the meeting.
     """
+    tzone = get_timezone()
     regular_meetings = fedocallib.get_future_regular_meeting_of_user(SESSION,
-        flask.g.fas_user.username)
+        flask.g.fas_user.username, tzone=tzone)
     single_meetings = fedocallib.get_future_single_meeting_of_user(SESSION,
-        flask.g.fas_user.username)
+        flask.g.fas_user.username, tzone=tzone)
     past_meetings = fedocallib.get_past_meeting_of_user(SESSION,
-        flask.g.fas_user.username)
+        flask.g.fas_user.username, tzone=tzone)
     admin = is_admin()
     return flask.render_template('my_meeting.html',
         title='My meeting', regular_meetings=regular_meetings,
         single_meetings=single_meetings, pas_meetings=past_meetings,
-        admin=admin)
+        admin=admin, tzone=tzone)
 
 
 @APP.route('/login/', methods=('GET', 'POST'))
@@ -411,27 +412,14 @@ def view_meeting_page(meeting_id, full):
     :arg meeting_id: the identifier of the meeting to visualize.
     """
     meeting = Meeting.by_id(SESSION, meeting_id)
+    tzone = get_timezone()
     if not meeting:
         flask.flash('No meeting could be found for this identifier')
         return flask.redirect(flask.url_for('index'))
-    meeting_start = fedocallib.convert_time(
-        datetime.datetime(meeting.meeting_date.year,
-            meeting.meeting_date.month, meeting.meeting_date.day,
-            meeting.meeting_time_start.hour,
-            meeting.meeting_time_start.minute),
-        'UTC', get_timezone())
-    meeting_stop = fedocallib.convert_time(
-        datetime.datetime(meeting.meeting_date.year,
-            meeting.meeting_date.month, meeting.meeting_date.day,
-            meeting.meeting_time_stop.hour,
-            meeting.meeting_time_stop.minute),
-        'UTC', get_timezone())
-    meeting.meeting_date = meeting_start.date()
-    meeting.meeting_time_start = meeting_start.time()
-    meeting.meeting_time_stop = meeting_stop.time()
+    meeting = fedocallib.convert_meeting_timezone(meeting, 'UTC', tzone)
     auth_form = forms.LoginForm()
     return flask.render_template('view_meeting.html', full=full,
-            meeting=meeting,
+            meeting=meeting, tzone=tzone,
             title=meeting.meeting_name, auth_form=auth_form)
 
 

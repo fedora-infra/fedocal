@@ -264,17 +264,17 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
             meetings[key] = [None for cnt2 in range(0, 7)]
     for meeting in week.meetings:
         start_delta = 0
-        if meeting.meeting_time_start.minute  < 15:
+        if meeting.meeting_time_start.minute < 15:
             start_delta = - meeting.meeting_time_start.minute
-        elif 15 <= meeting.meeting_time_start.minute  <= 45:
+        elif 15 <= meeting.meeting_time_start.minute <= 45:
             start_delta = 30 - meeting.meeting_time_start.minute
         elif meeting.meeting_time_start.minute > 45:
             start_delta = 60 - meeting.meeting_time_start.minute
 
         stop_delta = 0
-        if meeting.meeting_time_stop.minute  < 15:
+        if meeting.meeting_time_stop.minute < 15:
             stop_delta = - meeting.meeting_time_stop.minute
-        elif 15 <= meeting.meeting_time_stop.minute  <= 45:
+        elif 15 <= meeting.meeting_time_stop.minute <= 45:
             stop_delta = 30 - meeting.meeting_time_stop.minute
         elif meeting.meeting_time_stop.minute > 45:
             stop_delta = 60 - meeting.meeting_time_stop.minute
@@ -670,6 +670,7 @@ def add_meeting(session, calendarobj, fas_user,
 
     session.commit()
 
+
 def edit_meeting(session, meeting, calendarobj, fas_user,
     meeting_name, meeting_date,  # meeting_date_end,
     meeting_time_start, meeting_time_stop, comanager,
@@ -712,7 +713,7 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
             comanager)
 
     meeting.meeting_date = meeting_time_start.date()
-    meeting_end_date = None # meeting_date_end
+    meeting_end_date = None  # meeting_date_end
     if not meeting_end_date:
         meeting_end_date = meeting_time_start.date()
     meeting.meeting_end_date = meeting_end_date

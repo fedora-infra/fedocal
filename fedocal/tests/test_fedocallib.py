@@ -270,16 +270,16 @@ class Fedocallibtests(Modeltests):
     def test_is_date_in_future(self):
         """ Test the is_date_in_future function. """
         meeting_date = date.today()
-        meeting_time = datetime.utcnow().hour + 1
+        meeting_time = datetime.utcnow() + timedelta(hours=1)
         self.assertTrue(fedocallib.is_date_in_future(meeting_date,
             meeting_time))
 
-        meeting_time = datetime.utcnow().hour - 1
+        meeting_time = datetime.utcnow() - timedelta(hours=1)
         self.assertFalse(fedocallib.is_date_in_future(meeting_date,
             meeting_time))
 
         meeting_date = date.today() + timedelta(days=1)
-        meeting_time = datetime.utcnow().hour
+        meeting_time = datetime.utcnow()
         self.assertTrue(fedocallib.is_date_in_future(meeting_date,
             meeting_time))
 
@@ -291,7 +291,7 @@ class Fedocallibtests(Modeltests):
         """ Test the get_past_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
-            'pingou', TODAY)
+            'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
@@ -308,7 +308,7 @@ class Fedocallibtests(Modeltests):
         obj.save(self.session)
         self.session.commit()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
-            'pingou', TODAY)
+            'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 1)
         self.assertEqual(meetings[0].meeting_name, 'A past test meeting')
@@ -320,7 +320,7 @@ class Fedocallibtests(Modeltests):
         """ Test the get_future_single_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(self.session,
-            'pingou,', TODAY)
+            'pingou,', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 3)
         self.assertEqual(meetings[0].meeting_name,
@@ -351,7 +351,7 @@ class Fedocallibtests(Modeltests):
         """ Test the get_future_regular_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_future_regular_meeting_of_user(
-            self.session, 'pingou', TODAY)
+            self.session, 'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 3)
         self.assertEqual(meetings[0].meeting_name,
@@ -502,7 +502,7 @@ class Fedocallibtests(Modeltests):
         calendar = vobject.iCalendar()
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(
-            self.session, 'pingou,', TODAY)
+            self.session, 'pingou,', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 3)
 
@@ -864,9 +864,9 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(InvalidMeeting, fedocallib.edit_meeting,
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() - timedelta(days=1),
+            date.today() - timedelta(days=2),
             time(23, 0), time(23, 59), None,
-            'Information', 'EMEA', 'Europe/Paris',
+            'Information', 'EMEA', 'UTC',
             None, None,
             None, None)
         self.session.rollback()

@@ -55,6 +55,33 @@ def convert_time(timeobj, tzfrom, tzto):
     return timeobj_to
 
 
+def convert_meeting_timezone(meeting, tzfrom, tzto):
+    """ Convert a given meeting from one specified timezone to another
+    specified one.
+
+    :arg meeting: a Meeting object representing the meeting to convert
+        from one timezone to the other.
+    :arg tzfrom: the timezone from which to convert
+    :arg tzto: the timezone to which to convert
+    """
+    meeting_start = convert_time(
+        datetime(meeting.meeting_date.year, meeting.meeting_date.month,
+            meeting.meeting_date.day,
+            meeting.meeting_time_start.hour,
+            meeting.meeting_time_start.minute),
+        tzfrom, tzto)
+    meeting_stop = convert_time(
+        datetime(meeting.meeting_date.year, meeting.meeting_date.month,
+            meeting.meeting_date.day,
+            meeting.meeting_time_stop.hour,
+            meeting.meeting_time_stop.minute),
+        tzfrom, tzto)
+    meeting.meeting_date = meeting_start.date()
+    meeting.meeting_time_start = meeting_start.time()
+    meeting.meeting_time_stop = meeting_stop.time()
+    return meeting
+
+
 def create_session(db_url, debug=False, pool_recycle=3600):
     """ Create the Session object to use to query the database.
 
@@ -332,22 +359,28 @@ def is_date_in_future(indate, start_time):
         return True
 
 
-def get_past_meeting_of_user(session, username, from_date=date.today()):
+def get_past_meeting_of_user(session, username, tzone='UTC',
+    from_date=date.today()):
     """ Return all past meeting which specified username is among the
     managers.
     :arg session: the database session to use
     :arg username: the FAS user name that you would like to have the
         past meetings for.
-    :arg from_date: the date from which the futur meetings should be
+    :kwarg tzone: the time-zone to which to convert the meetings.
+        Defaults to 'UTC'.
+    :kwarg from_date: the date from which the futur meetings should be
         retrieved. Defaults to today
     """
-    meetings = Meeting.get_past_meeting_of_user(session, username,
+    meetings_tmp = Meeting.get_past_meeting_of_user(session, username,
         from_date)
+    meetings = []
+    for meeting in meetings_tmp:
+        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
     return meetings
 
 
 # pylint: disable=C0103
-def get_future_single_meeting_of_user(session, username,
+def get_future_single_meeting_of_user(session, username, tzone='UTC',
     from_date=date.today()):
     """ Return all future meeting which specified username is among the
     managers.
@@ -355,28 +388,38 @@ def get_future_single_meeting_of_user(session, username,
     :arg session: the database session to use
     :arg username: the FAS user name that you would like to have the
         past meetings for.
-    :arg from_date: the date from which the futur meetings should be
+    :kwarg tzone: the time-zone to which to convert the meetings.
+        Defaults to 'UTC'.
+    :kwarg from_date: the date from which the futur meetings should be
         retrieved. Defaults to today
     """
-    meetings = Meeting.get_future_single_meeting_of_user(session,
+    meetings_tmp = Meeting.get_future_single_meeting_of_user(session,
         username, from_date)
+    meetings = []
+    for meeting in meetings_tmp:
+        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
     return meetings
 
 
 # pylint: disable=C0103
-def get_future_regular_meeting_of_user(session, username,
+def get_future_regular_meeting_of_user(session, username, tzone='UTC',
     from_date=date.today()):
     """ Return all future recursive meeting which specified username is
     among the managers.
 
-    :arg session: the database session to use
+    :arg session: the database session to use.
     :arg username: the FAS user name that you would like to have the
         past meetings for.
-    :arg from_date: the date from which the futur meetings should be
-        retrieved. Defaults to today
+    :kwarg tzone: the time-zone to which to convert the meetings.
+        Defaults to 'UTC'.
+    :kwarg from_date: the date from which the futur meetings should be
+        retrieved. Defaults to today.
     """
-    meetings = Meeting.get_future_regular_meeting_of_user(session,
+    meetings_tmp = Meeting.get_future_regular_meeting_of_user(session,
         username, from_date)
+    meetings = []
+    for meeting in meetings_tmp:
+        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
     return meetings
 
 

@@ -170,9 +170,9 @@ One can only edit a meeting if he is one of the manager of the meeting or if
 he is an administrator of fedocal.
 
 
-In these cases, once logged-in, go to the page ``Manage your meetings`` and
-there is presented a list of the meetings for which you are a manager and that
-you can edit.
+In these cases, once logged-in, go to the ``User`` section in the main
+menu and select ``Manage your meetings``. This page will present a list
+of the meetings for which you are a manager and that you can edit.
 
 
 When editing a meeting you will have the same field as when creating one,
@@ -188,9 +188,9 @@ One can only delete a meeting if he is one of the manager of the meeting or if
 he is an administrator of fedocal.
 
 
-In these cases, once logged-in, go to the page ``Manage your meetings`` and
-there is presented a list of the meetings for which you are a manager and that
-you can delete.
+In these cases, once logged-in, go to the ``User`` section in the main
+menu and select ``Manage your meetings``. This page will present a list
+of the meetings for which you are a manager and that you can delete.
 
 
 You will be asked to confirm the deletion of the meeting and for recursive

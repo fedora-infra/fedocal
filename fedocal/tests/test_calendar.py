@@ -144,6 +144,25 @@ class Calendartests(Modeltests):
         self.assertEqual(len(obj), 0)
         self.assertEqual(obj, [])
 
+    def test_delete(self):
+        """ Test the Calendar.delete method. """
+        self.test_init_calendar()
+        obj = model.Calendar.get_all(self.session)
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 4)
+        obj = model.Calendar.by_id(self.session, 'test_calendar')
+        self.assertNotEqual(obj, None)
+
+        obj.delete(self.session)
+        self.session.commit()
+
+        obj = model.Calendar.get_all(self.session)
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 3)
+        obj = model.Calendar.by_id(self.session, 'test_calendar')
+        self.assertEqual(obj, None)
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Calendartests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

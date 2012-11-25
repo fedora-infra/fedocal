@@ -150,6 +150,11 @@ class DeleteMeetingForm(wtf.Form):
         'Yes, I want to delete all futher meetings.')
 
 
+class DeleteCalendarForm(wtf.Form):
+    """ Form used to delete a calendar. """
+    confirm_delete = wtf.BooleanField('Yes I want to delete this calendar')
+
+
 class LoginForm(wtf.Form):
     """ Form to log in the application. """
     username = wtf.TextField('Username', [wtf.validators.Required()])

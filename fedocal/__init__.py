@@ -461,6 +461,33 @@ def delete_meeting(meeting_id):
         title=meeting.meeting_name)
 
 
+@APP.route('/calendar/delete/<calendar_name>/', methods=('GET', 'POST'))
+@cla_plus_one_required
+def delete_calendar(calendar_name):
+    """ Delete a specific meeting given its identifier.
+
+    :arg meeting_id: the identifier of the meeting to delete.
+    """
+    if not flask.g.fas_user or not is_admin():
+        return flask.redirect(flask.url_for('index'))
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+    deleteform = forms.DeleteCalendarForm()
+    # pylint: disable=E1101
+    if deleteform.validate_on_submit():
+        if deleteform.confirm_delete.data:
+            calendarobj.delete(SESSION)
+            try:
+                SESSION.commit()
+            # pylint: disable=W0703
+            except Exception, err:
+                print 'delete_calendar:',  err
+                flask.flash('Could not delete this calendar.')
+        flask.flash('Calendar deleted')
+        return flask.redirect(flask.url_for('index'))
+    return flask.render_template('delete_calendar.html',
+        form=deleteform, calendarobj=calendarobj)
+
+
 if __name__ == '__main__':  # pragma: no cover
     APP.debug = True
     APP.run()

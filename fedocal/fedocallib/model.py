@@ -93,6 +93,10 @@ class Calendar(BASE):
         """ Save the object into the database. """
         session.add(self)
 
+    def delete(self, session):
+        """ Remove the object into the database. """
+        session.delete(self)
+
     @classmethod
     def by_id(cls, session, identifier):
         """ Retrieve a Calendar object from the database based on its

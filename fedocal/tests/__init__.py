@@ -38,6 +38,10 @@ from datetime import date
 from datetime import time
 from datetime import timedelta
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
+
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
@@ -61,7 +65,10 @@ class Modeltests(unittest.TestCase):
     # pylint: disable=C0103
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
-        self.session = model.create_tables('sqlite:///%s' % DB_PATH)
+        model.create_tables('sqlite:///%s' % DB_PATH)
+        engine = create_engine('sqlite:///%s' % DB_PATH)
+        scopedsession = scoped_session(sessionmaker(bind=engine))
+        self.session = scopedsession
 
     # pylint: disable=C0103
     def tearDown(self):

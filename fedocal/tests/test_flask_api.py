@@ -61,8 +61,8 @@ class FlaskApitests(Modeltests):
         super(FlaskApitests, self).setUp()
 
         fedocal.APP.config['TESTING'] = True
-        fedocal.SESSION = fedocallib.create_session(
-            'sqlite:///%s' % DB_PATH)
+        fedocal.APP.config['DB_URL'] = DB_PATH
+        fedocal.SESSION = self.session
         self.app = fedocal.APP.test_client()
 
     def test_api(self):
@@ -102,7 +102,7 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/date/test_calendar4/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
-        self.assertEqual(output.data.count('meeting_name'), 2)
+        self.assertEqual(output.data.count('meeting_name'), 3)
 
     def test_api_date(self):
         """ Test the api_date function. """
@@ -134,6 +134,24 @@ class FlaskApitests(Modeltests):
         self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
+    def test_api_date_error(self):
+        """ Test the api_date function with wrong input. """
+        self.__setup_db()
+
+        output = self.app.get('/api/date/test_calendar/%s/2012-09-aw/' %
+            (TODAY))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "notok"' in output.data)
+        self.assertTrue('"error": "Date format invalid:' in \
+            output.data)
+
+        output = self.app.get('/api/date/test_calendar/%s/2012-09/' %
+            (TODAY))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"retrieval": "notok"' in output.data)
+        self.assertTrue('"error": "Date format invalid"' in \
+            output.data)
+
     def test_api_place_default(self):
         """ Test the api_place_default function. """
         output = self.app.get('/api/place/EMEA/foobar')
@@ -159,7 +177,7 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/place/EMEA/test_calendar4/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
-        self.assertEqual(output.data.count('meeting_name'), 1)
+        self.assertEqual(output.data.count('meeting_name'), 2)
 
     def test_api_place(self):
         """ Test the api_place function. """
@@ -208,20 +226,21 @@ class FlaskApitests(Modeltests):
         self.assertEqual(output.data,
             '{ "retrieval": "notok", "meeting": []}')
 
-    def test_api_date_place_error(self):
-        """ Test the api_date and api_place functions with wrongly
-        formated input. """
-        output = self.app.get('/api/date/foobar/2000-01/2000-02/')
-        self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": [], "error": '\
-            '"Date format invalid"}')
+    def test_api_place_error(self):
+        """ Test the api_date function with wrong input. """
+        self.__setup_db()
 
-        output = self.app.get('/api/place/EMEA/foobar/2000-01/2000-02/')
+        output = self.app.get('/api/place/EMEA/test_calendar4/%s/2012-12/' % (
+            TODAY))
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": [], "error": '\
-            '"Date format invalid"}')
+        self.assertTrue('"error": "Date format invalid"' in \
+            output.data)
+
+        output = self.app.get('/api/place/EMEA/test_calendar4/%s/2012-12-ws/' % (
+            TODAY))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('"error": "Date format invalid:' in \
+            output.data)
 
 
 if __name__ == '__main__':

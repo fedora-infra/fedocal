@@ -40,10 +40,10 @@ import flask
 from flask_fas import FAS, cla_plus_one_required
 
 import forms as forms
-import fedocallib as fedocallib
+import fedocal.fedocallib as fedocallib
 import fedocallib.dbaction
-from fedocallib.exceptions import FedocalException
-from fedocallib.model import (Calendar, Meeting, Reminder)
+from fedocal.fedocallib.exceptions import FedocalException
+from fedocal.fedocallib.model import (Calendar, Meeting, Reminder)
 
 # Create the application.
 APP = flask.Flask(__name__)
@@ -52,6 +52,9 @@ FAS = FAS(APP)
 APP.config.from_object('fedocal.default_config')
 APP.config.from_envvar('FEDOCAL_CONFIG')
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
+
+
+import fedocal.api
 
 
 @APP.context_processor
@@ -456,165 +459,6 @@ def delete_meeting(meeting_id):
         meeting=meeting,
         calendars=calendars,
         title=meeting.meeting_name)
-
-
-### API
-
-@APP.route('/api/')
-def api():
-    """ Display the api information page. """
-    auth_form = forms.LoginForm()
-    admin = is_admin()
-    return flask.render_template('api.html',
-        auth_form=auth_form,
-        admin=admin)
-
-
-@APP.route('/api/date/<calendar_name>/')
-def api_date_default(calendar_name):
-    """ Returns all the meetings for the specified calendar for the
-    time frame between today - 30 days to today + 180 days.
-
-    :arg calendar_name: the name of the calendar to retrieve information
-        from.
-    """
-    startd = datetime.date.today() - datetime.timedelta(days=30)
-    endd = datetime.date.today() + datetime.timedelta(days=180)
-    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
-        startd, endd)
-    if not meetings:
-        output = '{ "retrieval": "notok", "meeting": []}'
-    else:
-        output = '{ "retrieval": "ok", "meeting": [\n'
-        cnt = 0
-        for meeting in meetings:
-            output = output + meeting.to_json()
-            cnt = cnt + 1
-            if cnt != len(meetings):
-                output = output + ','
-        output = output + '\n]}'
-    return flask.Response(output)
-
-
-@APP.route('/api/date/<calendar_name>/<start_date>/<end_date>/')
-def api_date(calendar_name, start_date, end_date):
-    """ Returns all the meetings for the specified calendar for the
-    specified time frame.
-
-    :arg calendar_name: the name of the calendar to retrieve information
-        from.
-    :arg start_date: the start date of the time frame for which one
-        would like to retrieve the meetings.
-    :arg end_date: the end date of the time frame for which one would
-        like to retrieve the meetings.
-    """
-    start_date = start_date.split('-')
-    end_date = end_date.split('-')
-    if len(start_date) != 3 or len(end_date) != 3:
-        output = '{ "retrieval": "notok", "meeting": [], "error": '\
-            '"Date format invalid"}'
-        return flask.Response(output)
-    try:
-        start_date = [int(item) for item in start_date]
-        end_date = [int(item) for item in end_date]
-        startd = datetime.date(start_date[0], start_date[1],
-            start_date[2])
-        endd = datetime.date(end_date[0], end_date[1], end_date[2])
-    except ValueError, error:
-        output = '{ "retrieval": "notok", "meeting": [], "error": '\
-            '"Date format invalid: %s"}' % error
-        return flask.Response(output)
-
-    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
-        startd, endd)
-    if not meetings:
-        output = '{ "retrieval": "notok", "meeting": []}'
-    else:
-        output = '{ "retrieval": "ok", "meeting": [\n'
-        cnt = 0
-        for meeting in meetings:
-            output = output + meeting.to_json()
-            cnt = cnt + 1
-            if cnt != len(meetings):
-                output = output + ','
-        output = output + '\n]}'
-    return flask.Response(output)
-
-
-@APP.route('/api/place/<region>/<calendar_name>/')
-def api_place_default(region, calendar_name):
-    """ Return all the meetings from an agenda in a specified region.
-    The meetings are in the time range from today - 30 days to
-    today + 180 days.
-
-    :arg region: the name of the region in which the meetings will
-        occur.
-    :arg calendar_name: the name of the calendar to retrieve information
-        from.
-    """
-    startd = datetime.date.today() - datetime.timedelta(days=30)
-    endd = datetime.date.today() + datetime.timedelta(days=180)
-    meetings = fedocallib.get_meetings_by_date_and_region(SESSION,
-        calendar_name, startd, endd, region)
-    if not meetings:
-        output = '{ "retrieval": "notok", "meeting": []}'
-    else:
-        output = '{ "retrieval": "ok", "meeting": [\n'
-        cnt = 0
-        for meeting in meetings:
-            output = output + meeting.to_json()
-            cnt = cnt + 1
-            if cnt != len(meetings):
-                output = output + ','
-        output = output + '\n]}'
-    return flask.Response(output)
-
-
-@APP.route('/api/place/<region>/<calendar_name>/<start_date>/<end_date>/')
-def api_place(region, calendar_name, start_date, end_date):
-    """ Returns all the meetings occuring in a region from an agenda
-    and for the specified time frame.
-
-    :arg region: the name of the region in which the meetings will
-        occur.
-    :arg calendar_name: the name of the calendar to retrieve information
-        from.
-    :arg start_date: the start date of the time frame for which one
-        would like to retrieve the meetings.
-    :arg end_date: the end date of the time frame for which one would
-        like to retrieve the meetings.
-    """
-    start_date = start_date.split('-')
-    end_date = end_date.split('-')
-    if len(start_date) != 3 or len(end_date) != 3:
-        output = '{ "retrieval": "notok", "meeting": [], "error": '\
-            '"Date format invalid"}'
-        return flask.Response(output)
-    try:
-        start_date = [int(item) for item in start_date]
-        end_date = [int(item) for item in end_date]
-        startd = datetime.date(start_date[0], start_date[1],
-            start_date[2])
-        endd = datetime.date(end_date[0], end_date[1], end_date[2])
-    except ValueError, error:
-        output = '{ "retrieval": "notok", "meeting": [], "error": '\
-            '"Date format invalid: %s"}' % error
-        return flask.Response(output)
-
-    meetings = fedocallib.get_meetings_by_date_and_region(SESSION,
-        calendar_name, startd, endd, region)
-    if not meetings:
-        output = '{ "retrieval": "notok", "meeting": []}'
-    else:
-        output = '{ "retrieval": "ok", "meeting": [\n'
-        cnt = 0
-        for meeting in meetings:
-            output = output + meeting.to_json()
-            cnt = cnt + 1
-            if cnt != len(meetings):
-                output = output + ','
-        output = output + '\n]}'
-    return flask.Response(output)
 
 
 if __name__ == '__main__':  # pragma: no cover

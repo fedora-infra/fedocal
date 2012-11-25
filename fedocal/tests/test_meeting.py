@@ -211,6 +211,20 @@ class Meetingtests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        obj = model.Meeting(  # id:11
+            meeting_name='test-meeting-11',
+            meeting_manager='test,',
+            meeting_date=TODAY + timedelta(days=20),
+            meeting_date_end=TODAY + timedelta(days=20),
+            meeting_time_start=time(17, 00),
+            meeting_time_stop=time(18, 00),
+            meeting_information='This is a second test meeting in EMEA',
+            calendar_name='test_calendar4',
+            meeting_region='EMEA')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
     def test_repr_meeting(self):
         """ Test the Meeting string representation function. """
         self.test_init_meeting()

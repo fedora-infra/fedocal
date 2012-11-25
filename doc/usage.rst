@@ -29,6 +29,7 @@ belong to at least one more group than the ``fedora_cla`` group which
 every contributor should sign to contribute to Fedora.
 
 
+
 Create calendar
 ---------------
 
@@ -72,6 +73,26 @@ The form to will ask for:
   Regions are meant to be 'NA', 'APAC', 'EMEA', 'LATAM'.
 
   Note that this can also be used to filter meetings retrieved via the API.
+
+
+
+Delete a calendar
+-----------------
+
+One can always delete a calendar if she/he is an administrator as defined
+above.
+
+To delete a calendar, select the calendar to delete in the main menu by
+clicking on its name. Then go to the ``Admin`` entry of the main menu and
+select ``Delete calendar``.
+
+You will see a confirmation page where you will have to select the checkbox
+to confirm the deletion of the Calendar.
+
+.. note:: Deletion of calendar is a permanent operation which will also
+   destroy all meetings of the calendar. You will thus loose all the
+   history of the calendar without possibility to undo it.
+
 
 
 Create meeting
@@ -159,6 +180,7 @@ plus when the meeting is recursive an option to update all the future meetings
 or just this one (default).
 
 
+
 Delete meeting
 --------------
 
@@ -179,6 +201,7 @@ or just this one (default).
 For archives purposes, you can never delete meetings from the past.
 
 
+
 iCal feed
 ---------
 
@@ -188,6 +211,7 @@ own calendar application.
 This iCal is read-only and can be found at::
 
  http://<url to fedocal>/ical/<calendar name>/
+
 
 
 .. _reminders:

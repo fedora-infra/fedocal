@@ -236,8 +236,8 @@ class FlaskApitests(Modeltests):
         self.assertTrue('"error": "Date format invalid"' in \
             output.data)
 
-        output = self.app.get('/api/place/EMEA/test_calendar4/%s/2012-12-ws/' % (
-            TODAY))
+        output = self.app.get('/api/place/EMEA/test_calendar4/%s/'\
+            '2012-12-ws/' % (TODAY))
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"error": "Date format invalid:' in \
             output.data)

@@ -544,7 +544,8 @@ class Meetingtests(Modeltests):
         """ Test the Meeting get_meeting_with_reminder function. """
         self.test_init_meeting()
         meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(11, 00), 'H-12')
+            TODAY + timedelta(days=11), time(11, 00), time(11, 30),
+            'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 1)
         self.assertEqual(meetings[0].meeting_name,
@@ -557,19 +558,21 @@ class Meetingtests(Modeltests):
         """
         self.test_init_meeting()
         meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(11, 00), 'H-96')
+            TODAY + timedelta(days=11), time(11, 00), time(11, 30),
+            'H-96')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
         meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(9, 00), 'H-12')
+            TODAY + timedelta(days=11), time(9, 00), time(9, 30), 'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
         meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=100), time(11, 00), 'H-12')
+            TODAY + timedelta(days=100), time(11, 00), time(11, 30),
+            'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])

@@ -470,8 +470,8 @@ class Fedocallibtests(Modeltests):
             meeting_manager='pingou',
             meeting_date=time_start.date(),
             meeting_date_end=time_start.date(),
-            meeting_time_start=time(time_start.hour, 00),
-            meeting_time_stop=time(time_end.hour, 00),
+            meeting_time_start=time_start.time(),
+            meeting_time_stop=time_end.time(),
             meeting_information='This is a test meeting with reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id)

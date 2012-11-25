@@ -495,31 +495,33 @@ def _generate_date_rounded_to_the_hour(meetingdate, offset):
     """
     delta = timedelta(hours=offset)
     new_date = meetingdate + delta
-    new_date = new_date - timedelta(minutes=new_date.minute,
-                                    seconds=new_date.second,
+    new_date = new_date - timedelta(seconds=new_date.second,
                                     microseconds=new_date.microsecond)
     return new_date
 
 
-def retrieve_meeting_to_remind(session):
+def retrieve_meeting_to_remind(session, offset=30):
     """ Retrieve all the meetings for which we have to send a reminder.
 
     :arg session: the database session to use.
+    :kwarg offset: the frequency at which the cron job is ran in order
+        to avoid sending twice the same reminder.
     """
     today = datetime.utcnow()
     # Retrieve meeting planned in less than 12h
     new_date = _generate_date_rounded_to_the_hour(today, 12)
+    end_date = new_date + timedelta(minutes=offset)
     meetings = Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), 'H-12')
+        new_date.date(), new_date.time(), end_date.time(), 'H-12')
     new_date = _generate_date_rounded_to_the_hour(today, 24)
     meetings.extend(Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), 'H-24'))
+        new_date.date(), new_date.time(), end_date.time(), 'H-24'))
     new_date = _generate_date_rounded_to_the_hour(today, 48)
     meetings.extend(Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), 'H-48'))
+        new_date.date(), new_date.time(), end_date.time(), 'H-48'))
     new_date = _generate_date_rounded_to_the_hour(today, 168)
     meetings.extend(Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), 'H-168'))
+        new_date.date(), new_date.time(), end_date.time(), 'H-168'))
 
     return meetings
 

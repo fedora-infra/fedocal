@@ -305,13 +305,13 @@ class Meeting(BASE):
     def get_by_time(cls, session, calendar, meetingdate, start_time,
         stop_time):
         """ Retrieve the list of meetings for a given date and between
-        two times.
+        two times for a specific calendar.
         """
         return session.query(cls).filter(and_
             (Meeting.calendar == calendar),
             (Meeting.meeting_date == meetingdate),
             (Meeting.meeting_time_start >= start_time),
-            (Meeting.meeting_time_stop <= stop_time)).all()
+            (Meeting.meeting_time_stop < stop_time)).all()
 
     @classmethod
     def at_time(cls, session, calendar, meetingdate, t_time):
@@ -363,7 +363,7 @@ class Meeting(BASE):
 
     @classmethod
     def get_meeting_with_reminder(cls, session, start_date,
-        start_time, offset):
+        start_time, stop_time, offset):
         """ Retrieve the list of meetings with a reminder set in
         <offset> hours for the given day and at the specified hour.
         """
@@ -374,7 +374,8 @@ class Meeting(BASE):
             return []
         return session.query(cls).filter(and_
                 (Meeting.meeting_date == start_date),
-                (Meeting.meeting_time_start == start_time),
+                (Meeting.meeting_time_start >= start_time),
+                (Meeting.meeting_time_start < stop_time),
                 (Meeting.reminder_id.in_(reminders))).all()
 
 

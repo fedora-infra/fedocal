@@ -38,4 +38,4 @@ SMTP_SERVER = 'localhost'
 
 
 # The cron job can be set with any frequency but fedocal_cron
-CRON_FREQUENCY=30
+CRON_FREQUENCY = 30

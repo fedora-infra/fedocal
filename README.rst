@@ -158,7 +158,7 @@ is not up to date, then you will have to run::
  alembic upgrade head
 
 .. note:: If this is the first time you are running ``alembic``, you will
-   need to copy file ``elembic.ini.smaple`` to ``alembic.ini`` and setup
+   need to copy file ``alembic.ini.sample`` to ``alembic.ini`` and setup
    the ``sqlalchemy.url`` variable in the latest
 
 

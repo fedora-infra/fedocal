@@ -43,7 +43,7 @@ class Week(object):
             self.start_date, self.stop_date)
 
         for meeting in Meeting.get_active_regular_meeting(self.session,
-            self.stop_date):
+            self.calendar, self.stop_date):
             for delta in range(0, 7):
                 day = self.start_date + timedelta(days=delta)
                 if ((meeting.meeting_date - day).days %

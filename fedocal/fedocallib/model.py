@@ -19,6 +19,7 @@ import pkg_resources
 
 from datetime import datetime
 from datetime import date
+from datetime import timedelta
 
 from sqlalchemy import (
     Boolean,
@@ -372,11 +373,27 @@ class Meeting(BASE):
         reminders = [int(item.reminder_id) for item in reminders]
         if not reminders:
             return []
-        return session.query(cls).filter(and_
+        meetings = session.query(cls).filter(and_
                 (Meeting.meeting_date == start_date),
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_start < stop_time),
                 (Meeting.reminder_id.in_(reminders))).all()
+        # Add recursive meetings
+        recursive_meetings = session.query(cls).filter(and_
+                (Meeting.meeting_time_start >= start_time),
+                (Meeting.meeting_time_start < stop_time),
+                (Meeting.recursion_ends >= start_date),
+                (Meeting.reminder_id.in_(reminders))).all()
+        for meeting in recursive_meetings:
+            meeting_date = meeting.meeting_date
+            while meeting_date <= meeting.recursion_ends:
+                if meeting_date == start_date:
+                    if meeting not in meetings:
+                        meetings.append(meeting)
+                    break
+                meeting_date = meeting_date + timedelta(
+                    days=meeting.recursion_frequency)
+        return meetings
 
 
 class Reminder(BASE):

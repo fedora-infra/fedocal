@@ -543,9 +543,18 @@ class Meetingtests(Modeltests):
     def test_get_meeting_with_reminder(self):
         """ Test the Meeting get_meeting_with_reminder function. """
         self.test_init_meeting()
+        for delta in [0, 7, 14, 21]:
+            meetings = model.Meeting.get_meeting_with_reminder(self.session,
+                TODAY + timedelta(days=12 + delta), time(10, 00),
+                time(10, 30), 'H-12')
+            self.assertNotEqual(meetings, None)
+            self.assertEqual(len(meetings), 1)
+            self.assertEqual(meetings[0].meeting_name,
+                'Test meeting with reminder and recursion')
+
         meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(11, 00), time(11, 30),
-            'H-12')
+            TODAY + timedelta(days=11), time(11, 00),
+            time(11, 30), 'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 1)
         self.assertEqual(meetings[0].meeting_name,
@@ -576,6 +585,36 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
+
+        meetings = model.Meeting.get_meeting_with_reminder(self.session,
+            TODAY + timedelta(days=11), time(10, 30), time(11, 00),
+            'H-12')
+        self.assertNotEqual(meetings, None)
+        self.assertEqual(len(meetings), 0)
+        self.assertEqual(meetings, [])
+
+        meetings = model.Meeting.get_meeting_with_reminder(self.session,
+            TODAY + timedelta(days=11), time(11, 30), time(12, 00),
+            'H-12')
+        self.assertNotEqual(meetings, None)
+        self.assertEqual(len(meetings), 0)
+        self.assertEqual(meetings, [])
+
+        for delta in [0, 7, 14, 21]:
+            meetings = model.Meeting.get_meeting_with_reminder(self.session,
+                TODAY + timedelta(days=12 + delta), time(9, 30),
+                time(10, 00), 'H-12')
+            self.assertNotEqual(meetings, None)
+            self.assertEqual(len(meetings), 0)
+            self.assertEqual(meetings, [])
+
+            meetings = model.Meeting.get_meeting_with_reminder(self.session,
+                TODAY + timedelta(days=12 + delta), time(10, 30),
+                time(11, 00), 'H-12')
+            self.assertNotEqual(meetings, None)
+            self.assertEqual(len(meetings), 0)
+            self.assertEqual(meetings, [])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Meetingtests)

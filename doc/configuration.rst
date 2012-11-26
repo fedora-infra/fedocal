@@ -71,4 +71,4 @@ information is essentiel to accurately retrieve the meetings to remind
 and avoid sending multiple reminder for one meeting.
 
 
-This field defaults to ``CRON_FREQUENCY='30'``.
+This field defaults to ``CRON_FREQUENCY=30``.

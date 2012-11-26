@@ -508,29 +508,16 @@ def retrieve_meeting_to_remind(session, offset=30):
         to avoid sending twice the same reminder.
     """
     today = datetime.utcnow()
-    # Retrieve meeting planned in less than 12h
-    new_date = _generate_date_rounded_to_the_hour(today, 12)
-    end_date = new_date + timedelta(minutes=offset)
-    meetings = Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), end_date.time(), 'H-12')
+    meetings = []
 
-    # Retrieve meeting planned in less than 24h
-    new_date = _generate_date_rounded_to_the_hour(today, 24)
-    end_date = new_date + timedelta(minutes=offset)
-    meetings.extend(Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), end_date.time(), 'H-24'))
-
-    # Retrieve meeting planned in less than 48h
-    new_date = _generate_date_rounded_to_the_hour(today, 48)
-    end_date = new_date + timedelta(minutes=offset)
-    meetings.extend(Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), end_date.time(), 'H-48'))
-
-    # Retrieve meeting planned in less than 168h
-    new_date = _generate_date_rounded_to_the_hour(today, 168)
-    end_date = new_date + timedelta(minutes=offset)
-    meetings.extend(Meeting.get_meeting_with_reminder(session,
-        new_date.date(), new_date.time(), end_date.time(), 'H-168'))
+    for reminder_time in [12, 24, 48, 168]:
+    # Retrieve meeting planned in less than X hours
+        new_date = _generate_date_rounded_to_the_hour(today,
+            reminder_time)
+        end_date = new_date + timedelta(minutes=offset)
+        meetings.extend(Meeting.get_meeting_with_reminder(session,
+            new_date.date(), new_date.time(), end_date.time(), 'H-%s' %
+            reminder_time))
 
     return meetings
 

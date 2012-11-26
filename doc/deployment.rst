@@ -101,6 +101,30 @@ http://localhost/fedocal
           <http://flask.pocoo.org/docs/deploying/mod_wsgi/>`_.
 
 
+Set-up the cron job
+-------------------
+
+Reminders are sent by a cron job which is provided with the source under
+the name ``fedocal_cron.py``.
+
+You will need to specified the ``FEDOCAL_CONFIG`` environment variable
+when running the cron job as the specified configuration file contains
+information required by the cron job (ie: SMTP_SERVER or CRON_FREQUENCY,
+see :doc:`configuration`).
+
+The only tricky part is that the configuration file will need to be
+adjusted according to how the cron job is set-up. See :doc:`configuration`
+on how to set-up the configuration file.
+
+Example of the cron job:
+
+::
+
+ */30 * * * *  FEDOCAL_CONFIG=/etc/fedocal.cfg python /path/to/fedocal_cron.py
+
+
+
+
 For testing
 -----------
 

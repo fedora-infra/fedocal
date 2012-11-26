@@ -277,7 +277,7 @@ class Meeting(BASE):
             (Meeting.meeting_date < stop_date)).all()
 
     @classmethod
-    def get_active_regular_meeting(cls, session, end_date):
+    def get_active_regular_meeting(cls, session, calendar, end_date):
         """ Retrieve the list of meetings with a recursion which
         end_date is not past the provided end_date and starting before
         the end of the time considered.
@@ -285,6 +285,7 @@ class Meeting(BASE):
         meetings = session.query(cls).filter(and_
                 (Meeting.meeting_date <= end_date),
                 (Meeting.recursion_ends >= end_date),
+                (Meeting.calendar == calendar),
                 (Meeting.recursion_frequency != None)
             ).order_by(Meeting.meeting_date).all()
         return meetings

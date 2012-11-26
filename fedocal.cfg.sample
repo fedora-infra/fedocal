@@ -15,3 +15,9 @@ ADMIN_GROUP='fedocal_admin'
 ### via the cron job.
 ### Default: 'localhost'
 SMTP_SERVER='localhost'
+
+### The cron job can be set with any frequency but fedocal_cron needs
+### this information to accurately retrieve the meetings to remind and
+### avoid sending multiple reminders for a single meeting.
+### Default: '30'
+CRON_FREQUENCY='30'

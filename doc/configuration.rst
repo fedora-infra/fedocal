@@ -51,10 +51,24 @@ The SMTP server address
 -----------------------
 
 Fedocal sends reminder emails for the meeting for which it has been asked.
-This tasks is performed by an hourly cron job.
+This tasks is performed by a cron job.
 The ``SMTP_SERVER`` field in the configuration file refers to the address
 of the `SMTP <http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol>`
 server to use to send these reminders.
 
 
 This field defaults to ``SMTP_SERVER='localhost'``.
+
+
+The cron job frequency
+----------------------
+
+Fedocal sends reminder emails for the meeting for which it has been asked.
+This tasks is performed by a cron job.
+The ``CRON_FREQUENCY`` field in the configuration file refers to the
+time (in minute) spent between two consecutive run of the cron job. This
+information is essentiel to accurately retrieve the meetings to remind
+and avoid sending multiple reminder for one meeting.
+
+
+This field defaults to ``CRON_FREQUENCY='30'``.

@@ -79,7 +79,8 @@ def send_reminder():
     """
     db_url = fedocal.APP.config['DB_URL']
     session = fedocallib.create_session(db_url)
-    meetings = fedocallib.retrieve_meeting_to_remind(session)
+    meetings = fedocallib.retrieve_meeting_to_remind(session,
+        offset=fedocal.APP.config['CRON_FREQUENCY'])
     for meeting in meetings:
         send_reminder_meeting(meeting)
 

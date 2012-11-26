@@ -35,3 +35,7 @@ ADMIN_GROUP = 'fedocal_admin'
 # The address of the SMTP server used to send the reminders emails
 # via the cron job.
 SMTP_SERVER = 'localhost'
+
+
+# The cron job can be set with any frequency but fedocal_cron
+CRON_FREQUENCY='30'

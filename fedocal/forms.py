@@ -58,6 +58,25 @@ class AddCalendarForm(wtf.Form):
     calendar_regional_meetings = wtf.BooleanField(
         'Meetings can regional?')
 
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        if a calendar is set using the calendar keyword, then fill the
+        value of the form with the value from the Calendar object.
+        """
+        super(AddCalendarForm, self).__init__(*args, **kwargs)
+        if 'calendar' in kwargs:
+            calendar = kwargs['calendar']
+
+            self.calendar_name.data = calendar.calendar_name
+            self.calendar_contact.data = calendar.calendar_contact
+            self.calendar_description.data = calendar.calendar_description
+            self.calendar_manager_groups.data = \
+                calendar.calendar_manager_group
+            self.calendar_multiple_meetings.data = bool(
+                calendar.calendar_multiple_meetings)
+            self.calendar_regional_meetings.data = bool(
+                calendar.calendar_regional_meetings)
+
 
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """

@@ -464,9 +464,9 @@ def delete_meeting(meeting_id):
 @APP.route('/calendar/delete/<calendar_name>/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def delete_calendar(calendar_name):
-    """ Delete a specific meeting given its identifier.
+    """ Delete a specific calendar given its identifier.
 
-    :arg meeting_id: the identifier of the meeting to delete.
+    :arg calendar_name: the identifier of the calendar to delete.
     """
     if not flask.g.fas_user or not is_admin():
         return flask.redirect(flask.url_for('index'))
@@ -487,6 +487,47 @@ def delete_calendar(calendar_name):
     return flask.render_template('delete_calendar.html',
         form=deleteform, calendarobj=calendarobj)
 
+
+# pylint: disable=R0915,R0912,R0911
+# CLA + 1
+@APP.route('/calendar/edit/<calendar_name>/', methods=('GET', 'POST'))
+@cla_plus_one_required
+def edit_calendar(calendar_name):
+    """ Edit a specific calendar based on the calendar identifier.
+
+    :arg calendar_name: the identifier of the calendar to edit.
+    """
+    if not flask.g.fas_user or not is_admin():
+        return flask.redirect(flask.url_for('index'))
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+    form = forms.AddCalendarForm()
+    # pylint: disable=E1101
+    if form.validate_on_submit():
+        try:
+            calendarobj.calendar_name = form.calendar_name.data
+            calendarobj.calendar_contact = form.calendar_contact.data
+            calendarobj.calendar_description = form.calendar_description.data
+            calendarobj.calendar_manager_group = \
+                form.calendar_manager_groups.data
+            calendarobj.calendar_multiple_meetings = bool(
+                form.calendar_multiple_meetings.data)
+            calendarobj.calendar_regional_meetings = bool(
+                form.calendar_regional_meetings.data)
+            calendarobj.save(SESSION)
+            SESSION.commit()
+        except SQLAlchemyError, err:
+            print 'edit_calendar:',  err
+            flask.flash('Could not update this calendar.')
+            return flask.render_template('edit_calendar.html', form=form,
+            calendar=calendarobj)
+
+        flask.flash('Calendar updated')
+        return flask.redirect(flask.url_for('calendar',
+            calendar_name=calendarobj.calendar_name))
+    else:
+        form = forms.AddCalendarForm(calendar=calendarobj)
+    return flask.render_template('edit_calendar.html', form=form,
+            calendar=calendarobj)
 
 if __name__ == '__main__':  # pragma: no cover
     APP.debug = True

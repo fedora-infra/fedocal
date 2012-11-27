@@ -1,0 +1,29 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %} Add calendar {% endblock %}
+
+{% set title_extent = 'add a new calendar' %}
+
+{% block content %}
+<section>
+    <header>
+        <h2>Edit calendar</h2>
+        <p>Edit the calendar details in the form below.</p>
+    </header>
+
+    <form action="" method="post">
+        {{ render_field(form.calendar_name) }}
+        {{ render_field(form.calendar_contact) }}
+        {{ render_field(form.calendar_description) }}
+        {{ render_field(form.calendar_manager_groups) }}
+        {{ render_field(form.calendar_multiple_meetings) }}
+        {{ render_field(form.calendar_regional_meetings) }}
+        <p class="buttons indent">
+            <input type="submit" class="submit positive button" value="Edit">
+            <input type="button" value="Cancel" class="button" onclick="history.back();">
+            {{ form.csrf_token }}
+        </p>
+    </form>
+</section>
+{% endblock %}

@@ -28,6 +28,8 @@ from flask.ext import wtf
 from datetime import time
 from datetime import datetime
 
+from wtforms import ValidationError
+
 import fedocallib
 
 

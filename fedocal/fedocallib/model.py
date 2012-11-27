@@ -383,6 +383,7 @@ class Meeting(BASE):
         recursive_meetings = session.query(cls).filter(and_
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_start < stop_time),
+                (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.reminder_id.in_(reminders))).all()
         for meeting in recursive_meetings:

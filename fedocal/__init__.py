@@ -269,9 +269,9 @@ def add_calendar():
         try:
             calendarobj.save(SESSION)
             SESSION.commit()
-        # pylint: disable=W0703
-        except Exception, err:
-            print err
+        except SQLAlchemyError, err:
+            SESSION.rollback()
+            print 'add_calendar:', err
             flask.flash('Could not add this calendar to the database')
             return flask.render_template('add_calendar.html',
                 form=form)
@@ -321,6 +321,7 @@ def add_meeting(calendar_name):
                 calendar=calendarobj, form=form,
                 tzone=tzone)
         except SQLAlchemyError, err:
+            SESSION.rollback()
             print 'add_meeting:', err
             flask.flash('Could not add this meeting to this calendar')
             return flask.render_template('add_meeting.html',
@@ -384,6 +385,7 @@ def edit_meeting(meeting_id):
                 meeting=meeting, calendar=calendarobj, form=form,
                 tzone=tzone)
         except SQLAlchemyError, err:
+            SESSION.rollback()
             print 'edit_meeting:',  err
             flask.flash('Could not update this meeting.')
             return flask.render_template('edit_meeting.html',
@@ -447,8 +449,8 @@ def delete_meeting(meeting_id):
                 meeting.delete(SESSION)
             try:
                 SESSION.commit()
-            # pylint: disable=W0703
-            except Exception, err:
+            except SQLAlchemyError, err:
+                SESSION.rollback()
                 print 'edit_meeting:',  err
                 flask.flash('Could not update this meeting.')
         flask.flash('Meeting deleted')
@@ -478,8 +480,8 @@ def delete_calendar(calendar_name):
             calendarobj.delete(SESSION)
             try:
                 SESSION.commit()
-            # pylint: disable=W0703
-            except Exception, err:
+            except SQLAlchemyError, err:
+                SESSION.rollback()
                 print 'delete_calendar:',  err
                 flask.flash('Could not delete this calendar.')
         flask.flash('Calendar deleted')
@@ -516,6 +518,7 @@ def edit_calendar(calendar_name):
             calendarobj.save(SESSION)
             SESSION.commit()
         except SQLAlchemyError, err:
+            SESSION.rollback()
             print 'edit_calendar:',  err
             flask.flash('Could not update this calendar.')
             return flask.render_template('edit_calendar.html', form=form,

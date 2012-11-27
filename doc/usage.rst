@@ -30,6 +30,8 @@ every contributor should sign to contribute to Fedora.
 
 
 
+.. _create_calendar:
+
 Create calendar
 ---------------
 
@@ -76,6 +78,21 @@ The form to will ask for:
 
 
 
+Edit a calendar
+---------------
+
+One can edit a calendar if she/he is an administrator as defined
+above.
+
+To edit a calendar, select the calendar to edit in the main menu by
+clicking on its name. Then go to the ``Admin`` entry of the main menu and
+select ``Edit calendar``.
+
+When editing a calendar you will have the same field as when creating one
+(see :ref:`create_calendar`).
+
+
+
 Delete a calendar
 -----------------
 
@@ -94,6 +111,8 @@ to confirm the deletion of the Calendar.
    history of the calendar without possibility to undo it.
 
 
+
+.. _create_meeting:
 
 Create meeting
 --------------
@@ -175,9 +194,9 @@ menu and select ``Manage your meetings``. This page will present a list
 of the meetings for which you are a manager and that you can edit.
 
 
-When editing a meeting you will have the same field as when creating one,
-plus when the meeting is recursive an option to update all the future meetings
-or just this one (default).
+When editing a meeting you will have the same field as when creating one
+(see :ref:`create_meeting`),plus when the meeting is recursive an option
+to update all the future meetings or just this one (default).
 
 
 

@@ -94,6 +94,7 @@ trac.
 .. note:: You can send your patch by email to the `fedocal mailing-list
           <https://lists.fedorahosted.org/mailman/listinfo/fedocal>`_
 
+
 Unit-tests
 ----------
 

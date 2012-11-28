@@ -149,8 +149,8 @@ class AddMeetingForm(wtf.Form):
             self.meeting_name.data = meeting.meeting_name
             self.meeting_date.data = startdt.date()
             self.meeting_date_end.data = meeting.meeting_date_end
-            self.meeting_time_start.data = startdt.time()
-            self.meeting_time_stop.data = stopdt.time()
+            self.meeting_time_start.data = startdt.time().strftime('%H:%M')
+            self.meeting_time_stop.data = stopdt.time().strftime('%H:%M')
             self.information.data = meeting.meeting_information
             # You are not allowed to remove yourself from the managers.
             meeting_manager = meeting.meeting_manager.replace(

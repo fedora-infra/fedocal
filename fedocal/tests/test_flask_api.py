@@ -181,7 +181,7 @@ class FlaskApitests(Modeltests):
 
     def test_api_place(self):
         """ Test the api_place function. """
-        end_date = TODAY + timedelta(days=2)
+        end_date = TODAY + timedelta(days=25)
         output = self.app.get('/api/place/EMEA/foobar/%s/%s' % (TODAY,
             end_date))
         self.assertEqual(output.status_code, 301)
@@ -210,7 +210,7 @@ class FlaskApitests(Modeltests):
             TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertTrue('"retrieval": "ok"' in output.data)
-        self.assertEqual(output.data.count('meeting_name'), 1)
+        self.assertEqual(output.data.count('meeting_name'), 2)
 
         end_date = TODAY + timedelta(days=1)
 

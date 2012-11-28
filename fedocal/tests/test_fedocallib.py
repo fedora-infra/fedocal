@@ -852,7 +852,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(UserNotAllowed, fedocallib.edit_meeting,
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
@@ -864,7 +864,7 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(InvalidMeeting, fedocallib.edit_meeting,
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() - timedelta(days=2),
+            date.today() - timedelta(days=2), None,
             time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'UTC',
             None, None,
@@ -874,8 +874,18 @@ class Fedocallibtests(Modeltests):
         self.assertRaises(InvalidMeeting, fedocallib.edit_meeting,
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(21, 59), None,
+            'Information', 'EMEA', 'Europe/Paris',
+            None, None,
+            None, None)
+        self.session.rollback()
+
+        self.assertRaises(InvalidMeeting, fedocallib.edit_meeting,
+            self.session, meeting, calendarobj, fasuser,
+            'Fedora-fr-meeting_edited',
+            date.today() + timedelta(days=1), date.today(),
+            time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
             None, None)
@@ -884,7 +894,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
@@ -899,7 +909,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited2',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), 'pingou',
             'Information2', 'EMEA', 'Europe/Paris',
             None, None,
@@ -914,7 +924,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
@@ -931,7 +941,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             7, TODAY + timedelta(days=30),
@@ -949,7 +959,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited2',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), None,
             'Information2', None, 'Europe/Paris',
             None, None,
@@ -968,7 +978,8 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Test meeting with reminder-2',
-            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=1), date.today() + timedelta(
+                days=3),
             time(23, 0), time(23, 59), None,
             'Information2', None, 'Europe/Paris',
             None, None,
@@ -981,6 +992,8 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_information, 'Information2')
         self.assertEqual(meeting.reminder.reminder_offset, 'H-24')
         self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
+        self.assertEqual(meeting.meeting_date_end, date.today() + \
+            timedelta(days=3))
 
 
 if __name__ == '__main__':

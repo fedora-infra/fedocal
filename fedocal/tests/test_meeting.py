@@ -61,8 +61,8 @@ class Meetingtests(Modeltests):
             meeting_manager='pingou, shaiton,',
             meeting_date=TODAY,
             meeting_date_end=TODAY,
-            meeting_time_start=time(19, 45),
-            meeting_time_stop=time(20, 45),
+            meeting_time_start=time(19, 50),
+            meeting_time_stop=time(20, 50),
             meeting_information='This is a test meeting',
             calendar_name='test_calendar')
         obj.save(self.session)
@@ -314,8 +314,8 @@ class Meetingtests(Modeltests):
             '"meeting_manager": "pingou, shaiton,",\n  '\
             '"meeting_date": "%s",\n  '\
             '"meeting_date_end": "%s",\n  '\
-            '"meeting_time_start": "19:45:00",\n  '\
-            '"meeting_time_stop": "20:45:00",\n  '\
+            '"meeting_time_start": "19:50:00",\n  '\
+            '"meeting_time_stop": "20:50:00",\n  '\
             '"meeting_information": "This is a test meeting",\n  '\
             '"meeting_region": "None",\n  '\
             '"calendar_name": "test_calendar"\n'\

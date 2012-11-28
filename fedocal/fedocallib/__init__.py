@@ -701,13 +701,13 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
             'The start date of your meeting is later than the end date.')
 
     meeting_time_start = convert_time(
-        datetime(meeting_date_end.year, meeting_date_end.month,
-            meeting_date_end.day,
+        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
             meeting_time_start.hour,
             meeting_time_start.minute),
         tzone, 'UTC')
     meeting_time_stop = convert_time(
-        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+        datetime(meeting_date_end.year, meeting_date_end.month,
+            meeting_date_end.day,
             meeting_time_stop.hour,
             meeting_time_stop.minute),
         tzone, 'UTC')
@@ -719,10 +719,7 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
             comanager)
 
     meeting.meeting_date = meeting_time_start.date()
-    meeting_end_date = meeting_time_stop.date()
-    if not meeting_end_date:
-        meeting_end_date = meeting_time_start.date()
-    meeting.meeting_end_date = meeting_end_date
+    meeting.meeting_date_end = meeting_time_stop.date()
     meeting.meeting_time_start = meeting_time_start.time()
     meeting.meeting_time_stop = meeting_time_stop.time()
     meeting.meeting_information = meeting_information

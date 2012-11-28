@@ -670,7 +670,7 @@ def add_meeting(session, calendarobj, fas_user,
 
 
 def edit_meeting(session, meeting, calendarobj, fas_user,
-    meeting_name, meeting_date,  # meeting_date_end,
+    meeting_name, meeting_date,  meeting_date_end,
     meeting_time_start, meeting_time_stop, comanager,
     meeting_information,
     meeting_region, tzone,
@@ -693,8 +693,16 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
         raise InvalidMeeting(
             'The start time of your meeting is later than the stop time.')
 
+    if not meeting_date_end:
+        meeting_date_end = meeting_date
+
+    if meeting_date > meeting_date_end:
+        raise InvalidMeeting(
+            'The start date of your meeting is later than the end date.')
+
     meeting_time_start = convert_time(
-        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+        datetime(meeting_date_end.year, meeting_date_end.month,
+            meeting_date_end.day,
             meeting_time_start.hour,
             meeting_time_start.minute),
         tzone, 'UTC')
@@ -711,7 +719,7 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
             comanager)
 
     meeting.meeting_date = meeting_time_start.date()
-    meeting_end_date = None  # meeting_date_end
+    meeting_end_date = meeting_time_stop.date()
     if not meeting_end_date:
         meeting_end_date = meeting_time_start.date()
     meeting.meeting_end_date = meeting_end_date

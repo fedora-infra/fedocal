@@ -368,7 +368,7 @@ def edit_meeting(meeting_id):
                 fas_user=flask.g.fas_user,
                 meeting_name=form.meeting_name.data,
                 meeting_date=form.meeting_date.data,
-                # meeting_date_end,
+                meeting_date_end=None,
                 meeting_time_start=form.meeting_time_start.data,
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,

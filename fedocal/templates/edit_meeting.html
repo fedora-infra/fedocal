@@ -58,6 +58,14 @@
 
 {% block jscripts %}
 {{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='globalize.js') }}">
+</script>
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='jquery-ui-timespinner.js') }}">
+</script>
 <script type="text/javascript">
     $(function(){
         $('#meeting_date').datepicker({
@@ -66,6 +74,7 @@
         $('#end_repeats').datepicker({
             dateFormat: "yy-mm-dd",
         });
+        $('#meeting_time_start,#meeting_time_stop').timespinner();
     });
 </script>
 {% endblock %}

@@ -591,10 +591,11 @@ class Fedocallibtests(Modeltests):
         # Handle the change of month
         expected_output = expected_output.replace(
             'class="month"><a class="button" href="#"><</a> '\
-            'November 2012 <a class="button" href="#">></a></th>',
+            '%s <a class="button" href="#">></a></th>',
             'class="month"><a class="button" href="#"><</a> %s %s '\
             '<a class="button" href="#">></a></th>' % (
-                today.strftime('%B'), today.year))
+                today.strftime('%B %Y'), today.strftime('%B'),
+                today.year))
         # Handle the current_week css class
         expected_output = expected_output.split('\n')
         cnt = 0

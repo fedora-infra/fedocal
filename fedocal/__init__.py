@@ -375,7 +375,7 @@ def edit_meeting(meeting_id):
                 recursion_ends=form.end_repeats.data,
                 remind_when=form.remind_when.data,
                 remind_who=form.remind_who.data,
-                edit_all_meeting=True)
+                edit_all_meeting=form.recursive_edit.data)
         except FedocalException, err:
             flask.flash(err)
             return flask.render_template('edit_meeting.html',

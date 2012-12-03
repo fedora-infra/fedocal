@@ -108,6 +108,9 @@ class AddMeetingForm(wtf.Form):
         )
     end_repeats = wtf.DateField('End date', [wtf.validators.optional()])
 
+    # Recursive edit
+    recursive_edit = wtf.BooleanField('Yes I want to edit all the meetings')
+
     # Reminder
     remind_when = wtf.SelectField('Send reminder',
         [wtf.validators.optional()],

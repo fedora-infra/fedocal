@@ -817,8 +817,8 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_information, 'Information')
         self.assertEqual(meeting.meeting_time_stop.minute, 59)
 
-    def test_edit_meeting(self):
-        """ Test the edit_meeting function. """
+    def test_edit_meeting_fail(self):
+        """ Test the edit_meeting function for when edit fails. """
         self.__setup_meeting()
         calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertNotEqual(calendarobj, None)
@@ -868,6 +868,15 @@ class Fedocallibtests(Modeltests):
             None, None,
             None, None)
         self.session.rollback()
+
+    def test_edit_meeting(self):
+        """ Test the edit_meeting function. """
+        self.__setup_meeting()
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        self.assertNotEqual(calendarobj, None)
+        fasuser = FakeUser(['fi-apprentice'])
+        meeting = model.Meeting.by_id(self.session, 1)
+        self.assertEqual(meeting.meeting_name, 'Fedora-fr-test-meeting')
 
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,

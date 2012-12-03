@@ -50,6 +50,7 @@ from fedocallib import model
 from fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 from tests import Modeltests, TODAY, FakeUser
 
+
 # pylint: disable=R0904
 class Fedocallibtests(Modeltests):
     """ Fedocallib tests. """
@@ -355,7 +356,6 @@ class Fedocallibtests(Modeltests):
             'Test meeting with reminder and recursion')
         self.assertEqual(meetings[3].meeting_information,
             'This is a test meeting with recursion and reminder')
-        
 
     # pylint: disable=C0103
     def test_get_future_regular_meeting_of_user_empty(self):
@@ -581,7 +581,7 @@ class Fedocallibtests(Modeltests):
         self.assertTrue('class="month"> %s </th>' % (
                 today.strftime('%B %Y')) in output)
         # Check the current_week css class
-        self.assertNotEqual(re.match('<tr class="current_week">.*'\
+        self.assertNotEqual(re.match('<tr class="current_week">.*'
             '<td>%s</td>' % (today.day), output), [])
 
     def test_get_week_day_index(self):
@@ -979,7 +979,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_information, 'Information2')
         self.assertEqual(meeting.reminder.reminder_offset, 'H-24')
         self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
-        self.assertEqual(meeting.meeting_date_end, date.today() + \
+        self.assertEqual(meeting.meeting_date_end, date.today() +
             timedelta(days=3))
 
         meeting = model.Meeting.by_id(self.session, 9)
@@ -1001,7 +1001,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_information, 'Information2')
         self.assertEqual(meeting.reminder.reminder_offset, 'H-24')
         self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
-        self.assertEqual(meeting.meeting_date_end, date.today() + \
+        self.assertEqual(meeting.meeting_date_end, date.today() +
             timedelta(days=3))
 
 

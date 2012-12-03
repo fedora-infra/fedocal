@@ -97,7 +97,7 @@ class FlaskApitests(Modeltests):
         self.assertTrue(' "meeting_manager": "pingou, shaiton,",' in \
             output.data)
         self.assertTrue('"meeting_name": "test-meeting2"' in output.data)
-        self.assertEqual(output.data.count('meeting_name'), 7)
+        self.assertEqual(output.data.count('meeting_name'), 8)
 
         output = self.app.get('/api/date/test_calendar4/')
         self.assertEqual(output.status_code, 200)

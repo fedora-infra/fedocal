@@ -33,6 +33,7 @@ import pkg_resources
 import unittest
 import sys
 import os
+import re
 
 from datetime import date
 from datetime import time
@@ -48,26 +49,6 @@ import fedocallib
 from fedocallib import model
 from fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 from tests import Modeltests, TODAY, FakeUser
-
-RESULT_CALENDAR_HTML = '<table class="month">\n'\
-'<tr><th colspan="7" class="month"> November 2012 </th></tr>\n'\
-'<tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td><td '\
-'class="noday">&nbsp;</td><td class="thu">1</td><td class="fri">2</td>'\
-'<td class="sat">3</td><td class="sun">4</td></tr>\n'\
-'<tr><td class="mon">5</td><td class="tue">6</td><td class="wed">7'\
-'</td><td class="thu">8</td><td class="fri">9</td><td class="sat">10'\
-'</td><td class="sun">11</td></tr>\n'\
-'<tr><td class="mon">12</td><td class="tue">13</td><td class="wed">14'\
-'</td><td class="thu">15</td><td class="fri">16</td><td class="sat">17'\
-'</td><td class="sun">18</td></tr>\n'\
-'<tr><td class="mon">19</td><td class="tue">20</td><td class="wed">21'\
-'</td><td class="thu">22</td><td class="fri">23</td><td class="sat">24'\
-'</td><td class="sun">25</td></tr>\n'\
-'<tr><td class="mon">26</td><td class="tue">27</td><td class="wed">28'\
-'</td><td class="thu">29</td><td class="fri">30</td><td class="noday">'\
-'&nbsp;</td><td class="noday">&nbsp;</td></tr>\n'\
-'</table>'
-
 
 # pylint: disable=R0904
 class Fedocallibtests(Modeltests):
@@ -149,7 +130,11 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(week, None)
         self.assertEqual(week.calendar.calendar_name, 'test_calendar')
         self.assertNotEqual(week.meetings, None)
-        self.assertEqual(len(week.meetings), 2)
+        self.assertEqual(len(week.meetings), 3)
+        self.assertEqual(week.meetings[0].meeting_name,
+            'Fedora-fr-test-meeting')
+        self.assertEqual(week.meetings[0].meeting_information,
+            'This is a test meeting')
         self.assertEqual(week.meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
         self.assertEqual(week.meetings[0].meeting_information,
@@ -291,7 +276,7 @@ class Fedocallibtests(Modeltests):
         """ Test the get_past_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
-            'pingou', from_date=TODAY)
+            'pingou', from_date=TODAY - timedelta(days=100))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
@@ -299,8 +284,8 @@ class Fedocallibtests(Modeltests):
         obj = model.Meeting(
             meeting_name='A past test meeting',
             meeting_manager='pingou',
-            meeting_date=TODAY - timedelta(days=1),
-            meeting_date_end=TODAY - timedelta(days=1),
+            meeting_date=TODAY - timedelta(days=110),
+            meeting_date_end=TODAY - timedelta(days=110),
             meeting_time_start=time(12, 00),
             meeting_time_stop=time(13, 00),
             meeting_information='This is a past test meeting',
@@ -308,7 +293,7 @@ class Fedocallibtests(Modeltests):
         obj.save(self.session)
         self.session.commit()
         meetings = fedocallib.get_past_meeting_of_user(self.session,
-            'pingou', from_date=TODAY)
+            'pingou', from_date=TODAY - timedelta(days=100))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 1)
         self.assertEqual(meetings[0].meeting_name, 'A past test meeting')
@@ -353,19 +338,24 @@ class Fedocallibtests(Modeltests):
         meetings = fedocallib.get_future_regular_meeting_of_user(
             self.session, 'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 3)
+        self.assertEqual(len(meetings), 4)
         self.assertEqual(meetings[0].meeting_name,
-            'Another test meeting2')
+            'Another past test meeting')
         self.assertEqual(meetings[0].meeting_information,
-            'This is a test meeting with recursion2')
+            'This is a past meeting with recursion')
         self.assertEqual(meetings[1].meeting_name,
-            'Another test meeting')
+            'Another test meeting2')
         self.assertEqual(meetings[1].meeting_information,
-            'This is a test meeting with recursion')
+            'This is a test meeting with recursion2')
         self.assertEqual(meetings[2].meeting_name,
-            'Test meeting with reminder and recursion')
+            'Another test meeting')
         self.assertEqual(meetings[2].meeting_information,
+            'This is a test meeting with recursion')
+        self.assertEqual(meetings[3].meeting_name,
+            'Test meeting with reminder and recursion')
+        self.assertEqual(meetings[3].meeting_information,
             'This is a test meeting with recursion and reminder')
+        
 
     # pylint: disable=C0103
     def test_get_future_regular_meeting_of_user_empty(self):
@@ -583,29 +573,16 @@ class Fedocallibtests(Modeltests):
         today = date.today()
         output = fedocallib.get_html_monthly_cal(today.day, today.month,
             today.year)
-        # Handle the today css class
-        expected_output = RESULT_CALENDAR_HTML.replace(
-            'class="%s">%s' % (today.strftime('%a').lower(), today.day),
-            'class="%s today">%s' % (today.strftime('%a').lower(),
-                today.day))
-        # Handle the change of month
-        expected_output = expected_output.replace(
-            'class="month"><a class="button" href="#"><</a> '\
-            '%s <a class="button" href="#">></a></th>',
-            'class="month"><a class="button" href="#"><</a> %s %s '\
-            '<a class="button" href="#">></a></th>' % (
-                today.strftime('%B %Y'), today.strftime('%B'),
-                today.year))
-        # Handle the current_week css class
-        expected_output = expected_output.split('\n')
-        cnt = 0
-        while cnt < len(expected_output):
-            if '>%s</td>' % today.day in expected_output[cnt]:
-                expected_output[cnt] = expected_output[cnt].replace(
-                    '<tr>', '<tr class="current_week">')
-            cnt = cnt + 1
-        self.assertEqual(output.strip(),
-            "\n".join(expected_output).strip())
+        # Check today css class
+        self.assertTrue('class="%s today">%s' % (
+                today.strftime('%a').lower(),
+                today.day) in output)
+        # Check the month
+        self.assertTrue('class="month"> %s </th>' % (
+                today.strftime('%B %Y')) in output)
+        # Check the current_week css class
+        self.assertNotEqual(re.match('<tr class="current_week">.*'\
+            '<td>%s</td>' % (today.day), output), [])
 
     def test_get_week_day_index(self):
         """ Test the get_week_day_index function. """

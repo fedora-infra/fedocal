@@ -376,7 +376,22 @@ def get_past_meeting_of_user(session, username, tzone='UTC',
         from_date)
     meetings = []
     for meeting in meetings_tmp:
-        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
+        if meeting.recursion_frequency and meeting.recursion_ends:
+            rec_meetings = []
+            cnt = 0
+            meetingobj = Meeting.copy(meeting)
+            while meetingobj.meeting_date < from_date:
+                meetingobj = Meeting.copy(meeting)
+                meetingobj.meeting_date = meetingobj.meeting_date + \
+                    timedelta(days=meeting.recursion_frequency * cnt)
+                cnt = cnt + 1
+                if meetingobj.meeting_date < from_date:
+                    rec_meetings.append(convert_meeting_timezone(
+                        meetingobj, 'UTC', tzone))
+            rec_meetings.reverse()
+            meetings.extend(rec_meetings)
+        else:
+            meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
     return meetings
 
 
@@ -674,8 +689,9 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
     meeting_time_start, meeting_time_stop, comanager,
     meeting_information,
     meeting_region, tzone,
-    frequency, end_repeats,
-    remind_when, remind_who):
+    recursion_frequency, recursion_ends,
+    remind_when, remind_who,
+    edit_all_meeting=True):
     """ When a user wants to edit a meeting to the database, we need to
     perform a number of test first checking that the input is valid
     and then edit the desired meeting.
@@ -699,6 +715,31 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
     if meeting_date > meeting_date_end:
         raise InvalidMeeting(
             'The start date of your meeting is later than the end date.')
+
+    ## The information are correct
+    ## What we do now:
+    # a) the meeting is not recursive -> edit the information as provided
+    # b) the meeting is recursive and we update all the meetings
+    #     -> recursion_end = today
+    #     -> copy meeting to new object
+    #     -> update new object
+    # c) the meeting is recursive and the update only one meeting
+    #     -> recursion_end = today
+    #     -> copy meeting to new object w/o recursion
+    #     -> update new object
+    #     -> copy meeting to new object w/ recursion and date = date + offset
+
+    if recursion_frequency and meeting.recursion_frequency:
+        old_meeting = Meeting.copy(meeting)
+        old_meeting.recursion_ends = meeting_date - timedelta(days=1)
+        if old_meeting.recursion_ends > old_meeting.meeting_date:
+            old_meeting.save(session)
+        if not edit_all_meeting:
+            new_meeting = Meeting.copy(meeting)
+            new_meeting.meeting_date = meeting.meeting_date + timedelta(
+                days=meeting.recursion_frequency)
+            new_meeting.save(session)
+        
 
     meeting_time_start = convert_time(
         datetime(meeting_date.year, meeting_date.month, meeting_date.day,
@@ -729,15 +770,14 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
         region = None
     meeting.meeting_region = region
 
-    frequency = frequency
-    if not frequency:
-        frequency = None
-    meeting.recursion_frequency = frequency
+    recursion_frequency = recursion_frequency
+    if not recursion_frequency:
+        recursion_frequency = None
+    meeting.recursion_frequency = recursion_frequency
 
-    ends_date = end_repeats
-    if not ends_date:
-        ends_date = date(2025, 12, 31)
-    meeting.recursion_ends = ends_date
+    if not recursion_ends:
+        recursion_ends = date(2025, 12, 31)
+    meeting.recursion_ends = recursion_ends
 
     if remind_when and remind_who:
         if meeting.reminder_id:
@@ -755,6 +795,10 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
     elif meeting.reminder_id:
         meeting.reminder.delete(session)
         meeting.reminder_id = None
+
+    if not edit_all_meeting and meeting.recursion_frequency:
+        meeting.recursion_frequency = None
+        meeting.recursion_ends = None
 
     meeting.save(session)
     session.commit()

@@ -995,6 +995,28 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_date_end, date.today() + \
             timedelta(days=3))
 
+        meeting = model.Meeting.by_id(self.session, 9)
+        fedocallib.edit_meeting(
+            self.session, meeting, calendarobj, fasuser,
+            'Test meeting with reminder-2',
+            date.today() + timedelta(days=1), date.today() + timedelta(
+                days=3),
+            time(23, 0), time(23, 59), None,
+            'Information2', None, 'Europe/Paris',
+            7, TODAY + timedelta(days=30),
+            'H-24', 'test@example.org',
+            edit_all_meeting=False)
+        meeting = model.Meeting.by_id(self.session, 9)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name,
+            'Test meeting with reminder-2')
+        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_information, 'Information2')
+        self.assertEqual(meeting.reminder.reminder_offset, 'H-24')
+        self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
+        self.assertEqual(meeting.meeting_date_end, date.today() + \
+            timedelta(days=3))
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

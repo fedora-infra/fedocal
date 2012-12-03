@@ -352,10 +352,6 @@ def edit_meeting(meeting_id):
             'you are not allowed to edit it.')
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
-    if not fedocallib.is_date_in_future(meeting.meeting_date,
-        meeting.meeting_time_start.hour):
-        flask.flash('This meeting has already occured, you may not '\
-            'change it anymore')
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
     tzone = get_timezone()
     form = forms.AddMeetingForm()
@@ -375,10 +371,11 @@ def edit_meeting(meeting_id):
                 meeting_information=form.information.data,
                 meeting_region=form.meeting_region.data,
                 tzone=get_timezone(),
-                frequency=form.frequency.data,
-                end_repeats=form.end_repeats.data,
+                recursion_frequency=form.frequency.data,
+                recursion_ends=form.end_repeats.data,
                 remind_when=form.remind_when.data,
-                remind_who=form.remind_who.data)
+                remind_who=form.remind_who.data,
+                edit_all_meeting=True)
         except FedocalException, err:
             flask.flash(err)
             return flask.render_template('edit_meeting.html',
@@ -396,6 +393,23 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('view_meeting',
             meeting_id=meeting_id))
     else:
+        if meeting.recursion_frequency and meeting.recursion_ends and \
+            fedocallib.is_date_in_future(meeting.recursion_ends,
+            meeting.meeting_time_start):
+            cnt = 0
+            meetingobj = Meeting.copy(meeting)
+            while meetingobj.meeting_date < datetime.date.today():
+                meetingobj = Meeting.copy(meeting)
+                meetingobj.meeting_date = meetingobj.meeting_date + \
+                    datetime.timedelta(
+                        days=meetingobj.recursion_frequency * cnt)
+                cnt = cnt + 1
+            meeting = meetingobj
+        if not fedocallib.is_date_in_future(meeting.meeting_date,
+            meeting.meeting_time_start):
+            flask.flash('This meeting has already occured, you may not '\
+                'change it anymore')
+            return flask.redirect(flask.url_for('my_meetings'))
         form = forms.AddMeetingForm(meeting=meeting, tzone=get_timezone())
     return flask.render_template('edit_meeting.html', meeting=meeting,
             calendar=calendarobj, form=form, tzone=tzone)

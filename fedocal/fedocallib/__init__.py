@@ -751,7 +751,7 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
         if not edit_all_meeting:
             remove_recursion = True
             new_meeting = Meeting.copy(meeting)
-            new_meeting.meeting_date = meeting.meeting_date + timedelta(
+            new_meeting.meeting_date = meeting_date + timedelta(
                 days=meeting.recursion_frequency)
             free_time = agenda_is_free(session, calendarobj,
                 new_meeting.meeting_date,
@@ -761,7 +761,6 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
             if not bool(calendarobj.calendar_multiple_meetings) and \
                 bool(free_time):
                 new_meeting.save(session)
-        
 
     meeting_time_start = convert_time(
         datetime(meeting_date.year, meeting_date.month, meeting_date.day,

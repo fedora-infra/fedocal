@@ -454,10 +454,23 @@ def agenda_is_free(session, calendar, meeting_date,
         time_start)
     meetings.extend(Meeting.at_time(session, calendar, meeting_date,
         time_stop))
-    if not meetings:
-        return True
-    else:
-        return False
+    meetings.extend(Meeting.get_by_time(session, calendar, meeting_date,
+        time_start, time_stop))
+    agenda_free = True
+    for meeting in set(meetings):
+        if time_start <= meeting.meeting_time_start \
+            and meeting.meeting_time_start < time_stop:
+            agenda_free = False
+        elif time_start < meeting.meeting_time_stop \
+            and meeting.meeting_time_stop <= time_stop:
+            agenda_free = False
+        elif time_start < meeting.meeting_time_start \
+            and time_stop > meeting.meeting_time_stop:
+            agenda_free = False
+        elif time_start > meeting.meeting_time_start \
+            and time_stop < meeting.meeting_time_stop:
+            agenda_free = False
+    return agenda_free
 
 
 def is_user_managing_in_calendar(session, calendar_name, fas_user):

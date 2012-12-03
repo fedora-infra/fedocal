@@ -133,7 +133,7 @@ class Meetingtests(Modeltests):
             meeting_date_end=TODAY + timedelta(days=1),
             meeting_time_start=time(14, 00),
             meeting_time_stop=time(16, 00),
-            meeting_information='This is a second test meeting at the'\
+            meeting_information='This is a second test meeting at the'
                 ' same time',
             calendar_name='test_calendar4',
             meeting_region='EMEA')
@@ -201,7 +201,7 @@ class Meetingtests(Modeltests):
             meeting_date_end=TODAY + timedelta(days=12),
             meeting_time_start=time(10, 00),
             meeting_time_stop=time(11, 00),
-            meeting_information='This is a test meeting with recursion'\
+            meeting_information='This is a test meeting with recursion'
                 ' and reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id,
@@ -246,9 +246,9 @@ class Meetingtests(Modeltests):
         self.test_init_meeting()
         obj = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(obj, None)
-        self.assertEqual(str(obj), '<Meeting(\'<Calendar(\'test_calendar\''\
-            ')>\', \'Fedora-fr-test-meeting\', \'' + str(TODAY) \
-            + '\')>')
+        self.assertEqual(str(obj), '<Meeting(\'<Calendar(\'test_calendar\''
+            ')>\', \'Fedora-fr-test-meeting\', \'' + str(TODAY) +
+            '\')>')
 
     def test_delete_meeting(self):
         """ Test the Meeting delete function. """
@@ -540,7 +540,6 @@ class Meetingtests(Modeltests):
             'Another test meeting')
         self.assertEqual(meetings[3].meeting_name,
             'Test meeting with reminder and recursion')
-        
 
     # pylint: disable=C0103
     def test_get_future_regular_meeting_of_user_fail(self):

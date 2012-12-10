@@ -316,12 +316,38 @@ class Meeting(BASE):
             (Meeting.meeting_time_stop < stop_time)).all()
 
     @classmethod
+    def get_in_future_by_time(cls, session, calendar, meetingdate,
+        recursion_ends, start_time, stop_time):
+        """ Retrieve the list of meetings for a given date and between
+        two times for a specific calendar.
+        """
+        return session.query(cls).filter(and_
+            (Meeting.calendar == calendar),
+            (Meeting.meeting_date >= meetingdate),
+            (Meeting.meeting_date <= recursion_ends),
+            (Meeting.meeting_time_start >= start_time),
+            (Meeting.meeting_time_stop < stop_time)).all()
+
+    @classmethod
     def at_time(cls, session, calendar, meetingdate, t_time):
         """ Returns the meeting occuring at this specifict time point.
         """
         return session.query(cls).filter(and_
             (Meeting.calendar == calendar),
             (Meeting.meeting_date == meetingdate),
+            (Meeting.meeting_time_start <= t_time),
+            (Meeting.meeting_time_stop > t_time)).all()
+
+    @classmethod
+    def in_future_at_time(cls, session, calendar, meetingdate,
+        recursion_ends, t_time):
+        """ Returns the meeting occuring at this specifict time point
+        at any time in the future.
+        """
+        return session.query(cls).filter(and_
+            (Meeting.calendar == calendar),
+            (Meeting.meeting_date >= meetingdate),
+            (Meeting.meeting_date <= recursion_ends),
             (Meeting.meeting_time_start <= t_time),
             (Meeting.meeting_time_stop > t_time)).all()
 

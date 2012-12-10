@@ -71,7 +71,7 @@ Create the database scheme::
 
 
 Run the server::
- python fedocal/__init__.py
+ sh runserver
 
 You should be able to access the server at http://localhost:5000
 

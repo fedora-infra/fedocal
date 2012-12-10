@@ -473,6 +473,41 @@ def agenda_is_free(session, calendar, meeting_date,
     return agenda_free
 
 
+def agenda_is_free_in_future(session, calendar, meeting_date,
+    recursion_ends, time_start, time_stop):
+    """For recursive meeting, check for meetings happening at the
+    specified time between the specified date and the end of the
+    recursion.
+
+    :arg session: the database session to use
+    :arg calendar: the name of the calendar of interest.
+    :arg meeting_date: the date of the meeting (as Datetime object)
+    :arg recursion_ends: the end date of the recursion
+    :arg time_start: the time at which the meeting starts (as int)
+    :arg time_stop: the time at which the meeting stops (as int)
+    """
+    meetings = Meeting.in_future_at_time(session, calendar, meeting_date,
+        recursion_ends, time_start)
+    meetings.extend(Meeting.in_future_at_time(session, calendar,
+        meeting_date, recursion_ends, time_stop))
+    meetings.extend(Meeting.get_in_future_by_time(session, calendar,
+        meeting_date, recursion_ends, time_start, time_stop))
+    agenda_free = True
+    for meeting in set(meetings):
+        if time_start <= meeting.meeting_time_start \
+            and meeting.meeting_time_start < time_stop:
+            agenda_free = False
+        elif time_start < meeting.meeting_time_stop \
+            and meeting.meeting_time_stop <= time_stop:
+            agenda_free = False
+        elif time_start < meeting.meeting_time_start \
+            and time_stop > meeting.meeting_time_stop:
+            agenda_free = False
+        elif time_start > meeting.meeting_time_start \
+            and time_stop < meeting.meeting_time_stop:
+            agenda_free = False
+    return agenda_free
+
 def is_user_managing_in_calendar(session, calendar_name, fas_user):
     """ Returns True if the user is in a group set as manager of the
     calendar and False otherwise. It will also return True if there are
@@ -662,6 +697,17 @@ def add_meeting(session, calendarobj, fas_user,
         raise InvalidMeeting(
             'The start or end time you have entered is already occupied.')
 
+    if frequency and end_repeats:
+        futur_meeting_at_time = agenda_is_free_in_future(session, calendarobj,
+                meeting_date,end_repeats,
+                meeting_time_start.time(), meeting_time_stop.time())
+
+        if not bool(calendarobj.calendar_multiple_meetings) and \
+            futur_meeting_at_time:
+            raise InvalidMeeting(
+                'The start or end time you have entered is already '
+                'occupied in the future.')
+
     reminder = None
     if remind_when and remind_who:
         try:
@@ -729,6 +775,17 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
         raise InvalidMeeting(
             'The start date of your meeting is later than the end date.')
 
+    if recursion_frequency and recursion_ends:
+        futur_meeting_at_time = agenda_is_free_in_future(session,
+            calendarobj, meeting_date, recursion_ends,
+            meeting_time_start, meeting_time_stop)
+
+        if not bool(calendarobj.calendar_multiple_meetings) and \
+            futur_meeting_at_time:
+            raise InvalidMeeting(
+                'The start or end time you have entered is already '
+                'occupied in the future.')
+
     ## The information are correct
     ## What we do now:
     # a) the meeting is not recursive -> edit the information as provided
@@ -743,7 +800,7 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
     #     -> copy meeting to new object w/ recursion and date = date + offset
 
     remove_recursion = False
-    if recursion_frequency and meeting.recursion_frequency:
+    if meeting.recursion_frequency:
         old_meeting = Meeting.copy(meeting)
         old_meeting.recursion_ends = meeting_date - timedelta(days=1)
         if old_meeting.recursion_ends > old_meeting.meeting_date:

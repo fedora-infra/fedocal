@@ -1004,6 +1004,29 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_date_end, date.today() +
             timedelta(days=3))
 
+        meeting = model.Meeting.by_id(self.session, 9)
+        fedocallib.edit_meeting(
+            self.session, meeting, calendarobj, fasuser,
+            'Test meeting with reminder-2.3',
+            date.today() + timedelta(days=1), date.today() + timedelta(
+                days=2),
+            time(23, 0), time(23, 59), None,
+            'Information3', None, 'Europe/Paris',
+            None, None,  # Recursion
+            None, None,  # Reminder
+            edit_all_meeting=False)
+        meeting = model.Meeting.by_id(self.session, 9)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name,
+            'Test meeting with reminder-2.3')
+        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_information, 'Information3')
+        self.assertEqual(meeting.reminder, None)
+        self.assertEqual(meeting.recursion_ends, None)
+        self.assertEqual(meeting.recursion_frequency, None)
+        self.assertEqual(meeting.meeting_date_end, date.today() +
+            timedelta(days=2))
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

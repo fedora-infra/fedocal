@@ -508,6 +508,7 @@ def agenda_is_free_in_future(session, calendar, meeting_date,
             agenda_free = False
     return agenda_free
 
+
 def is_user_managing_in_calendar(session, calendar_name, fas_user):
     """ Returns True if the user is in a group set as manager of the
     calendar and False otherwise. It will also return True if there are
@@ -699,7 +700,7 @@ def add_meeting(session, calendarobj, fas_user,
 
     if frequency and end_repeats:
         futur_meeting_at_time = agenda_is_free_in_future(session, calendarobj,
-                meeting_date,end_repeats,
+                meeting_date, end_repeats,
                 meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \

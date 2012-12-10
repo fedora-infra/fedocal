@@ -116,6 +116,17 @@ unit-tests of the project with coverage information using `python-nose
 <https://nose.readthedocs.org/>`_.
 
 
+.. note:: You can specify additional arguments to the nose command used
+          in this script by just passing arguments to the script.
+          
+          For example you can specify the ``-x`` / ``--stop`` argument:
+          `Stop running tests after the first error or failure` by just doing
+
+          ::
+
+            ./run_tests.sh --stop
+
+
 Each unit-tests files (located under ``fedocal/tests/``) can be called
 by alone, allowing easier debugging of the tests. For example:
 
@@ -123,8 +134,16 @@ by alone, allowing easier debugging of the tests. For example:
 
   python fedocal/tests/test_week.py
 
-.. note:: In order to have the coverage information you might have to
-          install ``python-coverage``
+Similarly as for nose you can also ask that the unit-test stop at the first
+error or failure. For example, the command could be:
+
+::
+
+  FEDOCAL_CONFIG=tests/fedocal_test.cfg python -m unittest -f -v fedocal.tests.test_week
+
+
+.. note:: In order to have coverage information you might have to install
+          ``python-coverage``
 
           ::
 

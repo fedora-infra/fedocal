@@ -190,18 +190,15 @@ def calendar_list(calendar_name, year, month, day):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
+    inyear = year
     if not year:
         inyear = datetime.date.today().year
-    else:
-        inyear = year
+    inmonth = month
     if not month:
         inmonth = 1
-    else:
-        inmonth = month
+    inday = day
     if not day:
         inday = 1
-    else:
-        inday = day
     start_date = datetime.date(inyear, inmonth, inday)
     if not month and not day:
         end_date = start_date + relativedelta(years=+1)

@@ -613,7 +613,7 @@ class Fedocallibtests(Modeltests):
         output = fedocallib.get_by_date(self.session, calendarobj, TODAY,
             TODAY + relativedelta(years=+1))
         self.assertNotEqual(output, None)
-        self.assertEqual(len(output), 45)
+        self.assertEqual(len(output), 43)
 
     # pylint: disable=R0915
     def test_add_meeting_fail(self):
@@ -926,7 +926,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited2',
-            date.today() + timedelta(days=1), None,
+            TODAY + timedelta(days=1), None,
             time(23, 0), time(23, 59), 'pingou',
             'Information2', 'EMEA', 'Europe/Paris',
             None, None,
@@ -941,7 +941,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() + timedelta(days=1), None,
+            TODAY + timedelta(days=1), None,
             time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
@@ -957,18 +957,18 @@ class Fedocallibtests(Modeltests):
 
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
-            'Fedora-fr-meeting_edited',
-            date.today() + timedelta(days=1), None,
-            time(23, 0), time(23, 59), None,
+            'Fedora-fr-meeting_edited2',
+            TODAY + timedelta(days=1), None,
+            time(22, 0), time(23, 0), None,
             'Information', 'EMEA', 'Europe/Paris',
             7, TODAY + timedelta(days=30),
             None, None)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
-        self.assertEqual(meeting.meeting_name, 'Fedora-fr-meeting_edited')
+        self.assertEqual(meeting.meeting_name, 'Fedora-fr-meeting_edited2')
         self.assertEqual(meeting.meeting_manager, 'username,')
         self.assertEqual(meeting.meeting_information, 'Information')
-        self.assertEqual(meeting.meeting_time_stop.minute, 59)
+        self.assertEqual(meeting.meeting_time_stop.minute, 0)
         self.assertEqual(meeting.recursion_frequency, 7)
         self.assertEqual(meeting.recursion_ends, TODAY + timedelta(days=30))
         self.assertEqual(meeting.reminder, None)
@@ -977,7 +977,7 @@ class Fedocallibtests(Modeltests):
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited2',
             date.today() + timedelta(days=1), None,
-            time(23, 0), time(23, 59), None,
+            time(21, 0), time(22, 00), None,
             'Information2', None, 'Europe/Paris',
             None, None,
             None, None)
@@ -997,7 +997,7 @@ class Fedocallibtests(Modeltests):
             'Test meeting with reminder-2',
             date.today() + timedelta(days=1), date.today() + timedelta(
                 days=3),
-            time(23, 0), time(23, 59), None,
+            time(20, 0), time(21, 00), None,
             'Information2', None, 'Europe/Paris',
             None, None,
             'H-24', 'test@example.org')

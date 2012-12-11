@@ -501,15 +501,19 @@ def agenda_is_free_in_future(session, calendar, meeting_date,
         if time_start <= meeting.meeting_time_start \
             and meeting.meeting_time_start < time_stop:
             agenda_free = False
+            break
         elif time_start < meeting.meeting_time_stop \
             and meeting.meeting_time_stop <= time_stop:
             agenda_free = False
+            break
         elif time_start < meeting.meeting_time_start \
             and time_stop > meeting.meeting_time_stop:
             agenda_free = False
+            break
         elif time_start > meeting.meeting_time_start \
             and time_stop < meeting.meeting_time_stop:
             agenda_free = False
+            break
     return agenda_free
 
 
@@ -822,10 +826,22 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
         raise InvalidMeeting(
             'The start date of your meeting is later than the end date.')
 
+    meeting_time_start = convert_time(
+        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+            meeting_time_start.hour,
+            meeting_time_start.minute),
+        tzone, 'UTC')
+    meeting_time_stop = convert_time(
+        datetime(meeting_date_end.year, meeting_date_end.month,
+            meeting_date_end.day,
+            meeting_time_stop.hour,
+            meeting_time_stop.minute),
+        tzone, 'UTC')
+
     if recursion_frequency and recursion_ends:
         futur_meeting_at_time = agenda_is_free_in_future(session,
             calendarobj, meeting_date, recursion_ends,
-            meeting_time_start, meeting_time_stop)
+            meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
             not(futur_meeting_at_time):
@@ -865,18 +881,6 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
             if not bool(calendarobj.calendar_multiple_meetings) and \
                 bool(free_time):
                 new_meeting.save(session)
-
-    meeting_time_start = convert_time(
-        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
-            meeting_time_start.hour,
-            meeting_time_start.minute),
-        tzone, 'UTC')
-    meeting_time_stop = convert_time(
-        datetime(meeting_date_end.year, meeting_date_end.month,
-            meeting_date_end.day,
-            meeting_time_stop.hour,
-            meeting_time_stop.minute),
-        tzone, 'UTC')
 
     meeting.meeting_name = meeting_name
     meeting.meeting_manager = '%s,' % fas_user.username

@@ -288,8 +288,9 @@ def get_meetings(session, calendar, year=None, month=None, day=None,
                 minutes=start_delta)
         startdt = convert_time(startdt, 'UTC', tzone)
 
-        stopdt = datetime(meeting.meeting_date.year,
-            meeting.meeting_date.month, meeting.meeting_date.day,
+        stopdt = datetime(meeting.meeting_date_end.year,
+            meeting.meeting_date_end.month,
+            meeting.meeting_date_end.day,
             meeting.meeting_time_stop.hour,
             meeting.meeting_time_stop.minute, 0) + timedelta(
                 minutes=stop_delta)
@@ -733,7 +734,7 @@ def add_meeting(session, calendarobj, fas_user,
         meeting_name=meeting_name,
         meeting_manager=managers,
         meeting_date=meeting_time_start.date(),
-        meeting_date_end=None,
+        meeting_date_end=meeting_time_stop.date(),
         meeting_time_start=meeting_time_start,
         meeting_time_stop=meeting_time_stop,
         meeting_information=meeting_information,

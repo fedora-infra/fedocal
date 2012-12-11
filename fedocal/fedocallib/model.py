@@ -274,7 +274,8 @@ class Meeting(BASE):
         return session.query(cls).filter(and_
             (Meeting.calendar == calendar),
             (Meeting.meeting_date >= start_date),
-            (Meeting.meeting_date < stop_date)).all()
+            (Meeting.meeting_date < stop_date)
+            ).order_by(Meeting.meeting_date).all()
 
     @classmethod
     def get_active_regular_meeting(cls, session, calendar, end_date):

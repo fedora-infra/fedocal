@@ -16,6 +16,7 @@ license.
 
 import vobject
 import pytz
+import operator
 
 from datetime import datetime
 from datetime import date
@@ -654,6 +655,45 @@ def get_html_monthly_cal(day=None, month=None, year=None,
     curmonth_cal_nf = htmlcal.formatmonth()
 
     return curmonth_cal_nf
+
+
+def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
+    """ Returns all the meetings in a given time period.
+    Recursive meetings are expanded as if each was a single meeting.
+
+    :arg session: the database session to use
+    :arg calendarobj: the calendar (object) of interest.
+    :arg start_date: a Date object representing the beginning of the
+        period
+    :arg start_date: a Date object representing the ending of the period
+    :kwarg tzone: the timezone in which the meetings should be displayed
+        defaults to UTC.
+    """
+    meetings_utc = Meeting.get_by_date(session, calendarobj, start_date,
+        end_date)
+    meetings = []
+    for meeting in meetings_utc:
+        if meeting.recursion_frequency and meeting.recursion_ends:
+            meeting_date = meeting.meeting_date
+            cnt = 0
+            while meeting_date >= start_date and meeting_date < end_date \
+                and meeting_date <= meeting.recursion_ends:
+                recmeeting = meeting.copy()
+                recmeeting.meeting_id = meeting.meeting_id
+                recmeeting.meeting_date = recmeeting.meeting_date + timedelta(
+                    days=recmeeting.recursion_frequency * cnt)
+                recmeeting.meeting_date_end = recmeeting.meeting_date_end \
+                    + timedelta(days=recmeeting.recursion_frequency * cnt)
+                meeting_date = recmeeting.meeting_date + timedelta(
+                    days=recmeeting.recursion_frequency)
+                meetings.append(convert_meeting_timezone(recmeeting,
+                    'UTC', tzone))
+                cnt = cnt + 1
+        else:
+            meetings.append(convert_meeting_timezone(meeting, 'UTC',
+                    tzone))
+    meetings.sort(key=operator.attrgetter('meeting_date'))
+    return meetings
 
 
 # pylint: disable=R0913,R0914

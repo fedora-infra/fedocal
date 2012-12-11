@@ -209,10 +209,8 @@ def calendar_list(calendar_name, year, month, day):
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     tzone = get_timezone()
-    meetings_utc = Meeting.get_by_date(SESSION, calendarobj, start_date,
-        end_date)
-    meetings = [fedocallib.convert_meeting_timezone(meeting, 'UTC', tzone)
-        for meeting in meetings_utc]
+    meetings = fedocallib.get_by_date(SESSION, calendarobj, start_date,
+        end_date, tzone)
     week_start = fedocallib.get_start_week(inyear, inmonth, inday)
     weekdays = fedocallib.get_week_days(inyear, inmonth, inday)
     next_week = fedocallib.get_next_week(week_start.year,

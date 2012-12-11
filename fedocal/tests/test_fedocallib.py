@@ -39,6 +39,7 @@ from datetime import date
 from datetime import time
 from datetime import datetime
 from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 
 from sqlalchemy.exc import IntegrityError
 
@@ -593,8 +594,29 @@ class Fedocallibtests(Modeltests):
         output = fedocallib.get_week_day_index()
         self.assertEqual(output, today.isoweekday())
 
+    def test_get_by_date_empty(self):
+        """ Test the get_by_date function. """
+        self.__setup_calendar()
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        self.assertNotEqual(calendarobj, None)
+        output = fedocallib.get_by_date(self.session, calendarobj, TODAY,
+            TODAY + relativedelta(years=+1))
+        self.assertNotEqual(output, None)
+        self.assertEqual(len(output), 0)
+        self.assertEqual(output, [])
+
+    def test_get_by_date(self):
+        """ Test the get_by_date function. """
+        self.__setup_meeting()
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        self.assertNotEqual(calendarobj, None)
+        output = fedocallib.get_by_date(self.session, calendarobj, TODAY,
+            TODAY + relativedelta(years=+1))
+        self.assertNotEqual(output, None)
+        self.assertEqual(len(output), 30)
+
     # pylint: disable=R0915
-    def test_add_meeting(self):
+    def test_add_meeting_fail(self):
         """ Test the add_meeting function. """
         self.__setup_calendar()
         calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
@@ -651,6 +673,14 @@ class Fedocallibtests(Modeltests):
             None, None,
             None, None)
         self.session.rollback()
+
+    # pylint: disable=R0915
+    def test_add_meeting(self):
+        """ Test the add_meeting function. """
+        self.__setup_calendar()
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        self.assertNotEqual(calendarobj, None)
+        fasuser = FakeUser(['fi-apprentice'])
 
         fedocallib.add_meeting(
             self.session, calendarobj, fasuser,
@@ -1030,4 +1060,4 @@ class Fedocallibtests(Modeltests):
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)
-    unittest.TextTestRunner(verbosity=2).run(SUITE)
+    unittest.TextTestRunner(verbosity=2, failfast=True).run(SUITE)

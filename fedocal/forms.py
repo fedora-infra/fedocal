@@ -97,7 +97,13 @@ class AddMeetingForm(wtf.Form):
 
     information = wtf.TextAreaField('Information')
 
-    meeting_region = wtf.TextField('Region')
+    meeting_region = wtf.SelectField('Region',
+        [wtf.validators.optional()],
+        choices=[('APAC', 'APAC'),
+                    ('EMEA', 'EMEA'),
+                    ('LATAM', 'LATAM'),
+                    ('NA', 'NA')]
+        )
 
     # Recursion
     frequency = wtf.SelectField('Repeat every',

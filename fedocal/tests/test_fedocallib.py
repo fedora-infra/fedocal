@@ -613,7 +613,7 @@ class Fedocallibtests(Modeltests):
         output = fedocallib.get_by_date(self.session, calendarobj, TODAY,
             TODAY + relativedelta(years=+1))
         self.assertNotEqual(output, None)
-        self.assertEqual(len(output), 30)
+        self.assertEqual(len(output), 45)
 
     # pylint: disable=R0915
     def test_add_meeting_fail(self):

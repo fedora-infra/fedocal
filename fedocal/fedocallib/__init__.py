@@ -671,24 +671,27 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
     """
     meetings_utc = Meeting.get_by_date(session, calendarobj, start_date,
         end_date)
+    meetings_utc.extend(Meeting.get_active_regular_meeting(session,
+        calendarobj, start_date))
     meetings = []
-    for meeting in meetings_utc:
+    for meeting in list(set(meetings_utc)):
         if meeting.recursion_frequency and meeting.recursion_ends:
             meeting_date = meeting.meeting_date
             cnt = 0
-            while meeting_date >= start_date and meeting_date < end_date \
-                and meeting_date <= meeting.recursion_ends:
+            while meeting_date < end_date and \
+                meeting_date <= meeting.recursion_ends:
                 recmeeting = meeting.copy()
-                recmeeting.meeting_id = meeting.meeting_id
-                recmeeting.meeting_date = recmeeting.meeting_date + timedelta(
-                    days=recmeeting.recursion_frequency * cnt)
-                recmeeting.meeting_date_end = recmeeting.meeting_date_end \
-                    + timedelta(days=recmeeting.recursion_frequency * cnt)
-                meeting_date = recmeeting.meeting_date + timedelta(
-                    days=recmeeting.recursion_frequency)
-                meetings.append(convert_meeting_timezone(recmeeting,
-                    'UTC', tzone))
+                if meeting_date >= start_date:
+                    recmeeting.meeting_id = meeting.meeting_id
+                    recmeeting.meeting_date = meeting.meeting_date + timedelta(
+                        days=meeting.recursion_frequency * cnt)
+                    recmeeting.meeting_date_end = meeting.meeting_date_end \
+                        + timedelta(days=meeting.recursion_frequency * cnt)
+                    meetings.append(convert_meeting_timezone(recmeeting,
+                        'UTC', tzone))
                 cnt = cnt + 1
+                meeting_date = meeting.meeting_date + timedelta(
+                    days=meeting.recursion_frequency * cnt)
         else:
             meetings.append(convert_meeting_timezone(meeting, 'UTC',
                     tzone))
@@ -747,7 +750,7 @@ def add_meeting(session, calendarobj, fas_user,
                 meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
-            futur_meeting_at_time:
+            not(futur_meeting_at_time):
             raise InvalidMeeting(
                 'The start or end time you have entered is already '
                 'occupied in the future.')
@@ -825,7 +828,7 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
             meeting_time_start, meeting_time_stop)
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
-            futur_meeting_at_time:
+            not(futur_meeting_at_time):
             raise InvalidMeeting(
                 'The start or end time you have entered is already '
                 'occupied in the future.')

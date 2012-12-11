@@ -211,12 +211,7 @@ def calendar_list(calendar_name, year, month, day):
     tzone = get_timezone()
     meetings = fedocallib.get_by_date(SESSION, calendarobj, start_date,
         end_date, tzone)
-    week_start = fedocallib.get_start_week(inyear, inmonth, inday)
-    weekdays = fedocallib.get_week_days(inyear, inmonth, inday)
-    next_week = fedocallib.get_next_week(week_start.year,
-        week_start.month, week_start.day)
-    prev_week = fedocallib.get_previous_week(week_start.year,
-        week_start.month, week_start.day)
+
     month_name = datetime.date.today().strftime('%B')
     auth_form = forms.LoginForm()
     admin = is_admin()
@@ -230,9 +225,7 @@ def calendar_list(calendar_name, year, month, day):
         month=month_name,
         meetings=meetings,
         tzone=tzone,
-        weekdays=weekdays,
-        next_week=next_week,
-        prev_week=prev_week,
+        year=inyear,
         auth_form=auth_form,
         curmonth_cal=curmonth_cal,
         admin=admin)

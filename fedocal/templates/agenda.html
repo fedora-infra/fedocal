@@ -31,6 +31,26 @@
     </nav>
 {% endif %}
 <div id='agenda'>
+{% macro render_meetings(meeting_list, loopidx) -%}
+    {% if loopidx == day_index %}
+        <td class="today">
+    {% else %}
+        <td>
+    {% endif %}
+    {% if meeting_list %}
+        {% for meeting in meeting_list %}
+            <a class="event meeting_{{ meeting.meeting_id }}"
+                href="{{ url_for('view_meeting',
+                    meeting_id=meeting.meeting_id) }}">
+                {{ meeting.meeting_name }}
+            </a>
+            {% if not loop.last %}
+            -
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </td>
+{%- endmacro %}
     <table>
         <tr>
             <th>{{ tzone }} time</th>
@@ -38,35 +58,34 @@
             <th> {{ day.strftime('%A %d') }}</th>
             {% endfor %}
         </tr>
+        <tr>
+            <th class="time" rowspan="2">00h00</th>
+            <td colspan="7" class="empty"></td>
+        </tr>
         {% for time_entry in meetings |sort %}
+            {% if time_entry == '00h00' %}
+                {% set previous_time_entry = time_entry %}
+            {% else %}
         <tr>
             {% if time_entry.endswith('00') %}
-            <th class="time">{{ time_entry }}</th>
-            {% else %}
-            <th></th>
+                <th rowspan="2" class="time">{{ time_entry }}</th>
             {% endif %}
-            {% for meeting_list in meetings[time_entry] %}
-                {% if loop.index == day_index %}
-                <td class="today">
-                {% else %}
-                <td>
-                {% endif %}
-                    {% if meeting_list %}
-                        {% for meeting in meeting_list %}
-                        <a class="event meeting_{{ meeting.meeting_id }}"
-                            href="{{ url_for('view_meeting',
-                                meeting_id=meeting.meeting_id) }}">
-                            {{ meeting.meeting_name }}
-                        </a>
-                        {% if not loop.last %}
-                        -
-                        {% endif %}
-                    {% endfor %}
-                    {% endif %}
-                </td>
+            {% for meeting_list in meetings[previous_time_entry] %}
+                {{ render_meetings(meeting_list, loop.index) }}
+            {% endfor %}
+            {% set previous_time_entry = time_entry %}
+        </tr>
+            {% endif %}
+        {% endfor %}
+        <tr>
+            <th rowspan="2" class="time">00h00</th>
+            {% for meeting_list in meetings['23h30'] %}
+                {{ render_meetings(meeting_list, loop.index) }}
             {% endfor %}
         </tr>
-        {% endfor %}
+        <tr>
+            <td colspan="7" class="empty"></td>
+        </tr>
     </table>
 </div>
 </section>

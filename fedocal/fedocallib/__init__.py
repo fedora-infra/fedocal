@@ -71,12 +71,14 @@ def convert_meeting_timezone(meeting, tzfrom, tzto):
             meeting.meeting_time_start.minute),
         tzfrom, tzto)
     meeting_stop = convert_time(
-        datetime(meeting.meeting_date.year, meeting.meeting_date.month,
-            meeting.meeting_date.day,
+        datetime(meeting.meeting_date_end.year,
+            meeting.meeting_date_end.month,
+            meeting.meeting_date_end.day,
             meeting.meeting_time_stop.hour,
             meeting.meeting_time_stop.minute),
         tzfrom, tzto)
     meeting.meeting_date = meeting_start.date()
+    meeting.meeting_date_end = meeting_stop.date()
     meeting.meeting_time_start = meeting_start.time()
     meeting.meeting_time_stop = meeting_stop.time()
     return meeting

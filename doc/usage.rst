@@ -9,6 +9,7 @@ Fedocal has basically two levels for the users:
  - administrators
  - users
 
+
 Administrators
 ~~~~~~~~~~~~~~
 
@@ -230,6 +231,30 @@ own calendar application.
 This iCal is read-only and can be found at::
 
  http://<url to fedocal>/ical/<calendar name>/
+
+
+
+List view
+---------
+
+Sometime it is interesting to have an overview of all the meetings over
+a given time period. The easiest way to achieve this is simply to have a
+list of all the meetings in this period.
+
+This list view can be found at::
+
+ http://<url to fedocal>/list/<calendar name>/
+
+This page can also be accessed from the main menu, for each calendar
+under the `List view` link.
+
+By default this will show you the list of all the meetings in the current
+year, but you can restrict or change the period by specifying a year or
+a year and a month or even a year, a month and a day::
+
+ http://<url to fedocal>/list/<calendar name>/<year>/
+ http://<url to fedocal>/list/<calendar name>/<year>/<month>/
+ http://<url to fedocal>/list/<calendar name>/<year>/<month>/<day>/
 
 
 

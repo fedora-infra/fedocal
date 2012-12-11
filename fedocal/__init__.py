@@ -32,6 +32,7 @@ import pkg_resources
 import ConfigParser
 import os
 import datetime
+from dateutil.relativedelta import relativedelta
 from urlparse import urljoin, urlparse
 import vobject
 from sqlalchemy.exc import SQLAlchemyError
@@ -164,6 +165,77 @@ def calendar(calendar_name, year, month, day):
         day_index=day_index,
         meetings=meetings,
         tzone=tzone,
+        next_week=next_week,
+        prev_week=prev_week,
+        auth_form=auth_form,
+        curmonth_cal=curmonth_cal,
+        admin=admin)
+
+
+@APP.route('/list/<calendar_name>/',
+    defaults={'year': None, 'month': None, 'day': None})
+@APP.route('/list/<calendar_name>/<int:year>/',
+    defaults={'month': None, 'day': None})
+@APP.route('/list/<calendar_name>/<int:year>/<int:month>/',
+    defaults={'day': None})
+@APP.route('/list/<calendar_name>/<int:year>/<int:month>/<int:day>/')
+def calendar_list(calendar_name, year, month, day):
+    """ Display in a list form all the meetings of a given calendar.
+    By default it displays all the meetings of the current year but this
+    can be more restricted to a month or even a day.
+
+    :arg calendar_name: the name of the calendar that one would like to
+        consult.
+    :arg year: the year of the date one would like to consult.
+    :arg month: the month of the date one would like to consult.
+    :arg day: the day of the date one would like to consult.
+    """
+    if not year:
+        inyear = datetime.date.today().year
+    else:
+        inyear = year
+    if not month:
+        inmonth = 1
+    else:
+        inmonth = month
+    if not day:
+        inday = 1
+    else:
+        inday = day
+    start_date = datetime.date(inyear, inmonth, inday)
+    if not month and not day:
+        end_date = start_date + relativedelta(years=+1)
+    elif not day:
+        end_date = start_date + relativedelta(months=+1)
+    else:
+        end_date = start_date + relativedelta(days=+1)
+
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+    tzone = get_timezone()
+    meetings_utc = Meeting.get_by_date(SESSION, calendarobj, start_date,
+        end_date)
+    meetings = [fedocallib.convert_meeting_timezone(meeting, 'UTC', tzone)
+        for meeting in meetings_utc]
+    week_start = fedocallib.get_start_week(inyear, inmonth, inday)
+    weekdays = fedocallib.get_week_days(inyear, inmonth, inday)
+    next_week = fedocallib.get_next_week(week_start.year,
+        week_start.month, week_start.day)
+    prev_week = fedocallib.get_previous_week(week_start.year,
+        week_start.month, week_start.day)
+    month_name = datetime.date.today().strftime('%B')
+    auth_form = forms.LoginForm()
+    admin = is_admin()
+
+    today = datetime.date.today()
+
+    curmonth_cal = fedocallib.get_html_monthly_cal(year=year,
+        month=month, day=day, calendar_name=calendar_name)
+    return flask.render_template('meeting_list.html',
+        calendar=calendarobj,
+        month=month_name,
+        meetings=meetings,
+        tzone=tzone,
+        weekdays=weekdays,
         next_week=next_week,
         prev_week=prev_week,
         auth_form=auth_form,

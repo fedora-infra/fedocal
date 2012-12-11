@@ -9,3 +9,4 @@ kitchen
 python-fedora
 pytz
 alembic
+python-dateutil <= 1.5

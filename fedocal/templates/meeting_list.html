@@ -1,0 +1,105 @@
+{% extends "master.html" %}
+
+{% block title %} {{ calendar.calendar_name }} {% endblock %}
+
+{% set title_extent = calendar.calendar_name %}
+
+{% block content %}
+<section>
+{% if calendar %}
+    <header>
+        <h2>
+            <a href="{{url_for('ical_out',
+                calendar_name=calendar.calendar_name)}}">
+            </a>
+            {{ calendar.calendar_name }}
+        </h2>
+        <p>{{ calendar.calendar_description }}</p>
+    </header>
+    <nav id="weeks">
+        <a href="{{url_for('calendar',
+            calendar_name=calendar.calendar_name, year=prev_week.year,
+            month=prev_week.month, day=prev_week.day)}}" class="button">
+            &lt
+        </a>
+        {{ weekdays | WeekHeading }}
+        <a href="{{url_for('calendar',
+            calendar_name=calendar.calendar_name, year=next_week.year,
+            month=next_week.month, day=next_week.day)}}" class="button">
+            &gt;
+        </a>
+    </nav>
+{% endif %}
+
+<div id='meeting_list'>
+    <p> Time are expressed in the {{ tzone }} time zone.</p>
+    <table>
+        <tr>
+            <td>Date</td>
+            <td>Time</td>
+            <td>Meeting</td>
+            <td>Description</td>
+            {% if calendar.calendar_regional_meetings %}
+            <td>Region</td>
+            {% endif %}
+        </tr>
+        {% for meeting in meetings %}
+        <tr>
+            <td>
+                {{ meeting.meeting_date }}
+                {% if meeting.meeting_date != meeting.meeting_date_end %}
+                to {{ meeting.meeting_date_end }}
+                {% endif %}
+            </td>
+            <td>
+                {{ meeting.meeting_time_start }} to
+                {{ meeting.meeting_time_stop }}
+            </td>
+            <td>
+                <a class="event meeting_{{ meeting.meeting_id }}"
+                            href="{{ url_for('view_meeting',
+                                meeting_id=meeting.meeting_id) }}">
+                            {{ meeting.meeting_name }}
+                </a>
+            </td>
+            <td> {{ meeting.meeting_information }} </td>
+            {% if calendar.calendar_regional_meetings %}
+            <td> {{ meeting.meeting_region }} </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+</section>
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript">
+    $(function(){
+        $('.event').click(function(){
+            var _cls = $(this).attr('class');
+            var _meetId = _cls.replace('event meeting_', '');
+            var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
+            $.ajax({
+                url: _url + _meetId + '/0/',
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $('<div title="Meeting details" id="show_meeting">' + res + '</div>');
+                    _elt.dialog({
+                        height: 350,
+                        width: '50%',
+                        modal: true
+                    });
+                },
+                error: function() {
+                    alert('Unable to retrieve selected meeting!');
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+{% endblock %}

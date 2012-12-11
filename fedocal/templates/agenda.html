@@ -17,13 +17,13 @@
         <p>{{ calendar.calendar_description }}</p>
     </header>
     <nav id="weeks">
-        <a href="{{url_for('calendar_fullday',
+        <a href="{{url_for('calendar',
             calendar_name=calendar.calendar_name, year=prev_week.year,
             month=prev_week.month, day=prev_week.day)}}" class="button">
             &lt
         </a>
         {{ weekdays | WeekHeading }}
-        <a href="{{url_for('calendar_fullday',
+        <a href="{{url_for('calendar',
             calendar_name=calendar.calendar_name, year=next_week.year,
             month=next_week.month, day=next_week.day)}}" class="button">
             &gt;

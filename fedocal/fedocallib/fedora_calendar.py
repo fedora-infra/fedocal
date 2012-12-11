@@ -46,7 +46,7 @@ class FedocalCalendar(HTMLCalendar):
             link_day = day
             if self.calendar_name:
                 link_day = '<a href="%s">%d</a>' % (flask.url_for(
-                        'calendar_fullday',
+                        'calendar',
                         calendar_name=self.calendar_name, year=self.year,
                         month=self.month, day=day), day)
             if day == cur_date.day \
@@ -91,7 +91,7 @@ class FedocalCalendar(HTMLCalendar):
         if self.calendar_name:
             prev_month_lnk = '<a class="button" href="%s"><</a>' % (
                 flask.url_for(
-                    'calendar_fullday',
+                    'calendar',
                     calendar_name=self.calendar_name,
                     year=int(prev_year),
                     month=int(prev_month),
@@ -105,7 +105,7 @@ class FedocalCalendar(HTMLCalendar):
         if self.calendar_name:
             next_month_lnk = '<a class="button" href="%s">></a>' % (
                 flask.url_for(
-                    'calendar_fullday',
+                    'calendar',
                     calendar_name=self.calendar_name,
                     year=int(next_year),
                     month=int(next_month),

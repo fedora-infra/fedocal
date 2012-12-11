@@ -111,7 +111,8 @@ def index():
     """
     calendars = Calendar.get_all(SESSION)
     if calendars:
-        return calendar(calendars[0].calendar_name)
+        return calendar(calendars[0].calendar_name, None, None,
+            None)
     else:
         auth_form = forms.LoginForm()
         admin = is_admin()
@@ -121,20 +122,11 @@ def index():
             admin=admin)
 
 
-@APP.route('/<calendar_name>/')
-def calendar(calendar_name):
-    """ Display the current week for a specific calendar.
-
-    :arg calendar_name: the name of the calendar that one would like to
-        consult.
-    """
-    return calendar_fullday(calendar_name, year=None, month=None,
-        day=None)
-
-
 # pylint: disable=R0914
+@APP.route('/<calendar_name>/',
+    defaults={'year': None, 'month': None, 'day': None})
 @APP.route('/<calendar_name>/<int:year>/<int:month>/<int:day>/')
-def calendar_fullday(calendar_name, year, month, day):
+def calendar(calendar_name, year, month, day):
     """ Display the week of a specific date for a specified calendar.
 
     :arg calendar_name: the name of the calendar that one would like to

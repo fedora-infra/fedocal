@@ -148,6 +148,7 @@ class Meeting(BASE):
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
         nullable=True)
     reminder = relationship("Reminder")
+    full_day = Column(Boolean, default=False)
 
     recursion_frequency = Column(Integer, nullable=True, default=None)
     recursion_ends = Column(Date, nullable=True, default=None)
@@ -158,7 +159,7 @@ class Meeting(BASE):
         meeting_time_start, meeting_time_stop,
         meeting_information, calendar_name, reminder_id=None,
         meeting_region=None, recursion_frequency=None,
-        recursion_ends=None):
+        recursion_ends=None, full_day=False):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
@@ -172,6 +173,7 @@ class Meeting(BASE):
         self.meeting_region = meeting_region
         self.recursion_frequency = recursion_frequency
         self.recursion_ends = recursion_ends
+        self.full_day = full_day
 
     def __repr__(self):
         """ Representation of the Reminder object when printed.
@@ -234,6 +236,7 @@ class Meeting(BASE):
             meeting.meeting_region = self.meeting_region
             meeting.recursion_frequency = self.recursion_frequency
             meeting.recursion_ends = self.recursion_ends
+            meeting.full_day = self.full_day
         else:
             meeting = Meeting(self.meeting_name, self.meeting_manager,
                 self.meeting_date, self.meeting_date_end,
@@ -243,7 +246,8 @@ class Meeting(BASE):
                 self.reminder_id,
                 self.meeting_region,
                 self.recursion_frequency,
-                self.recursion_ends)
+                self.recursion_ends,
+                self.full_day)
         return meeting
 
     @classmethod
@@ -267,18 +271,21 @@ class Meeting(BASE):
         return managers
 
     @classmethod
-    def get_by_date(cls, session, calendar, start_date, stop_date):
+    def get_by_date(cls, session, calendar, start_date, stop_date,
+        full_day=False):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
         """
         return session.query(cls).filter(and_
             (Meeting.calendar == calendar),
             (Meeting.meeting_date >= start_date),
-            (Meeting.meeting_date < stop_date)
+            (Meeting.meeting_date < stop_date),
+            (Meeting.full_day == full_day)
             ).order_by(Meeting.meeting_date).all()
 
     @classmethod
-    def get_active_regular_meeting(cls, session, calendar, end_date):
+    def get_active_regular_meeting(cls, session, calendar, end_date,
+        full_day=False):
         """ Retrieve the list of meetings with a recursion which
         end_date is not past the provided end_date and starting before
         the end of the time considered.
@@ -287,7 +294,8 @@ class Meeting(BASE):
                 (Meeting.meeting_date <= end_date),
                 (Meeting.recursion_ends >= end_date),
                 (Meeting.calendar == calendar),
-                (Meeting.recursion_frequency != None)
+                (Meeting.recursion_frequency != None),
+                (Meeting.full_day == full_day)
             ).order_by(Meeting.meeting_date).all()
         return meetings
 
@@ -340,7 +348,7 @@ class Meeting(BASE):
             (Meeting.meeting_time_stop > t_time)).all()
 
     @classmethod
-    def in_future_at_time(cls, session, calendar, meetingdate,
+    def get_in_future_at_time(cls, session, calendar, meetingdate,
         recursion_ends, t_time):
         """ Returns the meeting occuring at this specifict time point
         at any time in the future.

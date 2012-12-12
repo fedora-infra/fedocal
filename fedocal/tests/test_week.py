@@ -111,6 +111,26 @@ class Weektests(Modeltests):
         self.assertEqual(weekobj.meetings[1].meeting_information,
             'This is a test meeting with recursion2')
 
+    def test_meeting_in_week(self):
+        """ Test that the meetings in the week are correct function. """
+        calendar = model.Calendar.by_id(self.session, 'test_calendar')
+        weekobj = week.Week(self.session, calendar, TODAY)
+
+        self.assertNotEqual(weekobj, None)
+        self.assertEqual(len(weekobj.full_day_meetings), 1)
+        self.assertNotEqual(weekobj.full_day_meetings[0], None)
+        self.assertEqual(weekobj.full_day_meetings[0].meeting_name,
+            'Full-day meeting')
+
+        weekobj = week.Week(self.session, calendar, (TODAY + timedelta(
+            days=15)))
+
+        self.assertNotEqual(weekobj, None)
+        self.assertEqual(len(weekobj.full_day_meetings), 1)
+        self.assertNotEqual(weekobj.full_day_meetings[0], None)
+        self.assertEqual(weekobj.full_day_meetings[0].meeting_name,
+            'Full-day meeting with recursion')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Weektests)

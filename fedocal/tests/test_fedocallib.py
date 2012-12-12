@@ -208,7 +208,7 @@ class Fedocallibtests(Modeltests):
             if meeting is not None:
                 for meet in meeting:
                     self.assertEqual(meet.meeting_name,
-                    'Another test meeting')
+                        'Another test meeting')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -309,7 +309,7 @@ class Fedocallibtests(Modeltests):
         meetings = fedocallib.get_future_single_meeting_of_user(self.session,
             'pingou,', from_date=TODAY)
         self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 3)
+        self.assertEqual(len(meetings), 4)
         self.assertEqual(meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
         self.assertEqual(meetings[0].meeting_information,
@@ -340,7 +340,7 @@ class Fedocallibtests(Modeltests):
         meetings = fedocallib.get_future_regular_meeting_of_user(
             self.session, 'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 4)
+        self.assertEqual(len(meetings), 5)
         self.assertEqual(meetings[0].meeting_name,
             'Another past test meeting')
         self.assertEqual(meetings[0].meeting_information,
@@ -354,8 +354,12 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings[2].meeting_information,
             'This is a test meeting with recursion')
         self.assertEqual(meetings[3].meeting_name,
-            'Test meeting with reminder and recursion')
+            'Full-day meeting with recursion')
         self.assertEqual(meetings[3].meeting_information,
+            'Full day meeting with recursion')
+        self.assertEqual(meetings[4].meeting_name,
+            'Test meeting with reminder and recursion')
+        self.assertEqual(meetings[4].meeting_information,
             'This is a test meeting with recursion and reminder')
 
     # pylint: disable=C0103
@@ -495,14 +499,14 @@ class Fedocallibtests(Modeltests):
         meetings = fedocallib.get_future_single_meeting_of_user(
             self.session, 'pingou,', from_date=TODAY)
         self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 3)
+        self.assertEqual(len(meetings), 4)
 
         fedocallib.add_meetings_to_vcal(calendar, meetings)
         cnt = 0
         for event in calendar.vevent_list:
             self.assertTrue(event.summary.value in [
                 'Fedora-fr-test-meeting', 'Test meeting with reminder',
-                'test-meeting2'])
+                'test-meeting2', 'Full-day meeting'])
             self.assertTrue(event.organizer.value in [
                 'pingou,', 'pingou, shaiton,'])
             cnt = cnt + 1

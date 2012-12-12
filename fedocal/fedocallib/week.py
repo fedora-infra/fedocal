@@ -34,7 +34,9 @@ class Week(object):
         self.start_date = start_date
         self.stop_date = start_date + timedelta(days=7)
         self.meetings = []
+        self.full_day_meetings = []
         self.get_meetings()
+        self.get_full_day_meetings()
 
     def get_meetings(self):
         """ Retrieves the list of this week meeting from the database.
@@ -50,6 +52,21 @@ class Week(object):
                         meeting.recursion_frequency) == 0:
                     if meeting not in self.meetings:
                         self.meetings.append(meeting)
+
+    def get_full_day_meetings(self):
+        """ Retrieve all the full day meetings of this week. """
+        self.full_day_meetings = Meeting.get_by_date(self.session,
+            self.calendar, self.start_date, self.stop_date,
+            full_day=True)
+
+        for meeting in Meeting.get_active_regular_meeting(self.session,
+            self.calendar, self.stop_date, full_day=True):
+            for delta in range(0, 7):
+                day = self.start_date + timedelta(days=delta)
+                if ((meeting.meeting_date - day).days %
+                        meeting.recursion_frequency) == 0:
+                    if meeting not in self.full_day_meetings:
+                        self.full_day_meetings.append(meeting)
 
     def __repr__(self):
         """ Representation of the Week object when printed.

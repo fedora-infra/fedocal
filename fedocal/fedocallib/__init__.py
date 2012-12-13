@@ -462,7 +462,7 @@ def agenda_is_free(session, calendarobj, meeting_date,
 
 
 def agenda_is_free_in_future(session, calendarobj, meeting_date,
-    time_start, time_stop):
+    recursion_ends, time_start, time_stop):
     """For recursive meeting, check for meetings happening at the
     specified time between the specified date and to the end of the
     recursion.
@@ -475,7 +475,7 @@ def agenda_is_free_in_future(session, calendarobj, meeting_date,
     :arg time_stop: the time at which the meeting stops (as int)
     """
     meetings = get_by_date(session, calendarobj, meeting_date,
-        meeting_date + timedelta(days=1))
+        recursion_ends)
     agenda_free = True
     for meeting in set(meetings):
         if meeting.meeting_date != meeting_date:
@@ -714,7 +714,7 @@ def add_meeting(session, calendarobj, fas_user,
 
     if frequency and end_repeats:
         futur_meeting_at_time = agenda_is_free_in_future(session, calendarobj,
-                meeting_date, meeting_time_start.time(),
+                meeting_date, end_repeats, meeting_time_start.time(),
                 meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
@@ -804,8 +804,8 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
 
     if recursion_frequency and recursion_ends:
         futur_meeting_at_time = agenda_is_free_in_future(session,
-            calendarobj, meeting_date, meeting_time_start.time(),
-            meeting_time_stop.time())
+            calendarobj, meeting_date, recursion_ends,
+            meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
             not(futur_meeting_at_time):

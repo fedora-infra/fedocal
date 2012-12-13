@@ -154,6 +154,7 @@ class Meetingtests(Modeltests):
             recursion_frequency=7,
             recursion_ends=TODAY + timedelta(days=90))
         obj.save(self.session)
+
         obj = model.Meeting(  # id:8
             meeting_name='Another test meeting2',
             meeting_manager='pingou,',
@@ -397,6 +398,17 @@ class Meetingtests(Modeltests):
         self.assertEqual(obj[1].meeting_information,
             'This is a test meeting with recursion2')
         self.assertEqual(obj[1].reminder, None)
+
+        obj = model.Meeting.get_by_date(self.session, cal,
+                week_start, week_stop, no_recursive=True)
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton,')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a test meeting')
+        self.assertEqual(obj[0].reminder, None)
 
         week_stop = week_day + timedelta(days=12)
         obj = model.Meeting.get_by_date(self.session, cal,

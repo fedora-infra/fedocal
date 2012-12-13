@@ -520,10 +520,11 @@ class Fedocallibtests(Modeltests):
             TODAY + timedelta(days=10),
             TODAY + timedelta(days=12)
             )
-        self.assertEqual(len(meetings), 3)
+        self.assertEqual(len(meetings), 4)
         for meeting in meetings:
             self.assertTrue(meeting.meeting_name in ['test-meeting2',
-                'Another test meeting', 'Test meeting with reminder'])
+                'Another test meeting', 'Test meeting with reminder',
+                'Test meeting with reminder and recursion'])
             self.assertEqual(meeting.meeting_manager, 'pingou,')
 
     # pylint: disable=C0103

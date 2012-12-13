@@ -148,8 +148,8 @@ class Flasktests(Modeltests):
         self.assertTrue('DESCRIPTION:This is a test meeting with '\
             'recursion' in output.data)
         self.assertTrue('ORGANIZER:pingou' in output.data)
-        self.assertEqual(output.data.count('BEGIN:VEVENT'), 8)
-        self.assertEqual(output.data.count('END:VEVENT'), 8)
+        self.assertEqual(output.data.count('BEGIN:VEVENT'), 45)
+        self.assertEqual(output.data.count('END:VEVENT'), 45)
 
     def test_view_meeting(self):
         """ Test the view_meeting function. """

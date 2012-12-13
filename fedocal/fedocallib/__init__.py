@@ -20,7 +20,6 @@ import operator
 
 from datetime import datetime
 from datetime import date
-from datetime import time
 from datetime import timedelta
 
 from sqlalchemy import create_engine
@@ -325,8 +324,7 @@ def get_meetings_by_date(session, calendar_name, start_date, end_date):
         meetings (this day is excluded from the selection).
     """
     calendar = Calendar.by_id(session, calendar_name)
-    return Meeting.get_by_date(session, calendar, start_date,
-        end_date)
+    return get_by_date(session, calendar, start_date, end_date)
 
 
 def get_meetings_by_date_and_region(session, calendar, start_date,
@@ -376,26 +374,14 @@ def get_past_meeting_of_user(session, username, tzone='UTC',
     :kwarg from_date: the date from which the futur meetings should be
         retrieved. Defaults to today
     """
-    meetings_tmp = Meeting.get_past_meeting_of_user(session, username,
-        from_date)
+    meetings_tmp = Meeting.expand_regular_meetings(
+        Meeting.get_past_meeting_of_user(session, username,
+            from_date),
+        end_date=from_date)
     meetings = []
     for meeting in meetings_tmp:
-        if meeting.recursion_frequency and meeting.recursion_ends:
-            rec_meetings = []
-            cnt = 0
-            meetingobj = Meeting.copy(meeting)
-            while meetingobj.meeting_date < from_date:
-                meetingobj = Meeting.copy(meeting)
-                meetingobj.meeting_date = meetingobj.meeting_date + \
-                    timedelta(days=meeting.recursion_frequency * cnt)
-                cnt = cnt + 1
-                if meetingobj.meeting_date < from_date:
-                    rec_meetings.append(convert_meeting_timezone(
-                        meetingobj, 'UTC', tzone))
-            rec_meetings.reverse()
-            meetings.extend(rec_meetings)
-        else:
-            meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
+        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
+    meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 
 
@@ -443,10 +429,10 @@ def get_future_regular_meeting_of_user(session, username, tzone='UTC',
     return meetings
 
 
-def agenda_is_free(session, calendar, meeting_date,
+def agenda_is_free(session, calendarobj, meeting_date,
     time_start, time_stop):
     """Check if there is already someting planned in this agenda at that
-    time.
+    time on that day.
 
     :arg session: the database session to use
     :arg calendar: the name of the calendar of interest.
@@ -454,14 +440,12 @@ def agenda_is_free(session, calendar, meeting_date,
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
     """
-    meetings = Meeting.at_time(session, calendar, meeting_date,
-        time_start)
-    meetings.extend(Meeting.at_time(session, calendar, meeting_date,
-        time_stop))
-    meetings.extend(Meeting.get_by_time(session, calendar, meeting_date,
-        time_start, time_stop))
+    meetings = get_by_date(session, calendarobj, meeting_date,
+        meeting_date + timedelta(days=1))
     agenda_free = True
     for meeting in set(meetings):
+        if meeting.meeting_date != meeting_date:
+            continue
         if time_start <= meeting.meeting_time_start \
             and meeting.meeting_time_start < time_stop:
             agenda_free = False
@@ -477,27 +461,25 @@ def agenda_is_free(session, calendar, meeting_date,
     return agenda_free
 
 
-def agenda_is_free_in_future(session, calendar, meeting_date,
-    recursion_ends, time_start, time_stop):
+def agenda_is_free_in_future(session, calendarobj, meeting_date,
+    time_start, time_stop):
     """For recursive meeting, check for meetings happening at the
-    specified time between the specified date and the end of the
+    specified time between the specified date and to the end of the
     recursion.
 
     :arg session: the database session to use
-    :arg calendar: the name of the calendar of interest.
+    :arg calendarobj: the calendar of interest.
     :arg meeting_date: the date of the meeting (as Datetime object)
     :arg recursion_ends: the end date of the recursion
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
     """
-    meetings = Meeting.in_future_at_time(session, calendar, meeting_date,
-        recursion_ends, time_start)
-    meetings.extend(Meeting.in_future_at_time(session, calendar,
-        meeting_date, recursion_ends, time_stop))
-    meetings.extend(Meeting.get_in_future_by_time(session, calendar,
-        meeting_date, recursion_ends, time_start, time_stop))
+    meetings = get_by_date(session, calendarobj, meeting_date,
+        meeting_date + timedelta(days=1))
     agenda_free = True
     for meeting in set(meetings):
+        if meeting.meeting_date != meeting_date:
+            continue
         if time_start <= meeting.meeting_time_start \
             and meeting.meeting_time_start < time_stop:
             agenda_free = False
@@ -674,31 +656,13 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
         defaults to UTC.
     """
     meetings_utc = Meeting.get_by_date(session, calendarobj, start_date,
-        end_date)
-    meetings_utc.extend(Meeting.get_active_regular_meeting(session,
-        calendarobj, start_date))
+        end_date, no_recursive=True)
+    meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
+        calendarobj, start_date, end_date))
     meetings = []
     for meeting in list(set(meetings_utc)):
-        if meeting.recursion_frequency and meeting.recursion_ends:
-            meeting_date = meeting.meeting_date
-            cnt = 0
-            while meeting_date < end_date and \
-                meeting_date <= meeting.recursion_ends:
-                recmeeting = meeting.copy()
-                if meeting_date >= start_date:
-                    recmeeting.meeting_id = meeting.meeting_id
-                    recmeeting.meeting_date = meeting.meeting_date + timedelta(
-                        days=meeting.recursion_frequency * cnt)
-                    recmeeting.meeting_date_end = meeting.meeting_date_end \
-                        + timedelta(days=meeting.recursion_frequency * cnt)
-                    meetings.append(convert_meeting_timezone(recmeeting,
-                        'UTC', tzone))
-                cnt = cnt + 1
-                meeting_date = meeting.meeting_date + timedelta(
-                    days=meeting.recursion_frequency * cnt)
-        else:
-            meetings.append(convert_meeting_timezone(meeting, 'UTC',
-                    tzone))
+        meetings.append(convert_meeting_timezone(meeting, 'UTC',
+                tzone))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 
@@ -750,8 +714,8 @@ def add_meeting(session, calendarobj, fas_user,
 
     if frequency and end_repeats:
         futur_meeting_at_time = agenda_is_free_in_future(session, calendarobj,
-                meeting_date, end_repeats,
-                meeting_time_start.time(), meeting_time_stop.time())
+                meeting_date, meeting_time_start.time(),
+                meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
             not(futur_meeting_at_time):
@@ -840,8 +804,8 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
 
     if recursion_frequency and recursion_ends:
         futur_meeting_at_time = agenda_is_free_in_future(session,
-            calendarobj, meeting_date, recursion_ends,
-            meeting_time_start.time(), meeting_time_stop.time())
+            calendarobj, meeting_date, meeting_time_start.time(),
+            meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
             not(futur_meeting_at_time):

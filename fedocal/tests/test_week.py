@@ -111,7 +111,7 @@ class Weektests(Modeltests):
         self.assertEqual(weekobj.meetings[1].meeting_information,
             'This is a test meeting with recursion2')
 
-    def test_meeting_in_week(self):
+    def test_meeting_in_week_full_day(self):
         """ Test that the meetings in the week are correct function. """
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
         weekobj = week.Week(self.session, calendar, TODAY)

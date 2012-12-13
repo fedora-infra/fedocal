@@ -216,8 +216,6 @@ def calendar_list(calendar_name, year, month, day):
     auth_form = forms.LoginForm()
     admin = is_admin()
 
-    today = datetime.date.today()
-
     curmonth_cal = fedocallib.get_html_monthly_cal(year=year,
         month=month, day=day, calendar_name=calendar_name)
     return flask.render_template('meeting_list.html',

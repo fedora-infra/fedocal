@@ -347,7 +347,6 @@ class Meeting(BASE):
             ).order_by(Meeting.meeting_date).all()
         return meetings
 
-
     @classmethod
     def get_regular_meeting_by_date(cls, session, calendar, start_date,
         end_date, full_day=False):
@@ -467,7 +466,6 @@ class Meeting(BASE):
                     days=meeting.recursion_frequency)
         return meetings
 
-
     @classmethod
     def expand_regular_meetings(cls, meetings_in, end_date=None,
         start_date=None):
@@ -517,6 +515,7 @@ class Meeting(BASE):
                 meetings.append(meeting)
         meetings.sort(key=operator.attrgetter('meeting_date'))
         return meetings
+
 
 class Reminder(BASE):
     """ Reminders table.

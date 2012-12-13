@@ -335,7 +335,7 @@ class Meeting(BASE):
 
     @classmethod
     def get_active_regular_meeting_by_date(cls, session, calendar,
-        start_date, end_date, full_day=False):
+        start_date, full_day=False):
         """ Retrieve the list of recursive meetings occuring after the
         start_date in the specified calendar.
         """

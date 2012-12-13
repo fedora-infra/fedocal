@@ -29,11 +29,8 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 
-import ConfigParser
-import os
 import datetime
 from dateutil.relativedelta import relativedelta
-from urlparse import urljoin, urlparse
 import vobject
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -44,7 +41,7 @@ import forms as forms
 import fedocal.fedocallib as fedocallib
 import fedocallib.dbaction
 from fedocal.fedocallib.exceptions import FedocalException
-from fedocal.fedocallib.model import (Calendar, Meeting, Reminder)
+from fedocal.fedocallib.model import (Calendar, Meeting)
 
 # Create the application.
 APP = flask.Flask(__name__)

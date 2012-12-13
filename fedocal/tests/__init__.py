@@ -35,7 +35,6 @@ import sys
 import os
 
 from datetime import date
-from datetime import time
 from datetime import timedelta
 
 from sqlalchemy import create_engine

@@ -79,9 +79,11 @@
         {% endfor %}
         <tr>
             <th rowspan="2" class="time">00h00</th>
+            {% if meetings %}
             {% for meeting_list in meetings['23h30'] %}
                 {{ render_meetings(meeting_list, loop.index) }}
             {% endfor %}
+            {% endif %}
         </tr>
         <tr>
             <td colspan="7" class="empty"></td>

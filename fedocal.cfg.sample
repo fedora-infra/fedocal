@@ -21,3 +21,9 @@ SMTP_SERVER='localhost'
 ### avoid sending multiple reminders for a single meeting.
 ### Default: 30
 CRON_FREQUENCY=30
+
+### Path to the alembic configuration file
+### When creating the database, we need to tell the database which
+### revision of alembic we are at and to do this we need access to the
+### alembic.ini file.
+PATH_ALEMBIC_INI='/path/to/alembic.ini'

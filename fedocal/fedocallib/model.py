@@ -42,7 +42,7 @@ from sqlalchemy.sql import and_
 BASE = declarative_base()
 
 
-def create_tables(db_url, alembic_ini, debug=False):
+def create_tables(db_url, alembic_ini=None, debug=False):
     """ Create the tables in the database using the information from the
     url obtained.
 
@@ -50,20 +50,22 @@ def create_tables(db_url, alembic_ini, debug=False):
     information with regards to the database engine, the host to connect
     to, the user and password and the database name.
       ie: <engine>://<user>:<password>@<host>/<dbname>
-    :arg alembic_ini, path to the alembic ini file.
+    :kwarg alembic_ini, path to the alembic ini file. This is necessary to be
+	   able to use alembic correctly, but not for the unit-tests.
     :kwarg debug, a boolean specifying wether we should have the verbose
     output of sqlalchemy or not.
     :return a session that can be used to query the database.
     """
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
-    
-    # then, load the Alembic configuration and generate the
-    # version table, "stamping" it with the most recent rev:
-    from alembic.config import Config
-    from alembic import command
-    alembic_cfg = Config(alembic_ini)
-    command.stamp(alembic_cfg, "head")
+
+    if alembic_ini is not None:
+        # then, load the Alembic configuration and generate the
+        # version table, "stamping" it with the most recent rev:
+        from alembic.config import Config
+        from alembic import command
+        alembic_cfg = Config(alembic_ini)
+        command.stamp(alembic_cfg, "head")
 
     sessionmak = sessionmaker(bind=engine)
     return sessionmak()

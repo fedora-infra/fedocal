@@ -16,7 +16,7 @@ import sqlalchemy as sa
 
 def upgrade():
     op.add_column('meetings', sa.Column('full_days',
-        sa.Boolean))
+        sa.Boolean, default=False))
 
 
 def downgrade():

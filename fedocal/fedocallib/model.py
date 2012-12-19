@@ -51,7 +51,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     to, the user and password and the database name.
       ie: <engine>://<user>:<password>@<host>/<dbname>
     :kwarg alembic_ini, path to the alembic ini file. This is necessary to be
-	   able to use alembic correctly, but not for the unit-tests.
+      able to use alembic correctly, but not for the unit-tests.
     :kwarg debug, a boolean specifying wether we should have the verbose
     output of sqlalchemy or not.
     :return a session that can be used to query the database.

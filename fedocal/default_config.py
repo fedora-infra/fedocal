@@ -23,6 +23,8 @@
  MA 02110-1301, USA.
 """
 
+import os
+
 
 # url to the database server:
 DB_URL = 'sqlite:////var/tmp/fedocal_dev.sqlite'
@@ -39,3 +41,7 @@ SMTP_SERVER = 'localhost'
 
 # The cron job can be set with any frequency but fedocal_cron
 CRON_FREQUENCY = 30
+
+# Path to the alembic configuration file
+PATH_ALEMBIC_INI=os.path.join(os.path.dirname(os.path.abspath(__file__)),
+    '..','alembic.ini')

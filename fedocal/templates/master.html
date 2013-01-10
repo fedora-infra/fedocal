@@ -103,7 +103,8 @@
             </div>
             {% if admin %}
                 <h4> Admin </h4>
-                <ul>
+                <div>
+                <ul class="checkmark-list">
                     <li>
                         <a href="{{ url_for('add_calendar') }}"> Add a calendar </a>
                     </li>
@@ -118,6 +119,7 @@
                     </li>
                     {% endif %}
                 </ul>
+                </div>
             {% endif %}
             </div>
         </aside>

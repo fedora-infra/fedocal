@@ -25,7 +25,7 @@
 
 
 # url to the database server:
-DB_URL = 'sqlite:////tmp/fedocal_dev.sqlite'
+DB_URL = 'sqlite:////var/tmp/fedocal_dev.sqlite'
 
 
 # The FAS group in which the admin of fedocal are

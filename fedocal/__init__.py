@@ -226,6 +226,22 @@ def calendar_list(calendar_name, year, month, day):
         admin=admin)
 
 
+@APP.route('/ical/')
+def ical_all():
+    """ Returns a iCal feed of all calendars from today - 1 month to
+    today + 6 month.
+    """
+    startd = datetime.date.today() - datetime.timedelta(days=30)
+    endd = datetime.date.today() + datetime.timedelta(days=180)
+    ical = vobject.iCalendar()
+    meetings = []
+    for calendar in Calendar.get_all(SESSION):
+        meetings.extend(fedocallib.get_meetings_by_date(SESSION,
+            calendar.calendar_name, startd, endd))
+    fedocallib.add_meetings_to_vcal(ical, meetings)
+    return flask.Response(ical.serialize(), mimetype='text/calendar')
+
+
 @APP.route('/ical/<calendar_name>/')
 def ical_out(calendar_name):
     """ Returns a iCal feed of the calendar from today - 1 month to

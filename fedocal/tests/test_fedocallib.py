@@ -262,7 +262,7 @@ class Fedocallibtests(Modeltests):
             meeting_time))
 
         meeting_time = datetime.utcnow() - timedelta(hours=1)
-        self.assertFalse(fedocallib.is_date_in_future(meeting_date,
+        self.assertFalse(fedocallib.is_date_in_future(meeting_time.date(),
             meeting_time))
 
         meeting_date = date.today() + timedelta(days=1)
@@ -270,7 +270,7 @@ class Fedocallibtests(Modeltests):
         self.assertTrue(fedocallib.is_date_in_future(meeting_date,
             meeting_time))
 
-        meeting_date = date.today() - timedelta(days=1)
+        meeting_date = date.today() - timedelta(days=2)
         self.assertFalse(fedocallib.is_date_in_future(meeting_date,
             meeting_time))
 
@@ -931,7 +931,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited2',
-            TODAY + timedelta(days=1), None,
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), 'pingou',
             'Information2', 'EMEA', 'Europe/Paris',
             None, None,
@@ -946,7 +946,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited',
-            TODAY + timedelta(days=1), None,
+            date.today() + timedelta(days=1), None,
             time(23, 0), time(23, 59), None,
             'Information', 'EMEA', 'Europe/Paris',
             None, None,
@@ -963,7 +963,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited2',
-            TODAY + timedelta(days=1), None,
+            date.today() + timedelta(days=1), None,
             time(22, 0), time(23, 0), None,
             'Information', 'EMEA', 'Europe/Paris',
             7, TODAY + timedelta(days=30),

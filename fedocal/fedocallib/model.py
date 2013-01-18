@@ -251,16 +251,25 @@ class Meeting(BASE):
             meeting.recursion_ends = self.recursion_ends
             meeting.full_day = self.full_day
         else:
-            meeting = Meeting(self.meeting_name, self.meeting_manager,
-                self.meeting_date, self.meeting_date_end,
-                self.meeting_time_start, self.meeting_time_stop,
-                self.meeting_information,
-                self.calendar_name,
-                self.reminder_id,
-                self.meeting_region,
-                self.recursion_frequency,
-                self.recursion_ends,
-                self.full_day)
+            meeting = Meeting(
+                meeting_name=self.meeting_name,
+                meeting_manager=self.meeting_manager,
+                meeting_date=self.meeting_date,
+                meeting_date_end=self.meeting_date_end,
+                meeting_time_start=self.meeting_time_start,
+                meeting_time_stop=self.meeting_time_stop,
+                meeting_information=self.meeting_information,
+                calendar_name=self.calendar_name,
+                reminder_id=self.reminder_id,
+                meeting_region=self.meeting_region,
+                recursion_frequency=self.recursion_frequency,
+                recursion_ends=self.recursion_ends,
+                full_day=self.full_day
+                )
+        # Update object associated to the meeting
+        meeting.reminder = self.reminder
+        meeting.calendar = self.calendar
+        meeting.reminder = self.reminder
         return meeting
 
     @classmethod

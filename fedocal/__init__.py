@@ -411,7 +411,7 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     if not flask.g.fas_user.username in \
         Meeting.get_managers(SESSION, meeting_id):
-        flask.flash('You are not one of the manager of this meeting, '\
+        flask.flash('You are not one of the manager of this meeting, '
             'you are not allowed to edit it.')
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
@@ -446,7 +446,7 @@ def edit_meeting(meeting_id):
                 tzone=tzone)
         except SQLAlchemyError, err:
             SESSION.rollback()
-            print 'edit_meeting:',  err
+            print 'edit_meeting:', err
             flask.flash('Could not update this meeting.')
             return flask.render_template('edit_meeting.html',
                 meeting=meeting, calendar=calendarobj, form=form,
@@ -470,7 +470,7 @@ def edit_meeting(meeting_id):
             meeting = meetingobj
         if not fedocallib.is_date_in_future(meeting.meeting_date,
             meeting.meeting_time_start):
-            flask.flash('This meeting has already occured, you may not '\
+            flask.flash('This meeting has already occured, you may not '
                 'change it anymore')
             return flask.redirect(flask.url_for('my_meetings'))
         form = forms.AddMeetingForm(meeting=meeting, tzone=get_timezone())
@@ -528,7 +528,7 @@ def delete_meeting(meeting_id):
                 SESSION.commit()
             except SQLAlchemyError, err:
                 SESSION.rollback()
-                print 'edit_meeting:',  err
+                print 'edit_meeting:', err
                 flask.flash('Could not update this meeting.')
         flask.flash('Meeting deleted')
         return flask.redirect(flask.url_for('calendar',
@@ -559,7 +559,7 @@ def delete_calendar(calendar_name):
                 SESSION.commit()
             except SQLAlchemyError, err:
                 SESSION.rollback()
-                print 'delete_calendar:',  err
+                print 'delete_calendar:', err
                 flask.flash('Could not delete this calendar.')
         flask.flash('Calendar deleted')
         return flask.redirect(flask.url_for('index'))
@@ -596,7 +596,7 @@ def edit_calendar(calendar_name):
             SESSION.commit()
         except SQLAlchemyError, err:
             SESSION.rollback()
-            print 'edit_calendar:',  err
+            print 'edit_calendar:', err
             flask.flash('Could not update this calendar.')
             return flask.render_template('edit_calendar.html', form=form,
             calendar=calendarobj)

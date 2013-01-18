@@ -681,11 +681,11 @@ def add_meeting(session, calendarobj, fas_user,
     """
     if not is_user_managing_in_calendar(session,
         calendarobj.calendar_name, fas_user):
-        raise UserNotAllowed('You are not allowed to add'\
+        raise UserNotAllowed('You are not allowed to add'
             ' a meeting to this calendar')
 
     if not is_date_in_future(meeting_date, meeting_time_start):
-        raise InvalidMeeting('The date you entered is in '\
+        raise InvalidMeeting('The date you entered is in '
             'the past')
 
     if meeting_time_start > meeting_time_stop:
@@ -759,7 +759,7 @@ def add_meeting(session, calendarobj, fas_user,
 
 
 def edit_meeting(session, meeting, calendarobj, fas_user,
-    meeting_name, meeting_date,  meeting_date_end,
+    meeting_name, meeting_date, meeting_date_end,
     meeting_time_start, meeting_time_stop, comanager,
     meeting_information,
     meeting_region, tzone,
@@ -772,11 +772,11 @@ def edit_meeting(session, meeting, calendarobj, fas_user,
     """
     if not is_user_managing_in_calendar(session,
         calendarobj.calendar_name, fas_user):
-        raise UserNotAllowed('You are not allowed to add'\
+        raise UserNotAllowed('You are not allowed to add'
             ' a meeting to this calendar')
 
     if not is_date_in_future(meeting_date, meeting_time_start):
-        raise InvalidMeeting('The date you entered is in '\
+        raise InvalidMeeting('The date you entered is in '
             'the past')
 
     if meeting_time_start > meeting_time_stop:

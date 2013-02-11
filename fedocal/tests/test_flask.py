@@ -137,6 +137,42 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
+    def test_calendar_list(self):
+        """ Test the calendar_list function. """
+        self.__setup_db()
+
+        today = date.today()
+        output = self.app.get('/list/test_calendar/%s/%s/%s/' % (
+            today.year, today.month, today.day))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> test_calendar  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/%s' % (
+            today.year, today.month, today.day))
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/list/test_calendar/%s/%s/%s/' % (
+            today.year, today.month, today.day), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> test_calendar  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/' % (
+            today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> test_calendar  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
     def test_ical_out(self):
         """ Test the ical_out function. """
         self.__setup_db()
@@ -150,6 +186,20 @@ class Flasktests(Modeltests):
         self.assertTrue('ORGANIZER:pingou' in output.data)
         self.assertEqual(output.data.count('BEGIN:VEVENT'), 45)
         self.assertEqual(output.data.count('END:VEVENT'), 45)
+
+    def test_ical_all(self):
+        """ Test the ical_all function. """
+        self.__setup_db()
+
+        output = self.app.get('/ical/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('BEGIN:VCALENDAR' in output.data)
+        self.assertTrue('SUMMARY:test-meeting2' in output.data)
+        self.assertTrue('DESCRIPTION:This is a test meeting with '\
+            'recursion' in output.data)
+        self.assertTrue('ORGANIZER:pingou' in output.data)
+        self.assertEqual(output.data.count('BEGIN:VEVENT'), 50)
+        self.assertEqual(output.data.count('END:VEVENT'), 50)
 
     def test_view_meeting(self):
         """ Test the view_meeting function. """

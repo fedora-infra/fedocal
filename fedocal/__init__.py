@@ -28,14 +28,15 @@
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
+__version__ = '0.1.0'
 
 import datetime
-from dateutil.relativedelta import relativedelta
-import vobject
-from sqlalchemy.exc import SQLAlchemyError
-
 import flask
+import os
+import vobject
+from dateutil.relativedelta import relativedelta
 from flask_fas import FAS, cla_plus_one_required
+from sqlalchemy.exc import SQLAlchemyError
 
 import forms as forms
 import fedocal.fedocallib as fedocallib
@@ -48,8 +49,12 @@ APP = flask.Flask(__name__)
 # set up FAS
 FAS = FAS(APP)
 APP.config.from_object('fedocal.default_config')
-APP.config.from_envvar('FEDOCAL_CONFIG')
+
+if 'FEDOCAL_CONFIG' in os.environ:
+    APP.config.from_envvar('FEDOCAL_CONFIG')
+
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
+
 
 
 import fedocal.api

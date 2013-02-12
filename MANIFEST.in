@@ -1,0 +1,5 @@
+include LICENSE README.rst *.sample fedocal.wsgi requirements.txt
+include run_tests.sh createdb createdb.py
+recursive-include alembic *
+include doc/*
+

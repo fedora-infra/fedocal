@@ -4,7 +4,7 @@
 Setup script
 """
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from fedocal import __version__
 
 setup(

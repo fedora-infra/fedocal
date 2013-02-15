@@ -34,6 +34,7 @@ Requires:  python-fedora
 Requires:  python-alembic
 Requires:  python-dateutil <= 1.5
 Requires:  python-setuptools
+Requires:  mod_wsgi
 
 %description
 fedocal is a web- based calendar application for Fedora. It aims at replacing

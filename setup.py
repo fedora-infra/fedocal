@@ -18,7 +18,7 @@ setup(
     license = 'GPLv3+',
     download_url = 'https://fedorahosted.org/releases/f/e/fedocal/',
     url = 'https://fedorahosted.org/fedocal/',
-    packages=['fedocal'],
+    packages=['fedocal', 'fedocal.fedocallib'],
     include_package_data = True,
     exclude_package_data={'': ['tests/*']},
     install_requires=['Flask']

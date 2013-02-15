@@ -53,13 +53,24 @@ most calendar application.
 rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
+# Install wsgi, apache configuration and fedocal configuration files
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/
+install -m 644 fedocal.conf $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/fedocal.conf
+
+install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{python_sitelib}/fedocal/fedocal.wsgi
+
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal
+install -m 644 fedocal.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/fedocal.cfg
+
 
 %files
 %doc README.rst LICENSE doc/
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/fedocal.conf
+%config(noreplace) %{_sysconfdir}/fedocal/
 %{python_sitelib}/*
 
 
 %changelog
-* Fri Feb 15 2013 Pierre-Yves Chibon <pingou@pingoured.fr> -0.1.0-1
+* Fri Feb 15 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.0-1
 - Initial packaging work for Fedora
 

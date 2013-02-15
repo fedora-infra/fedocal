@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #-*- coding: UTF-8 -*-
 
 """
@@ -613,7 +612,3 @@ def edit_calendar(calendar_name):
         form = forms.AddCalendarForm(calendar=calendarobj)
     return flask.render_template('edit_calendar.html', form=form,
             calendar=calendarobj)
-
-if __name__ == '__main__':  # pragma: no cover
-    APP.debug = True
-    APP.run()

@@ -21,5 +21,7 @@ setup(
     packages=['fedocal', 'fedocal.fedocallib'],
     include_package_data = True,
     exclude_package_data={'': ['tests/*']},
-    install_requires=['Flask']
+    install_requires=['Flask', 'SQLAlchemy>=0.6', 'wtforms', 'flask-wtf',
+    'vobject', 'kitchen', 'python-fedora', 'pytz', 'python-dateutil<=1.5',
+    'alembic'],
     )

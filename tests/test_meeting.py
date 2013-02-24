@@ -40,7 +40,7 @@ from datetime import timedelta
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from fedocallib import model
+from fedocal.fedocallib import model
 from tests import Modeltests, TODAY
 from test_calendar import Calendartests
 
@@ -374,6 +374,38 @@ class Meetingtests(Modeltests):
             '}' % (TODAY, TODAY)
         self.assertEqual(obj.to_json(), exp)
 
+    def test_get_at_date(self):
+        """ Test the get_at_date function. """
+        self.test_init_meeting()
+        cal = model.Calendar.by_id(self.session, 'test_calendar')
+        obj = model.Meeting.get_at_date(self.session, cal,
+                TODAY)
+
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 2)
+        self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton,')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a test meeting')
+        self.assertEqual(obj[0].reminder, None)
+
+    def test_get_at_time(self):
+        """ Test the get_at_time function. """
+        self.test_init_meeting()
+        cal = model.Calendar.by_id(self.session, 'test_calendar')
+        obj = model.Meeting.get_at_time(self.session, cal,
+                TODAY, time(20, 00))
+
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton,')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a test meeting')
+        self.assertEqual(obj[0].reminder, None)
+
     def test_get_by_date(self):
         """ Test the query of a list of meetings between two dates. """
         self.test_init_meeting()
@@ -535,6 +567,23 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
+
+    def test_get_regular_meeting_at_date(self):
+        """ Test the get_regular_meeting_at_date function. """
+        self.test_init_meeting()
+        cal = model.Calendar.by_id(self.session, 'test_calendar')
+        obj = model.Meeting.get_regular_meeting_at_date(self.session,
+            cal, TODAY + timedelta(days=19))
+
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 1)
+        self.assertEqual(obj[0].meeting_name, 
+            'Test meeting with reminder and recursion')
+        self.assertEqual(obj[0].meeting_manager, 'pingou,')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a test meeting with recursion and reminder')
+        self.assertNotEqual(obj[0].reminder, None)
 
     # pylint: disable=C0103
     def test_get_future_single_meeting_of_user(self):

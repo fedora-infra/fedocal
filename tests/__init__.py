@@ -44,7 +44,7 @@ from sqlalchemy.orm import scoped_session
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from fedocallib import model, get_start_week
+from fedocal.fedocallib import model, get_start_week
 
 DB_PATH = '%s/test.db' % (os.path.dirname(
                                     os.path.abspath(__file__)))

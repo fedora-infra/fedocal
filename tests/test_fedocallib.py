@@ -46,9 +46,9 @@ from sqlalchemy.exc import IntegrityError
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import fedocallib
-from fedocallib import model
-from fedocallib.exceptions import UserNotAllowed, InvalidMeeting
+import fedocal.fedocallib as fedocallib
+from fedocal.fedocallib import model
+from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 from tests import Modeltests, TODAY, FakeUser
 
 

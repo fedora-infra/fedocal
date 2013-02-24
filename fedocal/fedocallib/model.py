@@ -59,7 +59,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
 
-    if alembic_ini is not None:
+    if alembic_ini is not None:  # pragma: no cover
         # then, load the Alembic configuration and generate the
         # version table, "stamping" it with the most recent rev:
         from alembic.config import Config
@@ -347,10 +347,14 @@ class Meeting(BASE):
         """ Retrieve the list of recursive meetings happening at the
         specified end_date.
         """
-        meetings = cls.expand_regular_meetings(
+        meetings_tmp = cls.expand_regular_meetings(
                 cls.get_active_regular_meeting(session, calendar,
                         end_date, full_day),
                 end_date)
+        meetings = []
+        for meeting in meetings_tmp:
+            if meeting.meeting_date == end_date:
+                meetings.append(meeting)
         return meetings
 
     @classmethod
@@ -500,7 +504,7 @@ class Meeting(BASE):
         """
         meetings = []
         for meeting in meetings_in:
-            if not end_date:
+            if not end_date:  # pragma: no cover
                 end_date = meeting.recursion_ends
             if meeting.recursion_frequency and meeting.recursion_ends:
                 meeting_date = meeting.meeting_date

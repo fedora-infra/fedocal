@@ -67,7 +67,8 @@ install -m 644 fedocal.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/fedocal
 %files
 %doc README.rst LICENSE doc/
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/fedocal.conf
-%config(noreplace) %{_sysconfdir}/fedocal/
+%config(noreplace) %{_sysconfdir}/fedocal/fedocal.cfg
+%dir %{_sysconfdir}/fedocal/
 %{python_sitelib}/*
 
 

@@ -8,7 +8,7 @@ Summary:        A web based calendar application
 
 License:        GPLv3+
 URL:            http://fedorahosted.org/fedocal/
-Source0:        fedocal-0.1.0.tar.gz
+Source0:        https://fedorahosted.org/releases/f/e/fedocal/%{name}-%{version}.tar.gz
 
 BuildArch:      noarch
 

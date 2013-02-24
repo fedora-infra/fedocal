@@ -36,7 +36,7 @@ import fedocallib
 def validate_time(form, field):
     """ Validate if the data set in the given field is a valid time. """
     import re
-    if not re.match('\d?\d:\d\d?', field.data):
+    if not re.match(r'\d?\d:\d\d?', field.data):
         raise ValidationError('Time must be of type "HH:MM"')
     time_data = field.data.split(':')
     try:

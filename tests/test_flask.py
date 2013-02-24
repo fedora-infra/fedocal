@@ -42,7 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import fedocal
 import fedocal.fedocallib as fedocallib
-from fedocal.tests import Modeltests, DB_PATH, FakeUser
+from tests import Modeltests, DB_PATH, FakeUser
 
 
 # pylint: disable=E1103

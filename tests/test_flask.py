@@ -38,18 +38,16 @@ import os
 from datetime import date
 
 sys.path.insert(0, os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '..', '..'))
+    os.path.abspath(__file__)), '..'))
 
 import fedocal
 import fedocal.fedocallib as fedocallib
-from tests import Modeltests, DB_PATH, FakeUser
+from tests import Modeltests, FakeUser
 
 
 # pylint: disable=E1103
 class Flasktests(Modeltests):
     """ Flask application tests. """
-
-    session = None
 
     def __setup_db(self):
         """ Add a calendar and some meetings so that we can play with
@@ -64,8 +62,7 @@ class Flasktests(Modeltests):
         super(Flasktests, self).setUp()
 
         fedocal.APP.config['TESTING'] = True
-        fedocal.SESSION = fedocallib.create_session(
-            'sqlite:///%s' % DB_PATH)
+        fedocal.SESSION = self.session
         self.app = fedocal.APP.test_client()
 
     def test_index_empty(self):

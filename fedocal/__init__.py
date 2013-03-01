@@ -55,7 +55,6 @@ if 'FEDOCAL_CONFIG' in os.environ:
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
 
-
 import fedocal.api
 
 

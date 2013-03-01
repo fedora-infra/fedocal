@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 
 """
- (c) 2012 - Copyright Pierre-Yves Chibon
+ (c) 2012-2013 - Copyright Pierre-Yves Chibon
  Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
@@ -46,8 +46,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from fedocal.fedocallib import model, get_start_week
 
-DB_PATH = '%s/test.db' % (os.path.dirname(
-                                    os.path.abspath(__file__)))
+#DB_PATH = '%s/test.db' % (os.path.dirname(
+                                    #os.path.abspath(__file__)))
+DB_PATH = ':memory:'
 
 TODAY = get_start_week(date.today().year, date.today().month,
     date.today().day) + timedelta(days=2)
@@ -64,10 +65,7 @@ class Modeltests(unittest.TestCase):
     # pylint: disable=C0103
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
-        model.create_tables('sqlite:///%s' % DB_PATH)
-        engine = create_engine('sqlite:///%s' % DB_PATH)
-        scopedsession = scoped_session(sessionmaker(bind=engine))
-        self.session = scopedsession
+        self.session = model.create_tables('sqlite:///%s' % DB_PATH)
 
     # pylint: disable=C0103
     def tearDown(self):

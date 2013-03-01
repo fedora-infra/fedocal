@@ -37,11 +37,12 @@ import os
 from datetime import timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '..', '..'))
+    os.path.abspath(__file__)), '..'))
 
 import fedocal
+import fedocal.api
 import fedocal.fedocallib as fedocallib
-from tests import Modeltests, DB_PATH, TODAY
+from tests import Modeltests, TODAY
 
 
 # pylint: disable=E1103
@@ -61,8 +62,8 @@ class FlaskApitests(Modeltests):
         super(FlaskApitests, self).setUp()
 
         fedocal.APP.config['TESTING'] = True
-        fedocal.APP.config['DB_URL'] = DB_PATH
         fedocal.SESSION = self.session
+        fedocal.api.SESSION = self.session
         self.app = fedocal.APP.test_client()
 
     def test_api(self):

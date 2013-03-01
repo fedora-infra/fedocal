@@ -36,13 +36,14 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation as relationship
 from sqlalchemy.sql import and_
 
 BASE = declarative_base()
 
 
-def create_tables(db_url, alembic_ini=None, debug=False):
+def create_tables(db_url, alembic_ini=None, debug=True):
     """ Create the tables in the database using the information from the
     url obtained.
 
@@ -67,8 +68,8 @@ def create_tables(db_url, alembic_ini=None, debug=False):
         alembic_cfg = Config(alembic_ini)
         command.stamp(alembic_cfg, "head")
 
-    sessionmak = sessionmaker(bind=engine)
-    return sessionmak()
+    scopedsession = scoped_session(sessionmaker(bind=engine))
+    return scopedsession
 
 
 class Calendar(BASE):

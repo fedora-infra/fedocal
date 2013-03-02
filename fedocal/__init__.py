@@ -34,7 +34,7 @@ import flask
 import os
 import vobject
 from dateutil.relativedelta import relativedelta
-from flask_fas import FAS, cla_plus_one_required
+from flask.ext.fas import FAS, cla_plus_one_required
 from sqlalchemy.exc import SQLAlchemyError
 
 import forms as forms

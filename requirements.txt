@@ -3,7 +3,6 @@
 alembic
 flask-wtf
 flask
-freezegun
 kitchen
 python-dateutil <= 1.5
 python-fedora

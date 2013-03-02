@@ -43,7 +43,7 @@ from sqlalchemy.sql import and_
 BASE = declarative_base()
 
 
-def create_tables(db_url, alembic_ini=None, debug=True):
+def create_tables(db_url, alembic_ini=None, debug=False):
     """ Create the tables in the database using the information from the
     url obtained.
 

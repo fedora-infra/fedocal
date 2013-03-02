@@ -40,7 +40,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from fedocallib.fedora_calendar import FedocalCalendar
-from tests import Modeltests
+from tests import Modeltests, TODAY
 
 
 class FedocalCalendartests(Modeltests):
@@ -61,7 +61,7 @@ class FedocalCalendartests(Modeltests):
 
     def test_formatweek(self):
         """ Test the formatweek function. """
-        today = date.today()
+        today = TODAY
         cal = FedocalCalendar(today.year, today.month, today.day)
         self.assertEqual(cal.formatweek([(1, 1), (2, 2)]),
             '<tr><td class="tue">1</td><td class="wed">2</td></tr>')

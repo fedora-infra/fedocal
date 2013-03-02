@@ -1,12 +1,13 @@
 # Used for when working from a virtualenv.
 # Use this file by running "$ pip install -r requirements.txt"
+alembic
+flask-wtf
 flask
-sqlalchemy
-wtforms
-Flask-wtf
-vobject
+freezegun
 kitchen
+python-dateutil <= 1.5
 python-fedora
 pytz
-alembic
-python-dateutil <= 1.5
+sqlalchemy
+vobject
+wtforms

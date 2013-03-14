@@ -76,6 +76,7 @@ install -m 644 fedocal.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/fedocal
 %dir %{_sysconfdir}/fedocal/
 %{python_sitelib}/fedocal/
 %{python_sitelib}/fedocal*.egg-info
+%{_bindir}/fedocal_cron.py
 
 
 %changelog

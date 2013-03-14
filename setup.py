@@ -25,6 +25,7 @@ setup(
     url = 'https://fedorahosted.org/fedocal/',
     packages=['fedocal'],
     include_package_data=True,
+    scripts=['fedocal_cron.py'],
     install_requires=['Flask', 'SQLAlchemy>=0.6', 'wtforms', 'flask-wtf',
     'vobject', 'kitchen', 'python-fedora', 'pytz', 'python-dateutil<=1.5',
     'alembic'],

@@ -26,4 +26,4 @@ CRON_FREQUENCY=30
 ### When creating the database, we need to tell the database which
 ### revision of alembic we are at and to do this we need access to the
 ### alembic.ini file.
-PATH_ALEMBIC_INI='/path/to/alembic.ini'
+PATH_ALEMBIC_INI='/etc/fedocal/alembic.ini'

@@ -67,7 +67,7 @@ install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{python_sitelib}/fedocal/fedocal.ws
 
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal
 install -m 644 fedocal.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/fedocal.cfg
-
+install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic.ini
 
 %files
 %doc README.rst LICENSE doc/

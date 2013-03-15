@@ -178,6 +178,8 @@ html_sidebars = {
         'fedocal-logo.html',
         'localtoc.html',
         'relations.html',
+        'sourcelink.html',
+        'searchbox.html',
     ]
 }
 

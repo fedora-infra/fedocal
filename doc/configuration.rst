@@ -1,7 +1,8 @@
 Configuration
 =============
 
-There are three main configuration options to set to have fedocal running
+There are the main configuration options to set to have fedocal running.
+These options are all present and described in the fedocal.cfg file.
 
 The secret key
 ---------------
@@ -32,6 +33,10 @@ Examples URLs are::
   DB_URL=mysql://user:pass@host/db_name
   DB_URL=postgres://user:pass@host/db_name
   DB_URL=sqlite:////full/path/to/database.sqlite
+
+
+.. note:: The key ``sqlalchemy.url`` of the ``alembic.ini`` file should
+          have the same value as the ``DB_URL`` described here.
 
 
 The admin group

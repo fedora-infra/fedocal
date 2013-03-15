@@ -9,17 +9,22 @@ Clone the source::
  git clone http://git.fedorahosted.org/git/fedocal.git
 
 
-Copy the configuration file::
+Copy the configuration files::
 
   cp fedocal.cfg.sample fedocal.cfg
+  cp alembic.ini.sample alembic.ini
 
-Adjust the configuration file (secret key, database URL, admin group...).
+Adjust the configuration files (secret key, database URL, admin group...).
 See :doc:`configuration` for detailed information about the configuration.
 
 
 Create the database scheme::
 
-   python fedocal/fedocallib/model.py
+   sh createdb
+
+or::
+
+   FEDOCAL_CONFIG=/path/to/fedocal.cfg python createdb.py
 
 Set up the WSGI as described below.
 
@@ -31,13 +36,9 @@ Start by install fedocal::
 
   yum install fedocal
 
-Find the sample configuration file::
-
-  rpm -ql fedocal |grep fedocal.cfg.sample
-
-Copy this file into (for example) ``/etc/`` with the name ``fedocal.cfg``::
-
-  cp /path/to/fedocal.cfg.sample /etc/fedocal.cfg
+Adjust the configuration files: ``/etc/fedocal/fedocaf.cfg`` and
+``/etc/fedocal/alembic.ini``.
+See :doc:`configuration` for detailed information about the configuration.
 
 Find the file used to create the database::
 
@@ -45,7 +46,7 @@ Find the file used to create the database::
 
 Create the database scheme::
 
-   FEDOCAL_CONFIG=/etc/fedocal/cfg python path/to/createdb.py
+   FEDOCAL_CONFIG=/etc/fedocal/fedocal.cfg python path/to/createdb.py
 
 Set up the WSGI as described below.
 
@@ -60,37 +61,14 @@ Start by installing ``mod_wsgi``::
 
 Then configure apache::
 
- sudo vim /etc/httd/conf.d/wsgi.conf
+ sudo vim /etc/httd/conf.d/fedocal.conf
 
-and put in this file::
-
-  WSGIScriptAlias /fedocal /var/www/wsgi/fedocal.wsgi
-  <Directory /var/www/wsgi/>
-      Order deny,allow
-      Allow from all
-  </Directory>
+uncomment the content of the file and adjust as desired.
 
 
-Then create the file /var/www/wsgi/fedocal.wsgi with::
+Then edit the file ``/usr/lib/python2.*/site-packages/fedocal/`` and
+adjust as needed.
 
- import os
- os.environ['FEDOCAL_CONFIG'] = '/etc/fedocal.cfg'
- 
- import fedocal
- application = fedocal.APP
-
-.. note:: If you run form the sources, you might have to add at the
-         top of the file ::
-
-            import sys
-            sys.path.insert(0, '/srv/fedocal/')
-
-         Adapt the path to your configuration
-
-
-.. seealso:: Within the sources of fedocal is a ``fedocal.wsgi`` which
-             can be used as a template for your own wsgi.
- 
 
 Then restart apache and you should be able to access the website on
 http://localhost/fedocal
@@ -120,8 +98,7 @@ Example of the cron job:
 
 ::
 
- */30 * * * *  FEDOCAL_CONFIG=/etc/fedocal.cfg python /path/to/fedocal_cron.py
-
+ */30 * * * *  FEDOCAL_CONFIG=/etc/fedocal/fedocal.cfg /usr/bin/fedocal_cron.py
 
 
 

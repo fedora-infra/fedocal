@@ -3,7 +3,7 @@
 
 Name:           fedocal
 Version:        0.1.1
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        A web based calendar application
 
 License:        GPLv3+
@@ -14,7 +14,6 @@ BuildArch:      noarch
 
 BuildRequires:  python2-devel
 BuildRequires:  python-flask
-BuildRequires:  python-sqlalchemy
 BuildRequires:  pytz
 BuildRequires:  python-wtforms
 BuildRequires:  python-flask-wtf
@@ -36,7 +35,6 @@ Requires:  python-sqlalchemy > 0.5
 %endif
 
 Requires:  python-flask
-Requires:  python-sqlalchemy
 Requires:  pytz
 Requires:  python-wtforms
 Requires:  python-flask-wtf

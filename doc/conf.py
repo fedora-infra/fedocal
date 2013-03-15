@@ -176,6 +176,8 @@ html_static_path = ['_static']
 html_sidebars = {
     '**': [
         'fedocal-logo.html',
+        'localtoc.html',
+        'relations.html',
     ]
 }
 

@@ -81,6 +81,7 @@ install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic
 %doc createdb.py
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/fedocal.conf
 %config(noreplace) %{_sysconfdir}/fedocal/fedocal.cfg
+%config(noreplace) %{_sysconfdir}/fedocal/alembic.ini
 %dir %{_sysconfdir}/fedocal/
 %{python_sitelib}/fedocal/
 %{python_sitelib}/fedocal*.egg-info

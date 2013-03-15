@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.1.0
+Version:        0.1.1
 Release:        2%{?dist}
 Summary:        A web based calendar application
 
@@ -25,6 +25,15 @@ BuildRequires:  python-fedora-flask
 BuildRequires:  python-alembic
 BuildRequires:  python-dateutil <= 1.5
 BuildRequires:  python-setuptools
+
+# EPEL6
+%if ( 0%{?rhel} && 0%{?rhel} == 6 )
+BuildRequires:  python-sqlalchemy0.7
+Requires:  python-sqlalchemy0.7
+%else
+BuildRequires:  python-sqlalchemy > 0.5
+Requires:  python-sqlalchemy > 0.5
+%endif
 
 Requires:  python-flask
 Requires:  python-sqlalchemy
@@ -49,8 +58,6 @@ most calendar application.
 %prep
 %setup -q
 
-rm fedocal/flask_fas.py
-
 %build
 %{__python} setup.py build
 
@@ -71,6 +78,7 @@ install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic
 
 %files
 %doc README.rst LICENSE doc/
+%doc createdb.py
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/fedocal.conf
 %config(noreplace) %{_sysconfdir}/fedocal/fedocal.cfg
 %dir %{_sysconfdir}/fedocal/
@@ -80,6 +88,15 @@ install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic
 
 
 %changelog
+* Fri Mar 15 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.1.-1
+- Update to 0.1.1
+- Include the createdb.py script as %%doc
+- Add the alembic.ini into /etc/fedocal
+
+* Fri Mar 08 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.0-3
+- Fix import of flask-fas which fixes build on EL6
+- Fix Requires and BuilRequires for EL6
+
 * Tue Feb 26 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.0-2
 - Fix BR to python2-devel
 - Be more specific on the %%{python_sitelib} inclusion in %%files

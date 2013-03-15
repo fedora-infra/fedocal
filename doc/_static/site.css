@@ -2,12 +2,11 @@
 @import url("http://fonts.googleapis.com/css?family=Comfortaa");
 
 .fedocal-logo span {
-    background: url("fedocal.png") no-repeat scroll 0 0 transparent;
-    background-size: 100% 100%;
+    background: url("fedocal.png") no-repeat scroll 50% 0 transparent;
     display: block;
     width: 134px;
-    height: 44px;
-    margin-bottom:1px;
+    height: 64px;
+    margin-bottom: 10px;
   }
 
 h1.fedocal-logo {

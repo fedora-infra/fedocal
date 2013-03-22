@@ -9,7 +9,10 @@ fedocal is a web based calendar application.
 
 Get this project:
 -----------------
-Source:  https://github.com/pypingou/fedocal
+Source:  http://git.fedorahosted.org/cgit/fedocal.git/
+Mirror on github: https://github.com/fedora-infra/fedocal
+(Please use fedorahosted as the main repository and make sure
+you run your patch against it)
 
 Documentation: http://fedocal.rtfd.org
 

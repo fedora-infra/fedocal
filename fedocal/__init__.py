@@ -46,12 +46,12 @@ from fedocal.fedocallib.model import (Calendar, Meeting)
 # Create the application.
 APP = flask.Flask(__name__)
 # set up FAS
-FAS = FAS(APP)
 APP.config.from_object('fedocal.default_config')
 
 if 'FEDOCAL_CONFIG' in os.environ:
     APP.config.from_envvar('FEDOCAL_CONFIG')
 
+FAS = FAS(APP)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
 

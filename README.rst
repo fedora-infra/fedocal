@@ -71,10 +71,11 @@ Adjust the configuration file (secret key, database URL, admin group...)
 
 Create the database scheme::
 
- python fedocal/fedocallib/model.py
+ sh createdb
 
 
 Run the server::
+
  sh runserver
 
 You should be able to access the server at http://localhost:5000

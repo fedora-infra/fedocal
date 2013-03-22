@@ -13,3 +13,4 @@ build
 alembic.ini
 _build/
 pylint.out
+nosetests.xml

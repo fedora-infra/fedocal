@@ -45,13 +45,15 @@ class FedocalCalendar(HTMLCalendar):
         else:
             link_day = day
             if self.calendar_name:
-                link_day = '<a href="%s">%d</a>' % (flask.url_for(
+                link_day = '<a href="%s">%d</a>' % (
+                    flask.url_for(
                         'calendar',
                         calendar_name=self.calendar_name, year=self.year,
-                        month=self.month, day=day), day)
+                        month=self.month, day=day),
+                    day)
             if day == cur_date.day \
-                and self.month == cur_date.month \
-                and self.year == cur_date.year:
+                    and self.month == cur_date.month \
+                    and self.year == cur_date.year:
                 return '<td class="%s today">%s</td>' % (
                     self.cssclasses[weekday], link_day)
             else:

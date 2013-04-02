@@ -41,7 +41,7 @@ def api():
     auth_form = forms.LoginForm()
     admin = fedocal.is_admin()
     return flask.render_template('api.html', auth_form=auth_form,
-        admin=admin)
+                                 admin=admin)
 
 
 @APP.route('/api/date/<calendar_name>/')
@@ -54,8 +54,8 @@ def api_date_default(calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
-        startd, endd)
+    meetings = fedocallib.get_meetings_by_date(
+        SESSION, calendar_name, startd, endd)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'
     else:
@@ -91,16 +91,16 @@ def api_date(calendar_name, start_date, end_date):
     try:
         start_date = [int(item) for item in start_date]
         end_date = [int(item) for item in end_date]
-        startd = datetime.date(start_date[0], start_date[1],
-            start_date[2])
+        startd = datetime.date(
+            start_date[0], start_date[1], start_date[2])
         endd = datetime.date(end_date[0], end_date[1], end_date[2])
     except ValueError, error:
         output = '{ "retrieval": "notok", "meeting": [], "error": '\
             '"Date format invalid: %s"}' % error
         return flask.Response(output)
 
-    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
-        startd, endd)
+    meetings = fedocallib.get_meetings_by_date(
+        SESSION, calendar_name, startd, endd)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'
     else:
@@ -128,8 +128,8 @@ def api_place_default(region, calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    meetings = fedocallib.get_meetings_by_date_and_region(SESSION,
-        calendar_name, startd, endd, region)
+    meetings = fedocallib.get_meetings_by_date_and_region(
+        SESSION, calendar_name, startd, endd, region)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'
     else:
@@ -168,15 +168,15 @@ def api_place(region, calendar_name, start_date, end_date):
         start_date = [int(item) for item in start_date]
         end_date = [int(item) for item in end_date]
         startd = datetime.date(start_date[0], start_date[1],
-            start_date[2])
+                               start_date[2])
         endd = datetime.date(end_date[0], end_date[1], end_date[2])
     except ValueError, error:
         output = '{ "retrieval": "notok", "meeting": [], "error": '\
             '"Date format invalid: %s"}' % error
         return flask.Response(output)
 
-    meetings = fedocallib.get_meetings_by_date_and_region(SESSION,
-        calendar_name, startd, endd, region)
+    meetings = fedocallib.get_meetings_by_date_and_region(
+        SESSION, calendar_name, startd, endd, region)
     if not meetings:
         output = '{ "retrieval": "notok", "meeting": []}'
     else:

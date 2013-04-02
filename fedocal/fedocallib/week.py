@@ -41,11 +41,12 @@ class Week(object):
     def get_meetings(self):
         """ Retrieves the list of this week meeting from the database.
         """
-        self.meetings = Meeting.get_by_date(self.session, self.calendar,
+        self.meetings = Meeting.get_by_date(
+            self.session, self.calendar,
             self.start_date, self.stop_date)
 
-        for meeting in Meeting.get_active_regular_meeting(self.session,
-            self.calendar, self.stop_date):
+        for meeting in Meeting.get_active_regular_meeting(
+                self.session, self.calendar, self.stop_date):
             for delta in range(0, 7):
                 day = self.start_date + timedelta(days=delta)
                 if ((meeting.meeting_date - day).days %
@@ -55,12 +56,13 @@ class Week(object):
 
     def get_full_day_meetings(self):
         """ Retrieve all the full day meetings of this week. """
-        self.full_day_meetings = Meeting.get_by_date(self.session,
-            self.calendar, self.start_date, self.stop_date,
-            full_day=True)
+        self.full_day_meetings = Meeting.get_by_date(
+            self.session, self.calendar, self.start_date,
+            self.stop_date, full_day=True)
 
-        for meeting in Meeting.get_active_regular_meeting(self.session,
-            self.calendar, self.stop_date, full_day=True):
+        for meeting in Meeting.get_active_regular_meeting(
+                self.session, self.calendar, self.stop_date,
+                full_day=True):
             for delta in range(0, 7):
                 day = self.start_date + timedelta(days=delta)
                 if ((meeting.meeting_date - day).days %

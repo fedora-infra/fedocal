@@ -43,5 +43,6 @@ SMTP_SERVER = 'localhost'
 CRON_FREQUENCY = 30
 
 # Path to the alembic configuration file
-PATH_ALEMBIC_INI = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+PATH_ALEMBIC_INI = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
     '..', 'alembic.ini')

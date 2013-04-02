@@ -47,9 +47,11 @@ def validate_time(form, field):
 
 class AddCalendarForm(wtf.Form):
     """ Form used to create a new calendar. """
-    calendar_name = wtf.TextField('Calendar',
+    calendar_name = wtf.TextField(
+        'Calendar',
         [wtf.validators.Required()])
-    calendar_contact = wtf.TextField('Contact email',
+    calendar_contact = wtf.TextField(
+        'Contact email',
         [wtf.validators.Required()])
     calendar_description = wtf.TextField('Description')
     calendar_manager_groups = wtf.TextField('Manager groups')
@@ -80,54 +82,62 @@ class AddCalendarForm(wtf.Form):
 
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """
-    meeting_name = wtf.TextField('Meeting name',
+    meeting_name = wtf.TextField(
+        'Meeting name',
         [wtf.validators.Required()])
 
     meeting_date = wtf.DateField('Date', [wtf.validators.Required()])
-    meeting_date_end = wtf.DateField('End date',
+    meeting_date_end = wtf.DateField(
+        'End date',
         [wtf.validators.optional()])
 
-    meeting_time_start = wtf.TextField('Start time',
+    meeting_time_start = wtf.TextField(
+        'Start time',
         [wtf.validators.Required(), validate_time])
 
-    meeting_time_stop = wtf.TextField('Stop time',
+    meeting_time_stop = wtf.TextField(
+        'Stop time',
         [wtf.validators.Required(), validate_time])
 
     comanager = wtf.TextField('Co-manager')
 
     information = wtf.TextAreaField('Information')
 
-    meeting_region = wtf.SelectField('Region',
+    meeting_region = wtf.SelectField(
+        'Region',
         [wtf.validators.optional()],
         choices=[('APAC', 'APAC'),
-                    ('EMEA', 'EMEA'),
-                    ('LATAM', 'LATAM'),
-                    ('NA', 'NA')]
-        )
+                 ('EMEA', 'EMEA'),
+                 ('LATAM', 'LATAM'),
+                 ('NA', 'NA')]
+    )
 
     # Recursion
-    frequency = wtf.SelectField('Repeat every',
+    frequency = wtf.SelectField(
+        'Repeat every',
         [wtf.validators.optional()],
         choices=[('', ''),
-                    ('7', '7 days'),
-                    ('14', '14 days')]
-        )
+                 ('7', '7 days'),
+                 ('14', '14 days')]
+    )
     end_repeats = wtf.DateField('End date', [wtf.validators.optional()])
 
     # Recursive edit
     recursive_edit = wtf.BooleanField('Yes I want to edit all the meetings')
 
     # Reminder
-    remind_when = wtf.SelectField('Send reminder',
+    remind_when = wtf.SelectField(
+        'Send reminder',
         [wtf.validators.optional()],
         choices=[('', ''),
-                    ('H-12', '12 hours before'),
-                    ('H-24', '1 day before'),
-                    ('H-48', '2 days before'),
-                    ('H-168', '7 days before'),
-                    ]
-        )
-    remind_who = wtf.TextField('Send reminder to',
+                 ('H-12', '12 hours before'),
+                 ('H-24', '1 day before'),
+                 ('H-48', '2 days before'),
+                 ('H-168', '7 days before'),
+                 ]
+    )
+    remind_who = wtf.TextField(
+        'Send reminder to',
         [wtf.validators.Email(), wtf.validators.optional()])
 
     def __init__(self, *args, **kwargs):
@@ -143,12 +153,16 @@ class AddMeetingForm(wtf.Form):
                 tzone = kwargs['tzone']
 
             # Convert time to user's timezone
-            startdt = datetime(meeting.meeting_date.year,
-                meeting.meeting_date.month, meeting.meeting_date.day,
+            startdt = datetime(
+                meeting.meeting_date.year,
+                meeting.meeting_date.month,
+                meeting.meeting_date.day,
                 meeting.meeting_time_start.hour,
                 meeting.meeting_time_start.minute, 0)
-            stopdt = datetime(meeting.meeting_date.year,
-                meeting.meeting_date.month, meeting.meeting_date.day,
+            stopdt = datetime(
+                meeting.meeting_date.year,
+                meeting.meeting_date.month,
+                meeting.meeting_date.day,
                 meeting.meeting_time_stop.hour,
                 meeting.meeting_time_stop.minute, 0)
 
@@ -163,7 +177,7 @@ class AddMeetingForm(wtf.Form):
             self.information.data = meeting.meeting_information
             # You are not allowed to remove yourself from the managers.
             meeting_manager = meeting.meeting_manager.replace(
-                        '%s,' % flask.g.fas_user.username, '')
+                '%s,' % flask.g.fas_user.username, '')
             self.comanager.data = meeting_manager
             self.meeting_region.data = meeting.meeting_region
             self.frequency.data = meeting.recursion_frequency

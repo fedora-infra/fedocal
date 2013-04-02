@@ -87,9 +87,10 @@ class Calendar(BASE):
     calendar_regional_meetings = Column(Boolean, default=False)
 
     # pylint: disable=R0913
-    def __init__(self, calendar_name, calendar_contact, calendar_description,
-        calendar_manager_group, calendar_multiple_meetings=False,
-        calendar_regional_meetings=False):
+    def __init__(
+            self, calendar_name, calendar_contact, calendar_description,
+            calendar_manager_group, calendar_multiple_meetings=False,
+            calendar_regional_meetings=False):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
         self.calendar_contact = calendar_contact
@@ -128,7 +129,7 @@ class Calendar(BASE):
             groups = []
         else:
             groups = [item.strip()
-                for item in calendar.calendar_manager_group.split(',')]
+                      for item in calendar.calendar_manager_group.split(',')]
         return groups
 
     @classmethod
@@ -148,7 +149,7 @@ class Meeting(BASE):
     meeting_id = Column(Integer, primary_key=True)
     meeting_name = Column(String(200), nullable=False)
     calendar_name = Column(String(80), ForeignKey('calendars.calendar_name'),
-        nullable=False)
+                           nullable=False)
     calendar = relationship("Calendar")
     # 5 person max (32 * 5) + 5 = 165
     meeting_manager = Column(String(165), nullable=False)
@@ -159,7 +160,7 @@ class Meeting(BASE):
     meeting_information = Column(Text)
     meeting_region = Column(String(10), default=None)
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
-        nullable=True)
+                         nullable=True)
     reminder = relationship("Reminder")
     full_day = Column(Boolean, default=False)
 
@@ -167,12 +168,13 @@ class Meeting(BASE):
     recursion_ends = Column(Date, nullable=True, default=None)
 
     # pylint: disable=R0913
-    def __init__(self, meeting_name, meeting_manager,
-        meeting_date, meeting_date_end,
-        meeting_time_start, meeting_time_stop,
-        meeting_information, calendar_name, reminder_id=None,
-        meeting_region=None, recursion_frequency=None,
-        recursion_ends=None, full_day=False):
+    def __init__(
+            self, meeting_name, meeting_manager,
+            meeting_date, meeting_date_end,
+            meeting_time_start, meeting_time_stop,
+            meeting_information, calendar_name, reminder_id=None,
+            meeting_region=None, recursion_frequency=None,
+            recursion_ends=None, full_day=False):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
         self.meeting_manager = meeting_manager
@@ -191,8 +193,8 @@ class Meeting(BASE):
     def __repr__(self):
         """ Representation of the Reminder object when printed.
         """
-        return "<Meeting('%s', '%s', '%s')>" % (self.calendar,
-            self.meeting_name, self.meeting_date)
+        return "<Meeting('%s', '%s', '%s')>" % (
+            self.calendar, self.meeting_name, self.meeting_date)
 
     def save(self, session):
         """ Save the object into the database. """
@@ -202,24 +204,24 @@ class Meeting(BASE):
         """ Return a jsonify string of the object.
         """
         string = '{'
-        string = '%s\n  "meeting_name": "%s",' % (string,
-            self.meeting_name)
-        string = '%s\n  "meeting_manager": "%s",' % (string,
-            self.meeting_manager)
-        string = '%s\n  "meeting_date": "%s",' % (string,
-            self.meeting_date)
-        string = '%s\n  "meeting_date_end": "%s",' % (string,
-            self.meeting_date_end)
-        string = '%s\n  "meeting_time_start": "%s",' % (string,
-            self.meeting_time_start)
-        string = '%s\n  "meeting_time_stop": "%s",' % (string,
-            self.meeting_time_stop)
-        string = '%s\n  "meeting_information": "%s",' % (string,
-            self.meeting_information)
-        string = '%s\n  "meeting_region": "%s",' % (string,
-            self.meeting_region)
-        string = '%s\n  "calendar_name": "%s"' % (string,
-            self.calendar_name)
+        string = '%s\n  "meeting_name": "%s",' % (
+            string, self.meeting_name)
+        string = '%s\n  "meeting_manager": "%s",' % (
+            string, self.meeting_manager)
+        string = '%s\n  "meeting_date": "%s",' % (
+            string, self.meeting_date)
+        string = '%s\n  "meeting_date_end": "%s",' % (
+            string, self.meeting_date_end)
+        string = '%s\n  "meeting_time_start": "%s",' % (
+            string, self.meeting_time_start)
+        string = '%s\n  "meeting_time_stop": "%s",' % (
+            string, self.meeting_time_stop)
+        string = '%s\n  "meeting_information": "%s",' % (
+            string, self.meeting_information)
+        string = '%s\n  "meeting_region": "%s",' % (
+            string, self.meeting_region)
+        string = '%s\n  "calendar_name": "%s"' % (
+            string, self.calendar_name)
         string = '%s\n}' % string
         return string
 
@@ -266,7 +268,7 @@ class Meeting(BASE):
                 recursion_frequency=self.recursion_frequency,
                 recursion_ends=self.recursion_ends,
                 full_day=self.full_day
-                )
+            )
         # Update object associated to the meeting
         meeting.reminder = self.reminder
         meeting.calendar = self.calendar
@@ -294,26 +296,29 @@ class Meeting(BASE):
         return managers
 
     @classmethod
-    def get_by_date(cls, session, calendar, start_date, stop_date,
-        full_day=False, no_recursive=False):
+    def get_by_date(
+            cls, session, calendar, start_date, stop_date,
+            full_day=False, no_recursive=False):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
         """
         if no_recursive:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date >= start_date),
-                (Meeting.meeting_date < stop_date),
-                (Meeting.recursion_frequency == None),
-                (Meeting.full_day == full_day)
-                ).order_by(Meeting.meeting_date).all()
+            return session.query(cls).filter(
+                and_(
+                    (Meeting.calendar == calendar),
+                    (Meeting.meeting_date >= start_date),
+                    (Meeting.meeting_date < stop_date),
+                    (Meeting.recursion_frequency == None),
+                    (Meeting.full_day == full_day)
+                )).order_by(Meeting.meeting_date).all()
         else:
-            return session.query(cls).filter(and_
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date >= start_date),
-                (Meeting.meeting_date < stop_date),
-                (Meeting.full_day == full_day)
-                ).order_by(Meeting.meeting_date).all()
+            return session.query(cls).filter(
+                and_(
+                    (Meeting.calendar == calendar),
+                    (Meeting.meeting_date >= start_date),
+                    (Meeting.meeting_date < stop_date),
+                    (Meeting.full_day == full_day)
+                )).order_by(Meeting.meeting_date).all()
 
     @classmethod
     def get_at_date(cls, session, calendar, meeting_date, full_day=False):
@@ -321,37 +326,39 @@ class Meeting(BASE):
         The full_day boolean allows to specify if you want full day
         meetings or not (defaults to False).
         """
-        return session.query(cls).filter(and_
-            (Meeting.calendar == calendar),
-            (Meeting.meeting_date == meeting_date),
-            (Meeting.full_day == full_day)
-            ).order_by(Meeting.meeting_date).all()
+        return session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date == meeting_date),
+                (Meeting.full_day == full_day)
+            )).order_by(Meeting.meeting_date).all()
 
     @classmethod
-    def get_active_regular_meeting(cls, session, calendar, end_date,
-        full_day=False):
+    def get_active_regular_meeting(
+            cls, session, calendar, end_date, full_day=False):
         """ Retrieve the list of recursive meetings occuring before the
         end_date in the specified calendar.
         """
-        meetings = session.query(cls).filter(and_
+        meetings = session.query(cls).filter(
+            and_(
                 (Meeting.meeting_date <= end_date),
                 (Meeting.recursion_ends >= end_date),
                 (Meeting.calendar == calendar),
-                (Meeting.recursion_frequency != None),
+                (Meeting.recursion_frequency is not None),
                 (Meeting.full_day == full_day)
-            ).order_by(Meeting.meeting_date).all()
+            )).order_by(Meeting.meeting_date).all()
         return meetings
 
     @classmethod
-    def get_regular_meeting_at_date(cls, session, calendar, end_date,
-        full_day=False):
+    def get_regular_meeting_at_date(
+            cls, session, calendar, end_date, full_day=False):
         """ Retrieve the list of recursive meetings happening at the
         specified end_date.
         """
         meetings_tmp = cls.expand_regular_meetings(
-                cls.get_active_regular_meeting(session, calendar,
-                        end_date, full_day),
-                end_date)
+            cls.get_active_regular_meeting(
+                session, calendar, end_date, full_day),
+            end_date)
         meetings = []
         for meeting in meetings_tmp:
             if meeting.meeting_date == end_date:
@@ -359,65 +366,72 @@ class Meeting(BASE):
         return meetings
 
     @classmethod
-    def get_active_regular_meeting_by_date(cls, session, calendar,
-        start_date, full_day=False):
+    def get_active_regular_meeting_by_date(
+            cls, session, calendar, start_date, full_day=False):
         """ Retrieve the list of recursive meetings occuring after the
         start_date in the specified calendar.
         """
-        meetings = session.query(cls).filter(and_
+        meetings = session.query(cls).filter(
+            and_(
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.calendar == calendar),
-                (Meeting.recursion_frequency != None),
+                (Meeting.recursion_frequency is not None),
                 (Meeting.full_day == full_day)
-            ).order_by(Meeting.meeting_date).all()
+            )).order_by(Meeting.meeting_date).all()
         return meetings
 
     @classmethod
-    def get_regular_meeting_by_date(cls, session, calendar, start_date,
-        end_date, full_day=False):
+    def get_regular_meeting_by_date(
+            cls, session, calendar, start_date, end_date, full_day=False):
         """ Retrieve the list of recursive meetings happening in between
         the two specified dates.
         """
         meetings = cls.expand_regular_meetings(
-                cls.get_active_regular_meeting_by_date(session, calendar,
-                        start_date, full_day),
-                end_date=end_date, start_date=start_date)
+            cls.get_active_regular_meeting_by_date(
+                session, calendar, start_date, full_day),
+            end_date=end_date, start_date=start_date)
         return meetings
 
     # pylint: disable=R0913
     @classmethod
-    def get_by_date_and_region(cls, session, calendar, start_date,
-        stop_date, region):
+    def get_by_date_and_region(
+            cls, session, calendar, start_date, stop_date, region):
         """ Retrieve the list of meetings in a region between two date.
         We include the start date and exclude the stop date.
         """
-        return session.query(cls).filter(and_
-            (Meeting.calendar == calendar),
-            (Meeting.meeting_date >= start_date),
-            (Meeting.meeting_date < stop_date),
-            (Meeting.meeting_region == region)).all()
+        return session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_date < stop_date),
+                (Meeting.meeting_region == region)
+            )).all()
 
     @classmethod
-    def get_by_time(cls, session, calendar, meetingdate, start_time,
-        stop_time):
+    def get_by_time(
+            cls, session, calendar, meetingdate, start_time, stop_time):
         """ Retrieve the list of meetings for a given date and between
         two times for a specific calendar.
         """
-        return session.query(cls).filter(and_
-            (Meeting.calendar == calendar),
-            (Meeting.meeting_date == meetingdate),
-            (Meeting.meeting_time_start >= start_time),
-            (Meeting.meeting_time_stop < stop_time)).all()
+        return session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date == meetingdate),
+                (Meeting.meeting_time_start >= start_time),
+                (Meeting.meeting_time_stop < stop_time)
+            )).all()
 
     @classmethod
     def get_at_time(cls, session, calendar, meetingdate, t_time):
         """ Returns the meeting occuring at this specifict time point.
         """
-        return session.query(cls).filter(and_
-            (Meeting.calendar == calendar),
-            (Meeting.meeting_date == meetingdate),
-            (Meeting.meeting_time_start <= t_time),
-            (Meeting.meeting_time_stop > t_time)).all()
+        return session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date == meetingdate),
+                (Meeting.meeting_time_start <= t_time),
+                (Meeting.meeting_time_stop > t_time)
+            )).all()
 
     @classmethod
     def get_past_meeting_of_user(cls, session, username, start_date):
@@ -425,61 +439,68 @@ class Meeting(BASE):
         is among the managers and which date is older than the specified
         one.
         """
-        return session.query(cls).filter(and_
-            (Meeting.meeting_date < start_date),
-            (Meeting.meeting_manager.like('%%%s%%' % username))).all()
+        return session.query(cls).filter(
+            and_(
+                (Meeting.meeting_date < start_date),
+                (Meeting.meeting_manager.like('%%%s%%' % username))
+            )).all()
 
     # pylint: disable=C0103
     @classmethod
-    def get_future_single_meeting_of_user(cls, session, username,
-        start_date=date.today()):
+    def get_future_single_meeting_of_user(
+            cls, session, username, start_date=date.today()):
         """ Retrieve the list of meetings which specified username
         is among the managers and which date is newer or egual than the
         specified one (which defaults to today).
         """
-        return session.query(cls).filter(and_
-            (Meeting.meeting_date >= start_date),
-            (Meeting.recursion_frequency == None),
-            (Meeting.meeting_manager.like('%%%s%%' % username))).all()
+        return session.query(cls).filter(
+            and_(
+                (Meeting.meeting_date >= start_date),
+                (Meeting.recursion_frequency == None),
+                (Meeting.meeting_manager.like('%%%s%%' % username))
+            )).all()
 
     # pylint: disable=C0103
     @classmethod
-    def get_future_regular_meeting_of_user(cls, session, username,
-        start_date=date.today()):
+    def get_future_regular_meeting_of_user(
+            cls, session, username, start_date=date.today()):
         """ Retrieve the list of meetings which specified username
         is among the managers and which end date is older or egual to
         specified one (which by default is today).
         """
-        meetings = session.query(cls).filter(and_
+        meetings = session.query(cls).filter(
+            and_(
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.recursion_frequency != None),
                 (Meeting.meeting_manager.like('%%%s%%' % username))
-            ).order_by(Meeting.meeting_date).all()
+            )).order_by(Meeting.meeting_date).all()
         return meetings
 
     @classmethod
-    def get_meeting_with_reminder(cls, session, start_date,
-        start_time, stop_time, offset):
+    def get_meeting_with_reminder(
+            cls, session, start_date, start_time, stop_time, offset):
         """ Retrieve the list of meetings with a reminder set in
         <offset> hours for the given day and at the specified hour.
         """
         reminders = session.query(Reminder.reminder_id).filter(
-                Reminder.reminder_offset == offset).all()
+            Reminder.reminder_offset == offset).all()
         reminders = [int(item.reminder_id) for item in reminders]
         if not reminders:
             return []
-        meetings = session.query(cls).filter(and_
+        meetings = session.query(cls).filter(
+            and_(
                 (Meeting.meeting_date == start_date),
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_start < stop_time),
-                (Meeting.reminder_id.in_(reminders))).all()
+                (Meeting.reminder_id.in_(reminders)))).all()
         # Add recursive meetings
-        recursive_meetings = session.query(cls).filter(and_
+        recursive_meetings = session.query(cls).filter(
+            and_(
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_start < stop_time),
                 (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends >= start_date),
-                (Meeting.reminder_id.in_(reminders))).all()
+                (Meeting.reminder_id.in_(reminders)))).all()
         for meeting in recursive_meetings:
             meeting_date = meeting.meeting_date
             while meeting_date <= meeting.recursion_ends:
@@ -492,8 +513,8 @@ class Meeting(BASE):
         return meetings
 
     @classmethod
-    def expand_regular_meetings(cls, meetings_in, end_date=None,
-        start_date=None):
+    def expand_regular_meetings(
+            cls, meetings_in, end_date=None, start_date=None):
         """ For a given list of meetings, go through all of them and if
         the meeting is recursive, expand the recursion as if they were
         all different meetings.
@@ -511,12 +532,12 @@ class Meeting(BASE):
                 meeting_date = meeting.meeting_date
                 cnt = 0
                 while meeting_date <= end_date and \
-                    meeting_date <= meeting.recursion_ends:
+                        meeting_date <= meeting.recursion_ends:
                     recmeeting = meeting.copy()
                     recmeeting.meeting_id = meeting.meeting_id
                     recmeeting.calendar = meeting.calendar
                     if start_date \
-                        and meeting_date >= start_date:
+                            and meeting_date >= start_date:
                         recmeeting.meeting_date = \
                             meeting.meeting_date + timedelta(
                                 days=meeting.recursion_frequency * cnt)
@@ -551,8 +572,9 @@ class Reminder(BASE):
 
     __tablename__ = 'reminders'
     reminder_id = Column(Integer, primary_key=True)
-    reminder_offset = Column(Enum('H-12', 'H-24', 'H-48', 'H-168',
-        name='reminder_offset'), nullable=False)
+    reminder_offset = Column(Enum(
+        'H-12', 'H-24', 'H-48', 'H-168', name='reminder_offset'),
+        nullable=False)
     reminder_to = Column(String(500), nullable=False)
     reminder_text = Column(Text)
 
@@ -565,8 +587,8 @@ class Reminder(BASE):
     def __repr__(self):
         """ Representation of the Reminder object when printed.
         """
-        return "<Reminder('%s', '%s')>" % (self.reminder_to,
-            self.reminder_offset)
+        return "<Reminder('%s', '%s')>" % (
+            self.reminder_to, self.reminder_offset)
 
     def save(self, session):
         """ Save the object into the database. """

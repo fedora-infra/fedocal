@@ -75,7 +75,7 @@ def reverse_filter(weekdays):
     between the two navigation buttons on the agenda template.
     """
     return "%s - %s" % (weekdays[0].strftime('%d %b'),
-        weekdays[-1].strftime('%d %b %Y'))
+                        weekdays[-1].strftime('%d %b %Y'))
 
 
 # pylint: disable=W0613
@@ -112,12 +112,13 @@ def index():
     """
     calendars = Calendar.get_all(SESSION)
     if calendars:
-        return calendar(calendars[0].calendar_name, None, None,
-            None)
+        return calendar(
+            calendars[0].calendar_name, None, None, None)
     else:
         auth_form = forms.LoginForm()
         admin = is_admin()
-        return flask.render_template('agenda.html',
+        return flask.render_template(
+            'agenda.html',
             calendar=None,
             auth_form=auth_form,
             admin=admin)
@@ -125,7 +126,7 @@ def index():
 
 # pylint: disable=R0914
 @APP.route('/<calendar_name>/',
-    defaults={'year': None, 'month': None, 'day': None})
+           defaults={'year': None, 'month': None, 'day': None})
 @APP.route('/<calendar_name>/<int:year>/<int:month>/<int:day>/')
 def calendar(calendar_name, year, month, day):
     """ Display the week of a specific date for a specified calendar.
@@ -140,12 +141,12 @@ def calendar(calendar_name, year, month, day):
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
     tzone = get_timezone()
-    meetings = fedocallib.get_meetings(SESSION, calendarobj, year,
-        month, day, tzone=tzone)
-    next_week = fedocallib.get_next_week(week_start.year,
-        week_start.month, week_start.day)
-    prev_week = fedocallib.get_previous_week(week_start.year,
-        week_start.month, week_start.day)
+    meetings = fedocallib.get_meetings(
+        SESSION, calendarobj, year, month, day, tzone=tzone)
+    next_week = fedocallib.get_next_week(
+        week_start.year, week_start.month, week_start.day)
+    prev_week = fedocallib.get_previous_week(
+        week_start.year, week_start.month, week_start.day)
     auth_form = forms.LoginForm()
     admin = is_admin()
     month_name = week_start.strftime('%B')
@@ -153,12 +154,13 @@ def calendar(calendar_name, year, month, day):
     day_index = None
     today = datetime.date.today()
     if today > week_start and today < week_start + datetime.timedelta(days=7):
-        day_index = fedocallib.get_week_day_index(today.year,
-            today.month, today.day)
+        day_index = fedocallib.get_week_day_index(
+            today.year, today.month, today.day)
 
-    curmonth_cal = fedocallib.get_html_monthly_cal(year=year,
-        month=month, day=day, calendar_name=calendar_name)
-    return flask.render_template('agenda.html',
+    curmonth_cal = fedocallib.get_html_monthly_cal(
+        year=year, month=month, day=day, calendar_name=calendar_name)
+    return flask.render_template(
+        'agenda.html',
         calendar=calendarobj,
         month=month_name,
         weekdays=weekdays,
@@ -173,11 +175,11 @@ def calendar(calendar_name, year, month, day):
 
 
 @APP.route('/list/<calendar_name>/',
-    defaults={'year': None, 'month': None, 'day': None})
+           defaults={'year': None, 'month': None, 'day': None})
 @APP.route('/list/<calendar_name>/<int:year>/',
-    defaults={'month': None, 'day': None})
+           defaults={'month': None, 'day': None})
 @APP.route('/list/<calendar_name>/<int:year>/<int:month>/',
-    defaults={'day': None})
+           defaults={'day': None})
 @APP.route('/list/<calendar_name>/<int:year>/<int:month>/<int:day>/')
 def calendar_list(calendar_name, year, month, day):
     """ Display in a list form all the meetings of a given calendar.
@@ -209,16 +211,17 @@ def calendar_list(calendar_name, year, month, day):
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     tzone = get_timezone()
-    meetings = fedocallib.get_by_date(SESSION, calendarobj, start_date,
-        end_date, tzone)
+    meetings = fedocallib.get_by_date(
+        SESSION, calendarobj, start_date, end_date, tzone)
 
     month_name = datetime.date.today().strftime('%B')
     auth_form = forms.LoginForm()
     admin = is_admin()
 
-    curmonth_cal = fedocallib.get_html_monthly_cal(year=year,
-        month=month, day=day, calendar_name=calendar_name)
-    return flask.render_template('meeting_list.html',
+    curmonth_cal = fedocallib.get_html_monthly_cal(
+        year=year, month=month, day=day, calendar_name=calendar_name)
+    return flask.render_template(
+        'meeting_list.html',
         calendar=calendarobj,
         month=month_name,
         meetings=meetings,
@@ -239,8 +242,8 @@ def ical_all():
     ical = vobject.iCalendar()
     meetings = []
     for calendar in Calendar.get_all(SESSION):
-        meetings.extend(fedocallib.get_meetings_by_date(SESSION,
-            calendar.calendar_name, startd, endd))
+        meetings.extend(fedocallib.get_meetings_by_date(
+            SESSION, calendar.calendar_name, startd, endd))
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
 
@@ -255,8 +258,8 @@ def ical_out(calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    meetings = fedocallib.get_meetings_by_date(SESSION, calendar_name,
-        startd, endd)
+    meetings = fedocallib.get_meetings_by_date(
+        SESSION, calendar_name, startd, endd)
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
@@ -271,14 +274,15 @@ def my_meetings():
     you manager rights to the meeting.
     """
     tzone = get_timezone()
-    regular_meetings = fedocallib.get_future_regular_meeting_of_user(SESSION,
-        flask.g.fas_user.username, tzone=tzone)
-    single_meetings = fedocallib.get_future_single_meeting_of_user(SESSION,
-        flask.g.fas_user.username, tzone=tzone)
-    past_meetings = fedocallib.get_past_meeting_of_user(SESSION,
-        flask.g.fas_user.username, tzone=tzone)
+    regular_meetings = fedocallib.get_future_regular_meeting_of_user(
+        SESSION, flask.g.fas_user.username, tzone=tzone)
+    single_meetings = fedocallib.get_future_single_meeting_of_user(
+        SESSION, flask.g.fas_user.username, tzone=tzone)
+    past_meetings = fedocallib.get_past_meeting_of_user(
+        SESSION, flask.g.fas_user.username, tzone=tzone)
     admin = is_admin()
-    return flask.render_template('my_meeting.html',
+    return flask.render_template(
+        'my_meeting.html',
         title='My meeting', regular_meetings=regular_meetings,
         single_meetings=single_meetings, pas_meetings=past_meetings,
         admin=admin, tzone=tzone)
@@ -331,7 +335,7 @@ def add_calendar():
                 form.calendar_multiple_meetings.data),
             calendar_regional_meetings=bool(
                 form.calendar_regional_meetings.data),
-            )
+        )
         try:
             calendarobj.save(SESSION)
             SESSION.commit()
@@ -340,7 +344,7 @@ def add_calendar():
             print 'add_calendar:', err
             flask.flash('Could not add this calendar to the database')
             return flask.render_template('add_calendar.html',
-                form=form)
+                                         form=form)
         flask.flash('Calendar added')
         return flask.redirect(flask.url_for('index'))
     return flask.render_template('add_calendar.html', form=form)
@@ -365,7 +369,8 @@ def add_meeting(calendar_name):
     # pylint: disable=E1101
     if form.validate_on_submit():
         try:
-            fedocallib.add_meeting(session=SESSION,
+            fedocallib.add_meeting(
+                session=SESSION,
                 calendarobj=calendarobj,
                 fas_user=flask.g.fas_user,
                 meeting_name=form.meeting_name.data,
@@ -383,22 +388,23 @@ def add_meeting(calendar_name):
                 remind_who=form.remind_who.data)
         except FedocalException, err:
             flask.flash(err)
-            return flask.render_template('add_meeting.html',
-                calendar=calendarobj, form=form,
+            return flask.render_template(
+                'add_meeting.html', calendar=calendarobj, form=form,
                 tzone=tzone)
         except SQLAlchemyError, err:
             SESSION.rollback()
             print 'add_meeting:', err
             flask.flash('Could not add this meeting to this calendar')
-            return flask.render_template('add_meeting.html',
-                calendar=calendarobj, form=form, tzone=tzone)
+            return flask.render_template(
+                'add_meeting.html', calendar=calendarobj, form=form,
+                tzone=tzone)
 
         flask.flash('Meeting added')
-        return flask.redirect(flask.url_for('calendar',
-            calendar_name=calendarobj.calendar_name))
+        return flask.redirect(flask.url_for(
+            'calendar', calendar_name=calendarobj.calendar_name))
 
-    return flask.render_template('add_meeting.html',
-        calendar=calendarobj, form=form, tzone=tzone)
+    return flask.render_template(
+        'add_meeting.html', calendar=calendarobj, form=form, tzone=tzone)
 
 
 # pylint: disable=R0915,R0912,R0911
@@ -413,9 +419,9 @@ def edit_meeting(meeting_id):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     if not flask.g.fas_user.username in \
-        Meeting.get_managers(SESSION, meeting_id):
+            Meeting.get_managers(SESSION, meeting_id):
         flask.flash('You are not one of the manager of this meeting, '
-            'you are not allowed to edit it.')
+                    'you are not allowed to edit it.')
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
@@ -424,7 +430,8 @@ def edit_meeting(meeting_id):
     # pylint: disable=E1101
     if form.validate_on_submit():
         try:
-            fedocallib.edit_meeting(session=SESSION,
+            fedocallib.edit_meeting(
+                session=SESSION,
                 meeting=meeting,
                 calendarobj=calendarobj,
                 fas_user=flask.g.fas_user,
@@ -444,24 +451,24 @@ def edit_meeting(meeting_id):
                 edit_all_meeting=form.recursive_edit.data)
         except FedocalException, err:
             flask.flash(err)
-            return flask.render_template('edit_meeting.html',
-                meeting=meeting, calendar=calendarobj, form=form,
-                tzone=tzone)
+            return flask.render_template(
+                'edit_meeting.html', meeting=meeting, calendar=calendarobj,
+                form=form, tzone=tzone)
         except SQLAlchemyError, err:
             SESSION.rollback()
             print 'edit_meeting:', err
             flask.flash('Could not update this meeting.')
-            return flask.render_template('edit_meeting.html',
-                meeting=meeting, calendar=calendarobj, form=form,
-                tzone=tzone)
+            return flask.render_template(
+                'edit_meeting.html', meeting=meeting,
+                calendar=calendarobj, form=form, tzone=tzone)
 
         flask.flash('Meeting updated')
         return flask.redirect(flask.url_for('view_meeting',
-            meeting_id=meeting_id))
+                              meeting_id=meeting_id))
     else:
         if meeting.recursion_frequency and meeting.recursion_ends and \
-            fedocallib.is_date_in_future(meeting.recursion_ends,
-            meeting.meeting_time_start):
+            fedocallib.is_date_in_future(
+                meeting.recursion_ends, meeting.meeting_time_start):
             cnt = 0
             meetingobj = Meeting.copy(meeting)
             while meetingobj.meeting_date < datetime.date.today():
@@ -471,14 +478,16 @@ def edit_meeting(meeting_id):
                         days=meetingobj.recursion_frequency * cnt)
                 cnt = cnt + 1
             meeting = meetingobj
-        if not fedocallib.is_date_in_future(meeting.meeting_date,
-            meeting.meeting_time_start):
+        if not fedocallib.is_date_in_future(
+                meeting.meeting_date,
+                meeting.meeting_time_start):
             flask.flash('This meeting has already occured, you may not '
-                'change it anymore')
+                        'change it anymore')
             return flask.redirect(flask.url_for('my_meetings'))
         form = forms.AddMeetingForm(meeting=meeting, tzone=get_timezone())
-    return flask.render_template('edit_meeting.html', meeting=meeting,
-            calendar=calendarobj, form=form, tzone=tzone)
+    return flask.render_template(
+        'edit_meeting.html', meeting=meeting, calendar=calendarobj,
+        form=form, tzone=tzone)
 
 
 @APP.route('/meeting/<int:meeting_id>/', methods=('GET', 'POST'))
@@ -503,9 +512,10 @@ def view_meeting_page(meeting_id, full):
         return flask.redirect(flask.url_for('index'))
     meeting = fedocallib.convert_meeting_timezone(meeting, 'UTC', tzone)
     auth_form = forms.LoginForm()
-    return flask.render_template('view_meeting.html', full=full,
-            meeting=meeting, tzone=tzone,
-            title=meeting.meeting_name, auth_form=auth_form)
+    return flask.render_template(
+        'view_meeting.html', full=full,
+        meeting=meeting, tzone=tzone,
+        title=meeting.meeting_name, auth_form=auth_form)
 
 
 @APP.route('/meeting/delete/<int:meeting_id>/', methods=('GET', 'POST'))
@@ -534,9 +544,10 @@ def delete_meeting(meeting_id):
                 print 'edit_meeting:', err
                 flask.flash('Could not update this meeting.')
         flask.flash('Meeting deleted')
-        return flask.redirect(flask.url_for('calendar',
-            calendar_name=meeting.calendar_name))
-    return flask.render_template('delete_meeting.html',
+        return flask.redirect(flask.url_for(
+            'calendar', calendar_name=meeting.calendar_name))
+    return flask.render_template(
+        'delete_meeting.html',
         form=deleteform,
         meeting=meeting,
         calendars=calendars,
@@ -566,8 +577,8 @@ def delete_calendar(calendar_name):
                 flask.flash('Could not delete this calendar.')
         flask.flash('Calendar deleted')
         return flask.redirect(flask.url_for('index'))
-    return flask.render_template('delete_calendar.html',
-        form=deleteform, calendarobj=calendarobj)
+    return flask.render_template(
+        'delete_calendar.html', form=deleteform, calendarobj=calendarobj)
 
 
 # pylint: disable=R0915,R0912,R0911
@@ -601,13 +612,13 @@ def edit_calendar(calendar_name):
             SESSION.rollback()
             print 'edit_calendar:', err
             flask.flash('Could not update this calendar.')
-            return flask.render_template('edit_calendar.html', form=form,
-            calendar=calendarobj)
+            return flask.render_template(
+                'edit_calendar.html', form=form, calendar=calendarobj)
 
         flask.flash('Calendar updated')
-        return flask.redirect(flask.url_for('calendar',
-            calendar_name=calendarobj.calendar_name))
+        return flask.redirect(flask.url_for(
+            'calendar', calendar_name=calendarobj.calendar_name))
     else:
         form = forms.AddCalendarForm(calendar=calendarobj)
     return flask.render_template('edit_calendar.html', form=form,
-            calendar=calendarobj)
+                                 calendar=calendarobj)

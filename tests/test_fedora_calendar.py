@@ -63,11 +63,16 @@ class FedocalCalendartests(Modeltests):
         """ Test the formatweek function. """
         today = TODAY
         cal = FedocalCalendar(today.year, today.month, today.day)
-        self.assertEqual(cal.formatweek([(1, 1), (2, 2)]),
+        output = cal.formatweek([(1, 1), (2, 2)]).replace(' today', '')
+        self.assertEqual(
+            output,
             '<tr><td class="tue">1</td><td class="wed">2</td></tr>')
-        self.assertEqual(cal.formatweek([(0, 1), (1, 2)]),
+        self.assertEqual(
+            cal.formatweek([(0, 1), (1, 2)]),
             '<tr><td class="noday">&nbsp;</td><td class="wed">1</td></tr>')
-        self.assertEqual(cal.formatweek([(1, 1), (2, 2)], True),
+        output = cal.formatweek([(1, 1), (2, 2)], True).replace(' today', '')
+        self.assertEqual(
+            output,
             '<tr class="current_week"><td class="tue">1</td><td '\
             'class="wed">2</td></tr>')
 

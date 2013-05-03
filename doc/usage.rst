@@ -78,6 +78,11 @@ The form to will ask for:
   Note that this can also be used to filter meetings retrieved via the API.
 
 
+.. note:: To create a new calendar in the `Fedora instance of fedocal
+          <https://apps.fedoraproject.org/calendar>`_ you will need to
+          create a ticket on the `infrastructure trac
+          <https://fedorahosted.org/fedora-infrastructure/>`_
+
 
 Edit a calendar
 ---------------
@@ -231,6 +236,10 @@ own calendar application.
 This iCal is read-only and can be found at::
 
  http://<url to fedocal>/ical/<calendar name>/
+
+A general iCal feed is available for all the calendar at once at:
+
+ http://<url to fedocal>/ical/
 
 
 

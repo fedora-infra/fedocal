@@ -237,7 +237,7 @@ This iCal is read-only and can be found at::
 
  http://<url to fedocal>/ical/<calendar name>/
 
-A general iCal feed is available for all the calendar at once at:
+A general iCal feed is available for all the calendar at once at::
 
  http://<url to fedocal>/ical/
 

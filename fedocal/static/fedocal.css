@@ -113,6 +113,19 @@ section nav {
     border:1px solid #37abc8;
 }
 
+.first_event {
+    border-bottom:0px;
+}
+
+.middle_event {
+    border-top:0px;
+    border-bottom:0px;
+}
+
+.last_event {
+    border-top:0px;
+}
+
 .my_meetings td {
     border-bottom: solid 1px grey;
     border-top: solid 1px grey;

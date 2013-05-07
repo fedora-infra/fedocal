@@ -324,6 +324,15 @@ th.month .ui-button-text {
     width: 15em;
 }
 
+.calendar_link img, .calendar_link span {
+    display: block;
+}
+
+.calendar_name {
+    font-weight: bold;
+    margin: .5em 0;
+}
+
 .calendar_row {
     display: table-row;
 }

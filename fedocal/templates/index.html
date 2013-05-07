@@ -12,13 +12,12 @@
         {% for calendar in calendar_row %}
             <a class="calendar_link"
                 href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
-                <p><img src="{{ url_for('static', filename='fedocal.png') }}" alt="" /></p>
-                <p class="calendar_name">{{ calendar.calendar_name }}</p>
-                <p class="calendar_desc">{{ calendar.calendar_description }}</p>
+                <img src="{{ url_for("static", filename="fedocal.png") }}" alt="" />
+                <span class="calendar_name">{{ calendar.calendar_name }}</span>
+                <span class="calendar_desc">{{ calendar.calendar_description }}</span>
             </a>
         {% endfor %}
     </div>
     {% endfor %}
-
 </section>
 {% endblock %}

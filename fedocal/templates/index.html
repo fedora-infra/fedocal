@@ -5,16 +5,16 @@
 {% set title_extent = "Home" %}
 
 {% block content %}
-<section id='calendar_list'>
+<section id="calendar_list">
 
     {% for calendar_row in calendars_table %}
-    <div class='calendar_row'>
+    <div class="calendar_row">
         {% for calendar in calendar_row %}
-            <a class='calendar_link'
+            <a class="calendar_link"
                 href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
-                <p><img src='{{ url_for("static", filename="fedocal.png") }}' alt='' /></p>
-                <p class='calendar_name'>{{ calendar.calendar_name }}</p>
-                <p class='calendar_desc'>{{ calendar.calendar_description }}</p>
+                <p><img src="{{ url_for('static', filename='fedocal.png') }}" alt="" /></p>
+                <p class="calendar_name">{{ calendar.calendar_name }}</p>
+                <p class="calendar_desc">{{ calendar.calendar_description }}</p>
             </a>
         {% endfor %}
     </div>

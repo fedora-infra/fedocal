@@ -1,13 +1,13 @@
 {% extends "master.html" %}
 
-{% block title %} Fedocal {% endblock %}
+{% block title %} Home {% endblock %}
 
 {% set title_extent = "Home" %}
 
 {% block content %}
 <section id='calendar_list'>
 
-    {% for calendar_row in calendars %}
+    {% for calendar_row in calendars_table %}
     <div class='calendar_row'>
         {% for calendar in calendar_row %}
             <a class='calendar_link'

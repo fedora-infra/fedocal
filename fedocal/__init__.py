@@ -122,7 +122,8 @@ def index():
     admin = is_admin()
     return flask.render_template(
         'index.html',
-        calendars=chunks(calendars, 3),
+        calendars=calendars,
+        calendars_table=chunks(calendars, 3),
         auth_form=auth_form,
         admin=admin)
 

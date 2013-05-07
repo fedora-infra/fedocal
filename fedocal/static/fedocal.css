@@ -308,18 +308,24 @@ th.month .ui-button-text {
     border: 1px solid #DDDDDD;
 }
 
+#calendar_list {
+    display: table;
+    border-spacing: 1em;
+}
+
 .calendar_link {
     border: 1px solid #CCCCCC;
     border-radius: 5px 5px 5px 5px;
     color: black;
-    display: block;
-    margin: 1em auto;
+    display: table-cell;
+    /*margin: 1em auto;*/
     overflow: hidden;
     padding: 2em;
+    width: 15em;
 }
 
 .calendar_row {
-    display: table;
+    display: table-row;
 }
 
 .calendar_row[a] {

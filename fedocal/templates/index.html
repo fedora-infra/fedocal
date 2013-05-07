@@ -1,0 +1,24 @@
+{% extends "master.html" %}
+
+{% block title %} Fedocal {% endblock %}
+
+{% set title_extent = "Home" %}
+
+{% block content %}
+<section id='calendar_list'>
+
+    {% for calendar_row in calendars %}
+    <div class='calendar_row'>
+        {% for calendar in calendar_row %}
+            <a class='calendar_link'
+                href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
+                <p><img src='{{ url_for("static", filename="fedocal.png") }}' /></p>
+                <p class='calendar_name'>{{ calendar.calendar_name }}</p>
+                <p class='calendar_desc'>{{ calendar.calendar_description }}</p>
+            </a>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+</section>
+{% endblock %}

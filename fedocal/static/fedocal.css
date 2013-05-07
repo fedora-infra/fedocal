@@ -307,3 +307,21 @@ th.month .ui-button-text {
 .ui-menu a.ui-state-focus {
     border: 1px solid #DDDDDD;
 }
+
+.calendar_link {
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    color: black;
+    display: block;
+    margin: 1em auto;
+    overflow: hidden;
+    padding: 2em;
+}
+
+.calendar_row {
+    display: table;
+}
+
+.calendar_row[a] {
+    display: block;
+}

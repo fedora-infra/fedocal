@@ -1,6 +1,6 @@
 {% extends "master.html" %}
 
-{% block title %} Home {% endblock %}
+{% block title %}Home{% endblock %}
 
 {% set title_extent = "Home" %}
 
@@ -12,7 +12,7 @@
         {% for calendar in calendar_row %}
             <a class='calendar_link'
                 href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
-                <p><img src='{{ url_for("static", filename="fedocal.png") }}' alt={{ calendar.calendar_name }} /></p>
+                <p><img src='{{ url_for("static", filename="fedocal.png") }}' alt='' /></p>
                 <p class='calendar_name'>{{ calendar.calendar_name }}</p>
                 <p class='calendar_desc'>{{ calendar.calendar_description }}</p>
             </a>

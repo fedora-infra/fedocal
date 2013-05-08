@@ -290,3 +290,7 @@ th.month a:hover {
 th.month .ui-button-text {
     padding: 0 .5em;
 }
+
+.ui-menu a.ui-state-focus {
+    border: 1px solid #DDDDDD;
+}

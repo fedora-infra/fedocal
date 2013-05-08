@@ -604,7 +604,7 @@ def add_meeting_to_vcal(ical, meeting):
     stop = entry.add('dtend')
     meeting.meeting_time_stop = meeting.meeting_time_stop.replace(
         tzinfo=utc)
-    stop.value = datetime.combine(meeting.meeting_date,
+    stop.value = datetime.combine(meeting.meeting_date_end,
                                   meeting.meeting_time_stop)
 
 

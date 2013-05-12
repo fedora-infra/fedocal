@@ -83,19 +83,22 @@ class Calendar(BASE):
     calendar_contact = Column(String(80))
     calendar_description = Column(String(500))
     calendar_manager_group = Column(String(100))  # 3 groups (3*32)
+    calendar_admin_group = Column(String(100), nullable=True)
     calendar_multiple_meetings = Column(Boolean, default=False)
     calendar_regional_meetings = Column(Boolean, default=False)
 
     # pylint: disable=R0913
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,
-            calendar_manager_group, calendar_multiple_meetings=False,
+            calendar_manager_group, calendar_admin_group=None,
+            calendar_multiple_meetings=False,
             calendar_regional_meetings=False):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
         self.calendar_contact = calendar_contact
         self.calendar_description = calendar_description
         self.calendar_manager_group = calendar_manager_group
+        self.calendar_admin_group = calendar_admin_group
         self.calendar_multiple_meetings = calendar_multiple_meetings
         self.calendar_regional_meetings = calendar_regional_meetings
 
@@ -122,7 +125,7 @@ class Calendar(BASE):
 
     @classmethod
     def get_manager_groups(cls, session, identifier):
-        """ Return the list of managers for a given meeting.
+        """ Return the list of managers for a given calendar.
         """
         calendar = Calendar.by_id(session, identifier)
         if not calendar or not calendar.calendar_manager_group:
@@ -130,6 +133,18 @@ class Calendar(BASE):
         else:
             groups = [item.strip()
                       for item in calendar.calendar_manager_group.split(',')]
+        return groups
+
+    @classmethod
+    def get_admin_groups(cls, session, identifier):
+        """ Return the list of admin group for a given calendar.
+        """
+        calendar = Calendar.by_id(session, identifier)
+        if not calendar or not calendar.calendar_admin_group:
+            groups = []
+        else:
+            groups = [item.strip()
+                      for item in calendar.calendar_admin_group.split(',')]
         return groups
 
     @classmethod

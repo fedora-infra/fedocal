@@ -62,7 +62,7 @@
                             {{ meeting.meeting_name }}
                 </a>
             </td>
-            <td> {{ meeting.meeting_information }} </td>
+            <td>{% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}</td>
             {% if calendar.calendar_regional_meetings %}
             <td> {{ meeting.meeting_region }} </td>
             {% endif %}

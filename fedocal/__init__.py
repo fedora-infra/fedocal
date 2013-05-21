@@ -30,10 +30,12 @@ import pkg_resources
 __version__ = '0.1.2'
 
 import datetime
-import flask
 import os
-import vobject
 from dateutil.relativedelta import relativedelta
+
+import flask
+import markdown
+import vobject
 from flask.ext.fas import FAS, cla_plus_one_required
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -76,6 +78,14 @@ def reverse_filter(weekdays):
     """
     return "%s - %s" % (weekdays[0].strftime('%d %b'),
                         weekdays[-1].strftime('%d %b %Y'))
+
+
+@APP.template_filter('markdown')
+def markdown_filter(text):
+    """ Template filter converting a string into html content using the
+    markdown library.
+    """
+    return markdown.markdown(text)
 
 
 # pylint: disable=W0613

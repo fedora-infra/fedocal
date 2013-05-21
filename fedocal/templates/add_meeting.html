@@ -16,7 +16,10 @@
             {{ render_field_in_row(form.meeting_date) }}
             {{ render_field_in_row(form.meeting_time_start, after="%s time" % tzone) }}
             {{ render_field_in_row(form.meeting_time_stop, after="%s time" % tzone) }}
-            {{ render_field_in_row(form.information) }}
+            {{ render_field_in_row(form.information,
+                                   after="Supports the <a href='http://daringfireball.net/projects/markdown/syntax'
+                                          target='_blank'>Markdown syntax</a>",
+                                   escape_after=True) }}
             {% if calendar.calendar_regional_meetings %}
                 {{ render_field_in_row(form.meeting_region) }}
             {% endif %}

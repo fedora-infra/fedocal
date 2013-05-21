@@ -70,7 +70,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>   - Fedocal</title>' in output.data)
+            '<title>Home - Fedocal</title>' in output.data)
 
     def test_index(self):
         """ Test the index function. """
@@ -79,7 +79,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in output.data)
+            '<title>Home - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)

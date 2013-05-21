@@ -113,6 +113,19 @@ section nav {
     border:1px solid #37abc8;
 }
 
+.first_event {
+    border-bottom:0px;
+}
+
+.middle_event {
+    border-top:0px;
+    border-bottom:0px;
+}
+
+.last_event {
+    border-top:0px;
+}
+
 .my_meetings td {
     border-bottom: solid 1px grey;
     border-top: solid 1px grey;
@@ -293,4 +306,37 @@ th.month .ui-button-text {
 
 .ui-menu a.ui-state-focus {
     border: 1px solid #DDDDDD;
+}
+
+#calendar_list {
+    display: table;
+    border-spacing: 1em;
+}
+
+.calendar_link {
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    color: black;
+    display: table-cell;
+    /*margin: 1em auto;*/
+    overflow: hidden;
+    padding: 2em;
+    width: 15em;
+}
+
+.calendar_link img, .calendar_link span {
+    display: block;
+}
+
+.calendar_name {
+    font-weight: bold;
+    margin: .5em 0;
+}
+
+.calendar_row {
+    display: table-row;
+}
+
+.calendar_row[a] {
+    display: block;
 }

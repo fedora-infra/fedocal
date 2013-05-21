@@ -23,4 +23,3 @@ def upgrade():
 def downgrade():
     """ Remove the calendar_contact field to the calendar table. """
     op.drop_column('calendars', 'calendar_contact')
-

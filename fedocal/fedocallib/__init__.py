@@ -289,7 +289,7 @@ def get_meetings(
             meeting.meeting_date.month, meeting.meeting_date.day,
             meeting.meeting_time_start.hour,
             meeting.meeting_time_start.minute, 0
-        )+timedelta(minutes=start_delta)
+        ) + timedelta(minutes=start_delta)
         startdt = convert_time(startdt, 'UTC', tzone)
 
         stopdt = datetime(
@@ -298,7 +298,7 @@ def get_meetings(
             meeting.meeting_date_end.day,
             meeting.meeting_time_stop.hour,
             meeting.meeting_time_stop.minute, 0
-        )+timedelta(minutes=stop_delta)
+        ) + timedelta(minutes=stop_delta)
         stopdt = convert_time(stopdt, 'UTC', tzone)
 
         if stopdt < startdt:

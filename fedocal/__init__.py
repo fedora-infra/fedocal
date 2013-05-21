@@ -433,10 +433,11 @@ def edit_meeting(meeting_id):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     if not flask.g.fas_user.username in \
-            Meeting.get_managers(SESSION, meeting_id):
+            Meeting.get_managers(SESSION, meeting_id) and not is_admin():
         flask.flash('You are not one of the manager of this meeting, '
-                    'you are not allowed to edit it.')
-        return flask.redirect(flask.url_for('index'))
+                    'or an admin, you are not allowed to edit it.')
+        return flask.redirect(flask.url_for('view_meeting',
+                                            meeting_id=meeting_id))
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
     tzone = get_timezone()
@@ -526,10 +527,19 @@ def view_meeting_page(meeting_id, full):
         return flask.redirect(flask.url_for('index'))
     meeting = fedocallib.convert_meeting_timezone(meeting, 'UTC', tzone)
     auth_form = forms.LoginForm()
+    editor = is_admin()
+    if not editor:
+        if flask.g.fas_user and \
+                flask.g.fas_user.username in meeting.meeting_manager:
+            editor = True
     return flask.render_template(
-        'view_meeting.html', full=full,
-        meeting=meeting, tzone=tzone,
-        title=meeting.meeting_name, auth_form=auth_form)
+        'view_meeting.html',
+        full=full,
+        meeting=meeting,
+        tzone=tzone,
+        title=meeting.meeting_name,
+        editor=editor,
+        auth_form=auth_form)
 
 
 @APP.route('/meeting/delete/<int:meeting_id>/', methods=('GET', 'POST'))
@@ -541,6 +551,12 @@ def delete_meeting(meeting_id):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
+    if not flask.g.fas_user.username in \
+            Meeting.get_managers(SESSION, meeting_id) and not is_admin():
+        flask.flash('You are not one of the manager of this meeting, '
+                    'or an admin, you are not allowed to delete it.')
+        return flask.redirect(flask.url_for('view_meeting',
+                                            meeting_id=meeting_id))
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendars = Calendar.get_all(SESSION)
     deleteform = forms.DeleteMeetingForm()

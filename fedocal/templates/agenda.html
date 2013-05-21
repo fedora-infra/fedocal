@@ -31,7 +31,7 @@
     </nav>
 {% endif %}
 <div id='agenda'>
-{% macro render_meetings(meeting_list, loopidx) -%}
+{% macro render_meetings(meeting_list, loopidx, prev_meetings, next_meetings) -%}
     {% if loopidx == day_index %}
         <td class="today">
     {% else %}
@@ -39,11 +39,45 @@
     {% endif %}
     {% if meeting_list %}
         {% for meeting in meeting_list %}
+            {% set first_meeting = [] %}
+            {% set last_meeting = [] %}
+
+            {% if prev_meetings[day_index] %}
+                {% for prev_meeting in prev_meetings[day_index] %}
+                    {% if prev_meeting.meeting_name == meeting.meeting_name %}
+                        <!--{{ first_meeting.append(False) }}-->
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if next_meetings[day_index] %}
+                {% for next_meeting in next_meetings[day_index] %}
+                    {% if next_meeting.meeting_name == meeting.meeting_name %}
+                        <!--{{ last_meeting.append(False) }}-->
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if not first_meeting and last_meeting%}
+            <a class="event first_event meeting_{{ meeting.meeting_id }}"
+                href="{{ url_for('view_meeting',
+                    meeting_id=meeting.meeting_id) }}">
+                {{ meeting.meeting_name }}
+            </a>
+            {% elif first_meeting and last_meeting %}
+            <a class="event middle_event meeting_{{ meeting.meeting_id }}"
+                href="{{ url_for('view_meeting',
+                    meeting_id=meeting.meeting_id) }}"/>
+            {% elif first_meeting and not last_meeting %}
+            <a class="event last_event meeting_{{ meeting.meeting_id }}"
+                href="{{ url_for('view_meeting',
+                    meeting_id=meeting.meeting_id) }}"/>
+            {% else %}
             <a class="event meeting_{{ meeting.meeting_id }}"
                 href="{{ url_for('view_meeting',
                     meeting_id=meeting.meeting_id) }}">
                 {{ meeting.meeting_name }}
             </a>
+            {% endif %}
             {% if not loop.last %}
             -
             {% endif %}
@@ -62,18 +96,22 @@
             <th class="time" rowspan="2">00h00</th>
             <td colspan="7" class="empty"></td>
         </tr>
-        {% for time_entry in meetings |sort %}
+        {% set keys = meetings.keys()|sort %}
+        {% for time_entry in keys %}
             {% if time_entry == '00h00' %}
-                {% set previous_time_entry = time_entry %}
+                {% set previous_time_entry = keys[loop.index0 - 1]%}
+                {% set current_time_entry = time_entry %}
             {% else %}
+            {% set previous_time_entry = keys[loop.index0 - 2]%}
         <tr>
             {% if time_entry.endswith('00') %}
                 <th rowspan="2" class="time">{{ time_entry }}</th>
             {% endif %}
-            {% for meeting_list in meetings[previous_time_entry] %}
-                {{ render_meetings(meeting_list, loop.index) }}
+            {% for meeting_list in meetings[current_time_entry] %}
+                {{ render_meetings(meeting_list, loop.index, meetings[previous_time_entry],
+                    meetings[time_entry]) }}
             {% endfor %}
-            {% set previous_time_entry = time_entry %}
+            {% set current_time_entry = time_entry %}
         </tr>
             {% endif %}
         {% endfor %}
@@ -99,7 +137,7 @@
     $(function(){
         $('.event').click(function(){
             var _cls = $(this).attr('class');
-            var _meetId = _cls.replace('event meeting_', '');
+            var _meetId = _cls.split('meeting_')[1];
             var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
             $.ajax({
                 url: _url + _meetId + '/0/',

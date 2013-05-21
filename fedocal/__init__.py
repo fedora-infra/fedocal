@@ -104,6 +104,13 @@ def get_timezone():
     return tzone
 
 
+def chunks(item_list, n):
+    """ Yield successive n-sized chunks from item_list.
+    """
+    for i in xrange(0, len(item_list), n):
+        yield item_list[i:i+n]
+
+
 ## Flask application
 @APP.route('/')
 def index():
@@ -111,17 +118,14 @@ def index():
     order of creation and if any) for the current week.
     """
     calendars = Calendar.get_all(SESSION)
-    if calendars:
-        return calendar(
-            calendars[0].calendar_name, None, None, None)
-    else:
-        auth_form = forms.LoginForm()
-        admin = is_admin()
-        return flask.render_template(
-            'agenda.html',
-            calendar=None,
-            auth_form=auth_form,
-            admin=admin)
+    auth_form = forms.LoginForm()
+    admin = is_admin()
+    return flask.render_template(
+        'index.html',
+        calendars=calendars,
+        calendars_table=chunks(calendars, 3),
+        auth_form=auth_form,
+        admin=admin)
 
 
 # pylint: disable=R0914

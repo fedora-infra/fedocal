@@ -24,6 +24,7 @@ BuildRequires:  python-fedora-flask
 BuildRequires:  python-alembic
 BuildRequires:  python-dateutil <= 1.5
 BuildRequires:  python-setuptools
+BuildRequires:  python-markdown
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -45,6 +46,7 @@ Requires:  python-fedora-flask
 Requires:  python-alembic
 Requires:  python-dateutil <= 1.5
 Requires:  python-setuptools
+Requires:  python-markdown
 Requires:  mod_wsgi
 
 %description

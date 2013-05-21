@@ -26,7 +26,7 @@
     </ul>
 
     <pre>
-        {{ meeting.meeting_information }}
+        {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
     </pre>
 
     {% if meeting.recursion %}

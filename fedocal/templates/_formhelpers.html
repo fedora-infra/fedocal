@@ -26,11 +26,15 @@
 </div>
 {% endmacro %}
 
-{% macro render_field_in_row(field, after="") %}
+{% macro render_field_in_row(field, after="", escape_after=False) %}
 <tr>
     <td>{{ field.label }}</td>
     <td>{{ field(**kwargs)|safe }}</td>
-{% if after %} <td>{{ after }}</td>{% endif %}
+    {% if escape_after %}
+    {% autoescape off%} {% if after %} <td>{{ after }}</td>{% endif %} {% endautoescape %}
+    {% else %}
+    {% if after %} <td>{{ after }}</td>{% endif %} 
+    {% endif %}
 </tr>
 {% if field.errors %}
 <tr class="errors">

@@ -27,7 +27,7 @@
  fedocal.model test script
 """
 
-__requires__ = ['SQLAlchemy >= 0.7']
+__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 import unittest
@@ -39,7 +39,7 @@ from datetime import date
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from fedocallib.fedora_calendar import FedocalCalendar
+from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 from tests import Modeltests, TODAY
 
 

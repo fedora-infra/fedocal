@@ -335,16 +335,16 @@ class Meeting(BASE):
 
     @classmethod
     def get_active_regular_meeting(
-            cls, session, calendar, end_date, full_day=False):
+            cls, session, calendar, start_date, end_date, full_day=False):
         """ Retrieve the list of recursive meetings occuring before the
         end_date in the specified calendar.
         """
         meetings = session.query(cls).filter(
             and_(
                 (Meeting.meeting_date <= end_date),
-                (Meeting.recursion_ends >= end_date),
+                (Meeting.recursion_ends >= start_date),
                 (Meeting.calendar == calendar),
-                (Meeting.recursion_frequency is not None),
+                (Meeting.recursion_frequency != None),
                 (Meeting.full_day == full_day)
             )).order_by(Meeting.meeting_date).all()
         return meetings
@@ -375,7 +375,7 @@ class Meeting(BASE):
             and_(
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.calendar == calendar),
-                (Meeting.recursion_frequency is not None),
+                (Meeting.recursion_frequency != None),
                 (Meeting.full_day == full_day)
             )).order_by(Meeting.meeting_date).all()
         return meetings

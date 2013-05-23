@@ -46,7 +46,8 @@ class Week(object):
             self.start_date, self.stop_date)
 
         for meeting in Meeting.get_active_regular_meeting(
-                self.session, self.calendar, self.stop_date):
+                self.session, self.calendar,
+                self.start_date, self.stop_date):
             for delta in range(0, 7):
                 day = self.start_date + timedelta(days=delta)
                 if ((meeting.meeting_date - day).days %
@@ -61,7 +62,8 @@ class Week(object):
             self.stop_date, full_day=True)
 
         for meeting in Meeting.get_active_regular_meeting(
-                self.session, self.calendar, self.stop_date,
+                self.session, self.calendar,
+                self.start_date, self.stop_date,
                 full_day=True):
             for delta in range(0, 7):
                 day = self.start_date + timedelta(days=delta)

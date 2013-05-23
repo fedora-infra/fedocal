@@ -357,7 +357,7 @@ class Meeting(BASE):
         """
         meetings_tmp = cls.expand_regular_meetings(
             cls.get_active_regular_meeting(
-                session, calendar, end_date, full_day),
+                session, calendar, end_date, end_date, full_day),
             end_date)
         meetings = []
         for meeting in meetings_tmp:

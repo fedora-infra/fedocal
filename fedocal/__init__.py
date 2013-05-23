@@ -377,6 +377,15 @@ def add_meeting(calendar_name):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
+    cal_admins = Calendar.get_manager_groups(SESSION, calendar_name)
+    if ( cal_admins and
+            not set(flask.g.fas_user.groups).intersection(
+                set(cal_admins))) \
+            and not is_admin():
+        flask.flash('You are not allowed to add a meeting to this calendar.',
+                    'errors')
+        return flask.redirect(flask.url_for(
+            'calendar', calendar_name=calendar_name))
     form = forms.AddMeetingForm()
     tzone = get_timezone()
     calendarobj = Calendar.by_id(SESSION, calendar_name)

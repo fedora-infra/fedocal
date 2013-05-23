@@ -39,8 +39,8 @@ from datetime import timedelta
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from fedocallib import model
-from fedocallib import week
+from fedocal.fedocallib import model
+from fedocal.fedocallib import week
 
 from tests import Modeltests
 from test_meeting import Meetingtests, TODAY

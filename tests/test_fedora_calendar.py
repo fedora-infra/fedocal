@@ -39,7 +39,7 @@ from datetime import date
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from fedocallib.fedora_calendar import FedocalCalendar
+from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 from tests import Modeltests, TODAY
 
 

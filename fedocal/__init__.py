@@ -539,7 +539,8 @@ def view_meeting_page(meeting_id, full):
     editor = is_admin()
     if not editor:
         if flask.g.fas_user and \
-                flask.g.fas_user.username in meeting.meeting_manager:
+                flask.g.fas_user.username in Meeting.get_managers(
+                    SESSION, meeting_id):
             editor = True
     return flask.render_template(
         'view_meeting.html',

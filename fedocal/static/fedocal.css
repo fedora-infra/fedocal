@@ -21,6 +21,18 @@ a {
     text-decoration: none;
 }
 
+.message {
+    color: green;
+}
+
+.errors {
+    color: red;
+}
+
+.warnings {
+    color: orange;
+}
+
 header#mainheader, footer {
     color: white;
     background: #426ead; /* Old browsers */

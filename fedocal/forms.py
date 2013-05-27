@@ -58,7 +58,7 @@ class AddCalendarForm(wtf.Form):
     calendar_multiple_meetings = wtf.BooleanField(
         'Agenda can have multiple meetings on the same day?')
     calendar_regional_meetings = wtf.BooleanField(
-        'Meetings can regional?')
+        'Meetings can be regional?')
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but

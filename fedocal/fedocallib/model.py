@@ -360,6 +360,7 @@ class Meeting(BASE):
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.calendar == calendar),
                 (Meeting.recursion_frequency != None),
+                (Meeting.recursion_ends != None),
                 (Meeting.full_day == full_day)
             )).order_by(Meeting.meeting_date).all()
         return meetings

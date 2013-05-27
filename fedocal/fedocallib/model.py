@@ -473,7 +473,7 @@ class Meeting(BASE):
             and_(
                 (Meeting.meeting_date >= start_date),
                 (Meeting.recursion_frequency == None),
-                (Meeting.meeting_manager.like('%%%s%%' % username))
+                (Meeting.meeting_manager.like('%%%s,%%' % username))
             )).all()
 
     # pylint: disable=C0103
@@ -488,7 +488,7 @@ class Meeting(BASE):
             and_(
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.recursion_frequency != None),
-                (Meeting.meeting_manager.like('%%%s%%' % username))
+                (Meeting.meeting_manager.like('%%%s,%%' % username))
             )).order_by(Meeting.meeting_date).all()
         return meetings
 

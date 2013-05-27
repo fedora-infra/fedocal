@@ -515,11 +515,14 @@ def is_user_managing_in_calendar(session, calendar_name, fas_user):
     :arg fas_user: a FAS user object with all the info.
     """
     manager_groups = Calendar.get_manager_groups(session, calendar_name)
+    admin_groups = Calendar.get_admin_groups(session, calendar_name)
     if not manager_groups:
         return True
     else:
         return len(
             set(manager_groups).intersection(set(fas_user.groups))
+        ) >= 1 or len(
+            set(admin_groups).intersection(set(fas_user.groups))
         ) >= 1
 
 

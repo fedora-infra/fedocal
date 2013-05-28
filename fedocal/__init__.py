@@ -97,12 +97,56 @@ def shutdown_session(exception=None):
 
 ## Local function
 def is_admin():
-    """ Return wether the user is admin for this application or not. """
+    """ Return whether the user is admin for this application or not. """
     if not flask.g.fas_user:
         return False
     else:
         if APP.config['ADMIN_GROUP'] in flask.g.fas_user.groups:
             return True
+
+
+def is_calendar_admin(calendar):
+    """ Return whether the user is admin for the specified calendar
+    (object).
+    """
+    if not flask.g.fas_user:
+        return False
+    else:
+        admin_groups = [
+            item.strip()
+            for item in calendar.calendar_admin_group.split(',')
+        ]
+        if set(flask.g.fas_user.groups).intersection(set(admin_groups)):
+            return True
+
+
+def is_calendar_manager(calendar):
+    """ Return whether the user is a manager for the specified calendar
+    (object).
+    """
+    if not flask.g.fas_user:
+        return False
+    else:
+        manager_groups = [
+            item.strip()
+            for item in calendar.calendar_manager_group.split(',')
+        ]
+        if len(manager_groups) == 0:
+            return True
+        if set(flask.g.fas_user.groups).intersection(set(manager_groups)):
+            return True
+
+
+def is_meeting_manager(meeting):
+    """ Return whether the user is one of the manager of the specified
+    meeting (object).
+    """
+    if not flask.g.fas_user:
+        return False
+    else:
+        managers = [item.strip()
+                    for item in meeting.meeting_manager.split(',')]
+        return flask.g.fas_user.username in managers
 
 
 def get_timezone():
@@ -345,6 +389,7 @@ def add_calendar():
             calendar_contact=form.calendar_contact.data,
             calendar_description=form.calendar_description.data,
             calendar_manager_group=form.calendar_manager_groups.data,
+            calendar_admin_group=form.calendar_admin_groups.data,
             calendar_multiple_meetings=bool(
                 form.calendar_multiple_meetings.data),
             calendar_regional_meetings=bool(
@@ -377,15 +422,16 @@ def add_meeting(calendar_name):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
-    cal_admins = Calendar.get_manager_groups(SESSION, calendar_name)
-    if ( cal_admins and
-            not set(flask.g.fas_user.groups).intersection(
-                set(cal_admins))) \
-            and not is_admin():
-        flask.flash('You are not allowed to add a meeting to this calendar.',
-                    'errors')
-        return flask.redirect(flask.url_for(
-            'calendar', calendar_name=calendar_name))
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not (is_calendar_manager(meeting.calendar) \
+            or is_calendar_admin(meeting.calendar) \
+            or is_admin()):
+        flask.flash('You are not one of the manager of this calendar, '
+                    'or one of its admins, you are not allowed to add '
+                    'new meetings.')
+        return flask.redirect(flask.url_for('calendar',
+                                            calendar_name=calendar_name))
+
     form = forms.AddMeetingForm()
     tzone = get_timezone()
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -408,7 +454,8 @@ def add_meeting(calendar_name):
                 frequency=form.frequency.data,
                 end_repeats=form.end_repeats.data,
                 remind_when=form.remind_when.data,
-                remind_who=form.remind_who.data)
+                remind_who=form.remind_who.data,
+                admin=is_admin())
         except FedocalException, err:
             flask.flash(err)
             return flask.render_template(
@@ -441,14 +488,16 @@ def edit_meeting(meeting_id):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
-    if not flask.g.fas_user.username in \
-            Meeting.get_managers(SESSION, meeting_id) and not is_admin():
+    meeting = Meeting.by_id(SESSION, meeting_id)
+    calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
+    if not (is_meeting_manager(meeting) \
+            or is_calendar_admin(meeting.calendarobj) \
+            or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to edit it.')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
-    meeting = Meeting.by_id(SESSION, meeting_id)
-    calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
+
     tzone = get_timezone()
     form = forms.AddMeetingForm()
     # pylint: disable=E1101
@@ -472,7 +521,8 @@ def edit_meeting(meeting_id):
                 recursion_ends=form.end_repeats.data,
                 remind_when=form.remind_when.data,
                 remind_who=form.remind_who.data,
-                edit_all_meeting=form.recursive_edit.data)
+                edit_all_meeting=form.recursive_edit.data,
+                admin=is_admin())
         except FedocalException, err:
             flask.flash(err)
             return flask.render_template(
@@ -538,9 +588,8 @@ def view_meeting_page(meeting_id, full):
     auth_form = forms.LoginForm()
     editor = is_admin()
     if not editor:
-        if flask.g.fas_user and \
-                flask.g.fas_user.username in Meeting.get_managers(
-                    SESSION, meeting_id):
+        if is_meeting_manager(meeting) or is_calendar_admin(
+                meeting.calendar):
             editor = True
     return flask.render_template(
         'view_meeting.html',
@@ -561,13 +610,15 @@ def delete_meeting(meeting_id):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
-    if not flask.g.fas_user.username in \
-            Meeting.get_managers(SESSION, meeting_id) and not is_admin():
+    meeting = Meeting.by_id(SESSION, meeting_id)
+    if not (is_meeting_manager(meeting) \
+            or is_calendar_admin(meeting.calendar) \
+            or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to delete it.')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
-    meeting = Meeting.by_id(SESSION, meeting_id)
+
     calendars = Calendar.get_all(SESSION)
     deleteform = forms.DeleteMeetingForm()
     # pylint: disable=E1101
@@ -642,6 +693,8 @@ def edit_calendar(calendar_name):
             calendarobj.calendar_description = form.calendar_description.data
             calendarobj.calendar_manager_group = \
                 form.calendar_manager_groups.data
+            calendarobj.calendar_admin_group = \
+                form.calendar_admin_groups.data
             calendarobj.calendar_multiple_meetings = bool(
                 form.calendar_multiple_meetings.data)
             calendarobj.calendar_regional_meetings = bool(

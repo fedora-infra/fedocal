@@ -307,7 +307,7 @@ class Fedocallibtests(Modeltests):
         """ Test the get_future_single_meeting_of_user function. """
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(self.session,
-            'pingou,', from_date=TODAY)
+            'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 4)
         self.assertEqual(meetings[0].meeting_name,
@@ -497,7 +497,7 @@ class Fedocallibtests(Modeltests):
         calendar = vobject.iCalendar()
         self.__setup_meeting()
         meetings = fedocallib.get_future_single_meeting_of_user(
-            self.session, 'pingou,', from_date=TODAY)
+            self.session, 'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 4)
 

@@ -51,6 +51,7 @@ class Calendartests(Modeltests):
             calendar_contact='test@example.com',
             calendar_description='This is a test calendar',
             calendar_manager_group='fi-apprentice',
+            calendar_admin_group='infrastructure-main',
             calendar_multiple_meetings=False)
         obj.save(self.session)
         self.session.commit()
@@ -102,6 +103,7 @@ class Calendartests(Modeltests):
         self.assertEqual(obj.calendar_name, 'test_calendar')
         self.assertEqual(obj.calendar_description, 'This is a test calendar')
         self.assertEqual(obj.calendar_manager_group, 'fi-apprentice')
+        self.assertEqual(obj.calendar_admin_group, 'infrastructure-main')
 
     def test_get_calendar_inexistant(self):
         """ Test by_id query of a non-existant Calendar. """
@@ -116,6 +118,13 @@ class Calendartests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(obj, ['fi-apprentice'])
 
+    def test_get_admin_groups(self):
+        """ Test the Calendar get_admin_groups function. """
+        self.test_init_calendar()
+        obj = model.Calendar.get_admin_groups(self.session, 'test_calendar')
+        self.assertNotEqual(obj, None)
+        self.assertEqual(obj, ['infrastructure-main'])
+
     # pylint: disable=C0103
     def test_get_manager_groups_inexistant_calendar(self):
         """ Test the Calendar get_manager_groups function for a non
@@ -123,6 +132,26 @@ class Calendartests(Modeltests):
         """
         self.test_init_calendar()
         obj = model.Calendar.get_manager_groups(self.session, 'unknown')
+        self.assertNotEqual(obj, None)
+        self.assertEqual(obj, [])
+
+    # pylint: disable=C0103
+    def test_get_admin_groups_inexistant_calendar(self):
+        """ Test the Calendar get_admin_groups function for a non
+        existant Calendar.
+        """
+        self.test_init_calendar()
+        obj = model.Calendar.get_admin_groups(self.session, 'unknown')
+        self.assertNotEqual(obj, None)
+        self.assertEqual(obj, [])
+
+    # pylint: disable=C0103
+    def test_get_admin_groups_no_admin_set(self):
+        """ Test the Calendar get_admin_groups function for a non
+        existant Calendar.
+        """
+        self.test_init_calendar()
+        obj = model.Calendar.get_admin_groups(self.session, 'test_calendar3')
         self.assertNotEqual(obj, None)
         self.assertEqual(obj, [])
 

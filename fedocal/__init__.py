@@ -421,14 +421,15 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     calendarobj = Calendar.by_id(SESSION, calendar_name)
-    if not is_calendar_manager(calendarobj) \
-            and not is_calendar_admin(calendarobj) \
-            and not is_admin():
+    if not (is_meeting_manager(meeting) \
+            or is_calendar_admin(meeting.calendar) \
+            or is_admin()):
         flask.flash('You are not one of the manager of this calendar, '
                     'or one of its admins, you are not allowed to add '
                     'new meetings.')
         return flask.redirect(flask.url_for('calendar',
                                             calendar_name=calendar_name))
+
     form = forms.AddMeetingForm()
     tzone = get_timezone()
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -487,13 +488,14 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
-    if not is_meeting_manager(meeting) \
-            and not is_calendar_admin(calendarobj) \
-            and not is_admin():
+    if not (is_meeting_manager(meeting) \
+            or is_calendar_admin(meeting.calendarobj) \
+            or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to edit it.')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
+
     tzone = get_timezone()
     form = forms.AddMeetingForm()
     # pylint: disable=E1101
@@ -606,14 +608,15 @@ def delete_meeting(meeting_id):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
-    if not is_meeting_manager(meeting) \
-            and not is_calendar_admin(calendarobj) \
-            and not is_admin():
+    meeting = Meeting.by_id(SESSION, meeting_id)
+    if not (is_meeting_manager(meeting) \
+            or is_calendar_admin(meeting.calendar) \
+            or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to delete it.')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
-    meeting = Meeting.by_id(SESSION, meeting_id)
+
     calendars = Calendar.get_all(SESSION)
     deleteform = forms.DeleteMeetingForm()
     # pylint: disable=E1101

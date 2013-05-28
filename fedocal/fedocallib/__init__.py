@@ -515,11 +515,14 @@ def is_user_managing_in_calendar(session, calendar_name, fas_user):
     :arg fas_user: a FAS user object with all the info.
     """
     manager_groups = Calendar.get_manager_groups(session, calendar_name)
+    admin_groups = Calendar.get_admin_groups(session, calendar_name)
     if not manager_groups:
         return True
     else:
         return len(
             set(manager_groups).intersection(set(fas_user.groups))
+        ) >= 1 or len(
+            set(admin_groups).intersection(set(fas_user.groups))
         ) >= 1
 
 
@@ -680,13 +683,14 @@ def add_meeting(
         meeting_information,
         meeting_region, tzone,
         frequency, end_repeats,
-        remind_when, remind_who):
+        remind_when, remind_who,
+        admin=False):
     """ When a user wants to add a meeting to the database, we need to
     perform a number of test first checking that the input is valid
     and then add the desired meeting.
     """
     if not is_user_managing_in_calendar(
-            session, calendarobj.calendar_name, fas_user):
+            session, calendarobj.calendar_name, fas_user)  and not admin:
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
 
@@ -775,13 +779,14 @@ def edit_meeting(
         meeting_region, tzone,
         recursion_frequency, recursion_ends,
         remind_when, remind_who,
-        edit_all_meeting=True):
+        edit_all_meeting=True,
+        admin=False):
     """ When a user wants to edit a meeting to the database, we need to
     perform a number of test first checking that the input is valid
     and then edit the desired meeting.
     """
     if not is_user_managing_in_calendar(
-            session, calendarobj.calendar_name, fas_user):
+            session, calendarobj.calendar_name, fas_user) and not admin:
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
 

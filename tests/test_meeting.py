@@ -591,7 +591,7 @@ class Meetingtests(Modeltests):
         """
         self.test_init_meeting()
         meetings = model.Meeting.get_future_single_meeting_of_user(
-            self.session, 'pingou,', TODAY)
+            self.session, 'pingou', TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 4)
         self.assertEqual(meetings[0].meeting_name,

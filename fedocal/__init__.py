@@ -131,6 +131,8 @@ def is_calendar_manager(calendar):
             item.strip()
             for item in calendar.calendar_manager_group.split(',')
         ]
+        if len(manager_groups) == 0:
+            return True
         if set(flask.g.fas_user.groups).intersection(set(manager_groups)):
             return True
 
@@ -421,7 +423,7 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     calendarobj = Calendar.by_id(SESSION, calendar_name)
-    if not (is_meeting_manager(meeting) \
+    if not (is_calendar_manager(meeting.calendar) \
             or is_calendar_admin(meeting.calendar) \
             or is_admin()):
         flask.flash('You are not one of the manager of this calendar, '

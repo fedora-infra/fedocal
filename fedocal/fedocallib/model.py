@@ -109,6 +109,21 @@ class Calendar(BASE):
         """
         return "<Calendar('%s')>" % (self.calendar_name)
 
+    def to_json(self):
+        """ JSON representation of the Calendar object.
+        """
+        return {
+            'calendar_name': self.calendar_name,
+            'calendar_contact': self.calendar_contact,
+            'calendar_description': self.calendar_description,
+            'calendar_manager_group': self.calendar_manager_group,
+            'calendar_admin_group': self.calendar_admin_group,
+            'calendar_multiple_meetings':
+                self.calendar_multiple_meetings,
+            'calendar_regional_meetings':
+                self.calendar_regional_meetings
+        }
+
     def save(self, session):
         """ Save the object into the database. """
         session.add(self)

@@ -16,8 +16,10 @@ import sqlalchemy as sa
 
 def upgrade():
     """ Add the calendar_contact field to the calendar table. """
-    op.add_column('calendars', sa.Column('calendar_contact',
-                  sa.String(80)))
+    op.add_column(
+        'calendars',
+        sa.Column('calendar_contact', sa.String(80))
+    )
 
 
 def downgrade():

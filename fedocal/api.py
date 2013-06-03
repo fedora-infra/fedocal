@@ -98,8 +98,6 @@ def load_doc(endpoint):
     return api_docs
 
 
-
-
 ### API
 @APP.route('/api/')
 def api():
@@ -297,7 +295,7 @@ Filter arguments
                 status=400,
                 mimetype='application/json')
 
-    endd = flask.request.args.get( 'end', None)
+    endd = flask.request.args.get('end', None)
     if endd is None:
         endd = datetime.date.today() + datetime.timedelta(days=180)
     else:

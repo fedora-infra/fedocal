@@ -118,10 +118,8 @@ class Calendar(BASE):
             calendar_description=self.calendar_description,
             calendar_manager_group=self.calendar_manager_group,
             calendar_admin_group=self.calendar_admin_group,
-            calendar_multiple_meetings=
-                self.calendar_multiple_meetings,
-            calendar_regional_meetings=
-                self.calendar_regional_meetings
+            calendar_multiple_meetings=self.calendar_multiple_meetings,
+            calendar_regional_meetings=self.calendar_regional_meetings
         )
 
     def save(self, session):
@@ -245,7 +243,7 @@ class Meeting(BASE):
             meeting_information=self.meeting_information,
             meeting_region=self.meeting_region,
             calendar_name=self.calendar_name
-            )
+        )
 
     def delete(self, session):
         """ Remove the object into the database. """

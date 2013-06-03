@@ -112,17 +112,17 @@ class Calendar(BASE):
     def to_json(self):
         """ JSON representation of the Calendar object.
         """
-        return {
-            'calendar_name': self.calendar_name,
-            'calendar_contact': self.calendar_contact,
-            'calendar_description': self.calendar_description,
-            'calendar_manager_group': self.calendar_manager_group,
-            'calendar_admin_group': self.calendar_admin_group,
-            'calendar_multiple_meetings':
+        return dict(
+            calendar_name=self.calendar_name,
+            calendar_contact=self.calendar_contact,
+            calendar_description=self.calendar_description,
+            calendar_manager_group=self.calendar_manager_group,
+            calendar_admin_group=self.calendar_admin_group,
+            calendar_multiple_meetings=
                 self.calendar_multiple_meetings,
-            'calendar_regional_meetings':
+            calendar_regional_meetings=
                 self.calendar_regional_meetings
-        }
+        )
 
     def save(self, session):
         """ Save the object into the database. """
@@ -235,27 +235,17 @@ class Meeting(BASE):
     def to_json(self):
         """ Return a jsonify string of the object.
         """
-        string = '{'
-        string = '%s\n  "meeting_name": "%s",' % (
-            string, self.meeting_name)
-        string = '%s\n  "meeting_manager": "%s",' % (
-            string, self.meeting_manager)
-        string = '%s\n  "meeting_date": "%s",' % (
-            string, self.meeting_date)
-        string = '%s\n  "meeting_date_end": "%s",' % (
-            string, self.meeting_date_end)
-        string = '%s\n  "meeting_time_start": "%s",' % (
-            string, self.meeting_time_start)
-        string = '%s\n  "meeting_time_stop": "%s",' % (
-            string, self.meeting_time_stop)
-        string = '%s\n  "meeting_information": "%s",' % (
-            string, self.meeting_information)
-        string = '%s\n  "meeting_region": "%s",' % (
-            string, self.meeting_region)
-        string = '%s\n  "calendar_name": "%s"' % (
-            string, self.calendar_name)
-        string = '%s\n}' % string
-        return string
+        return dict(
+            meeting_name=self.meeting_name,
+            meeting_manager=self.meeting_manager,
+            meeting_date=self.meeting_date.strftime('%Y-%m-%d'),
+            meeting_date_end=self.meeting_date_end.strftime('%Y-%m-%d'),
+            meeting_time_start=self.meeting_time_start.strftime('%H:%M:%S'),
+            meeting_time_stop=self.meeting_time_stop.strftime('%H:%M:%S'),
+            meeting_information=self.meeting_information,
+            meeting_region=self.meeting_region,
+            calendar_name=self.calendar_name
+            )
 
     def delete(self, session):
         """ Remove the object into the database. """

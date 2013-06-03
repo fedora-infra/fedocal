@@ -361,18 +361,22 @@ class Meetingtests(Modeltests):
         """ Test the to_json method a meeting. """
         self.test_init_meeting()
         obj = model.Meeting.by_id(self.session, 1)
-        exp = u'{\n  '\
-            '"meeting_name": "Fedora-fr-test-meeting",\n  '\
-            '"meeting_manager": "pingou, shaiton,",\n  '\
-            '"meeting_date": "%s",\n  '\
-            '"meeting_date_end": "%s",\n  '\
-            '"meeting_time_start": "19:50:00",\n  '\
-            '"meeting_time_stop": "20:50:00",\n  '\
-            '"meeting_information": "This is a test meeting",\n  '\
-            '"meeting_region": "None",\n  '\
-            '"calendar_name": "test_calendar"\n'\
-            '}' % (TODAY, TODAY)
-        self.assertEqual(obj.to_json(), exp)
+        exp = {
+            "meeting_name": "Fedora-fr-test-meeting",
+            "meeting_manager": "pingou, shaiton,",
+            "meeting_date": TODAY.strftime('%Y-%m-%d'),
+            "meeting_date_end": TODAY.strftime('%Y-%m-%d'),
+            "meeting_time_start": "19:50:00",
+            "meeting_time_stop": "20:50:00",
+            "meeting_information": "This is a test meeting",
+            "meeting_region": None,
+            "calendar_name": "test_calendar"
+            }
+        obs = obj.to_json()
+        self.assertEqual(len(set(obs.keys()).intersection(exp.keys())), 9)
+        keys = exp.keys()
+        for key in keys:
+            self.assertEqual(obs[key], exp[key])
 
     def test_get_at_date(self):
         """ Test the get_at_date function. """

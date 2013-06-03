@@ -7,86 +7,10 @@
 
 {% block content %}
 
-<h1>API documentation</h1>
+{{ api_html }}
 
-<p>
-    Fedocal provides a small API to retrieve information from the database
-    in JSON.
-</p>
+{{ calendars_api_html }}
 
-<h2>Retrieve meetings in a time frame</h2>
-
-<p>
-    In order to retrieve all the meetings within a given time frame you
-    will need to query
-</p>
-<p>
-    <code>{{ url_for('api_date',
-        calendar_name='calendar', start_date='start_date',
-        end_date='end_date') }}</code>
-</p>
-
-<p> The arguments are:</p>
-<ul>
-    <li><span class='arg'>calendar:</span> the name of the calendar.</li>
-    <li><span class='arg'>start_date:</span> the start date of the period
-    to consider. Format would be of type yyyy-mm-dd.</li>
-    <li><span class='arg'>end_date:</span> the end date of the period
-    to consider. Format would be of type yyyy-mm-dd.</li>
-</ul>
-
-<p>
-    The last two arguments (start_date &amp; end_date) are actually
-    optionnals meaning that you may call
-</p>
-<p>
-    <code>{{ url_for('api_date_default', calendar_name='calendar_name') }}</code>
-</p>
-<p>
-    This will by default return you the coming six months.
-</p>
-
-
-<h2>Retrieve meeting in a time frame in a region</h2>
-
-<p>
-    In order to retrieve all the meetings within a given time frame and
-    for a specific region, you will need to query
-</p>
-<p>
-    <code>{{
-        url_for('api_place', region='region',
-        calendar_name='calendar_name', start_date='start_date',
-        end_date='end_date') }}</code>
-</p>
-
-<p> The arguments are:</p>
-<ul>
-    <li><span class='arg'>region:</span> the name of the region you would
-        like to have the events off.</li>
-    <li><span class='arg'>calendar:</span> the name of the calendar.</li>
-    <li><span class='arg'>start_date:</span> the start date of the period
-    to consider. Format would be of type yyyy-mm-dd.</li>
-    <li><span class='arg'>end_date:</span> the end date of the period
-    to consider. Format would be of type yyyy-mm-dd.</li>
-</ul>
-
-<p>
-    The last two arguments (start_date &amps; end_date) are actually
-    optionnals meaning that you may call
-</p>
-<p>
-    <code>{{ url_for('api_place_default',
-        region='region', calendar_name='calendar_name') }}</code>
-</p>
-<p>
-    This will by default return you the coming six months.
-</p>
-
-<p>
-    Note, not all calendars have regional settings allowed for their meetings,
-    so you might not be able to retrieve meetings based on this criteria.
-</p>
-
+{{ meetings_api_html }}
 
 {% endblock %}

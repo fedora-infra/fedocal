@@ -25,7 +25,12 @@
 
 
 import datetime
+import docutils
+import docutils.examples
 import flask
+import json
+#import jinja2
+import markupsafe
 
 from dateutil import parser
 from sqlalchemy.exc import SQLAlchemyError
@@ -37,37 +42,246 @@ from fedocal import APP, SESSION
 import fedocal
 
 
+def modify_rst(rst):
+    """ Downgrade some of our rst directives if docutils is too old. """
+
+    try:
+        # The rst features we need were introduced in this version
+        minimum = [0, 9]
+        version = map(int, docutils.__version__.split('.'))
+
+        # If we're at or later than that version, no need to downgrade
+        if version >= minimum:
+            return rst
+    except Exception:  # pragma: no cover
+        # If there was some error parsing or comparing versions, run the
+        # substitutions just to be safe.
+        pass
+
+    # On Fedora this will never work as the docutils version is to recent
+    # Otherwise, make code-blocks into just literal blocks.
+    substitutions = {  # pragma: no cover
+        '.. code-block:: javascript': '::',
+    }
+    for old, new in substitutions.items():  # pragma: no cover
+        rst = rst.replace(old, new)
+
+    return rst  # pragma: no cover
+
+
+def modify_html(html):
+    """ Perform style substitutions where docutils doesn't do what we want.
+    """
+
+    substitutions = {
+        '<tt class="docutils literal">': '<code>',
+        '</tt>': '</code>',
+    }
+    for old, new in substitutions.items():
+        html = html.replace(old, new)
+
+    return html
+
+
+def load_doc(endpoint):
+    """ Utility to load an RST file and turn it into fancy HTML. """
+
+    rst = unicode(endpoint.__doc__)
+
+    rst = modify_rst(rst)
+
+    api_docs = docutils.examples.html_body(rst)
+
+    api_docs = modify_html(api_docs)
+
+    api_docs = markupsafe.Markup(api_docs)
+    return api_docs
+
+
+
+
 ### API
 @APP.route('/api/')
 def api():
-    """ Display the api information page. """
+    """
+API documentation
+=================
+
+Fedocal provides a small read-only API.
+
+
+The API supports GET and POST requests with the same arguments.
+
+A trailing slash is optional on all API endpoints. There is no
+difference between using one and not using one.
+
+Responses are always served as ``application/json`` (unless ``JSONP``
+is explicitly requested, in which case fedocal returns the
+appropriate ``application/javascript``).
+
+    """
     auth_form = forms.LoginForm()
     admin = fedocal.is_admin()
-    return flask.render_template('api.html', auth_form=auth_form,
-                                 admin=admin)
+    api_html = load_doc(api)
+    meetings_api_html = load_doc(api_meetings)
+    calendars_api_html = load_doc(api_calendars)
+    return flask.render_template(
+        'api.html',
+        auth_form=auth_form,
+        admin=admin,
+        api_html=api_html,
+        calendars_api_html=calendars_api_html,
+        meetings_api_html=meetings_api_html)
 
 
 @APP.route('/api/calendars/', methods=['GET', 'POST'])
 def api_calendars():
-    """ Returns all the calendars present in fedocal.
+    """
+Retrieve calendars
+==================
 
+The ``/api/calendars/`` endpoint returns the meetings meeting the
+provided criteria.
+
+Response format
+---------------
+
+Sample response:
+
+.. code-block:: javascript
+
+    {
+        "calendars": [
+            {
+                "calendar_multiple_meetings": false,
+                "calendar_description": "test",
+                "calendar_manager_group": "packager2",
+                "calendar_admin_group": "packager",
+                "calendar_contact": "test",
+                "calendar_regional_meetings": false,
+                "calendar_name": "test"
+            },
+            {
+                "calendar_multiple_meetings": false,
+                "calendar_description": "asd",
+                "calendar_manager_group": "",
+                "calendar_admin_group": "",
+                "calendar_contact": "asd",
+                "calendar_regional_meetings": false,
+                "calendar_name": "Another test"
+            }
+        ]
+    }
     """
     calendars = fedocallib.get_calendars(SESSION)
 
-    output = '{ "retrieval": "ok", "calendars": [\n'
-    for calendar in calendars:
-        output += str(calendar.to_json()) + '\n'
-    output += ']}'
-    return flask.Response(output)
+    output = {"calendars": [calendar.to_json() for calendar in calendars]}
+    return flask.Response(
+        response=json.dumps(output),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 @APP.route('/api/meetings/', methods=['GET', 'POST'])
+@APP.route('/api/meetings', methods=['GET', 'POST'])
 def api_meetings():
-    """ Returns all the meetings for the specified calendar for the
-    time frame between today - 30 days to today + 180 days.
+    """
+Retrieve meetings
+=================
 
-    :arg calendar_name: the name of the calendar to retrieve information
-        from.
+The ``/api/meetings/`` endpoint returns the meetings meeting the
+provided criteria.
+
+Response format
+----------------
+
+Sample response:
+
+.. code-block:: javascript
+
+    {
+        "meetings": [
+            {
+                "meeting_time_start": "23:00:00",
+                "meeting_information": "",
+                "meeting_time_stop": "23:00:00",
+                "calendar_name": "test",
+                "meeting_date_end": "2013-05-27",
+                "meeting_manager": "pingou2,",
+                "meeting_date": "2013-05-27",
+                "meeting_name": "test1.5",
+                "meeting_region": "None"
+            },
+            {
+                "meeting_time_start": "06:00:00",
+                "meeting_information": "",
+                "meeting_time_stop": "07:00:00",
+                "calendar_name": "test",
+                "meeting_date_end": "2013-05-28",
+                "meeting_manager": "pingou,",
+                "meeting_date": "2013-05-28",
+                "meeting_name": "test3",
+                "meeting_region": null
+            }
+        ],
+        "arguments": {
+            "start": "2013-05-04",
+            "calendar": "test",
+            "end": "2013-11-30",
+            "region": null
+        }
+    }
+
+
+The ``arguments`` item in the root dictionary contains all possible
+arguments, and displays the value used (the default if the argument
+was not provided).
+
+Time arguments
+--------------
+
+Below is a table describing what timeframe messages are received from
+depending on what combination of time options you provide.
+
+========= ======= =================
+``start`` ``end`` Message timeframe
+========= ======= =================
+no        no      the last 30 days and the coming 180 days
+**yes**   no      from ``start`` until the coming 180 days
+no        **yes** the last 30 days until ``end``
+**yes**   **yes** between ``start`` and ``end``
+========= ======= =================
+
+``start``
+  Return results starting at date ``start`` (prefered format is
+  "+%Y-%m-%d" see ``date "+%Y-%m-%d"``).
+
+  Default: 30 days ago ``date "+%Y-%m-%d" -d "30 days ago"``
+
+``end``
+  Return results ending at date ``end`` (prefered format is
+  "+%Y-%m-%d" see ``date "+%Y-%m-%d"``).
+
+  Default: coming 180 days ``date "+%Y-%m-%d" -d "180 days"``
+
+Filter arguments
+----------------
+
+``calendar``
+  Restrict the meetings to a specific calendar.
+
+  Default: all calendars
+
+``region``
+  Restrict the meeting to a specific region.
+
+  If the calendar does not have support for regions enabled, no
+  meetings will be found matching this criteria and no meetings will
+  be returned.
+
+  Default: all regions
+
     """
     startd = flask.request.args.get('start', None)
     if startd is None:
@@ -76,9 +290,12 @@ def api_meetings():
         try:
             startd = parser.parse(startd).date()
         except ValueError:
-            output = '{ "retrieval": "notok", "meeting": [], '\
-                     '"error": "Invalid start date format: %s" }' % startd
-            return flask.Response(output)
+            output = {"meetings": [],
+                      "error": "Invalid start date format: %s" % startd}
+            return flask.Response(
+                response=json.dumps(output),
+                status=400,
+                mimetype='application/json')
 
     endd = flask.request.args.get( 'end', None)
     if endd is None:
@@ -87,14 +304,18 @@ def api_meetings():
         try:
             endd = parser.parse(endd).date()
         except ValueError:
-            output = '{ "retrieval": "notok", "meeting": [], '\
-                     '"error": "Invalid end date format: %s" }' % endd
-            return flask.Response(output)
+            output = {"meetings": [],
+                      "error": "Invalid end date format: %s" % endd}
+            return flask.Response(
+                response=json.dumps(output),
+                status=400,
+                mimetype='application/json')
 
     calendar_name = flask.request.args.get('calendar', None)
     region = flask.request.args.get('region', None)
 
     status = 200
+    meetings = []
     try:
         if calendar_name:
             if region:
@@ -118,18 +339,22 @@ def api_meetings():
                     meetings.extend(fedocallib.get_meetings_by_date(
                         SESSION, calendar.calendar_name, startd, endd))
     except SQLAlchemyError:  # pragma: no cover
-        meetings = None
-        status = 500  #TODO: see if this code is the correct one
+        status = 500
 
-    if not meetings:
-        output = '{ "retrieval": "notok", "meeting": []}'
-    else:
-        output = '{ "retrieval": "ok", "meeting": [\n'
-        cnt = 0
-        for meeting in meetings:
-            output = output + meeting.to_json()
-            cnt = cnt + 1
-            if cnt != len(meetings):
-                output = output + ','
-        output = output + '\n]}'
-    return flask.Response(output)
+    output = {}
+    output['arguments'] = {
+        'start': startd.strftime('%Y-%m-%d'),
+        'end': endd.strftime('%Y-%m-%d'),
+        'calendar': calendar_name,
+        'region': region,
+    }
+    cnt = 0
+    meetings_json = []
+    for meeting in meetings:
+        meetings_json.append(meeting.to_json())
+    output['meetings'] = meetings_json
+    return flask.Response(
+        response=json.dumps(output),
+        status=status,
+        mimetype='application/json'
+    )

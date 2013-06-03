@@ -44,6 +44,7 @@ Contents:
    deployment
    configuration
    usage
+   api
    development
    contributing
 

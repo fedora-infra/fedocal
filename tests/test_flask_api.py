@@ -74,7 +74,7 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<title> API   - Fedocal</title>' in output.data)
-        self.assertTrue('<h1>API documentation</h1>' in output.data)
+        self.assertTrue('<h1 class="title">API documentation</h1>' in output.data)
         #self.assertTrue('<code>/api/date/calendar_name/</code>' \
             #in output.data)
         #self.assertTrue('<code>/api/place/region/calendar_name/</code>' \
@@ -82,17 +82,16 @@ class FlaskApitests(Modeltests):
 
     def test_api_date_default(self):
         """ Test the api_date_default function. """
-
         output = self.app.get('/api/meetings/?calendar=foobar')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], "arguments": {"start": "2013-05-04", '
+            '"calendar": "foobar", "end": "2013-11-30", "region": null}}')
 
         self.__setup_db()
 
         output = self.app.get('/api/meetings/?calendar=test_calendar')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertTrue(' "meeting_manager": "pingou, shaiton,",' in \
             output.data)
         self.assertTrue('"meeting_name": "test-meeting2"' in output.data)
@@ -100,28 +99,23 @@ class FlaskApitests(Modeltests):
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 3)
 
     def test_api_date(self):
         """ Test the api_date function. """
         end_date = TODAY + timedelta(days=11)
-        output = self.app.get('/api/meetings?calendar=foobar&start=%s&end=%s'
-            % (TODAY, end_date))
-        self.assertEqual(output.status_code, 301)
-
         output = self.app.get('/api/meetings/?calendar=foobar&start=%s&end=%s'
             % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], "arguments": {"start": "2013-06-05", '
+            '"calendar": "foobar", "end": "2013-06-16", "region": null}}')
 
         self.__setup_db()
 
         output = self.app.get('/api/meetings/?calendar=test_calendar'
             '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertTrue(' "meeting_manager": "pingou, shaiton,",' in \
             output.data)
         self.assertTrue('"meeting_name": "Another test meeting2",' in \
@@ -132,14 +126,12 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/meetings/?calendar=test_calendar4'
             '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
         end_date = TODAY + timedelta(days=2)
         output = self.app.get('/api/meetings/?start=%s&end=%s'
                               % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 5)
 
     def test_api_date_error(self):
@@ -148,50 +140,52 @@ class FlaskApitests(Modeltests):
 
         output = self.app.get('/api/meetings/?calendar=test_calendar'
             '&start=%s&end=2012-09-aw' % (TODAY))
-        self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "notok"' in output.data)
+        self.assertEqual(output.status_code, 400)
+        print output.data
         self.assertTrue('"error": "Invalid end date format: ' in \
                         output.data)
 
     def test_api_place_default(self):
         """ Test the api_place_default function. """
-        output = self.app.get('/api/meetings?calendar=foobar&region=EMEA')
-        self.assertEqual(output.status_code, 301)
 
         output = self.app.get('/api/meetings/?calendar=foobar&region=EMEA')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], '
+            '"arguments": {'
+            '"start": "2013-05-04", '
+            '"calendar": "foobar", '
+            '"end": "2013-11-30", '
+            '"region": "EMEA"}'
+            '}')
 
         self.__setup_db()
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=APAC')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], "arguments": {"start": "2013-05-04", '
+            '"calendar": "test_calendar4", "end": "2013-11-30", '
+            '"region": "APAC"}}')
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=NA')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 1)
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
     def test_api_place(self):
         """ Test the api_place function. """
         end_date = TODAY + timedelta(days=25)
-        output = self.app.get('/api/meetings?calendar=foobar&region=APAC'
-                              '&start=%s&end=%s' % (TODAY, end_date))
-        self.assertEqual(output.status_code, 301)
-
         output = self.app.get('/api/meetings/?calendar=foobar&region=APAC'
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], "arguments": {"start": "2013-06-05", '
+            '"calendar": "foobar", "end": "2013-06-30", '
+            '"region": "APAC"}}')
 
         self.__setup_db()
 
@@ -199,24 +193,23 @@ class FlaskApitests(Modeltests):
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], "arguments": {"start": "2013-06-05", '
+            '"calendar": "test_calendar4", "end": "2013-06-30", '
+            '"region": "APAC"}}')
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=NA'
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 1)
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA'
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
         output = self.app.get('/api/meetings/?region=EMEA'
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('"retrieval": "ok"' in output.data)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
         end_date = TODAY + timedelta(days=1)
@@ -225,13 +218,17 @@ class FlaskApitests(Modeltests):
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], "arguments": {"start": "2013-06-05", '
+            '"calendar": "test_calendar4", "end": "2013-06-06", '
+            '"region": "NA"}}')
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA'
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "notok", "meeting": []}')
+            '{"meetings": [], "arguments": {"start": "2013-06-05", '
+            '"calendar": "test_calendar4", "end": "2013-06-06", '
+            '"region": "EMEA"}}')
 
     def test_api_place_error(self):
         """ Test the api_date function with wrong input. """
@@ -240,19 +237,16 @@ class FlaskApitests(Modeltests):
         end_date = TODAY + timedelta(days=1)
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA'
                               '&end=%s&start=2012-12-as' % (end_date))
-        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.status_code, 400)
         self.assertTrue('"error": "Invalid start date format: ' in \
             output.data)
 
     def test_api_calendar(self):
         """ Test the api_calendar function. """
-        output = self.app.get('/api/calendars')
-        self.assertEqual(output.status_code, 301)
-
         output = self.app.get('/api/calendars/')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{ "retrieval": "ok", "calendars": [\n]}')
+            '{"calendars": []}')
 
         self.__setup_db()
 

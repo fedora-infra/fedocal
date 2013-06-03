@@ -97,6 +97,17 @@ def load_doc(endpoint):
     api_docs = markupsafe.Markup(api_docs)
     return api_docs
 
+def check_callback(response):
+    callback = flask.request.args.get('callback', None)
+    if callback:
+        response = flask.Response(
+            response="%s(%s);" % (callback, response.response),
+            status=response.status_code,
+            mimetype='application/javascript',
+        )
+    return response
+
+
 
 ### API
 @APP.route('/api/')
@@ -171,9 +182,14 @@ Sample response:
         ]
     }
     """
+    @flask.after_this_request
+    def callback(response):
+        return check_callback(response)
+
     calendars = fedocallib.get_calendars(SESSION)
 
     output = {"calendars": [calendar.to_json() for calendar in calendars]}
+
     return flask.Response(
         response=json.dumps(output),
         status=200,
@@ -281,6 +297,10 @@ Filter arguments
   Default: all regions
 
     """
+    @flask.after_this_request
+    def callback(response):
+        return check_callback(response)
+
     startd = flask.request.args.get('start', None)
     if startd is None:
         startd = datetime.date.today() - datetime.timedelta(days=30)
@@ -351,6 +371,7 @@ Filter arguments
     for meeting in meetings:
         meetings_json.append(meeting.to_json())
     output['meetings'] = meetings_json
+
     return flask.Response(
         response=json.dumps(output),
         status=status,

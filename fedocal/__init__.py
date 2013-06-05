@@ -36,7 +36,8 @@ from dateutil.relativedelta import relativedelta
 import flask
 import markdown
 import vobject
-from flask.ext.fas import FAS, cla_plus_one_required
+from flask.ext.fas import FAS
+from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 
 import forms as forms
@@ -58,6 +59,34 @@ SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
 
 import fedocal.api
+
+
+def cla_plus_one_required(function):
+    """ Flask decorator to retrict access to CLA+1.
+To use this decorator you need to have a function named 'auth_login'.
+Without that function the redirect if the user is not logged in will not
+work.
+"""
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        valid = True
+        if flask.g.fas_user is None:
+            flask.flash('Login required', 'errors')
+            valid = False
+        else:
+            non_cla_groups = [x.name
+                      for x in flask.g.fas_user.approved_memberships
+                      if x.group_type != 'cla']
+            if len(non_cla_groups) == 0:
+                valid = False
+                flask.flash('You must be in one more group than the CLA',
+                            'errors')
+        if not valid:
+            return flask.redirect(flask.url_for('auth_login',
+                                                next=flask.request.url))
+        else:
+            return function(*args, **kwargs)
+    return decorated_function
 
 
 @APP.context_processor
@@ -358,7 +387,7 @@ def auth_login():
             flask.flash('Welcome, %s' % flask.g.fas_user.username)
             return flask.redirect(flask.url_for('index'))
         else:
-            flask.flash('Incorrect username or password')
+            flask.flash('Incorrect username or password', 'errors')
     return flask.redirect(flask.url_for('index'))
 
 
@@ -379,8 +408,13 @@ def add_calendar():
     """ Add a calendar to the database.
     This function is only accessible to admin of the webapp.
     """
-    if not flask.g.fas_user or not is_admin():
+    if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
+    if not is_admin():
+        flask.flash('You are not a fedocal admin, you are not allowed '
+            'to add calendars.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     form = forms.AddCalendarForm()
     # pylint: disable=E1101
     if form.validate_on_submit():
@@ -401,7 +435,8 @@ def add_calendar():
         except SQLAlchemyError, err:
             SESSION.rollback()
             print 'add_calendar:', err
-            flask.flash('Could not add this calendar to the database')
+            flask.flash('Could not add this calendar to the database',
+                        'errors')
             return flask.render_template('add_calendar.html',
                                          form=form)
         flask.flash('Calendar added')
@@ -428,7 +463,7 @@ def add_meeting(calendar_name):
             or is_admin()):
         flask.flash('You are not one of the manager of this calendar, '
                     'or one of its admins, you are not allowed to add '
-                    'new meetings.')
+                    'new meetings.', 'errors')
         return flask.redirect(flask.url_for('calendar',
                                             calendar_name=calendar_name))
 
@@ -457,14 +492,15 @@ def add_meeting(calendar_name):
                 remind_who=form.remind_who.data,
                 admin=is_admin())
         except FedocalException, err:
-            flask.flash(err)
+            flask.flash(err, 'warnings')
             return flask.render_template(
                 'add_meeting.html', calendar=calendarobj, form=form,
                 tzone=tzone)
         except SQLAlchemyError, err:
             SESSION.rollback()
             print 'add_meeting:', err
-            flask.flash('Could not add this meeting to this calendar')
+            flask.flash('Could not add this meeting to this calendar',
+                        'errors')
             return flask.render_template(
                 'add_meeting.html', calendar=calendarobj, form=form,
                 tzone=tzone)
@@ -494,7 +530,8 @@ def edit_meeting(meeting_id):
             or is_calendar_admin(meeting.calendarobj) \
             or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
-                    'or an admin, you are not allowed to edit it.')
+                    'or an admin, you are not allowed to edit it.',
+                    'errors')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
 
@@ -524,14 +561,14 @@ def edit_meeting(meeting_id):
                 edit_all_meeting=form.recursive_edit.data,
                 admin=is_admin())
         except FedocalException, err:
-            flask.flash(err)
+            flask.flash(err, 'warnings')
             return flask.render_template(
                 'edit_meeting.html', meeting=meeting, calendar=calendarobj,
                 form=form, tzone=tzone)
         except SQLAlchemyError, err:
             SESSION.rollback()
             print 'edit_meeting:', err
-            flask.flash('Could not update this meeting.')
+            flask.flash('Could not update this meeting.', 'errors')
             return flask.render_template(
                 'edit_meeting.html', meeting=meeting,
                 calendar=calendarobj, form=form, tzone=tzone)
@@ -556,7 +593,7 @@ def edit_meeting(meeting_id):
                 meeting.meeting_date,
                 meeting.meeting_time_start):
             flask.flash('This meeting has already occured, you may not '
-                        'change it anymore')
+                        'change it anymore', 'warnings')
             return flask.redirect(flask.url_for('my_meetings'))
         form = forms.AddMeetingForm(meeting=meeting, tzone=get_timezone())
     return flask.render_template(
@@ -582,7 +619,8 @@ def view_meeting_page(meeting_id, full):
     meeting = Meeting.by_id(SESSION, meeting_id)
     tzone = get_timezone()
     if not meeting:
-        flask.flash('No meeting could be found for this identifier')
+        flask.flash('No meeting could be found for this identifier',
+                    'errors')
         return flask.redirect(flask.url_for('index'))
     meeting = fedocallib.convert_meeting_timezone(meeting, 'UTC', tzone)
     auth_form = forms.LoginForm()
@@ -615,7 +653,8 @@ def delete_meeting(meeting_id):
             or is_calendar_admin(meeting.calendar) \
             or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
-                    'or an admin, you are not allowed to delete it.')
+                    'or an admin, you are not allowed to delete it.',
+                    'errors')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
 
@@ -633,7 +672,7 @@ def delete_meeting(meeting_id):
             except SQLAlchemyError, err:
                 SESSION.rollback()
                 print 'edit_meeting:', err
-                flask.flash('Could not update this meeting.')
+                flask.flash('Could not update this meeting.', 'error')
         flask.flash('Meeting deleted')
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=meeting.calendar_name))
@@ -652,8 +691,13 @@ def delete_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to delete.
     """
-    if not flask.g.fas_user or not is_admin():
+    if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
+    if not is_admin():
+        flask.flash('You are not a fedocal admin, you are not allowed '
+            'to delete the calendar.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     deleteform = forms.DeleteCalendarForm()
     # pylint: disable=E1101
@@ -665,7 +709,7 @@ def delete_calendar(calendar_name):
             except SQLAlchemyError, err:
                 SESSION.rollback()
                 print 'delete_calendar:', err
-                flask.flash('Could not delete this calendar.')
+                flask.flash('Could not delete this calendar.', 'errors')
         flask.flash('Calendar deleted')
         return flask.redirect(flask.url_for('index'))
     return flask.render_template(
@@ -681,8 +725,13 @@ def edit_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to edit.
     """
-    if not flask.g.fas_user or not is_admin():
+    if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
+    if not is_admin():
+        flask.flash('You are not a fedocal admin, you are not allowed '
+            'to edit the calendar.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     form = forms.AddCalendarForm()
     # pylint: disable=E1101
@@ -704,7 +753,7 @@ def edit_calendar(calendar_name):
         except SQLAlchemyError, err:
             SESSION.rollback()
             print 'edit_calendar:', err
-            flask.flash('Could not update this calendar.')
+            flask.flash('Could not update this calendar.', 'errors')
             return flask.render_template(
                 'edit_calendar.html', form=form, calendar=calendarobj)
 

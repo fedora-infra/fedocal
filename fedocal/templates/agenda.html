@@ -37,20 +37,21 @@
     {% else %}
         <td>
     {% endif %}
+
     {% if meeting_list %}
         {% for meeting in meeting_list %}
             {% set first_meeting = [] %}
             {% set last_meeting = [] %}
 
-            {% if prev_meetings[day_index] %}
-                {% for prev_meeting in prev_meetings[day_index] %}
+            {% if prev_meetings and prev_meetings[loopidx - 1] %}
+                {% for prev_meeting in prev_meetings[loopidx - 1] %}
                     {% if prev_meeting.meeting_name == meeting.meeting_name %}
                         <!--{{ first_meeting.append(False) }}-->
                     {% endif %}
                 {% endfor %}
             {% endif %}
-            {% if next_meetings[day_index] %}
-                {% for next_meeting in next_meetings[day_index] %}
+            {% if next_meetings and next_meetings[loopidx - 1] %}
+                {% for next_meeting in next_meetings[loopidx - 1] %}
                     {% if next_meeting.meeting_name == meeting.meeting_name %}
                         <!--{{ last_meeting.append(False) }}-->
                     {% endif %}
@@ -97,29 +98,29 @@
             <td colspan="7" class="empty"></td>
         </tr>
         {% set keys = meetings.keys()|sort %}
-        {% for time_entry in keys %}
-            {% if time_entry == '00h00' %}
-                {% set previous_time_entry = keys[loop.index0 - 1]%}
-                {% set current_time_entry = time_entry %}
-            {% else %}
-            {% set previous_time_entry = keys[loop.index0 - 2]%}
+
+        {% for cnt in range(1, 48) %}
         <tr>
-            {% if time_entry.endswith('00') %}
-                <th rowspan="2" class="time">{{ time_entry }}</th>
+            {% if cnt > 1 and keys[cnt].endswith('00') %}
+                <th rowspan="2" class="time">{{ keys[(cnt)] }}</th>
             {% endif %}
-            {% for meeting_list in meetings[current_time_entry] %}
-                {{ render_meetings(meeting_list, loop.index, meetings[previous_time_entry],
-                    meetings[time_entry]) }}
+
+            {% for meeting_list in meetings[keys[cnt - 1]] %}
+                {{ render_meetings(meeting_list,
+                                   loop.index,
+                                   meetings[keys[cnt - 2]],
+                                   meetings[keys[cnt]]) }}
             {% endfor %}
-            {% set current_time_entry = time_entry %}
         </tr>
-            {% endif %}
         {% endfor %}
         <tr>
             <th rowspan="2" class="time">00h00</th>
             {% if meetings %}
             {% for meeting_list in meetings['23h30'] %}
-                {{ render_meetings(meeting_list, loop.index) }}
+                {{ render_meetings(meeting_list,
+                                   loop.index,
+                                   meetings['23h00'],
+                                   None) }}
             {% endfor %}
             {% endif %}
         </tr>

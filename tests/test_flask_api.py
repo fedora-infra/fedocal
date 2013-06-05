@@ -84,9 +84,13 @@ class FlaskApitests(Modeltests):
         """ Test the api_date_default function. """
         output = self.app.get('/api/meetings/?calendar=foobar')
         self.assertEqual(output.status_code, 200)
+        start_date = TODAY - timedelta(days=30)
+        end_date = TODAY + timedelta(days=180)
         self.assertEqual(output.data,
-            '{"meetings": [], "arguments": {"start": "2013-05-04", '
-            '"calendar": "foobar", "end": "2013-11-30", "region": null}}')
+            '{"meetings": [], "arguments": {"start": "%s", '
+            '"calendar": "foobar", "end": "%s", "region": null}}'
+            % (start_date.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')))
 
         self.__setup_db()
 
@@ -108,8 +112,9 @@ class FlaskApitests(Modeltests):
             % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{"meetings": [], "arguments": {"start": "2013-06-05", '
-            '"calendar": "foobar", "end": "2013-06-16", "region": null}}')
+            '{"meetings": [], "arguments": {"start": "%s", '
+            '"calendar": "foobar", "end": "%s", "region": null}}'
+            % (TODAY.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
 
         self.__setup_db()
 
@@ -141,7 +146,6 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/meetings/?calendar=test_calendar'
             '&start=%s&end=2012-09-aw' % (TODAY))
         self.assertEqual(output.status_code, 400)
-        print output.data
         self.assertTrue('"error": "Invalid end date format: ' in \
                         output.data)
 
@@ -150,23 +154,29 @@ class FlaskApitests(Modeltests):
 
         output = self.app.get('/api/meetings/?calendar=foobar&region=EMEA')
         self.assertEqual(output.status_code, 200)
+        start_date = TODAY - timedelta(days=30)
+        end_date = TODAY + timedelta(days=180)
         self.assertEqual(output.data,
             '{"meetings": [], '
             '"arguments": {'
-            '"start": "2013-05-04", '
+            '"start": "%s", '
             '"calendar": "foobar", '
-            '"end": "2013-11-30", '
+            '"end": "%s", '
             '"region": "EMEA"}'
-            '}')
+            '}' % (start_date.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')))
 
         self.__setup_db()
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=APAC')
         self.assertEqual(output.status_code, 200)
+        start_date = TODAY - timedelta(days=30)
+        end_date = TODAY + timedelta(days=180)
         self.assertEqual(output.data,
-            '{"meetings": [], "arguments": {"start": "2013-05-04", '
-            '"calendar": "test_calendar4", "end": "2013-11-30", '
-            '"region": "APAC"}}')
+            '{"meetings": [], "arguments": {"start": "%s", '
+            '"calendar": "test_calendar4", "end": "%s", '
+            '"region": "APAC"}}' %(start_date.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')))
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=NA')
         self.assertEqual(output.status_code, 200)
@@ -183,9 +193,10 @@ class FlaskApitests(Modeltests):
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{"meetings": [], "arguments": {"start": "2013-06-05", '
-            '"calendar": "foobar", "end": "2013-06-30", '
-            '"region": "APAC"}}')
+            '{"meetings": [], "arguments": {"start": "%s", '
+            '"calendar": "foobar", "end": "%s", '
+            '"region": "APAC"}}' % (TODAY.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')))
 
         self.__setup_db()
 
@@ -193,9 +204,10 @@ class FlaskApitests(Modeltests):
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{"meetings": [], "arguments": {"start": "2013-06-05", '
-            '"calendar": "test_calendar4", "end": "2013-06-30", '
-            '"region": "APAC"}}')
+            '{"meetings": [], "arguments": {"start": "%s", '
+            '"calendar": "test_calendar4", "end": "%s", '
+            '"region": "APAC"}}' % (TODAY.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')))
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=NA'
                               '&start=%s&end=%s' % (TODAY, end_date))
@@ -218,17 +230,19 @@ class FlaskApitests(Modeltests):
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{"meetings": [], "arguments": {"start": "2013-06-05", '
-            '"calendar": "test_calendar4", "end": "2013-06-06", '
-            '"region": "NA"}}')
+            '{"meetings": [], "arguments": {"start": "%s", '
+            '"calendar": "test_calendar4", "end": "%s", '
+            '"region": "NA"}}' % (TODAY.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')))
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA'
                               '&start=%s&end=%s' % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-            '{"meetings": [], "arguments": {"start": "2013-06-05", '
-            '"calendar": "test_calendar4", "end": "2013-06-06", '
-            '"region": "EMEA"}}')
+            '{"meetings": [], "arguments": {"start": "%s", '
+            '"calendar": "test_calendar4", "end": "%s", '
+            '"region": "EMEA"}}' % (TODAY.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')))
 
     def test_api_place_error(self):
         """ Test the api_date function with wrong input. """

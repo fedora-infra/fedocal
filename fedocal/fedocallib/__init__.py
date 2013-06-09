@@ -20,6 +20,7 @@ import operator
 
 from datetime import datetime
 from datetime import date
+from datetime import time
 from datetime import timedelta
 
 from sqlalchemy import create_engine
@@ -434,13 +435,17 @@ def get_future_regular_meeting_of_user(
 
 
 def agenda_is_free(
-        session, calendarobj, meeting_date, time_start, time_stop):
+        session, calendarobj,
+        meeting_date, meeting_date_end,
+        time_start, time_stop):
     """Check if there is already someting planned in this agenda at that
     time on that day.
 
     :arg session: the database session to use
     :arg calendar: the name of the calendar of interest.
     :arg meeting_date: the date of the meeting (as Datetime object)
+    :arg meeting_date_end: the end date of the meeting (as Datetime
+        object)
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
     """
@@ -451,17 +456,21 @@ def agenda_is_free(
     for meeting in set(meetings):
         if meeting.meeting_date != meeting_date:
             continue
+
         if time_start <= meeting.meeting_time_start \
-                and meeting.meeting_time_start < time_stop:
+                and time_stop > meeting.meeting_time_start:
             agenda_free = False
         elif time_start < meeting.meeting_time_stop \
-                and meeting.meeting_time_stop <= time_stop:
+                and time_stop >= meeting.meeting_time_stop:
             agenda_free = False
         elif time_start < meeting.meeting_time_start \
                 and time_stop > meeting.meeting_time_stop:
             agenda_free = False
         elif time_start > meeting.meeting_time_start \
                 and time_stop < meeting.meeting_time_stop:
+            agenda_free = False
+        elif time_start == meeting.meeting_time_start \
+                and time_stop == meeting.meeting_time_stop:
             agenda_free = False
     return agenda_free
 
@@ -684,6 +693,7 @@ def add_meeting(
         meeting_region, tzone,
         frequency, end_repeats,
         remind_when, remind_who,
+        full_day,
         admin=False):
     """ When a user wants to add a meeting to the database, we need to
     perform a number of test first checking that the input is valid
@@ -701,20 +711,30 @@ def add_meeting(
         raise InvalidMeeting(
             'The start time of your meeting is later than the stop time.')
 
+    if full_day:
+        meeting_time_start = time(0, 0)
+        meeting_time_stop = time(0, 0)
+        meeting_date_end = meeting_date + timedelta(days=1)
+        tzone = 'UTC'
+
     meeting_time_start = convert_time(
         datetime(meeting_date.year, meeting_date.month, meeting_date.day,
                  meeting_time_start.hour,
                  meeting_time_start.minute),
         tzone, 'UTC')
     meeting_time_stop = convert_time(
-        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+        datetime(meeting_date.year,
+                 meeting_date.month,
+                 meeting_date.day,
                  meeting_time_stop.hour,
                  meeting_time_stop.minute),
         tzone, 'UTC')
 
     free_time = agenda_is_free(
         session, calendarobj,
-        meeting_date, meeting_time_start.time(),
+        meeting_time_start.date(),
+        meeting_time_stop.date(),
+        meeting_time_start.time(),
         meeting_time_stop.time())
 
     if not bool(calendarobj.calendar_multiple_meetings) and \

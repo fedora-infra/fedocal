@@ -490,6 +490,7 @@ def add_meeting(calendar_name):
                 end_repeats=form.end_repeats.data,
                 remind_when=form.remind_when.data,
                 remind_who=form.remind_who.data,
+                full_day=form.full_day.data,
                 admin=is_admin())
         except FedocalException, err:
             flask.flash(err, 'warnings')

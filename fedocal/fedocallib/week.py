@@ -32,7 +32,7 @@ class Week(object):
         self.session = session
         self.calendar = calendar
         self.start_date = start_date
-        self.stop_date = start_date + timedelta(days=7)
+        self.stop_date = start_date + timedelta(days=6)
         self.meetings = []
         self.full_day_meetings = []
         self.get_meetings()

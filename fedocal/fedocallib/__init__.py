@@ -849,6 +849,11 @@ def edit_meeting(
         raise InvalidMeeting(
             'The start date of your meeting is later than the end date.')
 
+    if full_day:
+        meeting_time_start = time(0, 0)
+        meeting_time_stop = time(0, 0)
+        tzone = 'UTC'
+
     meeting_time_start = convert_time(
         datetime(meeting_date.year, meeting_date.month, meeting_date.day,
                  meeting_time_start.hour,
@@ -860,6 +865,9 @@ def edit_meeting(
                  meeting_time_stop.hour,
                  meeting_time_stop.minute),
         tzone, 'UTC')
+
+    if full_day:
+        meeting_time_stop = meeting_time_stop + timedelta(days=1)
 
     if recursion_frequency and recursion_ends:
         futur_meeting_at_time = agenda_is_free_in_future(

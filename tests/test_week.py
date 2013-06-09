@@ -66,7 +66,7 @@ class Weektests(Modeltests):
     def test_init_week(self):
         """ Test the Week init function. """
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        end_date = TODAY + timedelta(days=7)
+        end_date = TODAY + timedelta(days=6)
         weekobj = week.Week(self.session, calendar, TODAY)
 
         self.assertNotEqual(weekobj, None)
@@ -77,7 +77,7 @@ class Weektests(Modeltests):
     def test_repr_week(self):
         """ Test if the week string representation is correct. """
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        end_date = TODAY + timedelta(days=7)
+        end_date = TODAY + timedelta(days=6)
         weekobj = week.Week(self.session, calendar, TODAY)
 
         self.assertNotEqual(weekobj, None)

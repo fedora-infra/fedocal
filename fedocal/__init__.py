@@ -559,6 +559,7 @@ def edit_meeting(meeting_id):
                 recursion_ends=form.end_repeats.data,
                 remind_when=form.remind_when.data,
                 remind_who=form.remind_who.data,
+                full_day=form.full_day.data,
                 edit_all_meeting=form.recursive_edit.data,
                 admin=is_admin())
         except FedocalException, err:

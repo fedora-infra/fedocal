@@ -476,7 +476,8 @@ def agenda_is_free(
 
 
 def agenda_is_free_in_future(
-        session, calendarobj, meeting_date, recursion_ends,
+        session, calendarobj, meeting_date, meeting_date_end,
+        recursion_ends,
         time_start, time_stop):
     """For recursive meeting, check for meetings happening at the
     specified time between the specified date and to the end of the
@@ -485,6 +486,8 @@ def agenda_is_free_in_future(
     :arg session: the database session to use
     :arg calendarobj: the calendar of interest.
     :arg meeting_date: the date of the meeting (as Datetime object)
+    :arg meeting_date_end: the end date of the meeting (as Datetime
+        object)
     :arg recursion_ends: the end date of the recursion
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
@@ -745,8 +748,9 @@ def add_meeting(
     if frequency and end_repeats:
         futur_meeting_at_time = agenda_is_free_in_future(
             session, calendarobj,
-            meeting_date, end_repeats, meeting_time_start.time(),
-            meeting_time_stop.time())
+            meeting_time_start.date(), meeting_time_stop.date(),
+            end_repeats,
+            meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
                 not(futur_meeting_at_time):
@@ -799,6 +803,7 @@ def edit_meeting(
         meeting_region, tzone,
         recursion_frequency, recursion_ends,
         remind_when, remind_who,
+        full_day,
         edit_all_meeting=True,
         admin=False):
     """ When a user wants to edit a meeting to the database, we need to
@@ -838,7 +843,9 @@ def edit_meeting(
 
     if recursion_frequency and recursion_ends:
         futur_meeting_at_time = agenda_is_free_in_future(
-            session, calendarobj, meeting_date, recursion_ends,
+            session, calendarobj,
+            meeting_time_start.date(), meeting_time_stop.date(),
+            recursion_ends,
             meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
@@ -874,6 +881,7 @@ def edit_meeting(
             free_time = agenda_is_free(
                 session, calendarobj,
                 new_meeting.meeting_date,
+                new_meeting.meeting_date_end,
                 new_meeting.meeting_time_start,
                 new_meeting.meeting_time_stop)
 

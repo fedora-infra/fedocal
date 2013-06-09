@@ -479,7 +479,7 @@ def add_meeting(calendar_name):
                 fas_user=flask.g.fas_user,
                 meeting_name=form.meeting_name.data,
                 meeting_date=form.meeting_date.data,
-                # meeting_date_end,
+                # meeting_date_end=form.meeting_date_end.data,
                 meeting_time_start=form.meeting_time_start.data,
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,
@@ -508,7 +508,10 @@ def add_meeting(calendar_name):
 
         flask.flash('Meeting added')
         return flask.redirect(flask.url_for(
-            'calendar', calendar_name=calendarobj.calendar_name))
+            'calendar', calendar_name=calendarobj.calendar_name,
+            year=form.meeting_date.data.year,
+            month=form.meeting_date.data.month,
+            day=form.meeting_date.data.day))
 
     return flask.render_template(
         'add_meeting.html', calendar=calendarobj, form=form, tzone=tzone)

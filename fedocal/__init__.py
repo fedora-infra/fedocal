@@ -74,9 +74,10 @@ work.
             flask.flash('Login required', 'errors')
             valid = False
         else:
-            non_cla_groups = [x.name
-                      for x in flask.g.fas_user.approved_memberships
-                      if x.group_type != 'cla']
+            non_cla_groups = [
+                x.name
+                for x in flask.g.fas_user.approved_memberships
+                if x.group_type != 'cla']
             if len(non_cla_groups) == 0:
                 valid = False
                 flask.flash('You must be in one more group than the CLA',
@@ -412,7 +413,7 @@ def add_calendar():
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
-            'to add calendars.', 'errors')
+                    'to add calendars.', 'errors')
         return flask.redirect(flask.url_for('index'))
 
     form = forms.AddCalendarForm()
@@ -458,8 +459,8 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     calendarobj = Calendar.by_id(SESSION, calendar_name)
-    if not (is_calendar_manager(calendarobj) \
-            or is_calendar_admin(calendarobj) \
+    if not (is_calendar_manager(calendarobj)
+            or is_calendar_admin(calendarobj)
             or is_admin()):
         flask.flash('You are not one of the manager of this calendar, '
                     'or one of its admins, you are not allowed to add '
@@ -530,8 +531,8 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
-    if not (is_meeting_manager(meeting) \
-            or is_calendar_admin(meeting.calendarobj) \
+    if not (is_meeting_manager(meeting)
+            or is_calendar_admin(meeting.calendarobj)
             or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to edit it.',
@@ -654,8 +655,8 @@ def delete_meeting(meeting_id):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
-    if not (is_meeting_manager(meeting) \
-            or is_calendar_admin(meeting.calendar) \
+    if not (is_meeting_manager(meeting)
+            or is_calendar_admin(meeting.calendar)
             or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to delete it.',
@@ -700,7 +701,7 @@ def delete_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
-            'to delete the calendar.', 'errors')
+                    'to delete the calendar.', 'errors')
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -734,7 +735,7 @@ def edit_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
-            'to edit the calendar.', 'errors')
+                    'to edit the calendar.', 'errors')
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)

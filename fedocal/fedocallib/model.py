@@ -366,7 +366,7 @@ class Meeting(BASE):
             ))
 
         query = query1.union(query2).union(
-                query3).union(query4).order_by(Meeting.meeting_date)
+            query3).union(query4).order_by(Meeting.meeting_date)
 
         return list(set(query.all()))
 

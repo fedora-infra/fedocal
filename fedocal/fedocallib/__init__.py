@@ -436,8 +436,8 @@ def get_future_regular_meeting_of_user(
 
 def agenda_is_free(
         session, calendarobj,
-        meeting_date, meeting_date_end,
-        time_start, time_stop):
+        meeting_date,
+        meeting_date_end):
     """Check if there is already someting planned in this agenda at that
     time on that day.
 
@@ -450,28 +450,47 @@ def agenda_is_free(
     :arg time_stop: the time at which the meeting stops (as int)
     """
     meetings = get_by_date(
-        session, calendarobj, meeting_date,
-        meeting_date + timedelta(days=1))
+        session, calendarobj,
+        meeting_date.date(),
+        meeting_date_end.date())
     agenda_free = True
-    for meeting in set(meetings):
-        if meeting.meeting_date != meeting_date:
-            continue
 
-        if time_start <= meeting.meeting_time_start \
-                and time_stop > meeting.meeting_time_start:
+    meetings.extend(Meeting.get_at_date(
+        session, calendarobj, meeting_date.date(), full_day=True))
+
+    for meeting in set(meetings):
+        meeting_start_date_time = datetime(
+            meeting.meeting_date.year,
+            meeting.meeting_date.month,
+            meeting.meeting_date.day,
+            meeting.meeting_time_start.hour,
+            meeting.meeting_time_start.minute,
+            tzinfo=pytz.utc)
+
+        meeting_stop_date_time = datetime(
+            meeting.meeting_date_end.year,
+            meeting.meeting_date_end.month,
+            meeting.meeting_date_end.day,
+            meeting.meeting_time_stop.hour,
+            meeting.meeting_time_stop.minute,
+            tzinfo=pytz.utc)
+
+        if meeting_date <= meeting_start_date_time \
+                and meeting_date_end > meeting_start_date_time:
             agenda_free = False
-        elif time_start < meeting.meeting_time_stop \
-                and time_stop >= meeting.meeting_time_stop:
+        elif meeting_date < meeting_stop_date_time \
+                and meeting_date_end >= meeting_stop_date_time:
             agenda_free = False
-        elif time_start < meeting.meeting_time_start \
-                and time_stop > meeting.meeting_time_stop:
+        elif meeting_date < meeting_start_date_time \
+                and meeting_date_end > meeting_stop_date_time:
             agenda_free = False
-        elif time_start > meeting.meeting_time_start \
-                and time_stop < meeting.meeting_time_stop:
+        elif meeting_date > meeting_start_date_time \
+                and meeting_date_end < meeting_stop_date_time:
             agenda_free = False
-        elif time_start == meeting.meeting_time_start \
-                and time_stop == meeting.meeting_time_stop:
+        elif meeting_date == meeting_start_date_time \
+                and meeting_date_end == meeting_stop_date_time:
             agenda_free = False
+
     return agenda_free
 
 
@@ -717,7 +736,6 @@ def add_meeting(
     if full_day:
         meeting_time_start = time(0, 0)
         meeting_time_stop = time(0, 0)
-        meeting_date_end = meeting_date + timedelta(days=1)
         tzone = 'UTC'
 
     meeting_time_start = convert_time(
@@ -732,13 +750,14 @@ def add_meeting(
                  meeting_time_stop.hour,
                  meeting_time_stop.minute),
         tzone, 'UTC')
+    
+    if full_day:
+        meeting_time_stop = meeting_time_stop + timedelta(days=1)
 
     free_time = agenda_is_free(
         session, calendarobj,
-        meeting_time_start.date(),
-        meeting_time_stop.date(),
-        meeting_time_start.time(),
-        meeting_time_stop.time())
+        meeting_time_start,
+        meeting_time_stop)
 
     if not bool(calendarobj.calendar_multiple_meetings) and \
             not bool(free_time):
@@ -790,7 +809,8 @@ def add_meeting(
         reminder_id=reminder_id,
         meeting_region=meeting_region,
         recursion_frequency=frequency,
-        recursion_ends=end_repeats)
+        recursion_ends=end_repeats,
+        full_day=full_day)
 
     session.commit()
 
@@ -878,12 +898,25 @@ def edit_meeting(
             new_meeting = Meeting.copy(meeting)
             new_meeting.meeting_date = meeting_date + timedelta(
                 days=meeting.recursion_frequency)
+
+            dt_start = datetime(
+                new_meeting.meeting_date.year,
+                new_meeting.meeting_date.month,
+                new_meeting.meeting_date.day,
+                new_meeting.meeting_time_start.hour,
+                new_meeting.meeting_time_start.minute,
+                tzinfo=pytz.utc)
+            dt_stop = datetime(
+                new_meeting.meeting_date_end.year,
+                new_meeting.meeting_date_end.month,
+                new_meeting.meeting_date_end.day,
+                new_meeting.meeting_time_start.hour,
+                new_meeting.meeting_time_start.minute,
+                tzinfo=pytz.utc)
+
             free_time = agenda_is_free(
                 session, calendarobj,
-                new_meeting.meeting_date,
-                new_meeting.meeting_date_end,
-                new_meeting.meeting_time_start,
-                new_meeting.meeting_time_stop)
+                dt_start, dt_stop)
 
             if not bool(calendarobj.calendar_multiple_meetings) and \
                     bool(free_time):

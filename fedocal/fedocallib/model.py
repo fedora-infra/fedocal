@@ -317,23 +317,18 @@ class Meeting(BASE):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
         """
+        query = session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_date_end <= stop_date),
+                (Meeting.full_day == full_day)
+            )).order_by(Meeting.meeting_date)
+
         if no_recursive:
-            return session.query(cls).filter(
-                and_(
-                    (Meeting.calendar == calendar),
-                    (Meeting.meeting_date >= start_date),
-                    (Meeting.meeting_date < stop_date),
-                    (Meeting.recursion_frequency == None),
-                    (Meeting.full_day == full_day)
-                )).order_by(Meeting.meeting_date).all()
-        else:
-            return session.query(cls).filter(
-                and_(
-                    (Meeting.calendar == calendar),
-                    (Meeting.meeting_date >= start_date),
-                    (Meeting.meeting_date < stop_date),
-                    (Meeting.full_day == full_day)
-                )).order_by(Meeting.meeting_date).all()
+            query = query.filter(Meeting.recursion_frequency == None)
+
+        return query.all()
 
     @classmethod
     def get_at_date(cls, session, calendar, meeting_date, full_day=False):

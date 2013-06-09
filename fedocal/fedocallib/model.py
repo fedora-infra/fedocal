@@ -331,6 +331,46 @@ class Meeting(BASE):
         return query.all()
 
     @classmethod
+    def get_overlaping_meetings(
+            cls, session, calendar, start_date, stop_date):
+        """ Retrieve the list of meetings overlaping with the date
+        provided.
+        """
+        # new meeting including others
+        query1 = session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_date_end <= stop_date),
+            ))
+        # new meeting included in another
+        query2 = session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date <= start_date),
+                (Meeting.meeting_date_end >= stop_date),
+            ))
+        # new meeting end included in another
+        query3 = session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date >= stop_date),
+                (Meeting.meeting_date_end <= stop_date),
+            ))
+        # new meeting start included in another
+        query4 = session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_date_end <= start_date),
+            ))
+
+        query = query1.union(query2).union(
+                query3).union(query4).order_by(Meeting.meeting_date)
+
+        return list(set(query.all()))
+
+    @classmethod
     def get_at_date(cls, session, calendar, meeting_date, full_day=False):
         """ Retrieve the list of meetings happening at a given date.
         The full_day boolean allows to specify if you want full day

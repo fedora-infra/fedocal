@@ -479,7 +479,7 @@ def add_meeting(calendar_name):
                 fas_user=flask.g.fas_user,
                 meeting_name=form.meeting_name.data,
                 meeting_date=form.meeting_date.data,
-                # meeting_date_end=form.meeting_date_end.data,
+                meeting_date_end=form.meeting_date_end.data,
                 meeting_time_start=form.meeting_time_start.data,
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,

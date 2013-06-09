@@ -35,6 +35,8 @@ import sys
 import os
 import re
 
+import pytz
+
 from datetime import date
 from datetime import time
 from datetime import datetime
@@ -132,7 +134,7 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(week, None)
         self.assertEqual(week.calendar.calendar_name, 'test_calendar')
         self.assertNotEqual(week.meetings, None)
-        self.assertEqual(len(week.meetings), 3)
+        self.assertEqual(len(week.meetings), 4)
         self.assertEqual(week.meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
         self.assertEqual(week.meetings[0].meeting_information,
@@ -176,11 +178,11 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['20h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertEqual(meet.meeting_name,
-                        'Fedora-fr-test-meeting')
+                    self.assertTrue(meet.meeting_name in
+                        ['Fedora-fr-test-meeting', 'Full-day meeting'])
             else:
                 cnt = cnt + 1
-        self.assertEqual(cnt, 6)
+        self.assertEqual(cnt, 5)
         self.assertEqual(meetings['15h00'][0], None)
 
         new_day = TODAY + timedelta(days=10)
@@ -191,7 +193,9 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['14h30']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertEqual(meet.meeting_name, 'test-meeting2')
+                    self.assertTrue(meet.meeting_name in
+                        ['test-meeting2',
+                         'Full-day meeting with recursion'])
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -199,7 +203,9 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['15h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertEqual(meet.meeting_name, 'test-meeting2')
+                    self.assertTrue(meet.meeting_name in
+                        ['test-meeting2',
+                         'Full-day meeting with recursion'])
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -207,8 +213,9 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['02h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertEqual(meet.meeting_name,
-                        'Another test meeting')
+                    self.assertTrue(meet.meeting_name in
+                        ['Another test meeting',
+                         'Full-day meeting with recursion'])
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -412,17 +419,31 @@ class Fedocallibtests(Modeltests):
         """ Test the agenda_is_free function. """
         self.__setup_meeting()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
+
+        today_dt_start = datetime(TODAY.year, TODAY.month, TODAY.day,
+            10, 0, tzinfo=pytz.utc)
+        today_dt_stop = datetime(TODAY.year, TODAY.month, TODAY.day,
+            11, 0, tzinfo=pytz.utc)
         self.assertTrue(fedocallib.agenda_is_free(self.session, cal,
-            TODAY, TODAY, time(10, 0), time(11, 0)))
+            today_dt_start, today_dt_stop))
+
+        today_dt_start = datetime(TODAY.year, TODAY.month, TODAY.day,
+            20, 0, tzinfo=pytz.utc)
+        today_dt_stop = datetime(TODAY.year, TODAY.month, TODAY.day,
+            21, 0, tzinfo=pytz.utc)
         self.assertFalse(fedocallib.agenda_is_free(self.session, cal,
-            TODAY, TODAY, time(20, 0), time(21, 0)))
+            today_dt_start, today_dt_stop))
 
     def test_agenda_is_free_empty(self):
         """ Test the agenda_is_free function. """
         self.__setup_calendar()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
+        today_dt_start = datetime(TODAY.year, TODAY.month, TODAY.day,
+            10, 0, tzinfo=pytz.utc)
+        today_dt_stop = datetime(TODAY.year, TODAY.month, TODAY.day,
+            11, 0, tzinfo=pytz.utc)
         self.assertTrue(fedocallib.agenda_is_free(self.session, cal,
-            TODAY, TODAY, time(10, 0), time(11, 0)))
+            today_dt_start, today_dt_stop))
 
     # pylint: disable=C0103
     def test_is_user_managing_in_calendar(self):
@@ -628,60 +649,120 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(calendarobj, None)
 
         self.assertRaises(AttributeError, fedocallib.add_meeting,
-            self.session, calendarobj, None,
-            None, None,
-            time(9, 0), time(10, 0), None,
-            None, None, None,
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=None,
+            meeting_name=None,
+            meeting_date=None,
+            meeting_date_end=None,
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone=None,
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
 
         fasuser = FakeUser(['test'])
         self.assertRaises(UserNotAllowed, fedocallib.add_meeting,
-            self.session, calendarobj, fasuser,
-            None, None,
-            time(9, 0), time(10, 0), None,
-            None, None, None,
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name=None,
+            meeting_date=None,
+            meeting_date_end=None,
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone=None,
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
 
         fasuser = FakeUser(['fi-apprentice'])
         self.assertRaises(TypeError, fedocallib.add_meeting,
-            self.session, calendarobj, fasuser,
-            None, None,
-            time(9, 0), time(10, 0), None,
-            None, None, None,
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name=None,
+            meeting_date=None,
+            meeting_date_end=None,
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone=None,
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
 
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
-            self.session, calendarobj, fasuser,
-            None, TODAY - timedelta(days=4),
-            time(9, 0), time(10, 0), None,
-            None, None, None,
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name=None,
+            meeting_date=TODAY - timedelta(days=4),
+            meeting_date_end=TODAY - timedelta(days=4),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone=None,
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
 
         self.assertRaises(IntegrityError, fedocallib.add_meeting,
-            self.session, calendarobj, fasuser,
-            None, date.today() + timedelta(days=1),
-            time(9, 0), time(10, 0), None,
-            None, None, 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name=None,
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         self.session.rollback()
 
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(10, 0), time(9, 0), None,
-            None, None, 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(10, 0),
+            meeting_time_stop=time(9, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         self.session.rollback()
 
@@ -694,12 +775,22 @@ class Fedocallibtests(Modeltests):
         fasuser = FakeUser(['fi-apprentice'])
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(9, 0), time(10, 0), None,
-            None, None, 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today()  + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
@@ -712,21 +803,41 @@ class Fedocallibtests(Modeltests):
         self.session.flush()
 
         self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(9, 0), time(10, 0), None,
-            None, None, 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(10, 0), time(11, 0), 'pingou',
-            None, None, 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(10, 0),
+            meeting_time_stop=time(11, 0),
+            comanager='pingou',
+            meeting_information=None,
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 2)
         self.assertNotEqual(meeting, None)
@@ -739,12 +850,22 @@ class Fedocallibtests(Modeltests):
         self.session.commit()
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(11, 00), time(12, 0), 'pingou',
-            'Information', None, 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(11, 0),
+            meeting_time_stop=time(12, 0),
+            comanager='pingou',
+            meeting_information='Information',
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 3)
         self.assertNotEqual(meeting, None)
@@ -753,12 +874,22 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_information, 'Information')
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(13, 0), time(14, 0), 'pingou',
-            'Information', 'EMEA', 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(13, 0),
+            meeting_time_stop=time(14, 0),
+            comanager='pingou',
+            meeting_information='Information',
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 4)
         self.assertNotEqual(meeting, None)
@@ -771,12 +902,22 @@ class Fedocallibtests(Modeltests):
         fasuser = FakeUser(['packager'])
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(9, 0), time(10, 0), 'pingou',
-            'Information', 'EMEA', 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager='pingou',
+            meeting_information='Information',
+            meeting_region='EMEA',
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 5)
         self.assertNotEqual(meeting, None)
@@ -786,12 +927,22 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_region, 'EMEA')
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(10, 0), time(11, 0), 'pingou',
-            'Information', 'EMEA', 'Europe/Paris',
-            7, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(10, 0),
+            meeting_time_stop=time(11, 0),
+            comanager='pingou',
+            meeting_information='Information',
+            meeting_region='EMEA',
+            tzone='Europe/Paris',
+            frequency=7,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 6)
         self.assertNotEqual(meeting, None)
@@ -802,12 +953,22 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.recursion_frequency, 7)
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(11, 0), time(12, 0), 'pingou',
-            'Information', 'EMEA', 'Europe/Paris',
-            7, date.today() + timedelta(days=28),
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(11, 0),
+            meeting_time_stop=time(12, 0),
+            comanager='pingou',
+            meeting_information='Information',
+            meeting_region='EMEA',
+            tzone='Europe/Paris',
+            frequency=7,
+            end_repeats=date.today() + timedelta(days=28),
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 7)
         self.assertNotEqual(meeting, None)
@@ -820,12 +981,22 @@ class Fedocallibtests(Modeltests):
             28)
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(12, 0), time(13, 0), 'pingou',
-            'Information', 'EMEA', 'Europe/Paris',
-            7, date.today() + timedelta(days=28),
-            '', 'test@example.org',
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(12, 0),
+            meeting_time_stop=time(13, 0),
+            comanager='pingou',
+            meeting_information='Information',
+            meeting_region='EMEA',
+            tzone='Europe/Paris',
+            frequency=7,
+            end_repeats=date.today() + timedelta(days=28),
+            remind_when='',
+            remind_who='test@example.org',
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 8)
         self.assertNotEqual(meeting, None)
@@ -837,12 +1008,22 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.reminder, None)
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name', date.today() + timedelta(days=1),
-            time(13, 0), time(14, 0), 'pingou',
-            'Information', 'EMEA', 'Europe/Paris',
-            7, date.today() + timedelta(days=28),
-            'H-12', 'test@example.org',
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(13, 0),
+            meeting_time_stop=time(14, 0),
+            comanager='pingou',
+            meeting_information='Information',
+            meeting_region='EMEA',
+            tzone='Europe/Paris',
+            frequency=7,
+            end_repeats=date.today() + timedelta(days=28),
+            remind_when='H-12',
+            remind_who='test@example.org',
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 9)
         self.assertNotEqual(meeting, None)
@@ -855,12 +1036,22 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
 
         fedocallib.add_meeting(
-            self.session, calendarobj, fasuser,
-            'Name23h59', date.today() + timedelta(days=1),
-            time(23, 0), time(23, 59), None,
-            'Information', 'EMEA', 'Europe/Paris',
-            None, None,
-            None, None,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name23h59',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(23, 0),
+            meeting_time_stop=time(23, 59),
+            comanager=None,
+            meeting_information='Information',
+            meeting_region='EMEA',
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 10)
         self.assertNotEqual(meeting, None)

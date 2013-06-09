@@ -14,6 +14,7 @@
         <table>
             {{ render_field_in_row(form.meeting_name) }}
             {{ render_field_in_row(form.meeting_date) }}
+            {{ render_field_in_row(form.meeting_date_end) }}
             {{ render_field_in_row(form.meeting_time_start, after="%s time" % tzone) }}
             {{ render_field_in_row(form.meeting_time_stop, after="%s time" % tzone) }}
             {{ render_field_in_row(form.full_day) }}

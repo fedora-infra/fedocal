@@ -449,14 +449,11 @@ def agenda_is_free(
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
     """
-    meetings = get_by_date(
+    meetings = Meeting.get_overlaping_meetings(
         session, calendarobj,
         meeting_date.date(),
         meeting_date_end.date())
     agenda_free = True
-
-    meetings.extend(Meeting.get_at_date(
-        session, calendarobj, meeting_date.date(), full_day=True))
 
     for meeting in set(meetings):
         meeting_start_date_time = datetime(
@@ -709,7 +706,7 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
 # pylint: disable=R0913,R0914
 def add_meeting(
         session, calendarobj, fas_user,
-        meeting_name, meeting_date,  # meeting_date_end,
+        meeting_name, meeting_date, meeting_date_end,
         meeting_time_start, meeting_time_stop, comanager,
         meeting_information,
         meeting_region, tzone,
@@ -733,6 +730,9 @@ def add_meeting(
         raise InvalidMeeting(
             'The start time of your meeting is later than the stop time.')
 
+    if meeting_date_end is None:
+        meeting_date_end = meeting_date
+
     if full_day:
         meeting_time_start = time(0, 0)
         meeting_time_stop = time(0, 0)
@@ -744,9 +744,9 @@ def add_meeting(
                  meeting_time_start.minute),
         tzone, 'UTC')
     meeting_time_stop = convert_time(
-        datetime(meeting_date.year,
-                 meeting_date.month,
-                 meeting_date.day,
+        datetime(meeting_date_end.year,
+                 meeting_date_end.month,
+                 meeting_date_end.day,
                  meeting_time_stop.hour,
                  meeting_time_stop.minute),
         tzone, 'UTC')

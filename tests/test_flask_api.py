@@ -34,6 +34,7 @@ import unittest
 import sys
 import os
 
+from datetime import date
 from datetime import timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(
@@ -84,8 +85,8 @@ class FlaskApitests(Modeltests):
         """ Test the api_date_default function. """
         output = self.app.get('/api/meetings/?calendar=foobar')
         self.assertEqual(output.status_code, 200)
-        start_date = TODAY - timedelta(days=30)
-        end_date = TODAY + timedelta(days=180)
+        start_date = date.today() - timedelta(days=30)
+        end_date = date.today() + timedelta(days=180)
         self.assertEqual(output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
             '"calendar": "foobar", "end": "%s", "region": null}}'
@@ -154,8 +155,8 @@ class FlaskApitests(Modeltests):
 
         output = self.app.get('/api/meetings/?calendar=foobar&region=EMEA')
         self.assertEqual(output.status_code, 200)
-        start_date = TODAY - timedelta(days=30)
-        end_date = TODAY + timedelta(days=180)
+        start_date = date.today() - timedelta(days=30)
+        end_date = date.today() + timedelta(days=180)
         self.assertEqual(output.data,
             '{"meetings": [], '
             '"arguments": {'
@@ -170,8 +171,6 @@ class FlaskApitests(Modeltests):
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4&region=APAC')
         self.assertEqual(output.status_code, 200)
-        start_date = TODAY - timedelta(days=30)
-        end_date = TODAY + timedelta(days=180)
         self.assertEqual(output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
             '"calendar": "test_calendar4", "end": "%s", '

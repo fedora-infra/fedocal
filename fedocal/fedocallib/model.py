@@ -39,6 +39,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation as relationship
 from sqlalchemy.sql import and_
+from sqlalchemy import func as safunc
 
 BASE = declarative_base()
 
@@ -80,9 +81,10 @@ class Calendar(BASE):
 
     __tablename__ = 'calendars'
     calendar_name = Column(String(80), primary_key=True)
-    calendar_contact = Column(String(80))
-    calendar_description = Column(String(500))
-    calendar_manager_group = Column(String(100))  # 3 groups (3*32)
+    calendar_contact = Column(String(80), nullable=False)
+    calendar_description = Column(String(500), nullable=True)
+    # 3 groups (3*32)
+    calendar_manager_group = Column(String(100), nullable=True)
     calendar_admin_group = Column(String(100), nullable=True)
     calendar_multiple_meetings = Column(Boolean, default=False)
     calendar_regional_meetings = Column(Boolean, default=False)
@@ -168,12 +170,12 @@ class Meeting(BASE):
     calendar = relationship("Calendar")
     # 5 person max (32 * 5) + 5 = 165
     meeting_manager = Column(String(165), nullable=False)
-    meeting_date = Column(Date, default=datetime.utcnow().date())
-    meeting_date_end = Column(Date, default=datetime.utcnow().date())
-    meeting_time_start = Column(Time, default=datetime.utcnow().time())
-    meeting_time_stop = Column(Time, default=datetime.utcnow().time())
-    meeting_information = Column(Text)
-    meeting_region = Column(String(10), default=None)
+    meeting_date = Column(Date, default=safunc.now(), nullable=False)
+    meeting_date_end = Column(Date, default=safunc.now(), nullable=False)
+    meeting_time_start = Column(Time, default=safunc.now(), nullable=False)
+    meeting_time_stop = Column(Time, default=safunc.now(), nullable=False)
+    meeting_information = Column(Text, nullable=True)
+    meeting_region = Column(String(10), default=None, nullable=True)
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
                          nullable=True)
     reminder = relationship("Reminder")

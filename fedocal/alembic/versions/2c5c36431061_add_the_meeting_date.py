@@ -12,13 +12,12 @@ down_revision = None
 
 from alembic import op
 import sqlalchemy as sa
-from datetime import datetime
 
 
 def upgrade():
     ''' Add the meeting_date_end column to the meetings table '''
     op.add_column('meetings', sa.Column('meeting_date_end', sa.Date,
-                  default=datetime.utcnow().date()))
+                  server_default=sa.func.now()))
 
 
 def downgrade():

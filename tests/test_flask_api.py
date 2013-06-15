@@ -108,7 +108,7 @@ class FlaskApitests(Modeltests):
 
     def test_api_date(self):
         """ Test the api_date function. """
-        end_date = TODAY + timedelta(days=11)
+        end_date = TODAY + timedelta(days=10)
         output = self.app.get('/api/meetings/?calendar=foobar&start=%s&end=%s'
             % (TODAY, end_date))
         self.assertEqual(output.status_code, 200)

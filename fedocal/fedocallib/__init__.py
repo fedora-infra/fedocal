@@ -20,6 +20,7 @@ import operator
 
 from datetime import datetime
 from datetime import date
+from datetime import time
 from datetime import timedelta
 
 from sqlalchemy import create_engine
@@ -434,40 +435,65 @@ def get_future_regular_meeting_of_user(
 
 
 def agenda_is_free(
-        session, calendarobj, meeting_date, time_start, time_stop):
+        session, calendarobj,
+        meeting_date,
+        meeting_date_end):
     """Check if there is already someting planned in this agenda at that
     time on that day.
 
     :arg session: the database session to use
     :arg calendar: the name of the calendar of interest.
     :arg meeting_date: the date of the meeting (as Datetime object)
+    :arg meeting_date_end: the end date of the meeting (as Datetime
+        object)
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
     """
-    meetings = get_by_date(
-        session, calendarobj, meeting_date,
-        meeting_date + timedelta(days=1))
+    meetings = Meeting.get_overlaping_meetings(
+        session, calendarobj,
+        meeting_date.date(),
+        meeting_date_end.date())
     agenda_free = True
+
     for meeting in set(meetings):
-        if meeting.meeting_date != meeting_date:
-            continue
-        if time_start <= meeting.meeting_time_start \
-                and meeting.meeting_time_start < time_stop:
+        meeting_start_date_time = datetime(
+            meeting.meeting_date.year,
+            meeting.meeting_date.month,
+            meeting.meeting_date.day,
+            meeting.meeting_time_start.hour,
+            meeting.meeting_time_start.minute,
+            tzinfo=pytz.utc)
+
+        meeting_stop_date_time = datetime(
+            meeting.meeting_date_end.year,
+            meeting.meeting_date_end.month,
+            meeting.meeting_date_end.day,
+            meeting.meeting_time_stop.hour,
+            meeting.meeting_time_stop.minute,
+            tzinfo=pytz.utc)
+
+        if meeting_date <= meeting_start_date_time \
+                and meeting_date_end > meeting_start_date_time:
             agenda_free = False
-        elif time_start < meeting.meeting_time_stop \
-                and meeting.meeting_time_stop <= time_stop:
+        elif meeting_date < meeting_stop_date_time \
+                and meeting_date_end >= meeting_stop_date_time:
             agenda_free = False
-        elif time_start < meeting.meeting_time_start \
-                and time_stop > meeting.meeting_time_stop:
+        elif meeting_date < meeting_start_date_time \
+                and meeting_date_end > meeting_stop_date_time:
             agenda_free = False
-        elif time_start > meeting.meeting_time_start \
-                and time_stop < meeting.meeting_time_stop:
+        elif meeting_date > meeting_start_date_time \
+                and meeting_date_end < meeting_stop_date_time:
             agenda_free = False
+        elif meeting_date == meeting_start_date_time \
+                and meeting_date_end == meeting_stop_date_time:
+            agenda_free = False
+
     return agenda_free
 
 
 def agenda_is_free_in_future(
-        session, calendarobj, meeting_date, recursion_ends,
+        session, calendarobj, meeting_date, meeting_date_end,
+        recursion_ends,
         time_start, time_stop):
     """For recursive meeting, check for meetings happening at the
     specified time between the specified date and to the end of the
@@ -476,6 +502,8 @@ def agenda_is_free_in_future(
     :arg session: the database session to use
     :arg calendarobj: the calendar of interest.
     :arg meeting_date: the date of the meeting (as Datetime object)
+    :arg meeting_date_end: the end date of the meeting (as Datetime
+        object)
     :arg recursion_ends: the end date of the recursion
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
@@ -678,19 +706,20 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
 # pylint: disable=R0913,R0914
 def add_meeting(
         session, calendarobj, fas_user,
-        meeting_name, meeting_date,  # meeting_date_end,
+        meeting_name, meeting_date, meeting_date_end,
         meeting_time_start, meeting_time_stop, comanager,
         meeting_information,
         meeting_region, tzone,
         frequency, end_repeats,
         remind_when, remind_who,
+        full_day,
         admin=False):
     """ When a user wants to add a meeting to the database, we need to
     perform a number of test first checking that the input is valid
     and then add the desired meeting.
     """
     if not is_user_managing_in_calendar(
-            session, calendarobj.calendar_name, fas_user)  and not admin:
+            session, calendarobj.calendar_name, fas_user) and not admin:
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
 
@@ -701,21 +730,34 @@ def add_meeting(
         raise InvalidMeeting(
             'The start time of your meeting is later than the stop time.')
 
+    if meeting_date_end is None:
+        meeting_date_end = meeting_date
+
+    if full_day:
+        meeting_time_start = time(0, 0)
+        meeting_time_stop = time(0, 0)
+        tzone = 'UTC'
+
     meeting_time_start = convert_time(
         datetime(meeting_date.year, meeting_date.month, meeting_date.day,
                  meeting_time_start.hour,
                  meeting_time_start.minute),
         tzone, 'UTC')
     meeting_time_stop = convert_time(
-        datetime(meeting_date.year, meeting_date.month, meeting_date.day,
+        datetime(meeting_date_end.year,
+                 meeting_date_end.month,
+                 meeting_date_end.day,
                  meeting_time_stop.hour,
                  meeting_time_stop.minute),
         tzone, 'UTC')
 
+    if full_day:
+        meeting_time_stop = meeting_time_stop + timedelta(days=1)
+
     free_time = agenda_is_free(
         session, calendarobj,
-        meeting_date, meeting_time_start.time(),
-        meeting_time_stop.time())
+        meeting_time_start,
+        meeting_time_stop)
 
     if not bool(calendarobj.calendar_multiple_meetings) and \
             not bool(free_time):
@@ -725,8 +767,9 @@ def add_meeting(
     if frequency and end_repeats:
         futur_meeting_at_time = agenda_is_free_in_future(
             session, calendarobj,
-            meeting_date, end_repeats, meeting_time_start.time(),
-            meeting_time_stop.time())
+            meeting_time_start.date(), meeting_time_stop.date(),
+            end_repeats,
+            meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
                 not(futur_meeting_at_time):
@@ -766,7 +809,8 @@ def add_meeting(
         reminder_id=reminder_id,
         meeting_region=meeting_region,
         recursion_frequency=frequency,
-        recursion_ends=end_repeats)
+        recursion_ends=end_repeats,
+        full_day=full_day)
 
     session.commit()
 
@@ -779,6 +823,7 @@ def edit_meeting(
         meeting_region, tzone,
         recursion_frequency, recursion_ends,
         remind_when, remind_who,
+        full_day,
         edit_all_meeting=True,
         admin=False):
     """ When a user wants to edit a meeting to the database, we need to
@@ -804,6 +849,11 @@ def edit_meeting(
         raise InvalidMeeting(
             'The start date of your meeting is later than the end date.')
 
+    if full_day:
+        meeting_time_start = time(0, 0)
+        meeting_time_stop = time(0, 0)
+        tzone = 'UTC'
+
     meeting_time_start = convert_time(
         datetime(meeting_date.year, meeting_date.month, meeting_date.day,
                  meeting_time_start.hour,
@@ -816,9 +866,14 @@ def edit_meeting(
                  meeting_time_stop.minute),
         tzone, 'UTC')
 
+    if full_day:
+        meeting_time_stop = meeting_time_stop + timedelta(days=1)
+
     if recursion_frequency and recursion_ends:
         futur_meeting_at_time = agenda_is_free_in_future(
-            session, calendarobj, meeting_date, recursion_ends,
+            session, calendarobj,
+            meeting_time_start.date(), meeting_time_stop.date(),
+            recursion_ends,
             meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
@@ -851,11 +906,25 @@ def edit_meeting(
             new_meeting = Meeting.copy(meeting)
             new_meeting.meeting_date = meeting_date + timedelta(
                 days=meeting.recursion_frequency)
+
+            dt_start = datetime(
+                new_meeting.meeting_date.year,
+                new_meeting.meeting_date.month,
+                new_meeting.meeting_date.day,
+                new_meeting.meeting_time_start.hour,
+                new_meeting.meeting_time_start.minute,
+                tzinfo=pytz.utc)
+            dt_stop = datetime(
+                new_meeting.meeting_date_end.year,
+                new_meeting.meeting_date_end.month,
+                new_meeting.meeting_date_end.day,
+                new_meeting.meeting_time_start.hour,
+                new_meeting.meeting_time_start.minute,
+                tzinfo=pytz.utc)
+
             free_time = agenda_is_free(
                 session, calendarobj,
-                new_meeting.meeting_date,
-                new_meeting.meeting_time_start,
-                new_meeting.meeting_time_stop)
+                dt_start, dt_stop)
 
             if not bool(calendarobj.calendar_multiple_meetings) and \
                     bool(free_time):

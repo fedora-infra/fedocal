@@ -11,3 +11,4 @@ sqlalchemy
 vobject
 wtforms
 Markdown
+docutils

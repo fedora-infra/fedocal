@@ -2,5 +2,6 @@ include LICENSE README.rst *.sample  requirements.txt
 include fedocal.spec fedocal.wsgi fedocal.conf alembic.ini.sample
 include run_tests.sh createdb createdb.py
 recursive-include fedocal *
+recursive-include alembic *
 include doc/*
 

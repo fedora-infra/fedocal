@@ -78,6 +78,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal
 install -m 644 fedocal.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/fedocal.cfg
 install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic.ini
 
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/fedocal
+cp -r alembic/ $RPM_BUILD_ROOT/%{_datadir}/fedocal/
+
 %files
 %doc README.rst LICENSE doc/
 %doc createdb.py
@@ -85,6 +88,7 @@ install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic
 %config(noreplace) %{_sysconfdir}/fedocal/fedocal.cfg
 %config(noreplace) %{_sysconfdir}/fedocal/alembic.ini
 %dir %{_sysconfdir}/fedocal/
+%{_datadir}/fedocal/
 %{python_sitelib}/fedocal/
 %{python_sitelib}/fedocal*.egg-info
 %{_bindir}/fedocal_cron.py

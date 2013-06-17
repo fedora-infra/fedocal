@@ -16,8 +16,12 @@ import sqlalchemy as sa
 
 def upgrade():
     ''' Add the meeting_date_end column to the meetings table '''
-    op.add_column('meetings', sa.Column('meeting_date_end', sa.Date,
-                  server_default=sa.func.now()))
+    op.add_column(
+        'meetings',
+        sa.Column('meeting_date_end', sa.Date,
+                  default=sa.func.now()
+                  )
+    )
 
 
 def downgrade():

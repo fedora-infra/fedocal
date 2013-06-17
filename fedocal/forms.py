@@ -143,6 +143,9 @@ class AddMeetingForm(wtf.Form):
         'Send reminder to',
         [wtf.validators.Email(), wtf.validators.optional()])
 
+    # Full day
+    full_day = wtf.BooleanField('Full day meeting')
+
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
         if a meeting is set using the meeting keyword, then fill the
@@ -185,6 +188,7 @@ class AddMeetingForm(wtf.Form):
             self.meeting_region.data = meeting.meeting_region
             self.frequency.data = meeting.recursion_frequency
             self.end_repeats.data = meeting.recursion_ends
+            self.full_day.data = meeting.full_day
             if meeting.reminder_id:
                 self.remind_when.data = meeting.reminder.reminder_offset
                 self.remind_who.data = meeting.reminder.reminder_to

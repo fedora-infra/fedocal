@@ -106,10 +106,17 @@
             {% endif %}
 
             {% for meeting_list in meetings[keys[cnt - 1]] %}
+                {% if cnt == 1 %}
+                {{ render_meetings(meeting_list,
+                                   loop.index,
+                                   [],
+                                   meetings[keys[cnt]]) }}
+                {% else %}
                 {{ render_meetings(meeting_list,
                                    loop.index,
                                    meetings[keys[cnt - 2]],
                                    meetings[keys[cnt]]) }}
+                {% endif %}
             {% endfor %}
         </tr>
         {% endfor %}

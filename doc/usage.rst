@@ -133,7 +133,12 @@ When creating a meeting you will have to fill the form asking for:
 - ``meeting name``: this is the name of the meeting has presented in main
   calendar as well as by email.
 
-- ``meetin date``: the date at which the meeting will occur. If you use a
+- ``meeting date``: the date at which the meeting will occur. If you use a
+  browser with javascript enable you will have a pop-up enabling to choose
+  the date in a calendar. Otherwise, you will have to provide the date using
+  the format: ``yyyy-mm-dd``.
+
+- ``meeting end date``: the date at which the meeting will end. If you use a
   browser with javascript enable you will have a pop-up enabling to choose
   the date in a calendar. Otherwise, you will have to provide the date using
   the format: ``yyyy-mm-dd``.
@@ -146,13 +151,19 @@ When creating a meeting you will have to fill the form asking for:
   any time although the calendar will only displays half-hour time slots.
   It should be of the format: ``HH:MM``.
 
+- ``full day``: checkbox to specify that the meeting is full day. Full day
+  meeting are recorded as being from the specified date midnight to the
+  next day midnight, UTC times.
+
 - ``co-manager``: by default the person creating the meeting is the manager of
   the meeting. However, sometime you want to allow someone else to manage
   the meeting as well. This field allows you to provide a comma separated
   list of people you trust to manage the meeting with you.
 
 - ``meeting information``: this is a free-text field containing as much 
-  information as you wish about the meeting.
+  information as you wish about the meeting. This field support the
+  `markdown syntax <http://daringfireball.net/projects/markdown/syntax>`_
+  allowing formating the text and adding links.
 
 - ``meeting region``: when the calendar supports it, you may associate your
   meeting with a world region (APAC, EMEA, LATAM, NA)

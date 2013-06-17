@@ -32,7 +32,7 @@ class Week(object):
         self.session = session
         self.calendar = calendar
         self.start_date = start_date
-        self.stop_date = start_date + timedelta(days=7)
+        self.stop_date = start_date + timedelta(days=6)
         self.meetings = []
         self.full_day_meetings = []
         self.get_meetings()
@@ -44,6 +44,10 @@ class Week(object):
         self.meetings = Meeting.get_by_date(
             self.session, self.calendar,
             self.start_date, self.stop_date)
+
+        self.meetings.extend(Meeting.get_by_date(
+            self.session, self.calendar,
+            self.start_date, self.stop_date, full_day=True))
 
         for meeting in Meeting.get_active_regular_meeting(
                 self.session, self.calendar,

@@ -17,6 +17,13 @@ Contributors:
   git clone ssh://<FAS user>@git.fedorahosted.org/git/fedocal.git
 
 
+Dependencies
+------------
+
+The dependencies of fedocal are listed in the file ``requirements.txt``
+at the top level of the sources.
+
+
 Run fedocal for development
 ---------------------------
 Copy the configuration file::

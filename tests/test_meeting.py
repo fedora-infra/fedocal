@@ -411,7 +411,7 @@ class Meetingtests(Modeltests):
         self.test_init_meeting()
         week_day = TODAY
         week_start = week_day - timedelta(days=week_day.weekday())
-        week_stop = week_day + timedelta(days=7)
+        week_stop = week_day + timedelta(days=6)
         cal = model.Calendar.by_id(self.session, 'test_calendar')
         obj = model.Meeting.get_by_date(self.session, cal,
                 week_start, week_stop)
@@ -446,7 +446,7 @@ class Meetingtests(Modeltests):
         obj = model.Meeting.get_by_date(self.session, cal,
                 week_start, week_stop)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 5)
+        self.assertEqual(len(obj), 6)
 
     def test_get_by_date_and_region(self):
         """ Test the query of a list of meetings between two dates. """

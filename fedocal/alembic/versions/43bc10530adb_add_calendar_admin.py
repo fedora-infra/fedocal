@@ -16,7 +16,7 @@ import sqlalchemy as sa
 
 def upgrade():
     op.add_column('calendars', sa.Column('calendar_admin_group',
-        sa.String(100), nullable=True))
+                  sa.String(100), nullable=True))
 
 
 def downgrade():

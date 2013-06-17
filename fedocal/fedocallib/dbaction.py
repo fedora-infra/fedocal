@@ -32,12 +32,20 @@ def add_reminder(session, remind_when, remind_who, reminder_text=None):
 
 # pylint: disable=R0913,R0914
 def add_meeting(
-        session, meeting_name, meeting_manager,
-        meeting_date, meeting_date_end,
-        meeting_time_start, meeting_time_stop,
-        meeting_information, calendarobj, reminder_id=None,
+        session,
+        meeting_name,
+        meeting_manager,
+        meeting_date,
+        meeting_date_end,
+        meeting_time_start,
+        meeting_time_stop,
+        meeting_information,
+        calendarobj,
+        reminder_id=None,
         meeting_region=None,
-        recursion_frequency=None, recursion_ends=None):
+        recursion_frequency=None,
+        recursion_ends=None,
+        full_day=False):
     """ Logic to add a meeting to the database.
     """
 
@@ -64,6 +72,7 @@ def add_meeting(
         reminder_id=reminder_id,
         meeting_region=meeting_region,
         recursion_frequency=recursion_frequency,
-        recursion_ends=recursion_ends)
+        recursion_ends=recursion_ends,
+        full_day=full_day)
     meeting.save(session)
     session.flush()

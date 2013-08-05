@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#-*- coding: UTF-8 -*-
+#-*- coding: utf-8 -*-
 
 """
  (c) 2012 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>

@@ -1,4 +1,4 @@
-#-*- coding: UTF-8 -*-
+#-*- coding: utf-8 -*-
 
 """
  (c) 2013 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>

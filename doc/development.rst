@@ -183,3 +183,21 @@ Then edit the file generated in alembic/versions/ to add the correct command
 for upgrade and downgrade (for example: ``op.add_column``, ``op.drop_column``,
 ``op.create_table``, ``op.drop_table``).
 
+
+
+Troubleshooting
+---------------
+
++ Login fails in development mode
+
+  The Flask FAS extension requires a secure cookie which ensures that it is
+  always encrypted during client/server exchanges.
+  This makes the authentication cookie less likely to be exposed to cookie
+  theft by eavesdropping.
+
+  You can disable the secure cookie for testing purposes by setting the
+  configuration key ``FAS_HTTPS_REQUIRED`` to False.
+
+  .. WARNING::
+     Do not use this option in production as it causes major security issues
+

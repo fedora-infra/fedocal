@@ -1,4 +1,4 @@
-#-*- coding: UTF-8 -*-
+#-*- coding: utf-8 -*-
 
 # The three lines below are required to run on EL6 as EL6 has
 # two possible version of python-sqlalchemy and python-jinja2

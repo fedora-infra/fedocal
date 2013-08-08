@@ -36,7 +36,7 @@ from dateutil.relativedelta import relativedelta
 import flask
 import markdown
 import vobject
-from flask.ext.fas import FAS
+from flask_fas_openid import FAS
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -378,18 +378,16 @@ def my_meetings():
 
 @APP.route('/login/', methods=('GET', 'POST'))
 def auth_login():
-    """ Method to log into the application. """
+    """ Method to log into the application using FAS OpenID. """
+    
+    return_point = flask.url_for('index')
+    if 'next' in flask.request.args:
+        return_point = flask.request.args['next'] 
+    
     if flask.g.fas_user:
-        return flask.redirect(flask.url_for('index'))
-    form = forms.LoginForm()
-    # pylint: disable=E1101
-    if form.validate_on_submit():
-        if FAS.login(form.username.data, form.password.data):
-            flask.flash('Welcome, %s' % flask.g.fas_user.username)
-            return flask.redirect(flask.url_for('index'))
-        else:
-            flask.flash('Incorrect username or password', 'errors')
-    return flask.redirect(flask.url_for('index'))
+        return flask.redirect(return_point)
+
+    return FAS.login(return_url=return_point)
 
 
 @APP.route('/logout/')

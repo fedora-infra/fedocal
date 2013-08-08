@@ -79,28 +79,19 @@
                 </li>
                 {% endfor %}
             </ul>
+            {% if not g.fas_user %}
+            <h4> <a class="toDisable" href={{ url_for("auth_login", next=request.url) + '' }}>FAS Log in</a> </h4>
+            <div></div>
+            {% else %}
             <h4> User </h4>
             <div>
-            {% if not g.fas_user %}
-                <form action="{{ url_for('auth_login') }}" method="post">
-                    <p>Log in using your <a href="{{ config.FAS_BASE_URL }}">
-                        <abbr title="Fedora Accounts System">FAS</abbr></a> account.
-                    </p>
-                    {{ render_field(auth_form.username) }}
-                    {{ render_field(auth_form.password) }}
-                    <p class="buttons indent">
-                        <input type="submit" class="submit positive button" value="Log in">
-                    </p>
-                    {{ auth_form.csrf_token }}
-                </form>
-            {% else %}
                 <p> Welcome, {{ g.fas_user.username }}</p>
                 <ul class="checkmark-list">
                     <li><a href="{{ url_for('my_meetings') }}"> Manage your meetings </a></li>
                     <li><a href="{{ url_for('auth_logout') }}"> Log-out </a></li>
                 </ul>
-            {% endif %}
             </div>
+            {% endif %}
             {% if admin %}
                 <h4> Admin </h4>
                 <div>
@@ -150,6 +141,7 @@
             filename='jquery-ui-1.9.2.custom.min.js') }}">
     </script>
     <script type="text/javascript">
+        $(".toDisable").live("click", function (){document.location = this.href;});
         $(function(){
             $('#calendars_menu').menu();
             $('.button').button();

@@ -494,7 +494,8 @@ def agenda_is_free(
 def agenda_is_free_in_future(
         session, calendarobj, meeting_date, meeting_date_end,
         recursion_ends,
-        time_start, time_stop):
+        time_start, time_stop,
+        meeting_id=None):
     """For recursive meeting, check for meetings happening at the
     specified time between the specified date and to the end of the
     recursion.
@@ -507,12 +508,17 @@ def agenda_is_free_in_future(
     :arg recursion_ends: the end date of the recursion
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
+    :kwarg meeting_id: a meeting identifier allowing to check if a
+        potentially conflicting meeting isn't in fact a future iteration
+        of the current meeting.
     """
     meetings = get_by_date(
         session, calendarobj, meeting_date, recursion_ends)
     agenda_free = True
     for meeting in set(meetings):
         if meeting.meeting_date != meeting_date:
+            continue
+        if meeting_id and meeting.meeting_id == meeting_id:
             continue
         if time_start <= meeting.meeting_time_start \
                 and meeting.meeting_time_start < time_stop:
@@ -870,14 +876,15 @@ def edit_meeting(
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
 
     if recursion_frequency and recursion_ends:
-        futur_meeting_at_time = agenda_is_free_in_future(
+        agenda_free = agenda_is_free_in_future(
             session, calendarobj,
             meeting_time_start.date(), meeting_time_stop.date(),
             recursion_ends,
-            meeting_time_start.time(), meeting_time_stop.time())
+            meeting_time_start.time(), meeting_time_stop.time(),
+            meeting_id = meeting.meeting_id)
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
-                not(futur_meeting_at_time):
+                not agenda_free:
             raise InvalidMeeting(
                 'The start or end time you have entered is already '
                 'occupied in the future.')

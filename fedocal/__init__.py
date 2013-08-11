@@ -584,12 +584,16 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('view_meeting',
                               meeting_id=meeting_id))
     else:
-        if meeting.recursion_frequency and meeting.recursion_ends and \
-            fedocallib.is_date_in_future(
-                meeting.recursion_ends, meeting.meeting_time_start):
+        if meeting.recursion_frequency and meeting.recursion_ends \
+                and fedocallib.is_date_in_future(
+                    meeting.recursion_ends, meeting.meeting_time_start):
             cnt = 0
             meetingobj = Meeting.copy(meeting)
             while meetingobj.meeting_date < datetime.date.today():
+                if meetingobj.recursion_ends < meetingobj.meeting_date + \
+                    datetime.timedelta(
+                        days=meetingobj.recursion_frequency * cnt):
+                    break
                 meetingobj = Meeting.copy(meeting)
                 meetingobj.meeting_date = meetingobj.meeting_date + \
                     datetime.timedelta(

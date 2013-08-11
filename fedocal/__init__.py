@@ -459,7 +459,8 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     calendarobj = Calendar.by_id(SESSION, calendar_name)
-    if not (is_calendar_manager(calendarobj)
+    if calendarobj.calendar_manager_group and \
+       not (is_calendar_manager(calendarobj)
             or is_calendar_admin(calendarobj)
             or is_admin()):
         flask.flash('You are not one of the manager of this calendar, '

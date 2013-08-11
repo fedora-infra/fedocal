@@ -74,7 +74,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
 
 
 class Calendar(BASE):
-    """ Calendara table.
+    """ Calendar table.
 
     Define the calendar available in this application.
     """

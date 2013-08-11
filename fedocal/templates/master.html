@@ -65,7 +65,7 @@
                         </li>
                         <li>
                             <a href="{{url_for('ical_out',
-                calendar_name=calendar.calendar_name)}}"
+                                               calendar_name=calendar.calendar_name)}}"
                                 title="Add this calendar to your agenda">iCal export</a>
                         </li>
                         {% if calendar.calendar_contact %}
@@ -80,7 +80,7 @@
                 {% endfor %}
             </ul>
             {% if not g.fas_user %}
-            <h4> <a class="toDisable" href={{ url_for("auth_login", next=request.url) + '' }}>FAS Log in</a> </h4>
+            <h4> <a class="toDisable" href={{ url_for("auth_login", next=request.url) }}>FAS Log in</a> </h4>
             <div></div>
             {% else %}
             <h4> User </h4>
@@ -141,7 +141,7 @@
             filename='jquery-ui-1.9.2.custom.min.js') }}">
     </script>
     <script type="text/javascript">
-        $(".toDisable").live("click", function (){document.location = this.href;});
+        $(".toDisable").on("click", function (){document.location = this.href;});
         $(function(){
             $('#calendars_menu').menu();
             $('.button').button();

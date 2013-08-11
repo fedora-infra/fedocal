@@ -13,9 +13,9 @@
 
 import sys, os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+#sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from fedocal import __version__
+#from fedocal import __version__
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -52,7 +52,8 @@ copyright = u'2012, Pierre-Yves Chibon <pingou@pingoured.fr>'
 # built documents.
 #
 # The short X.Y version.
-version = __version__
+#version = __version__
+version = '0.1.2'
 # The full version, including alpha/beta/rc tags.
 #release = '1'
 

@@ -74,11 +74,7 @@ work.
             flask.flash('Login required', 'errors')
             valid = False
         else:
-            non_cla_groups = [
-                x.name
-                for x in flask.g.fas_user.approved_memberships
-                if x.group_type != 'cla']
-            if len(non_cla_groups) == 0:
+            if len(flask.g.fas_user.groups) == 0:
                 valid = False
                 flask.flash('You must be in one more group than the CLA',
                             'errors')

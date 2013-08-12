@@ -53,7 +53,7 @@ copyright = u'2012, Pierre-Yves Chibon <pingou@pingoured.fr>'
 #
 # The short X.Y version.
 #version = __version__
-version = '0.1.2'
+version = '0.2.0'
 # The full version, including alpha/beta/rc tags.
 #release = '1'
 

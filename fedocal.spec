@@ -19,7 +19,7 @@ BuildRequires:  python-wtforms
 BuildRequires:  python-flask-wtf
 BuildRequires:  python-vobject
 BuildRequires:  python-kitchen
-BuildRequires:  python-fedora
+BuildRequires:  python-fedora >= 0.3.32.3-3
 BuildRequires:  python-fedora-flask
 BuildRequires:  python-alembic
 BuildRequires:  python-dateutil <= 1.5
@@ -42,7 +42,7 @@ Requires:  python-wtforms
 Requires:  python-flask-wtf
 Requires:  python-vobject
 Requires:  python-kitchen
-Requires:  python-fedora
+Requires:  python-fedora >= 0.3.32.3-3
 Requires:  python-fedora-flask
 Requires:  python-alembic
 Requires:  python-dateutil <= 1.5

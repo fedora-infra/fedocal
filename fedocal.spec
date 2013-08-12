@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.1.2
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -95,6 +95,9 @@ cp -r alembic/ $RPM_BUILD_ROOT/%{_datadir}/fedocal/
 
 
 %changelog
+* Mon Aug 12 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.0-1
+- Update to release 0.2.0
+
 * Fri Mar 15 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.2.-1
 - Update to 0.1.2 which includes the alembic files
 

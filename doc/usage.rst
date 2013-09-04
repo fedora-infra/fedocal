@@ -4,10 +4,11 @@ Usage
 Users
 -----
 
-Fedocal has basically two levels for the users:
+Fedocal has basically four levels for the users:
 
  - administrators
  - list administrators
+ - list managers
  - users
 
 
@@ -25,11 +26,21 @@ meetings in all calendar.
 List administrators
 ~~~~~~~~~~~~~~~~~~~
 
-List administrators are set when the calendar is created. They are the member
-of the FAS group set as `Manager group` when the calendar is created.
+List administrators are set when the calendar is created. They are the members
+of the FAS group set as `Admin group` when the calendar is created.
 
 Being a list administrators, give you edit and delete over all meetings of
 a calendar.
+
+
+List administrators
+~~~~~~~~~~~~~~~~~~~
+
+List managers are set when the calendar is created. They are the members of
+the FAS group set as `Manager group` when the calendar is created.
+
+List administrators are used when one wants to restrict the edition of the
+calendar to members of a certain group.
 
 
 Users
@@ -68,7 +79,14 @@ The form to will ask for:
 - ``calendar managers group``: the name of the
   `FAS <https://admin.fedoraproject.org/accounts/>`_
   group to which people should belong that will manage the calendar
-  (ie: create meetings).
+  (ie: create meetings). This is used to restrict the creation of meeting
+  in a calendar to a specific group.
+
+- ``calendar admin group``: the name of the
+  `FAS <https://admin.fedoraproject.org/accounts/>`_
+  group to which people should belong that will administrate the calendar
+  (ie: edit/delete meetings). This gives administrator privilege to a group
+  of people but for this calendar only.
 
 - ``multiple meetings``: by default a calendar does not allow someone to create
   a meeting or an event on a specific date if there is already something

@@ -28,6 +28,7 @@ Resources:
 - `Home page <http://fedorahosted.org/fedocal/>`_
 - `Documentation <http://fedocal.rtfd.org/>`_
 - `Git repository <http://git.fedorahosted.org/git/fedocal>`_
+- `Github mirror <https://github.com/fedora-infra/fedocal>`_
 - `Discussion mailing-list
   <https://lists.fedorahosted.org/mailman/listinfo/fedocal>`_
 - `Developer mailing-list

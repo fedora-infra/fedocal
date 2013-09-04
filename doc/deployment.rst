@@ -66,7 +66,7 @@ Then configure apache::
 uncomment the content of the file and adjust as desired.
 
 
-Then edit the file ``/usr/lib/python2.*/site-packages/fedocal/`` and
+Then edit the file ``/usr/share/fedocal/fedocal.wsgi`` and
 adjust as needed.
 
 

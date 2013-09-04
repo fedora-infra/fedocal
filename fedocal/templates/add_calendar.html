@@ -1,5 +1,5 @@
 {% extends "master.html" %}
-{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import render_field_in_row %}
 
 {% block title %} Add calendar {% endblock %}
 
@@ -13,13 +13,15 @@
     </header>
 
     <form action="" method="post">
-        {{ render_field(form.calendar_name) }}
-        {{ render_field(form.calendar_contact) }}
-        {{ render_field(form.calendar_description) }}
-        {{ render_field(form.calendar_manager_groups) }}
-        {{ render_field(form.calendar_admin_groups) }}
-        {{ render_field(form.calendar_multiple_meetings) }}
-        {{ render_field(form.calendar_regional_meetings) }}
+        <table>
+        {{ render_field_in_row(form.calendar_name) }}
+        {{ render_field_in_row(form.calendar_contact) }}
+        {{ render_field_in_row(form.calendar_description) }}
+        {{ render_field_in_row(form.calendar_manager_groups) }}
+        {{ render_field_in_row(form.calendar_admin_groups) }}
+        {{ render_field_in_row(form.calendar_multiple_meetings) }}
+        {{ render_field_in_row(form.calendar_regional_meetings) }}
+        </table>
         <p class="buttons indent">
             <input type="submit" class="submit positive button" value="Create">
             <input type="button" value="Cancel" class="button" onclick="history.back();">

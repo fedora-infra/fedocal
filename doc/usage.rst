@@ -7,6 +7,7 @@ Users
 Fedocal has basically two levels for the users:
 
  - administrators
+ - list administrators
  - users
 
 
@@ -17,8 +18,18 @@ Administrators are people with an account on the
 `Fedora account system (FAS) <https://admin.fedoraproject.org/accounts/>`_ and
 belong the administrator group as set in the :doc:`configuration`.
 
-Administrators are the only people allowed to create a calendar and edit all
-the meetings.
+Administrators are the only people allowed to create a calendar and edit/delete
+meetings in all calendar.
+
+
+List administrators
+~~~~~~~~~~~~~~~~~~~
+
+List administrators are set when the calendar is created. They are the member
+of the FAS group set as `Manager group` when the calendar is created.
+
+Being a list administrators, give you edit and delete over all meetings of
+a calendar.
 
 
 Users
@@ -125,7 +136,7 @@ Create meeting
 
 After logging in with your `FAS account
 <https://admin.fedoraproject.org/accounts/>`_ you can create a meeting in one
-of the available calendar. 
+of the available calendar.
 
 
 When creating a meeting you will have to fill the form asking for:
@@ -160,7 +171,7 @@ When creating a meeting you will have to fill the form asking for:
   the meeting as well. This field allows you to provide a comma separated
   list of people you trust to manage the meeting with you.
 
-- ``meeting information``: this is a free-text field containing as much 
+- ``meeting information``: this is a free-text field containing as much
   information as you wish about the meeting. This field support the
   `markdown syntax <http://daringfireball.net/projects/markdown/syntax>`_
   allowing formating the text and adding links.
@@ -231,7 +242,7 @@ of the meetings for which you are a manager and that you can delete.
 
 You will be asked to confirm the deletion of the meeting and for recursive
 meetings you will have to specify if you want to delete all the future meetings
-or just this one (default). 
+or just this one (default).
 
 
 For archives purposes, you can never delete meetings from the past.
@@ -310,7 +321,7 @@ content:
 
  Dear all,
 
- You are kindly invited to the meeting : 
+ You are kindly invited to the meeting :
     <meeting name> on <meetin date> from <starting time> to <ending time>
 
  The meeting will be about:

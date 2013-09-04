@@ -57,7 +57,7 @@ class AddCalendarForm(wtf.Form):
     calendar_manager_groups = wtf.TextField('Manager groups')
     calendar_admin_groups = wtf.TextField('Admin groups')
     calendar_multiple_meetings = wtf.BooleanField(
-        'Agenda can have multiple meetings on the same day?')
+        'Multiple meetings on the same day?')
     calendar_regional_meetings = wtf.BooleanField(
         'Meetings can be regional?')
 

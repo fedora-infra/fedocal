@@ -74,12 +74,12 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/
 install -m 644 fedocal.conf $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/fedocal.conf
 
-# Install configuration fiel
+# Install configuration file
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal
 install -m 644 fedocal.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/fedocal.cfg
 install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic.ini
 
-# Instal WSGI file
+# Install WSGI file
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/fedocal
 cp -r alembic/ $RPM_BUILD_ROOT/%{_datadir}/fedocal/
 install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi

@@ -70,14 +70,16 @@ sed -i -e 's|script_location = alembic|script_location = /usr/share/alembic'
 rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
-# Install wsgi, apache configuration and fedocal configuration files
+# Install apache configuration file
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/
 install -m 644 fedocal.conf $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/fedocal.conf
 
+# Install configuration fiel
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal
 install -m 644 fedocal.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/fedocal.cfg
 install -m 644 alembic.ini.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/alembic.ini
 
+# Instal WSGI file
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/fedocal
 cp -r alembic/ $RPM_BUILD_ROOT/%{_datadir}/fedocal/
 install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi

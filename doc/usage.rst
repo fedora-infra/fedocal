@@ -79,7 +79,7 @@ The form to will ask for:
 - ``calendar managers group``: the name of the
   `FAS <https://admin.fedoraproject.org/accounts/>`_
   group to which people should belong that will manage the calendar
-  (ie: create meetings). This is used to restrict the creation of meeting
+  (ie: create meetings). This is used to restrict the creation of meetings
   in a calendar to a specific group.
 
 - ``calendar admin group``: the name of the
@@ -154,7 +154,7 @@ Create meeting
 
 After logging in with your `FAS account
 <https://admin.fedoraproject.org/accounts/>`_ you can create a meeting in
-one of the available calendar.
+one of the available calendars.
 
 
 When creating a meeting you will have to fill the form asking for:

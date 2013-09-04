@@ -21,3 +21,5 @@ This list is generated using
 ::
 
   git shortlog -s -n -e
+
+The fedocal logo is the results of the work of: Mark Klein (aka areke).

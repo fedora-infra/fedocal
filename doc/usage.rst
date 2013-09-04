@@ -116,8 +116,8 @@ The form to will ask for:
 Edit a calendar
 ---------------
 
-One can edit a calendar if she/he is an administrator as defined
-above.
+One can edit a calendar if she/he is a fedocal administrator or a list
+administrator as defined above.
 
 To edit a calendar, select the calendar to edit in the main menu by
 clicking on its name. Then go to the ``Admin`` entry of the main menu and
@@ -131,8 +131,8 @@ When editing a calendar you will have the same field as when creating one
 Delete a calendar
 -----------------
 
-One can always delete a calendar if she/he is an administrator as defined
-above.
+One can edit a calendar if she/he is a fedocal administrator or a list
+administrator as defined above.
 
 To delete a calendar, select the calendar to delete in the main menu by
 clicking on its name. Then go to the ``Admin`` entry of the main menu and
@@ -153,8 +153,8 @@ Create meeting
 --------------
 
 After logging in with your `FAS account
-<https://admin.fedoraproject.org/accounts/>`_ you can create a meeting in one
-of the available calendar.
+<https://admin.fedoraproject.org/accounts/>`_ you can create a meeting in
+one of the available calendar.
 
 
 When creating a meeting you will have to fill the form asking for:

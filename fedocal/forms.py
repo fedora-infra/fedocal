@@ -28,7 +28,7 @@ from flask.ext import wtf
 from datetime import time
 from datetime import datetime
 
-from wtforms import ValidationError
+import wtforms
 
 import fedocallib
 
@@ -37,28 +37,28 @@ def validate_time(form, field):
     """ Validate if the data set in the given field is a valid time. """
     import re
     if not re.match(r'\d?\d:\d\d?', field.data):
-        raise ValidationError('Time must be of type "HH:MM"')
+        raise wtforms.ValidationError('Time must be of type "HH:MM"')
     time_data = field.data.split(':')
     try:
         field.data = time(int(time_data[0]), int(time_data[1]))
     except ValueError:
-        raise ValidationError('Time must be of type "HH:MM"')
+        raise wtforms.ValidationError('Time must be of type "HH:MM"')
 
 
 class AddCalendarForm(wtf.Form):
     """ Form used to create a new calendar. """
-    calendar_name = wtf.TextField(
+    calendar_name = wtforms.TextField(
         'Calendar',
-        [wtf.validators.Required()])
-    calendar_contact = wtf.TextField(
+        [wtforms.validators.Required()])
+    calendar_contact = wtforms.TextField(
         'Contact email',
-        [wtf.validators.Required()])
-    calendar_description = wtf.TextField('Description')
-    calendar_manager_groups = wtf.TextField('Manager groups')
-    calendar_admin_groups = wtf.TextField('Admin groups')
-    calendar_multiple_meetings = wtf.BooleanField(
+        [wtforms.validators.Required()])
+    calendar_description = wtforms.TextField('Description')
+    calendar_manager_groups = wtforms.TextField('Manager groups')
+    calendar_admin_groups = wtforms.TextField('Admin groups')
+    calendar_multiple_meetings = wtforms.BooleanField(
         'Multiple meetings on the same day?')
-    calendar_regional_meetings = wtf.BooleanField(
+    calendar_regional_meetings = wtforms.BooleanField(
         'Meetings can be regional?')
 
     def __init__(self, *args, **kwargs):
@@ -85,30 +85,30 @@ class AddCalendarForm(wtf.Form):
 
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """
-    meeting_name = wtf.TextField(
+    meeting_name = wtforms.TextField(
         'Meeting name',
-        [wtf.validators.Required()])
+        [wtforms.validators.Required()])
 
-    meeting_date = wtf.DateField('Date', [wtf.validators.Required()])
-    meeting_date_end = wtf.DateField(
+    meeting_date = wtforms.DateField('Date', [wtforms.validators.Required()])
+    meeting_date_end = wtforms.DateField(
         'End date',
-        [wtf.validators.optional()])
+        [wtforms.validators.optional()])
 
-    meeting_time_start = wtf.TextField(
+    meeting_time_start = wtforms.TextField(
         'Start time',
-        [wtf.validators.Required(), validate_time])
+        [wtforms.validators.Required(), validate_time])
 
-    meeting_time_stop = wtf.TextField(
+    meeting_time_stop = wtforms.TextField(
         'Stop time',
-        [wtf.validators.Required(), validate_time])
+        [wtforms.validators.Required(), validate_time])
 
-    comanager = wtf.TextField('Co-manager')
+    comanager = wtforms.TextField('Co-manager')
 
-    information = wtf.TextAreaField('Information')
+    information = wtforms.TextAreaField('Information')
 
-    meeting_region = wtf.SelectField(
+    meeting_region = wtforms.SelectField(
         'Region',
-        [wtf.validators.optional()],
+        [wtforms.validators.optional()],
         choices=[('APAC', 'APAC'),
                  ('EMEA', 'EMEA'),
                  ('LATAM', 'LATAM'),
@@ -116,22 +116,22 @@ class AddMeetingForm(wtf.Form):
     )
 
     # Recursion
-    frequency = wtf.SelectField(
+    frequency = wtforms.SelectField(
         'Repeat every',
-        [wtf.validators.optional()],
+        [wtforms.validators.optional()],
         choices=[('', ''),
                  ('7', '7 days'),
                  ('14', '14 days')]
     )
-    end_repeats = wtf.DateField('End date', [wtf.validators.optional()])
+    end_repeats = wtforms.DateField('End date', [wtforms.validators.optional()])
 
     # Recursive edit
-    recursive_edit = wtf.BooleanField('Yes I want to edit all the meetings')
+    recursive_edit = wtforms.BooleanField('Yes I want to edit all the meetings')
 
     # Reminder
-    remind_when = wtf.SelectField(
+    remind_when = wtforms.SelectField(
         'Send reminder',
-        [wtf.validators.optional()],
+        [wtforms.validators.optional()],
         choices=[('', ''),
                  ('H-12', '12 hours before'),
                  ('H-24', '1 day before'),
@@ -139,12 +139,12 @@ class AddMeetingForm(wtf.Form):
                  ('H-168', '7 days before'),
                  ]
     )
-    remind_who = wtf.TextField(
+    remind_who = wtforms.TextField(
         'Send reminder to',
-        [wtf.validators.Email(), wtf.validators.optional()])
+        [wtforms.validators.Email(), wtforms.validators.optional()])
 
     # Full day
-    full_day = wtf.BooleanField('Full day meeting')
+    full_day = wtforms.BooleanField('Full day meeting')
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -196,17 +196,17 @@ class AddMeetingForm(wtf.Form):
 
 class DeleteMeetingForm(wtf.Form):
     """ Form used to delete a meeting. """
-    confirm_delete = wtf.BooleanField('Yes I want to delete this meeting')
-    confirm_futher_delete = wtf.BooleanField(
+    confirm_delete = wtforms.BooleanField('Yes I want to delete this meeting')
+    confirm_futher_delete = wtforms.BooleanField(
         'Yes, I want to delete all futher meetings.')
 
 
 class DeleteCalendarForm(wtf.Form):
     """ Form used to delete a calendar. """
-    confirm_delete = wtf.BooleanField('Yes I want to delete this calendar')
+    confirm_delete = wtforms.BooleanField('Yes I want to delete this calendar')
 
 
 class LoginForm(wtf.Form):
     """ Form to log in the application. """
-    username = wtf.TextField('Username', [wtf.validators.Required()])
-    password = wtf.PasswordField('Password', [wtf.validators.Required()])
+    username = wtforms.TextField('Username', [wtforms.validators.Required()])
+    password = wtforms.PasswordField('Password', [wtforms.validators.Required()])

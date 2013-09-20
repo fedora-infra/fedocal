@@ -62,7 +62,7 @@ Running a development instance:
 
 Clone the source::
 
- git clone https://github.com/pypingou/fedocal.git
+ git clone https://github.com/fedora-infra/fedocal.git
 
 
 Copy the configuration file::

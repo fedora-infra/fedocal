@@ -43,6 +43,35 @@ import fedocal
 import fedocal.fedocallib as fedocallib
 
 
+def fedmsg_init():
+    try:
+        import fedmsg
+        import fedmsg.config
+    except ImportError:
+        warnings.warn("fedmsg ImportError")
+        return
+
+    config = fedmsg.config.load_config()
+    config['active'] = True
+    fedmsg.init(**config)
+
+
+def fedmsg_publish(meeting):
+    try:
+        import fedmsg
+    except ImportError:
+        return
+
+    fedmsg.publish(
+        modname="fedocal",
+        topic="meeting.reminder",
+        msg=dict(
+            calendar=meeting.calendar.to_json()
+            meeting=meeting.to_json(),
+        ),
+    )
+
+
 def send_reminder_meeting(meeting):
     """ This function sends the actual reminder of a given meeting.
     :arg meeting: a Meeting object from fedocallib.model
@@ -89,7 +118,9 @@ def send_reminder():
         offset=int(fedocal.APP.config['CRON_FREQUENCY']))
     for meeting in meetings:
         send_reminder_meeting(meeting)
+        fedmsg_publish(meeting)
 
 
 if __name__ == '__main__':
+    fedmsg_init()
     send_reminder()

@@ -729,13 +729,6 @@ def add_meeting(
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
 
-    if not is_date_in_future(meeting_date, meeting_time_start):
-        raise InvalidMeeting('The date you entered is in the past')
-
-    if meeting_time_start > meeting_time_stop:
-        raise InvalidMeeting(
-            'The start time of your meeting is later than the stop time.')
-
     if meeting_date_end is None:
         meeting_date_end = meeting_date
 
@@ -756,6 +749,17 @@ def add_meeting(
                  meeting_time_stop.hour,
                  meeting_time_stop.minute),
         tzone, 'UTC')
+
+    if not is_date_in_future(meeting_date, meeting_time_start):
+        raise InvalidMeeting('The date you entered is in the past')
+
+    if meeting_time_start.date() > meeting_time_stop.date():
+        raise InvalidMeeting(
+            'The start date of your meeting is later than the stop date.')
+
+    if meeting_time_start > meeting_time_stop:
+        raise InvalidMeeting(
+            'The start time of your meeting is later than the stop time.')
 
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
@@ -841,19 +845,8 @@ def edit_meeting(
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
 
-    if not is_date_in_future(meeting_date, meeting_time_start):
-        raise InvalidMeeting('The date you entered is in the past')
-
-    if meeting_time_start > meeting_time_stop:
-        raise InvalidMeeting(
-            'The start time of your meeting is later than the stop time.')
-
     if not meeting_date_end:
         meeting_date_end = meeting_date
-
-    if meeting_date > meeting_date_end:
-        raise InvalidMeeting(
-            'The start date of your meeting is later than the end date.')
 
     if full_day:
         meeting_time_start = time(0, 0)
@@ -871,6 +864,17 @@ def edit_meeting(
                  meeting_time_stop.hour,
                  meeting_time_stop.minute),
         tzone, 'UTC')
+
+    if not is_date_in_future(meeting_date, meeting_time_start):
+        raise InvalidMeeting('The date you entered is in the past')
+
+    if meeting_time_start.date() > meeting_time_stop.date():
+        raise InvalidMeeting(
+            'The start date of your meeting is later than the stop date.')
+
+    if meeting_time_start > meeting_time_stop:
+        raise InvalidMeeting(
+            'The start time of your meeting is later than the stop time.')
 
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)

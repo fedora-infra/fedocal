@@ -60,7 +60,7 @@ most calendar application.
 %prep
 %setup -q
 
-sed -i -e 's|script_location = alembic|script_location = /usr/share/alembic'
+sed -i -e 's|script_location = alembic|script_location = /usr/share/fedocal/alembic|' alembic.ini.sample
 
 %build
 %{__python} setup.py build

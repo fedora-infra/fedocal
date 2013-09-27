@@ -98,7 +98,7 @@ install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi
 
 
 %changelog
-* Mon Aug 12 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.0-1
+* Fri Sep 27 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.0-1
 - Update to release 0.2.0
 
 * Fri Mar 15 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.2.-1

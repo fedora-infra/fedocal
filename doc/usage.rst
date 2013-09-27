@@ -7,8 +7,8 @@ Users
 Fedocal has basically four levels for the users:
 
  - administrators
- - list administrators
- - list managers
+ - calendar administrators
+ - calendar managers
  - users
 
 
@@ -23,8 +23,8 @@ Administrators are the only people allowed to create a calendar and edit/delete
 meetings in all calendar.
 
 
-List administrators
-~~~~~~~~~~~~~~~~~~~
+Calendar administrators
+~~~~~~~~~~~~~~~~~~~~~~~
 
 List administrators are set when the calendar is created. They are the members
 of the FAS group set as `Admin group` when the calendar is created.
@@ -33,8 +33,8 @@ Being a list administrators, give you edit and delete over all meetings of
 a calendar.
 
 
-List administrators
-~~~~~~~~~~~~~~~~~~~
+Calendar administrators
+~~~~~~~~~~~~~~~~~~~~~~~
 
 List managers are set when the calendar is created. They are the members of
 the FAS group set as `Manager group` when the calendar is created.

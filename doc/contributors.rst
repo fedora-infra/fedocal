@@ -3,7 +3,7 @@ Contributors to fedocal
 
 Fedocal would be nothing without its contributors.
 
-On September 27 2013 (release 0.2.0), the list looks as follow:
+On September 27, 2013 (release 0.2.0), the list looks as follow:
 
 =================  ===========
 Number of commits  Contributor

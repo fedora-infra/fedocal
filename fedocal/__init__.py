@@ -375,11 +375,11 @@ def my_meetings():
 @APP.route('/login/', methods=('GET', 'POST'))
 def auth_login():
     """ Method to log into the application using FAS OpenID. """
-    
+
     return_point = flask.url_for('index')
     if 'next' in flask.request.args:
-        return_point = flask.request.args['next'] 
-    
+        return_point = flask.request.args['next']
+
     if flask.g.fas_user:
         return flask.redirect(return_point)
 

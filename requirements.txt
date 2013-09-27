@@ -2,11 +2,11 @@
 # Use this file by running "$ pip install -r requirements.txt"
 alembic
 flask-wtf
-flask
+flask<0.10
 kitchen
 python-dateutil <= 1.5
 python-fedora
-pytz
+pytz>=2013b
 sqlalchemy
 vobject
 wtforms

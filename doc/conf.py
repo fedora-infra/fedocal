@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'fedocal'
-copyright = u'2012, Pierre-Yves Chibon <pingou@pingoured.fr>'
+copyright = u'2012, 2013, Pierre-Yves Chibon <pingou@pingoured.fr>'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

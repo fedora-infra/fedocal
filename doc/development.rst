@@ -31,8 +31,21 @@ Copy the configuration file::
  cp fedocal.cfg.sample fedocal.cfg
 
 Adjust the configuration file (secret key, database URL, admin group...)
-See :doc:`configuration` for more detailed information about the configuration.
+See :doc:`configuration` for more detailed information about the
+configuration.
 
+::
+
+ cp alembic.ini.sample alembic.ini
+
+Adjust the database url to be the same as in ``fedocal.cfg``.
+
+.. note:: You can use the follow entry in ``fedocal.cfg`` when working on a
+          development version of fedocal::
+
+            import os
+            PATH_ALEMBIC_INI=os.path.join(
+                os.path.dirname(__file__), 'alembic.ini')
 
 Create the database scheme::
 
@@ -61,8 +74,8 @@ your source.
 We are also inspecting the code using `pylint
 <http://pypi.python.org/pypi/pylint>`_ and aim of course for a 10/10 code
 (but it is an assymptotic goal).
-We provide a shell script ``run_pylint.sh`` at the top of the sources to allow
-easy inspection of the code with pylint.
+We provide a shell script ``run_pylint.sh`` at the top of the sources to
+allow easy inspection of the code with pylint.
 
 .. note:: both pep8 and pylint are available in Fedora via yum:
 
@@ -74,9 +87,10 @@ easy inspection of the code with pylint.
 Send patch
 ----------
 
-The easiest way to work on fedocal is to make your own branch in git, make your
-changes to this branch, commit whenever you want, rebase on master, whenever
-you need and when you are done, send the patch either by email or via the trac.
+The easiest way to work on fedocal is to make your own branch in git, make
+your changes to this branch, commit whenever you want, rebase on master,
+whenever you need and when you are done, send the patch either by email or
+via the trac.
 
 
 The workflow would therefore be something like:
@@ -109,10 +123,10 @@ Fedocal has a number of unit-tests providing at the moment a full coverage of
 the backend library (fedocallib).
 
 
-We aim at having a full (100%) coverage of the whole code (including the Flask
-application) and of course a smart coverage as in we want to check that the
-functions work the way we want but also that they fail when we expect it and
-the way we expect it.
+We aim at having a full (100%) coverage of the whole code (including the
+Flask application) and of course a smart coverage as in we want to check
+that the functions work the way we want but also that they fail when we
+expect it and the way we expect it.
 
 
 Tests checking that function are failing when/how we want are as important
@@ -125,7 +139,7 @@ unit-tests of the project with coverage information using `python-nose
 
 .. note:: You can specify additional arguments to the nose command used
           in this script by just passing arguments to the script.
-          
+
           For example you can specify the ``-x`` / ``--stop`` argument:
           `Stop running tests after the first error or failure` by just doing
 

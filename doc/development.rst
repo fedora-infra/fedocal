@@ -24,6 +24,12 @@ The dependencies of fedocal are listed in the file ``requirements.txt``
 at the top level of the sources.
 
 
+.. note:: if you work in a `virtualenv <http://www.virtualenv.org/en/latest/>`_
+          the installation of python-fedora might fail the first time you
+          try, just try to run the command twice, the second time it should
+          work.
+
+
 Run fedocal for development
 ---------------------------
 Copy the configuration file::

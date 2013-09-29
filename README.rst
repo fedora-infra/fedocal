@@ -102,6 +102,19 @@ To run them::
     ./run_tests.sh -x
 
 
+
+Reporting issues:
+-----------------
+
+For any issue you may encounter please file a ticket and submit it to:
+
+Fedocal Trac: https://fedorahosted.org/fedocal/
+
+Contributors can use the same tracker to find existing bugs to work on.
+You need to login with your FAS account to submit or modify a ticket.
+
+
+
 License:
 --------
 

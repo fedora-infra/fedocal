@@ -137,13 +137,15 @@ def is_calendar_admin(calendar):
     """
     if not flask.g.fas_user:
         return False
-    else:
+    elif calendar.calendar_admin_group:
         admin_groups = [
             item.strip()
             for item in calendar.calendar_admin_group.split(',')
         ]
         if set(flask.g.fas_user.groups).intersection(set(admin_groups)):
             return True
+    else:
+        return False
 
 
 def is_calendar_manager(calendar):
@@ -527,7 +529,7 @@ def edit_meeting(meeting_id):
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
     if not (is_meeting_manager(meeting)
-            or is_calendar_admin(meeting.calendarobj)
+            or is_calendar_admin(calendarobj)
             or is_admin()):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to edit it.',

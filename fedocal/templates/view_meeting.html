@@ -25,9 +25,7 @@
         <li>Ending time: {{ meeting.meeting_time_stop }} {{tzone}}</li>
     </ul>
 
-    <pre>
-        {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
-    </pre>
+    {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
     {% if meeting.recursion %}
     <p>

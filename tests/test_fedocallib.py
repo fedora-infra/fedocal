@@ -263,7 +263,7 @@ class Fedocallibtests(Modeltests):
 
     def test_is_date_in_future(self):
         """ Test the is_date_in_future function. """
-        meeting_date = date.today()
+        meeting_date = datetime.utcnow().date()
         meeting_time = datetime.utcnow() + timedelta(hours=1)
         self.assertTrue(fedocallib.is_date_in_future(meeting_date,
             meeting_time))

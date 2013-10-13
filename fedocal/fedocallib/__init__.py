@@ -806,7 +806,7 @@ def add_meeting(
     if comanager:
         managers = managers + comanager
 
-    dbaction.add_meeting(
+    meeting = dbaction.add_meeting(
         session=session,
         meeting_name=meeting_name,
         meeting_manager=managers,
@@ -823,6 +823,7 @@ def add_meeting(
         full_day=full_day)
 
     session.commit()
+    return meeting
 
 
 def edit_meeting(
@@ -990,3 +991,4 @@ def edit_meeting(
 
     meeting.save(session)
     session.commit()
+    return meeting

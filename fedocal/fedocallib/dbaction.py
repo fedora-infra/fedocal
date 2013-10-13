@@ -76,3 +76,4 @@ def add_meeting(
         full_day=full_day)
     meeting.save(session)
     session.flush()
+    return meeting

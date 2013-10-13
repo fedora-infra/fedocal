@@ -46,6 +46,8 @@ import fedocallib.dbaction
 from fedocal.fedocallib.exceptions import FedocalException
 from fedocal.fedocallib.model import (Calendar, Meeting)
 
+import fedocal.fedocallib.fedmsgshim as fedmsg
+
 # Create the application.
 APP = flask.Flask(__name__)
 # set up FAS
@@ -436,7 +438,12 @@ def add_calendar():
                         'errors')
             return flask.render_template('add_calendar.html',
                                          form=form)
+
         flask.flash('Calendar added')
+        fedmsg.publish(topic="calendar.new", msg=dict(
+            agent=flask.g.fas_user.username,
+            calendar=calendarobj.to_json(),
+        ))
         return flask.redirect(flask.url_for('index'))
     return flask.render_template('add_calendar.html', form=form)
 
@@ -471,7 +478,7 @@ def add_meeting(calendar_name):
     # pylint: disable=E1101
     if form.validate_on_submit():
         try:
-            fedocallib.add_meeting(
+            meeting = fedocallib.add_meeting(
                 session=SESSION,
                 calendarobj=calendarobj,
                 fas_user=flask.g.fas_user,
@@ -505,6 +512,11 @@ def add_meeting(calendar_name):
                 tzone=tzone)
 
         flask.flash('Meeting added')
+        fedmsg.publish(topic="meeting.new", msg=dict(
+            agent=flask.g.fas_user.username,
+            meeting=meeting.to_json(),
+            calendar=calendarobj.to_json(),
+        ))
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=calendarobj.calendar_name,
             year=form.meeting_date.data.year,
@@ -577,6 +589,11 @@ def edit_meeting(meeting_id):
                 calendar=calendarobj, form=form, tzone=tzone)
 
         flask.flash('Meeting updated')
+        fedmsg.publish(topic="meeting.update", msg=dict(
+            agent=flask.g.fas_user.username,
+            meeting=meeting.to_json(),
+            calendar=calendarobj.to_json(),
+        ))
         return flask.redirect(flask.url_for('view_meeting',
                               meeting_id=meeting_id))
     else:
@@ -681,6 +698,11 @@ def delete_meeting(meeting_id):
                 print 'edit_meeting:', err
                 flask.flash('Could not update this meeting.', 'error')
         flask.flash('Meeting deleted')
+        fedmsg.publish(topic="meeting.delete", msg=dict(
+            agent=flask.g.fas_user.username,
+            meeting=meeting.to_json(),
+            calendar=meeting.calendar.to_json(),
+        ))
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=meeting.calendar_name))
     return flask.render_template(
@@ -718,6 +740,10 @@ def delete_calendar(calendar_name):
                 print 'delete_calendar:', err
                 flask.flash('Could not delete this calendar.', 'errors')
         flask.flash('Calendar deleted')
+        fedmsg.publish(topic="calendar.delete", msg=dict(
+            agent=flask.g.fas_user.username,
+            calendar=calendarobj.to_json(),
+        ))
         return flask.redirect(flask.url_for('index'))
     return flask.render_template(
         'delete_calendar.html', form=deleteform, calendarobj=calendarobj)
@@ -765,6 +791,10 @@ def edit_calendar(calendar_name):
                 'edit_calendar.html', form=form, calendar=calendarobj)
 
         flask.flash('Calendar updated')
+        fedmsg.publish(topic="calendar.update", msg=dict(
+            agent=flask.g.fas_user.username,
+            calendar=calendarobj.to_json(),
+        ))
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=calendarobj.calendar_name))
     else:

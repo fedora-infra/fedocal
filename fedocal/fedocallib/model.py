@@ -234,6 +234,7 @@ class Meeting(BASE):
         """ Return a jsonify string of the object.
         """
         return dict(
+            meeting_id=self.meeting_id,
             meeting_name=self.meeting_name,
             meeting_manager=self.meeting_manager,
             meeting_date=self.meeting_date.strftime('%Y-%m-%d'),

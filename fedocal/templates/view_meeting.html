@@ -20,14 +20,13 @@
     <h4> Meeting: {{ meeting.meeting_name}}</h4>
 
     <ul>
-        <li>Date: {{ meeting.meeting_date }} </li>
+        <li>Start date: {{ meeting.meeting_date }} </li>
+        <li>End date: {{ meeting.meeting_date_end }} </li>
         <li>Starting time: {{ meeting.meeting_time_start }} {{tzone}}</li>
         <li>Ending time: {{ meeting.meeting_time_stop }} {{tzone}}</li>
     </ul>
 
-    <pre>
-        {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
-    </pre>
+    {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
     {% if meeting.recursion %}
     <p>

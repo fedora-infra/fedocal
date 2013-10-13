@@ -634,15 +634,19 @@ def add_meeting_to_vcal(ical, meeting):
     entry.add('organizer').value = meeting.meeting_manager
 
     start = entry.add('dtstart')
-    meeting.meeting_time_start = meeting.meeting_time_start.replace(
-        tzinfo=utc)
-    start.value = datetime.combine(meeting.meeting_date,
-                                   meeting.meeting_time_start)
     stop = entry.add('dtend')
-    meeting.meeting_time_stop = meeting.meeting_time_stop.replace(
-        tzinfo=utc)
-    stop.value = datetime.combine(meeting.meeting_date_end,
-                                  meeting.meeting_time_stop)
+    if meeting.full_day:
+        start.value = meeting.meeting_date
+        stop.value = meeting.meeting_date_end
+    else:
+        meeting.meeting_time_start = meeting.meeting_time_start.replace(
+            tzinfo=utc)
+        start.value = datetime.combine(meeting.meeting_date,
+                                       meeting.meeting_time_start)
+        meeting.meeting_time_stop = meeting.meeting_time_stop.replace(
+            tzinfo=utc)
+        stop.value = datetime.combine(meeting.meeting_date_end,
+                                      meeting.meeting_time_stop)
 
 
 def add_meetings_to_vcal(ical, meetings):

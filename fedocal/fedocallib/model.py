@@ -38,7 +38,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation as relationship
-from sqlalchemy.sql import and_
+from sqlalchemy.sql import and_, or_
 from sqlalchemy import func as safunc
 
 BASE = declarative_base()
@@ -328,15 +328,25 @@ class Meeting(BASE):
             only select meetings which do not take the full day.  None will
             not restrict.  Default to None
         """
-        query = session.query(cls).filter(
-            and_(
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date >= start_date),
-                (Meeting.meeting_date_end <= stop_date),
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name)
+        query = session.query(
+            cls
+        ).filter(
+            Meeting.calendar == calendar
+        ).filter(
+            or_(
+                and_(
+                    (Meeting.meeting_date >= start_date),
+                    (Meeting.meeting_date <= stop_date),
+                ),
+                and_(
+                    (Meeting.meeting_date_end >= start_date),
+                    (Meeting.meeting_date_end <= stop_date),
+                )
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name)
 
         if full_day is not None:
             query = query.filter(Meeting.full_day == full_day)

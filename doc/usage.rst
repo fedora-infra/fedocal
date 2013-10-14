@@ -33,8 +33,8 @@ Being a list administrators, give you edit and delete over all meetings of
 a calendar.
 
 
-Calendar administrators
-~~~~~~~~~~~~~~~~~~~~~~~
+Calendar managers
+~~~~~~~~~~~~~~~~~
 
 List managers are set when the calendar is created. They are the members of
 the FAS group set as `Manager group` when the calendar is created.

@@ -77,7 +77,7 @@ work.
                                                 next=flask.request.url))
         elif not flask.g.fas_user.cla_done:
             flask.flash('You must sign the CLA (Contributor License '
-                        'Agreement to use nuancier', 'errors')
+                        'Agreement to use fedocal', 'errors')
             return flask.redirect(flask.url_for('.index'))
         else:
             if len(flask.g.fas_user.groups) == 0:

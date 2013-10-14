@@ -26,21 +26,20 @@ meetings in all calendar.
 Calendar administrators
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-List administrators are set when the calendar is created. They are the members
+Calendar administrators are set when the calendar is created. They are the members
 of the FAS group set as `Admin group` when the calendar is created.
 
-Being a list administrators, give you edit and delete over all meetings of
-a calendar.
+Administrators can edit and delete over all meetings of a calendar.
 
 
 Calendar managers
 ~~~~~~~~~~~~~~~~~
 
-List managers are set when the calendar is created. They are the members of
+Calendar managers are set when the calendar is created. They are the members of
 the FAS group set as `Manager group` when the calendar is created.
 
-List administrators are used when one wants to restrict the edition of the
-calendar to members of a certain group.
+Managers are used when one wants to restrict the edition of the calendar to
+members of a certain group.
 
 
 Users

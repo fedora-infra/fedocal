@@ -319,18 +319,23 @@ class Meeting(BASE):
     @classmethod
     def get_by_date(
             cls, session, calendar, start_date, stop_date,
-            full_day=False, no_recursive=False):
+            full_day=None, no_recursive=False):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
         """
         query = session.query(cls).filter(
             and_(
                 (Meeting.calendar == calendar),
                 (Meeting.meeting_date >= start_date),
                 (Meeting.meeting_date_end <= stop_date),
-                (Meeting.full_day == full_day)
             )).order_by(Meeting.meeting_date)
-
+        if full_day is not None:
+            query = query.filter(Meeting.full_day == full_day)
         if no_recursive:
             query = query.filter(Meeting.recursion_frequency == None)
 
@@ -377,23 +382,33 @@ class Meeting(BASE):
         return list(set(query.all()))
 
     @classmethod
-    def get_at_date(cls, session, calendar, meeting_date, full_day=False):
+    def get_at_date(cls, session, calendar, meeting_date, full_day=None):
         """ Retrieve the list of meetings happening at a given date.
-        The full_day boolean allows to specify if you want full day
-        meetings or not (defaults to False).
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
         """
-        return session.query(cls).filter(
+        query = session.query(cls).filter(
             and_(
                 (Meeting.calendar == calendar),
                 (Meeting.meeting_date == meeting_date),
-                (Meeting.full_day == full_day)
-            )).order_by(Meeting.meeting_date).all()
+            )).order_by(Meeting.meeting_date)
+        if full_day is not None:
+            query = query.filter(Meeting.full_day == full_day)
+        return query.all()
 
     @classmethod
     def get_active_regular_meeting(
-            cls, session, calendar, start_date, end_date, full_day=False):
+            cls, session, calendar, start_date, end_date, full_day=None):
         """ Retrieve the list of recursive meetings occuring before the
         end_date in the specified calendar.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
         """
         meetings = session.query(cls).filter(
             and_(
@@ -402,15 +417,21 @@ class Meeting(BASE):
                 (Meeting.calendar == calendar),
                 (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends != None),
-                (Meeting.full_day == full_day)
-            )).order_by(Meeting.meeting_date).all()
-        return meetings
+            )).order_by(Meeting.meeting_date)
+        if full_day is not None:
+            meetings = meetings.filter(Meeting.full_day == full_day)
+        return meetings.all()
 
     @classmethod
     def get_regular_meeting_at_date(
-            cls, session, calendar, end_date, full_day=False):
+            cls, session, calendar, end_date, full_day=None):
         """ Retrieve the list of recursive meetings happening at the
         specified end_date.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
         """
         meetings_tmp = cls.expand_regular_meetings(
             cls.get_active_regular_meeting(
@@ -424,9 +445,14 @@ class Meeting(BASE):
 
     @classmethod
     def get_active_regular_meeting_by_date(
-            cls, session, calendar, start_date, full_day=False):
+            cls, session, calendar, start_date, full_day=None):
         """ Retrieve the list of recursive meetings occuring after the
         start_date in the specified calendar.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
         """
         meetings = session.query(cls).filter(
             and_(
@@ -434,15 +460,21 @@ class Meeting(BASE):
                 (Meeting.calendar == calendar),
                 (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends != None),
-                (Meeting.full_day == full_day)
-            )).order_by(Meeting.meeting_date).all()
-        return meetings
+            )).order_by(Meeting.meeting_date)
+        if full_day is not None:
+            meetings = meetings.filter(Meeting.full_day == full_day)
+        return meetings.all()
 
     @classmethod
     def get_regular_meeting_by_date(
-            cls, session, calendar, start_date, end_date, full_day=False):
+            cls, session, calendar, start_date, end_date, full_day=None):
         """ Retrieve the list of recursive meetings happening in between
         the two specified dates.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
         """
         meetings = cls.expand_regular_meetings(
             cls.get_active_regular_meeting_by_date(
@@ -481,7 +513,7 @@ class Meeting(BASE):
 
     @classmethod
     def get_at_time(cls, session, calendar, meetingdate, t_time):
-        """ Returns the meeting occuring at this specifict time point.
+        """ Returns the meeting occuring at this specific time point.
         """
         return session.query(cls).filter(
             and_(

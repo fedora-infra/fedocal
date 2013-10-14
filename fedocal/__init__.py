@@ -71,20 +71,16 @@ work.
 """
     @wraps(function)
     def decorated_function(*args, **kwargs):
-        valid = True
         if flask.g.fas_user is None:
             flask.flash('Login required', 'errors')
-            valid = False
-        else:
-            if len(flask.g.fas_user.groups) == 0:
-                valid = False
-                flask.flash('You must be in one more group than the CLA',
-                            'errors')
-        if not valid:
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         else:
-            return function(*args, **kwargs)
+            if len(flask.g.fas_user.groups) == 0:
+                flask.flash('You must be in one more group than the CLA',
+                            'errors')
+                return flask.redirect(flask.url_for('index'))
+        return function(*args, **kwargs)
     return decorated_function
 
 

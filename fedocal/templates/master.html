@@ -68,6 +68,11 @@
                                                calendar_name=calendar.calendar_name)}}"
                                 title="Add this calendar to your agenda">iCal export</a>
                         </li>
+                        <li>
+                            <a onclick="CopyToClipboard('{{url_for('ical_out',
+                                               calendar_name=calendar.calendar_name)}}')"
+                                title="Copy the iCal feed URL">Copy iCal link</a>
+                        </li>
                         {% if calendar.calendar_contact %}
                         <li>
                             <a href="mailto:{{calendar.calendar_contact}}">
@@ -144,6 +149,11 @@
             filename='jquery-ui-1.9.2.custom.min.js') }}">
     </script>
     <script type="text/javascript">
+        function CopyToClipboard (text) {
+            window.prompt('Press CTRL+C, then ENTER',
+                         '{{ request.url_root }}' + text);
+            return false;
+        }
         $(".toDisable").on("click", function (){document.location = this.href;});
         $(function(){
             $('#calendars_menu').menu();

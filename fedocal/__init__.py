@@ -75,6 +75,10 @@ work.
             flask.flash('Login required', 'errors')
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
+        elif not flask.g.fas_user.cla_done:
+            flask.flash('You must sign the CLA (Contributor License '
+                        'Agreement to use fedocal', 'errors')
+            return flask.redirect(flask.url_for('.index'))
         else:
             if len(flask.g.fas_user.groups) == 0:
                 flask.flash('You must be in one more group than the CLA',

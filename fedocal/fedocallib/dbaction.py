@@ -57,7 +57,9 @@ def add_meeting(
     if not calendarobj.calendar_regional_meetings or not meeting_region:
         meeting_region = None
 
-    if not meeting_date_end:
+    # Unless we test directly dbaction we will never hit this as
+    # fedocallib.add_meeting already covers it
+    if not meeting_date_end:  # pragma: no cover
         meeting_date_end = meeting_date
 
     meeting = model.Meeting(

@@ -94,7 +94,7 @@ class CalendarStatus(BASE):
         """ Constructor instanciating the defaults values. """
         self.status = status
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         """ Representation of the CalendarStatus object when printed.
         """
         return "<CalendarStatus('%s')>" % (self.status)

@@ -15,6 +15,7 @@ license.
 """
 
 from datetime import timedelta
+import operator
 from model import Meeting
 
 
@@ -58,6 +59,8 @@ class Week(object):
                         meeting.recursion_frequency) == 0:
                     if meeting not in self.meetings:
                         self.meetings.append(meeting)
+        self.meetings.sort(key=operator.attrgetter('meeting_date',
+            'meeting_time_start', 'meeting_name'))
 
     def get_full_day_meetings(self):
         """ Retrieve all the full day meetings of this week. """
@@ -75,6 +78,8 @@ class Week(object):
                         meeting.recursion_frequency) == 0:
                     if meeting not in self.full_day_meetings:
                         self.full_day_meetings.append(meeting)
+        self.full_day_meetings.sort(key=operator.attrgetter('meeting_date',
+            'meeting_time_start', 'meeting_name'))
 
     def __repr__(self):
         """ Representation of the Week object when printed.

@@ -45,6 +45,7 @@
             <h4>Calendars</h4>
             <ul id="calendars_menu" class="checkmark-list">
                 {% for calendar in calendars %}
+                {% if calendar.calendar_status == 'Enabled' %}
                 <li>
                     <a href="{{url_for('calendar',
                         calendar_name=calendar.calendar_name)}}">
@@ -82,6 +83,7 @@
                         {% endif %}
                     </ul>
                 </li>
+                {% endif %}
                 {% endfor %}
             </ul>
             {% if not g.fas_user %}

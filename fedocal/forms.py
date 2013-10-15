@@ -60,6 +60,11 @@ class AddCalendarForm(wtf.Form):
         'Multiple meetings on the same day?')
     calendar_regional_meetings = wtforms.BooleanField(
         'Meetings can be regional?')
+    calendar_status = wtforms.SelectField(
+        'Status',
+        [wtforms.validators.Required()],
+        choices=[(item, item) for item in []]
+    )
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -81,6 +86,12 @@ class AddCalendarForm(wtf.Form):
                 calendar.calendar_multiple_meetings)
             self.calendar_regional_meetings.data = bool(
                 calendar.calendar_regional_meetings)
+
+        if 'status' in kwargs:
+            self.calendar_status.choices = [
+                (status.status, status.status)
+                for status in kwargs['status']
+            ]
 
 
 class AddMeetingForm(wtf.Form):

@@ -135,18 +135,28 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(week.calendar.calendar_name, 'test_calendar')
         self.assertNotEqual(week.meetings, None)
         self.assertEqual(len(week.meetings), 4)
+
         self.assertEqual(week.meetings[0].meeting_name,
-            'Fedora-fr-test-meeting')
+            'Another past test meeting')
         self.assertEqual(week.meetings[0].meeting_information,
-            'This is a test meeting')
-        self.assertEqual(week.meetings[0].meeting_name,
-            'Fedora-fr-test-meeting')
-        self.assertEqual(week.meetings[0].meeting_information,
-            'This is a test meeting')
+            'This is a past meeting with recursion')
+
         self.assertEqual(week.meetings[1].meeting_name,
             'Another test meeting2')
         self.assertEqual(week.meetings[1].meeting_information,
             'This is a test meeting with recursion2')
+
+        self.assertEqual(week.meetings[2].meeting_name,
+            'Fedora-fr-test-meeting')
+        self.assertEqual(week.meetings[2].meeting_information,
+            'This is a test meeting')
+
+        self.assertEqual(week.meetings[3].meeting_name,
+            'Full-day meeting')
+        self.assertEqual(week.meetings[3].meeting_manager,
+            'pingou,')
+        self.assertEqual(week.meetings[3].meeting_information,
+            'This is a full day meeting')
 
     def test_get_week_empty(self):
         """ Test the get_week function with no meetings. """
@@ -317,16 +327,21 @@ class Fedocallibtests(Modeltests):
             'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 4)
+
         self.assertEqual(meetings[0].meeting_name,
             'Fedora-fr-test-meeting')
         self.assertEqual(meetings[0].meeting_information,
             'This is a test meeting')
-        self.assertEqual(meetings[1].meeting_name, 'test-meeting2')
+        self.assertEqual(meetings[1].meeting_name,
+            'Full-day meeting')
         self.assertEqual(meetings[1].meeting_information,
-            'This is another test meeting')
-        self.assertEqual(meetings[2].meeting_name,
-            'Test meeting with reminder')
+            'This is a full day meeting')
+        self.assertEqual(meetings[2].meeting_name, 'test-meeting2')
         self.assertEqual(meetings[2].meeting_information,
+            'This is another test meeting')
+        self.assertEqual(meetings[3].meeting_name,
+            'Test meeting with reminder')
+        self.assertEqual(meetings[3].meeting_information,
             'This is a test meeting with reminder')
 
     # pylint: disable=C0103
@@ -348,6 +363,7 @@ class Fedocallibtests(Modeltests):
             self.session, 'pingou', from_date=TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 5)
+
         self.assertEqual(meetings[0].meeting_name,
             'Another past test meeting')
         self.assertEqual(meetings[0].meeting_information,
@@ -357,13 +373,13 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings[1].meeting_information,
             'This is a test meeting with recursion2')
         self.assertEqual(meetings[2].meeting_name,
-            'Another test meeting')
-        self.assertEqual(meetings[2].meeting_information,
-            'This is a test meeting with recursion')
-        self.assertEqual(meetings[3].meeting_name,
             'Full-day meeting with recursion')
-        self.assertEqual(meetings[3].meeting_information,
+        self.assertEqual(meetings[2].meeting_information,
             'Full day meeting with recursion')
+        self.assertEqual(meetings[3].meeting_name,
+            'Another test meeting')
+        self.assertEqual(meetings[3].meeting_information,
+            'This is a test meeting with recursion')
         self.assertEqual(meetings[4].meeting_name,
             'Test meeting with reminder and recursion')
         self.assertEqual(meetings[4].meeting_information,

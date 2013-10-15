@@ -208,13 +208,15 @@ def index():
     """ Displays the index page with containing the first calendar (by
     order of creation and if any) for the current week.
     """
-    calendars = Calendar.get_all(SESSION)
+    calendars_enabled = Calendar.by_status(SESSION, 'Enabled')
+    calendars_disabled = Calendar.by_status(SESSION, 'Disabled')
     auth_form = forms.LoginForm()
     admin = is_admin()
     return flask.render_template(
         'index.html',
-        calendars=calendars,
-        calendars_table=list(chunks(calendars, 3)),
+        calendars=calendars_enabled,
+        calendars_table=chunks(calendars_enabled, 3),
+        calendars_table2=chunks(calendars_disabled, 3),
         auth_form=auth_form,
         admin=admin)
 

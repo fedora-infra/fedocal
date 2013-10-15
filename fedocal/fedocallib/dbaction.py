@@ -4,7 +4,7 @@
 dbaction - Simple file containing all the methods to add/edit and remove
             object from the database.
 
-Copyright (C) 2012 Pierre-Yves Chibon
+Copyright (C) 2012-2013 Pierre-Yves Chibon
 Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
 This program is free software; you can redistribute it and/or modify

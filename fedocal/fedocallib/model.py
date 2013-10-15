@@ -4,7 +4,7 @@
 model - an object mapper to a SQL database representation of the data
         stored in this project.
 
-Copyright (C) 2012 Pierre-Yves Chibon
+Copyright (C) 2012-2013 Pierre-Yves Chibon
 Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
 This program is free software; you can redistribute it and/or modify

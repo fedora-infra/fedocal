@@ -5,17 +5,37 @@
 {% set title_extent = "Home" %}
 
 {% block content %}
-<section id="calendar_list">
-
+<h2>Active Calendar</h2>
+<section class="calendar_list">
     {% for calendar_row in calendars_table %}
     <div class="calendar_row">
         {% for calendar in calendar_row %}
+            {% if calendar.calendar_status == 'Enabled' %}
             <a class="calendar_link"
                 href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
                 <img src="{{ url_for("static", filename="fedocal.png") }}" alt="" />
                 <span class="calendar_name">{{ calendar.calendar_name }}</span>
                 <span class="calendar_desc">{{ calendar.calendar_description }}</span>
             </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+</section>
+
+<h2>Calendar disabled</h2>
+<section class="calendar_list">
+    {% for calendar_row in calendars_table %}
+    <div class="calendar_row">
+        {% for calendar in calendar_row %}
+            {% if calendar.calendar_status != 'Enabled' %}
+            <a class="calendar_link"
+                href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
+                <img src="{{ url_for("static", filename="fedocal.png") }}" alt="" />
+                <span class="calendar_name">{{ calendar.calendar_name }}</span>
+                <span class="calendar_desc">{{ calendar.calendar_description }}</span>
+            </a>
+            {% endif %}
         {% endfor %}
     </div>
     {% endfor %}

@@ -50,7 +50,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar',
             calendar_contact='test@example.com',
             calendar_description='This is a test calendar',
-            calendar_manager_group='fi-apprentice',
+            calendar_editor_group='fi-apprentice',
             calendar_admin_group='infrastructure-main',
             calendar_multiple_meetings=False)
         obj.save(self.session)
@@ -61,7 +61,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar2',
             calendar_contact='test2@example.com',
             calendar_description='This is another test calendar',
-            calendar_manager_group='packager',
+            calendar_editor_group='packager',
             calendar_multiple_meetings=True)
         obj.save(self.session)
         self.session.commit()
@@ -71,7 +71,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar3',
             calendar_contact='test3@example.com',
             calendar_description='This is the third test calendar',
-            calendar_manager_group='packager',
+            calendar_editor_group='packager',
             calendar_multiple_meetings=True)
         obj.save(self.session)
         self.session.commit()
@@ -81,7 +81,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar4',
             calendar_contact='test4@example.com',
             calendar_description='This is yet another test calendar',
-            calendar_manager_group='packager',
+            calendar_editor_group='packager',
             calendar_multiple_meetings=True,
             calendar_regional_meetings=True)
         obj.save(self.session)
@@ -102,7 +102,7 @@ class Calendartests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(obj.calendar_name, 'test_calendar')
         self.assertEqual(obj.calendar_description, 'This is a test calendar')
-        self.assertEqual(obj.calendar_manager_group, 'fi-apprentice')
+        self.assertEqual(obj.calendar_editor_group, 'fi-apprentice')
         self.assertEqual(obj.calendar_admin_group, 'infrastructure-main')
 
     def test_get_calendar_inexistant(self):
@@ -111,10 +111,10 @@ class Calendartests(Modeltests):
         obj = model.Calendar.by_id(self.session, 'unknonwn')
         self.assertEqual(obj, None)
 
-    def test_get_manager_groups(self):
-        """ Test the Calendar get_manager_groups function. """
+    def test_get_editor_groups(self):
+        """ Test the Calendar get_editor_groups function. """
         self.test_init_calendar()
-        obj = model.Calendar.get_manager_groups(self.session, 'test_calendar')
+        obj = model.Calendar.get_editor_groups(self.session, 'test_calendar')
         self.assertNotEqual(obj, None)
         self.assertEqual(obj, ['fi-apprentice'])
 
@@ -126,12 +126,12 @@ class Calendartests(Modeltests):
         self.assertEqual(obj, ['infrastructure-main'])
 
     # pylint: disable=C0103
-    def test_get_manager_groups_inexistant_calendar(self):
-        """ Test the Calendar get_manager_groups function for a non
+    def test_get_editor_groups_inexistant_calendar(self):
+        """ Test the Calendar get_editor_groups function for a non
         existant Calendar.
         """
         self.test_init_calendar()
-        obj = model.Calendar.get_manager_groups(self.session, 'unknown')
+        obj = model.Calendar.get_editor_groups(self.session, 'unknown')
         self.assertNotEqual(obj, None)
         self.assertEqual(obj, [])
 

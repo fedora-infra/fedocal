@@ -29,7 +29,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
 from week import Week
-from model import Calendar, Reminder, Meeting
+from model import CalendarStatus, Calendar, Reminder, Meeting
 import dbaction as dbaction
 from exceptions import UserNotAllowed, InvalidMeeting
 
@@ -996,3 +996,8 @@ def edit_meeting(
     meeting.save(session)
     session.commit()
     return meeting
+
+
+def get_calendar_status(session):
+    """ Return the list of all the status available for the calendars. """
+    return session.query(CalendarStatus).all()

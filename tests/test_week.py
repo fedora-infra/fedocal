@@ -92,17 +92,19 @@ class Weektests(Modeltests):
         # Test the meeting in the week
         self.assertNotEqual(weekobj, None)
         self.assertNotEqual(weekobj.meetings[0], None)
-        self.assertEqual(weekobj.meetings[0].meeting_name,
-            'Fedora-fr-test-meeting')
-        self.assertEqual(weekobj.meetings[0].meeting_manager,
-            'pingou, shaiton,')
+        self.assertEqual(len(weekobj.meetings), 4)
+
         self.assertEqual(weekobj.meetings[0].calendar.calendar_name,
             'test_calendar')
         self.assertEqual(weekobj.meetings[0].calendar.calendar_description,
             'This is a test calendar')
+
+        self.assertEqual(weekobj.meetings[0].meeting_name,
+            'Another past test meeting')
+        self.assertEqual(weekobj.meetings[0].meeting_manager,
+            'pingou,')
         self.assertEqual(weekobj.meetings[0].meeting_information,
-            'This is a test meeting')
-        self.assertEqual(weekobj.meetings[0].reminder, None)
+            'This is a past meeting with recursion')
 
         self.assertEqual(weekobj.meetings[1].meeting_name,
             'Another test meeting2')
@@ -110,6 +112,21 @@ class Weektests(Modeltests):
             'pingou,')
         self.assertEqual(weekobj.meetings[1].meeting_information,
             'This is a test meeting with recursion2')
+
+        self.assertEqual(weekobj.meetings[2].meeting_name,
+            'Fedora-fr-test-meeting')
+        self.assertEqual(weekobj.meetings[2].meeting_manager,
+            'pingou, shaiton,')
+        self.assertEqual(weekobj.meetings[2].meeting_information,
+            'This is a test meeting')
+        self.assertEqual(weekobj.meetings[2].reminder, None)
+
+        self.assertEqual(weekobj.meetings[3].meeting_name,
+            'Full-day meeting')
+        self.assertEqual(weekobj.meetings[3].meeting_manager,
+            'pingou,')
+        self.assertEqual(weekobj.meetings[3].meeting_information,
+            'This is a full day meeting')
 
     def test_meeting_in_week_full_day(self):
         """ Test that the meetings in the week are correct function. """

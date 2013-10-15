@@ -200,6 +200,15 @@ class Calendar(BASE):
         """ Retrieve all the Calendar available."""
         return session.query(cls).all()
 
+    @classmethod
+    def by_status(cls, session, status):
+        """ Retrieve all the Calendar having a certain status. """
+        return session.query(
+            cls
+        ).filter(
+            cls.calendar_status == status
+        ).all()
+
 
 # pylint: disable=R0902
 class Meeting(BASE):

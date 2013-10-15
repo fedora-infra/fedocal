@@ -84,7 +84,7 @@ class Calendar(BASE):
     calendar_contact = Column(String(80), nullable=False)
     calendar_description = Column(String(500), nullable=True)
     # 3 groups (3*32)
-    calendar_manager_group = Column(String(100), nullable=True)
+    calendar_editor_group = Column(String(100), nullable=True)
     calendar_admin_group = Column(String(100), nullable=True)
     calendar_multiple_meetings = Column(Boolean, default=False)
     calendar_regional_meetings = Column(Boolean, default=False)
@@ -92,14 +92,14 @@ class Calendar(BASE):
     # pylint: disable=R0913
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,
-            calendar_manager_group, calendar_admin_group=None,
+            calendar_editor_group, calendar_admin_group=None,
             calendar_multiple_meetings=False,
             calendar_regional_meetings=False):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
         self.calendar_contact = calendar_contact
         self.calendar_description = calendar_description
-        self.calendar_manager_group = calendar_manager_group
+        self.calendar_editor_group = calendar_editor_group
         self.calendar_admin_group = calendar_admin_group
         self.calendar_multiple_meetings = calendar_multiple_meetings
         self.calendar_regional_meetings = calendar_regional_meetings
@@ -116,7 +116,7 @@ class Calendar(BASE):
             calendar_name=self.calendar_name,
             calendar_contact=self.calendar_contact,
             calendar_description=self.calendar_description,
-            calendar_manager_group=self.calendar_manager_group,
+            calendar_editor_group=self.calendar_editor_group,
             calendar_admin_group=self.calendar_admin_group,
             calendar_multiple_meetings=self.calendar_multiple_meetings,
             calendar_regional_meetings=self.calendar_regional_meetings
@@ -139,15 +139,15 @@ class Calendar(BASE):
         return session.query(cls).get(identifier)
 
     @classmethod
-    def get_manager_groups(cls, session, identifier):
-        """ Return the list of managers for a given calendar.
+    def get_editor_groups(cls, session, identifier):
+        """ Return the list of editors for a given calendar.
         """
         calendar = Calendar.by_id(session, identifier)
-        if not calendar or not calendar.calendar_manager_group:
+        if not calendar or not calendar.calendar_editor_group:
             groups = []
         else:
             groups = [item.strip()
-                      for item in calendar.calendar_manager_group.split(',')]
+                      for item in calendar.calendar_editor_group.split(',')]
         return groups
 
     @classmethod

@@ -105,7 +105,7 @@ Sample response:
             {
                 "calendar_multiple_meetings": false,
                 "calendar_description": "test",
-                "calendar_manager_group": "packager2",
+                "calendar_editor_group": "packager2",
                 "calendar_admin_group": "packager",
                 "calendar_contact": "test",
                 "calendar_regional_meetings": false,
@@ -114,7 +114,7 @@ Sample response:
             {
                 "calendar_multiple_meetings": false,
                 "calendar_description": "asd",
-                "calendar_manager_group": "",
+                "calendar_editor_group": "",
                 "calendar_admin_group": "",
                 "calendar_contact": "asd",
                 "calendar_regional_meetings": false,

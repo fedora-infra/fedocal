@@ -98,24 +98,24 @@
             </div>
             {% endif %}
             {% if admin %}
-                <h4> Admin </h4>
-                <div>
-                <ul class="checkmark-list">
-                    <li>
-                        <a href="{{ url_for('add_calendar') }}"> Add a calendar </a>
-                    </li>
-                    {% if calendar %}
-                    <li>
-                        <a href="{{ url_for('edit_calendar',
-                            calendar_name=calendar.calendar_name) }}"> Edit calendar </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('delete_calendar',
-                            calendar_name=calendar.calendar_name) }}"> Delete calendar </a>
-                    </li>
-                    {% endif %}
-                </ul>
-                </div>
+            <h4> Admin </h4>
+            <div>
+            <ul class="checkmark-list">
+                <li>
+                    <a href="{{ url_for('add_calendar') }}"> Add a calendar </a>
+                </li>
+                {% if calendar %}
+                <li>
+                    <a href="{{ url_for('edit_calendar',
+                        calendar_name=calendar.calendar_name) }}"> Edit calendar </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('delete_calendar',
+                        calendar_name=calendar.calendar_name) }}"> Delete calendar </a>
+                </li>
+                {% endif %}
+            </ul>
+            </div>
             {% endif %}
             <h4>Information</h4>
             <div>
@@ -124,7 +124,7 @@
                 <li><a href="http://fedocal.rtfd.org/">Documentation</a></li>
                 <li><a href="{{ url_for('api') }}">API</a></li>
                 <li><a href="https://fedorahosted.org/fedocal/report">Bugs & Improvements</a></li>
-            </div>
+            </ul>
             </div>
             {% if calendar %}
             <ul class="checkmark-list">
@@ -138,6 +138,7 @@
                 {% endif %}
             </ul>
             {% endif %}
+            </div>
         </aside>
         <footer>
             <a href="https://fedorahosted.org/fedocal/"

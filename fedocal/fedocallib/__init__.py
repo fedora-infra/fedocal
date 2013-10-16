@@ -703,6 +703,10 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
     """
     meetings_utc = Meeting.get_by_date(session, calendarobj, start_date,
                                        end_date, no_recursive=True)
+    meetings_utc.extend(Meeting.get_by_date(
+                            session, calendarobj, start_date,
+                            end_date, full_day=True, no_recursive=True)
+                        )
     meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
                         calendarobj, start_date, end_date))
     meetings = []

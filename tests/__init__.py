@@ -48,7 +48,15 @@ from fedocal.fedocallib import model, get_start_week
 
 #DB_PATH = '%s/test.db' % (os.path.dirname(
                                     #os.path.abspath(__file__)))
-DB_PATH = ':memory:'
+DB_PATH = 'sqlite:///:memory:'
+try:
+    import requests
+    req = requests.get('http://209.132.184.152/faitout/new')
+    if req.status_code == 200:
+        DB_PATH = req.text
+        print 'Using faitout at: %s' % DB_PATH
+except:
+    pass
 
 TODAY = get_start_week(date.today().year, date.today().month,
     date.today().day) + timedelta(days=2)
@@ -65,13 +73,18 @@ class Modeltests(unittest.TestCase):
     # pylint: disable=C0103
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
-        self.session = model.create_tables('sqlite:///%s' % DB_PATH)
+        self.session = model.create_tables(DB_PATH)
 
     # pylint: disable=C0103
     def tearDown(self):
         """ Remove the test.db database if there is one. """
+        self.session.close()
         if os.path.exists(DB_PATH):
             os.unlink(DB_PATH)
+        if DB_PATH.startswith('postgres'):
+            db_name = DB_PATH.rsplit('/', 1)[1]
+            print requests.get(
+                'http://209.132.184.152/faitout/clean/%s' % db_name).text
 
 
 class FakeGroup(object):

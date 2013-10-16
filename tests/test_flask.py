@@ -181,8 +181,8 @@ class Flasktests(Modeltests):
         self.assertTrue('DESCRIPTION:This is a test meeting with '\
             'recursion' in output.data)
         self.assertTrue('ORGANIZER:pingou' in output.data)
-        self.assertEqual(output.data.count('BEGIN:VEVENT'), 45)
-        self.assertEqual(output.data.count('END:VEVENT'), 45)
+        self.assertEqual(output.data.count('BEGIN:VEVENT'), 49)
+        self.assertEqual(output.data.count('END:VEVENT'), 49)
 
     def test_ical_all(self):
         """ Test the ical_all function. """
@@ -195,8 +195,8 @@ class Flasktests(Modeltests):
         self.assertTrue('DESCRIPTION:This is a test meeting with '\
             'recursion' in output.data)
         self.assertTrue('ORGANIZER:pingou' in output.data)
-        self.assertEqual(output.data.count('BEGIN:VEVENT'), 50)
-        self.assertEqual(output.data.count('END:VEVENT'), 50)
+        self.assertEqual(output.data.count('BEGIN:VEVENT'), 54)
+        self.assertEqual(output.data.count('END:VEVENT'), 54)
 
     def test_view_meeting(self):
         """ Test the view_meeting function. """

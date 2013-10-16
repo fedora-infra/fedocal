@@ -592,7 +592,7 @@ class Meetingtests(Modeltests):
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
-        self.assertEqual(obj[0].meeting_name, 
+        self.assertEqual(obj[0].meeting_name,
             'Test meeting with reminder and recursion')
         self.assertEqual(obj[0].meeting_manager, 'pingou,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
@@ -704,7 +704,7 @@ class Meetingtests(Modeltests):
         self.test_init_meeting()
         meetings = model.Meeting.get_meeting_with_reminder(self.session,
             TODAY + timedelta(days=11), time(11, 00), time(11, 30),
-            'H-96')
+            'H-168')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])

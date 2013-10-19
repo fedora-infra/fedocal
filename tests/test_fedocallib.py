@@ -239,11 +239,12 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['23h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertEqual(meet.meeting_name,
-                        'test-meeting23h59')
+                    self.assertTrue(meet.meeting_name in (
+                        'test-meeting23h59',
+                        'Full-day meeting with recursion'))
             else:
                 cnt = cnt + 1
-        self.assertEqual(cnt, 6)
+        self.assertEqual(cnt, 5)
 
     # pylint: disable=C0103
     def test_get_meetings_with_multiple_same_time(self):
@@ -557,11 +558,12 @@ class Fedocallibtests(Modeltests):
             TODAY + timedelta(days=10),
             TODAY + timedelta(days=12)
             )
-        self.assertEqual(len(meetings), 4)
+        self.assertEqual(len(meetings), 5)
         for meeting in meetings:
             self.assertTrue(meeting.meeting_name in ['test-meeting2',
                 'Another test meeting', 'Test meeting with reminder',
-                'Test meeting with reminder and recursion'])
+                'Test meeting with reminder and recursion',
+                'Full-day meeting with recursion'])
             self.assertEqual(meeting.meeting_manager, 'pingou,')
 
     # pylint: disable=C0103
@@ -655,7 +657,7 @@ class Fedocallibtests(Modeltests):
         output = fedocallib.get_by_date(self.session, calendarobj, TODAY,
             TODAY + relativedelta(years=+1))
         self.assertNotEqual(output, None)
-        self.assertEqual(len(output), 43)
+        self.assertEqual(len(output), 47)
 
     # pylint: disable=R0915
     def test_add_meeting_fail(self):

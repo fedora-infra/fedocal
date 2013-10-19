@@ -54,7 +54,7 @@ class AddCalendarForm(wtf.Form):
         'Contact email',
         [wtforms.validators.Required()])
     calendar_description = wtforms.TextField('Description')
-    calendar_manager_groups = wtforms.TextField('Manager groups')
+    calendar_editor_groups = wtforms.TextField('Editor groups')
     calendar_admin_groups = wtforms.TextField('Admin groups')
     calendar_multiple_meetings = wtforms.BooleanField(
         'Multiple meetings on the same day?')
@@ -73,8 +73,8 @@ class AddCalendarForm(wtf.Form):
             self.calendar_name.data = calendar.calendar_name
             self.calendar_contact.data = calendar.calendar_contact
             self.calendar_description.data = calendar.calendar_description
-            self.calendar_manager_groups.data = \
-                calendar.calendar_manager_group
+            self.calendar_editor_groups.data = \
+                calendar.calendar_editor_group
             self.calendar_admin_groups.data = \
                 calendar.calendar_admin_group
             self.calendar_multiple_meetings.data = bool(

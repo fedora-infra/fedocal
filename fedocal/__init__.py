@@ -157,13 +157,13 @@ def is_calendar_manager(calendar):
     if not flask.g.fas_user:
         return False
     else:
-        manager_groups = [
+        editor_groups = [
             item.strip()
-            for item in calendar.calendar_manager_group.split(',')
+            for item in calendar.calendar_editor_group.split(',')
         ]
-        if len(manager_groups) == 0:
+        if len(editor_groups) == 0:
             return True
-        if set(flask.g.fas_user.groups).intersection(set(manager_groups)):
+        if set(flask.g.fas_user.groups).intersection(set(editor_groups)):
             return True
 
 
@@ -421,7 +421,7 @@ def add_calendar():
             calendar_name=form.calendar_name.data,
             calendar_contact=form.calendar_contact.data,
             calendar_description=form.calendar_description.data,
-            calendar_manager_group=form.calendar_manager_groups.data,
+            calendar_editor_group=form.calendar_editor_group.data,
             calendar_admin_group=form.calendar_admin_groups.data,
             calendar_multiple_meetings=bool(
                 form.calendar_multiple_meetings.data),
@@ -462,7 +462,7 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     calendarobj = Calendar.by_id(SESSION, calendar_name)
-    if calendarobj.calendar_manager_group and \
+    if calendarobj.calendar_editor_group and \
        not (is_calendar_manager(calendarobj)
             or is_calendar_admin(calendarobj)
             or is_admin()):
@@ -773,8 +773,8 @@ def edit_calendar(calendar_name):
             calendarobj.calendar_name = form.calendar_name.data
             calendarobj.calendar_contact = form.calendar_contact.data
             calendarobj.calendar_description = form.calendar_description.data
-            calendarobj.calendar_manager_group = \
-                form.calendar_manager_groups.data
+            calendarobj.calendar_editor_group = \
+                form.calendar_editor_groups.data
             calendarobj.calendar_admin_group = \
                 form.calendar_admin_groups.data
             calendarobj.calendar_multiple_meetings = bool(

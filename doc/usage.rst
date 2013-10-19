@@ -32,14 +32,14 @@ of the FAS group set as `Admin group` when the calendar is created.
 Administrators can edit and delete over all meetings of a calendar.
 
 
-Calendar managers
+Calendar editors
 ~~~~~~~~~~~~~~~~~
 
-Calendar managers are set when the calendar is created. They are the members of
-the FAS group set as `Manager group` when the calendar is created.
+Calendar editors are set when the calendar is created. They are the members of
+the FAS group set as `Editor group` when the calendar is created.
 
-Managers are used when one wants to restrict the edition of the calendar to
-members of a certain group.
+Editors are used when one wants to restrict the edition (adding meetings)
+of the calendar to members of a certain group.
 
 
 Users

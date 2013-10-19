@@ -92,10 +92,10 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(calendars, None)
         self.assertEqual(len(calendars), 4)
         self.assertEqual(calendars[0].calendar_name, 'test_calendar')
-        self.assertEqual(calendars[0].calendar_manager_group,
+        self.assertEqual(calendars[0].calendar_editor_group,
             'fi-apprentice')
         self.assertEqual(calendars[1].calendar_name, 'test_calendar2')
-        self.assertEqual(calendars[1].calendar_manager_group,
+        self.assertEqual(calendars[1].calendar_editor_group,
             'packager')
 
     def test_get_start_week(self):
@@ -478,7 +478,7 @@ class Fedocallibtests(Modeltests):
             calendar_name='test_calendar30',
             calendar_contact='test30@example.com',
             calendar_description='This is a test calendar30',
-            calendar_manager_group='')
+            calendar_editor_group='')
         calendar.save(self.session)
         self.session.commit()
 
@@ -706,7 +706,8 @@ class Fedocallibtests(Modeltests):
             full_day=False)
 
         fasuser = FakeUser(['fi-apprentice'])
-        self.assertRaises(TypeError, fedocallib.add_meeting,
+        # Fails due to dates being None and thus not having .year .month...
+        self.assertRaises(AttributeError, fedocallib.add_meeting,
             session=self.session,
             calendarobj=calendarobj,
             fas_user=fasuser,
@@ -725,7 +726,8 @@ class Fedocallibtests(Modeltests):
             remind_who=None,
             full_day=False)
 
-        self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
+        # Fails because the timezone provided is None
+        self.assertRaises(AttributeError, fedocallib.add_meeting,
             session=self.session,
             calendarobj=calendarobj,
             fas_user=fasuser,
@@ -738,6 +740,26 @@ class Fedocallibtests(Modeltests):
             meeting_information=None,
             meeting_region=None,
             tzone=None,
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
+            full_day=False)
+
+        # Fails because the meeting is in the past
+        self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name=None,
+            meeting_date=TODAY - timedelta(days=4),
+            meeting_date_end=TODAY - timedelta(days=4),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone='UTC',
             frequency=None,
             end_repeats=None,
             remind_when=None,

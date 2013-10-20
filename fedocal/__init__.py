@@ -421,7 +421,7 @@ def add_calendar():
             calendar_name=form.calendar_name.data,
             calendar_contact=form.calendar_contact.data,
             calendar_description=form.calendar_description.data,
-            calendar_editor_group=form.calendar_editor_group.data,
+            calendar_editor_group=form.calendar_editor_groups.data,
             calendar_admin_group=form.calendar_admin_groups.data,
             calendar_multiple_meetings=bool(
                 form.calendar_multiple_meetings.data),

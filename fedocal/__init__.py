@@ -611,8 +611,12 @@ def edit_meeting(meeting_id):
                 meetingobj.meeting_date = meetingobj.meeting_date + \
                     datetime.timedelta(
                         days=meetingobj.recursion_frequency * cnt)
+                meetingobj.meeting_date_end = meetingobj.meeting_date_end + \
+                    datetime.timedelta(
+                        days=meetingobj.recursion_frequency * cnt)
                 cnt = cnt + 1
             meeting = meetingobj
+
         if not fedocallib.is_date_in_future(
                 meeting.meeting_date,
                 meeting.meeting_time_start):

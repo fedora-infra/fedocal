@@ -166,9 +166,9 @@ class AddMeetingForm(wtf.Form):
                 meeting.meeting_time_start.hour,
                 meeting.meeting_time_start.minute, 0)
             stopdt = datetime(
-                meeting.meeting_date.year,
-                meeting.meeting_date.month,
-                meeting.meeting_date.day,
+                meeting.meeting_date_end.year,
+                meeting.meeting_date_end.month,
+                meeting.meeting_date_end.day,
                 meeting.meeting_time_stop.hour,
                 meeting.meeting_time_stop.minute, 0)
 

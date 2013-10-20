@@ -28,6 +28,8 @@ from flask.ext import wtf
 from datetime import time
 from datetime import datetime
 
+from pytz import common_timezones
+
 import wtforms
 
 import fedocallib
@@ -102,6 +104,11 @@ class AddMeetingForm(wtf.Form):
         'Stop time',
         [wtforms.validators.Required(), validate_time])
 
+    meeting_timezone = wtforms.SelectField(
+        'Time zone',
+        [wtforms.validators.Required()],
+        choices=[(tzone, tzone) for tzone in common_timezones])
+
     comanager = wtforms.TextField('Co-manager')
 
     information = wtforms.TextAreaField('Information')
@@ -152,11 +159,17 @@ class AddMeetingForm(wtf.Form):
         value of the form with the value from the Meeting object.
         """
         super(AddMeetingForm, self).__init__(*args, **kwargs)
+        if 'timezone' in kwargs:
+            self.meeting_timezone.choices = [
+                (tzone, tzone) for tzone in common_timezones]
+            self.meeting_timezone.choices.insert(
+                0, (kwargs['timezone'], kwargs['timezone']))
+
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']
             tzone = 'UTC'
-            if 'tzone' in kwargs:
-                tzone = kwargs['tzone']
+            if 'timezone' in kwargs:
+                tzone = kwargs['timezone']
 
             # Convert time to user's timezone
             startdt = datetime(

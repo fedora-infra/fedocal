@@ -128,7 +128,7 @@ def is_admin():
     """ Return whether the user is admin for this application or not. """
     if not flask.g.fas_user \
             or not flask.g.fas_user.cla_done \
-            or len(flask.g.fas_user.groups) < 1 :
+            or len(flask.g.fas_user.groups) < 1:
         return False
 
     admins = APP.config['ADMIN_GROUP']
@@ -136,8 +136,8 @@ def is_admin():
         admins = set([admins])
     else:
         admins = set(admins)
-    return len(set(flask.g.fas_user.groups).intersection(admins))> 0
-
+    groups = set(flask.g.fas_user.groups)
+    return not groups.isdisjoint(admins)
 
 
 def is_calendar_admin(calendar):

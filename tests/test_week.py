@@ -50,14 +50,9 @@ from test_meeting import Meetingtests, TODAY
 class Weektests(Modeltests):
     """ Week tests. """
 
-    def __init__(self, method_name='runTest'):
-        """ Constructor. """
-        unittest.TestCase.__init__(self, method_name)
-        self.session = None
-
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
-        self.session = model.create_tables('sqlite:///:memory:')
+        super(Weektests, self).setUp()
         # Fills some data in the database in memory
         modeltest = Meetingtests(method_name='test_init_meeting')
         modeltest.session = self.session

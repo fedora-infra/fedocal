@@ -34,7 +34,7 @@ import unittest
 import sys
 import os
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DataError
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
@@ -66,7 +66,7 @@ class Remindertests(Modeltests):
         obj.save(self.session)
         try:
             self.session.flush()
-        except IntegrityError:
+        except (IntegrityError, DataError):
             obj = None
         self.assertEqual(obj, None)
 

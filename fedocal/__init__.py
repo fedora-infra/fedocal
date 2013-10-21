@@ -423,7 +423,7 @@ def add_calendar():
                     'to add calendars.', 'errors')
         return flask.redirect(flask.url_for('index'))
 
-    status = fedocallib.get_calendar_status(SESSION)
+    status = fedocallib.get_calendar_statuses(SESSION)
 
     form = forms.AddCalendarForm(status=status)
     # pylint: disable=E1101
@@ -806,7 +806,7 @@ def edit_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
-    status = fedocallib.get_calendar_status(SESSION)
+    status = fedocallib.get_calendar_statuses(SESSION)
     form = forms.AddCalendarForm(status=status)
     # pylint: disable=E1101
     if form.validate_on_submit():

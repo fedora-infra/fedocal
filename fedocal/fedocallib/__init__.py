@@ -998,6 +998,6 @@ def edit_meeting(
     return meeting
 
 
-def get_calendar_status(session):
+def get_calendar_statuses(session):
     """ Return the list of all the status available for the calendars. """
     return session.query(CalendarStatus).all()

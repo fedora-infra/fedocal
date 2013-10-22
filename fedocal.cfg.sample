@@ -27,3 +27,16 @@ CRON_FREQUENCY=30
 ### revision of alembic we are at and to do this we need access to the
 ### alembic.ini file.
 PATH_ALEMBIC_INI='/etc/fedocal/alembic.ini'
+
+
+### Optional Configuration
+
+
+### Name of the desired theme for fedocal.
+###
+### These themes must be located in the traditional 'templates' and 'static'
+### folder used by fedocal, but assuming you have your own templates and
+### static files, you can switch from one to another here.
+### It defaults to 'default' which is the name of the default theme shipped
+### with fedocal.
+# THEME_FOLDER = 'default'

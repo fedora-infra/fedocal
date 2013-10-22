@@ -56,6 +56,12 @@ APP.config.from_object('fedocal.default_config')
 if 'FEDOCAL_CONFIG' in os.environ:
     APP.config.from_envvar('FEDOCAL_CONFIG')
 
+# Points the template and static folders to the desired theme
+APP.template_folder = os.path.join(
+    APP.template_folder, APP.config['THEME_FOLDER'])
+APP.static_folder = os.path.join(
+    APP.static_folder, APP.config['THEME_FOLDER'])
+
 FAS = FAS(APP)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 

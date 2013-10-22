@@ -46,3 +46,7 @@ CRON_FREQUENCY = 30
 PATH_ALEMBIC_INI = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     '..', 'alembic.ini')
+
+# Name of the folder containing the desired theme inside the traditional
+# template folder. Defaults to 'default'.
+THEME_FOLDER = 'default'

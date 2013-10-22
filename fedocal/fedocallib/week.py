@@ -38,12 +38,6 @@ class Week(object):
         self.full_day_meetings = []
         self.get_meetings()
         self.get_full_day_meetings()
-        self.meetings = Meeting.expand_regular_meetings(
-            self.meetings, end_date=self.stop_date,
-            start_date=self.start_date)
-        self.full_day_meetings = Meeting.expand_regular_meetings(
-            self.full_day_meetings, end_date=self.stop_date,
-            start_date=self.start_date)
 
     def get_meetings(self):
         """ Retrieves the list of this week's meeting from the database.
@@ -60,6 +54,11 @@ class Week(object):
                         meeting.recursion_frequency) == 0:
                     if meeting not in self.meetings:
                         self.meetings.append(meeting)
+        # Expand the regular meetings so that they appear as meeting
+        self.meetings = Meeting.expand_regular_meetings(
+            self.meetings, end_date=self.stop_date,
+            start_date=self.start_date)
+        # Sort the meetings by date, time_start and name
         self.meetings.sort(key=operator.attrgetter('meeting_date',
             'meeting_time_start', 'meeting_name'))
 
@@ -79,6 +78,11 @@ class Week(object):
                         meeting.recursion_frequency) == 0:
                     if meeting not in self.full_day_meetings:
                         self.full_day_meetings.append(meeting)
+        # Expand the regular meetings so that they appear as meeting
+        self.full_day_meetings = Meeting.expand_regular_meetings(
+            self.full_day_meetings, end_date=self.stop_date,
+            start_date=self.start_date)
+        # Sort the meetings by date, time_start and name
         self.full_day_meetings.sort(key=operator.attrgetter('meeting_date',
             'meeting_time_start', 'meeting_name'))
 

@@ -109,6 +109,8 @@ class FakeUser(object):
         :arg groups: list of the groups in which this fake user is
             supposed to be.
         """
+        if isinstance(groups, basestring):
+            groups = [groups]
         self.groups = groups
         self.username = username
         self.name = username

@@ -492,11 +492,12 @@ def add_meeting(calendar_name):
         return flask.redirect(flask.url_for('calendar',
                                             calendar_name=calendar_name))
 
-    form = forms.AddMeetingForm()
     tzone = get_timezone()
+    form = forms.AddMeetingForm(timezone=tzone)
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     # pylint: disable=E1101
     if form.validate_on_submit():
+        tzone = form.meeting_timezone.data or tzone
         try:
             meeting = fedocallib.add_meeting(
                 session=SESSION,
@@ -510,7 +511,7 @@ def add_meeting(calendar_name):
                 comanager=form.comanager.data,
                 meeting_information=form.information.data,
                 meeting_region=form.meeting_region.data,
-                tzone=get_timezone(),
+                tzone=tzone,
                 frequency=form.frequency.data,
                 end_repeats=form.end_repeats.data,
                 remind_when=form.remind_when.data,
@@ -578,9 +579,10 @@ def edit_meeting(meeting_id):
                                             meeting_id=meeting_id))
 
     tzone = get_timezone()
-    form = forms.AddMeetingForm()
+    form = forms.AddMeetingForm(timezone=tzone)
     # pylint: disable=E1101
     if form.validate_on_submit():
+        tzone = form.meeting_timezone.data or tzone
         try:
             fedocallib.edit_meeting(
                 session=SESSION,
@@ -595,7 +597,7 @@ def edit_meeting(meeting_id):
                 comanager=form.comanager.data,
                 meeting_information=form.information.data,
                 meeting_region=form.meeting_region.data,
-                tzone=get_timezone(),
+                tzone=tzone,
                 recursion_frequency=form.frequency.data,
                 recursion_ends=form.end_repeats.data,
                 remind_when=form.remind_when.data,
@@ -651,7 +653,7 @@ def edit_meeting(meeting_id):
             flask.flash('This meeting has already occured, you may not '
                         'change it anymore', 'warnings')
             return flask.redirect(flask.url_for('my_meetings'))
-        form = forms.AddMeetingForm(meeting=meeting, tzone=get_timezone())
+        form = forms.AddMeetingForm(meeting=meeting, timezone=tzone)
     return flask.render_template(
         'edit_meeting.html', meeting=meeting, calendar=calendarobj,
         form=form, tzone=tzone)

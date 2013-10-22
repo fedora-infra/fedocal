@@ -38,6 +38,12 @@ class Week(object):
         self.full_day_meetings = []
         self.get_meetings()
         self.get_full_day_meetings()
+        self.meetings = Meeting.expand_regular_meetings(
+            self.meetings, end_date=self.stop_date,
+            start_date=self.start_date)
+        self.full_day_meetings = Meeting.expand_regular_meetings(
+            self.full_day_meetings, end_date=self.stop_date,
+            start_date=self.start_date)
 
     def get_meetings(self):
         """ Retrieves the list of this week's meeting from the database.

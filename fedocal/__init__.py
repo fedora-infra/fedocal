@@ -477,6 +477,7 @@ def add_meeting(calendar_name):
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     # pylint: disable=E1101
     if form.validate_on_submit():
+        tzone = form.meeting_timezone.data or tzone
         try:
             meeting = fedocallib.add_meeting(
                 session=SESSION,
@@ -490,7 +491,7 @@ def add_meeting(calendar_name):
                 comanager=form.comanager.data,
                 meeting_information=form.information.data,
                 meeting_region=form.meeting_region.data,
-                tzone=form.meeting_timezone.data or tzone,
+                tzone=tzone,
                 frequency=form.frequency.data,
                 end_repeats=form.end_repeats.data,
                 remind_when=form.remind_when.data,
@@ -553,6 +554,7 @@ def edit_meeting(meeting_id):
     form = forms.AddMeetingForm(timezone=tzone)
     # pylint: disable=E1101
     if form.validate_on_submit():
+        tzone = form.meeting_timezone.data or tzone
         try:
             fedocallib.edit_meeting(
                 session=SESSION,
@@ -567,7 +569,7 @@ def edit_meeting(meeting_id):
                 comanager=form.comanager.data,
                 meeting_information=form.information.data,
                 meeting_region=form.meeting_region.data,
-                tzone=form.meeting_timezone.data or tzone,
+                tzone=tzone,
                 recursion_frequency=form.frequency.data,
                 recursion_ends=form.end_repeats.data,
                 remind_when=form.remind_when.data,

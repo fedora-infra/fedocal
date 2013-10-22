@@ -113,9 +113,10 @@ class FakeUser(object):
         self.username = username
         self.name = username
         self.approved_memberships = [FakeGroup('packager'),
-            FakeGroup('cla_done')]
+            FakeGroup('design-team')]
         self.dic = {}
         self.dic['timezone'] = 'Europe/Paris'
+        self.cla_done = True
 
     def __getitem__(self, key):
         return self.dic[key]

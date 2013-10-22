@@ -290,7 +290,8 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
 
         t_time = startdt
         while t_time < stopdt:
-            if t_time < week_start or t_time >= (week_start + timedelta(days=7)):
+            if t_time < week_start \
+                    or t_time >= (week_start + timedelta(days=7)):
                 t_time = t_time + timedelta(minutes=30)
                 continue
             day = t_time.weekday()
@@ -321,8 +322,7 @@ def get_meetings(
     """
     week_start = get_start_week(year, month, day)
     week_start = pytz.timezone(tzone).localize(
-                    datetime(week_start.year, week_start.month, week_start.day,
-                             0, 0,))
+        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     week = get_week(session, calendar, year, month, day)
     meetings = {}
     for hour in HOURS[:-1]:
@@ -332,7 +332,8 @@ def get_meetings(
             meetings[key] = [None for cnt2 in range(0, 7)]
     meetings = _format_week_meeting(meetings, week.meetings, tzone,
                                     week_start)
-    #meetings = _format_week_meeting(meetings, week.full_day_meetings, tzone)
+    #meetings = _format_week_meeting(
+        #meetings, week.full_day_meetings, tzone, week_start)
     return meetings
 
 

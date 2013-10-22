@@ -324,16 +324,18 @@ def get_meetings(
     week_start = pytz.timezone(tzone).localize(
         datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     week = get_week(session, calendar, year, month, day)
+
+    # Prepare empty data structure in which we will then insert the meetings
+    # This is pretty much the table that will get displayed.
     meetings = {}
     for hour in HOURS[:-1]:
         for key in ['%sh00', '%sh30']:
             key = key % (hour)
             # pylint: disable=W0612
             meetings[key] = [None for cnt2 in range(0, 7)]
+
     meetings = _format_week_meeting(meetings, week.meetings, tzone,
                                     week_start)
-    #meetings = _format_week_meeting(
-        #meetings, week.full_day_meetings, tzone, week_start)
     return meetings
 
 

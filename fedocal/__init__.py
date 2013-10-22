@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 """
- (c) 2012 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
+ (c) 2012-2013 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website
@@ -208,13 +208,15 @@ def index():
     """ Displays the index page with containing the first calendar (by
     order of creation and if any) for the current week.
     """
-    calendars = Calendar.get_all(SESSION)
+    calendars_enabled = Calendar.by_status(SESSION, 'Enabled')
+    calendars_disabled = Calendar.by_status(SESSION, 'Disabled')
     auth_form = forms.LoginForm()
     admin = is_admin()
     return flask.render_template(
         'index.html',
-        calendars=calendars,
-        calendars_table=chunks(calendars, 3),
+        calendars=calendars_enabled,
+        calendars_table=chunks(calendars_enabled, 3),
+        calendars_table2=chunks(calendars_disabled, 3),
         auth_form=auth_form,
         admin=admin)
 
@@ -421,7 +423,9 @@ def add_calendar():
                     'to add calendars.', 'errors')
         return flask.redirect(flask.url_for('index'))
 
-    form = forms.AddCalendarForm()
+    status = fedocallib.get_calendar_statuses(SESSION)
+
+    form = forms.AddCalendarForm(status=status)
     # pylint: disable=E1101
     if form.validate_on_submit():
         calendarobj = Calendar(
@@ -434,6 +438,7 @@ def add_calendar():
                 form.calendar_multiple_meetings.data),
             calendar_regional_meetings=bool(
                 form.calendar_regional_meetings.data),
+            calendar_status = form.calendar_status.data
         )
         try:
             calendarobj.save(SESSION)
@@ -469,11 +474,19 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+
+    if calendarobj.calendar_status != 'Enabled':
+        flask.flash('This calendar is "%s", you are not allowed to add '
+                    'meetings anymore.' % calendarobj.calendar_status,
+                    'errors')
+        return flask.redirect(flask.url_for('calendar',
+                              calendar_name=calendar_name))
+
     if calendarobj.calendar_editor_group and \
        not (is_calendar_manager(calendarobj)
             or is_calendar_admin(calendarobj)
             or is_admin()):
-        flask.flash('You are not one of the manager of this calendar, '
+        flask.flash('You are not one of the editors of this calendar, '
                     'or one of its admins, you are not allowed to add '
                     'new meetings.', 'errors')
         return flask.redirect(flask.url_for('calendar',
@@ -547,6 +560,14 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
+
+    if calendarobj.calendar_status != 'Enabled':
+        flask.flash('This calendar is "%s", you are not allowed to edit its '
+                    'meetings anymore.' % calendarobj.calendar_status,
+                    'errors')
+        return flask.redirect(flask.url_for('calendar',
+                              calendar_name=calendar_name))
+
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(calendarobj)
             or is_admin()):
@@ -684,6 +705,14 @@ def delete_meeting(meeting_id):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
+
+    if meeting.calendar.calendar_status != 'Enabled':
+        flask.flash('This calendar is "%s", you are not allowed to delete '
+                    'its meetings anymore.' % calendarobj.calendar_status,
+                    'errors')
+        return flask.redirect(flask.url_for('calendar',
+                              calendar_name=calendar_name))
+
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(meeting.calendar)
             or is_admin()):
@@ -777,7 +806,8 @@ def edit_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
-    form = forms.AddCalendarForm()
+    status = fedocallib.get_calendar_statuses(SESSION)
+    form = forms.AddCalendarForm(status=status)
     # pylint: disable=E1101
     if form.validate_on_submit():
         try:
@@ -792,6 +822,7 @@ def edit_calendar(calendar_name):
                 form.calendar_multiple_meetings.data)
             calendarobj.calendar_regional_meetings = bool(
                 form.calendar_regional_meetings.data)
+            calendarobj.calendar_status = form.calendar_status.data
             calendarobj.save(SESSION)
             SESSION.commit()
         except SQLAlchemyError, err:
@@ -809,6 +840,6 @@ def edit_calendar(calendar_name):
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=calendarobj.calendar_name))
     else:
-        form = forms.AddCalendarForm(calendar=calendarobj)
+        form = forms.AddCalendarForm(calendar=calendarobj, status=status)
     return flask.render_template('edit_calendar.html', form=form,
                                  calendar=calendarobj)

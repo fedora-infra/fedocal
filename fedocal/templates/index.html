@@ -1,23 +1,34 @@
 {% extends "master.html" %}
 
-{% block title %}Home{% endblock %}
-
-{% set title_extent = "Home" %}
-
-{% block content %}
-<section id="calendar_list">
-
-    {% for calendar_row in calendars_table %}
+{% macro render_calendars(calendars) -%}
+    {% for calendar_row in calendars %}
     <div class="calendar_row">
         {% for calendar in calendar_row %}
             <a class="calendar_link"
                 href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
-                <img src="{{ url_for("static", filename="fedocal.png") }}" alt="" />
+                <img src='{{ url_for("static", filename="fedocal.png") }}' alt="" />
                 <span class="calendar_name">{{ calendar.calendar_name }}</span>
                 <span class="calendar_desc">{{ calendar.calendar_description }}</span>
             </a>
         {% endfor %}
     </div>
+    {% else %}
+    <p>No calendar found</p>
     {% endfor %}
+{%- endmacro %}
+
+{% block title %}Home{% endblock %}
+
+{% set title_extent = "Home" %}
+
+{% block content %}
+<h2>Active Calendars</h2>
+<section class="calendar_list">
+    {{ render_calendars(calendars_table) }}
+</section>
+
+<h3>Calendars disabled</h3>
+<section class="calendar_list">
+    {{ render_calendars(calendars_table2) }}
 </section>
 {% endblock %}

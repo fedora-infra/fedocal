@@ -320,7 +320,7 @@ th.month .ui-button-text {
     border: 1px solid #DDDDDD;
 }
 
-#calendar_list {
+.calendar_list {
     display: table;
     border-spacing: 1em;
 }

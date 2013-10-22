@@ -4,7 +4,7 @@
 model - an object mapper to a SQL database representation of the data
         stored in this project.
 
-Copyright (C) 2012 Pierre-Yves Chibon
+Copyright (C) 2012-2013 Pierre-Yves Chibon
 Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
 This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,34 @@ def create_tables(db_url, alembic_ini=None, debug=False):
         command.stamp(alembic_cfg, "head")
 
     scopedsession = scoped_session(sessionmaker(bind=engine))
+    fill_default_status(scopedsession)
     return scopedsession
+
+
+def fill_default_status(session):
+    """ Fill in the default status for the calendar. """
+    for str_status in ['Enabled', 'Disabled']:
+        status = CalendarStatus(str_status)
+        session.add(status)
+    session.commit()
+
+
+class CalendarStatus(BASE):
+    """ Calendar_status table.
+
+    This table lists all the status a calendar can have.
+    """
+    __tablename__ = 'calendar_status'
+    status = Column(String(50), primary_key=True)
+
+    def __init__(self, status):
+        """ Constructor instanciating the defaults values. """
+        self.status = status
+
+    def __repr__(self):  # pragma: no cover
+        """ Representation of the CalendarStatus object when printed.
+        """
+        return "<CalendarStatus('%s')>" % (self.status)
 
 
 class Calendar(BASE):
@@ -88,13 +115,17 @@ class Calendar(BASE):
     calendar_admin_group = Column(String(100), nullable=True)
     calendar_multiple_meetings = Column(Boolean, default=False)
     calendar_regional_meetings = Column(Boolean, default=False)
+    calendar_status = Column(String(50),
+                             ForeignKey('calendar_status.status'),
+                             default='Enabled',
+                             nullable=False)
 
-    # pylint: disable=R0913
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,
             calendar_editor_group, calendar_admin_group=None,
             calendar_multiple_meetings=False,
-            calendar_regional_meetings=False):
+            calendar_regional_meetings=False,
+            calendar_status='Enabled'):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
         self.calendar_contact = calendar_contact
@@ -103,6 +134,7 @@ class Calendar(BASE):
         self.calendar_admin_group = calendar_admin_group
         self.calendar_multiple_meetings = calendar_multiple_meetings
         self.calendar_regional_meetings = calendar_regional_meetings
+        self.calendar_status = calendar_status
 
     def __repr__(self):
         """ Representation of the Calendar object when printed.
@@ -119,7 +151,8 @@ class Calendar(BASE):
             calendar_editor_group=self.calendar_editor_group,
             calendar_admin_group=self.calendar_admin_group,
             calendar_multiple_meetings=self.calendar_multiple_meetings,
-            calendar_regional_meetings=self.calendar_regional_meetings
+            calendar_regional_meetings=self.calendar_regional_meetings,
+            calendar_status=self.calendar_status
         )
 
     def save(self, session):
@@ -166,6 +199,15 @@ class Calendar(BASE):
     def get_all(cls, session):
         """ Retrieve all the Calendar available."""
         return session.query(cls).all()
+
+    @classmethod
+    def by_status(cls, session, status):
+        """ Retrieve all the Calendar having a certain status. """
+        return session.query(
+            cls
+        ).filter(
+            cls.calendar_status == status
+        ).all()
 
 
 # pylint: disable=R0902

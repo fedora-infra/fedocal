@@ -109,13 +109,16 @@ class FakeUser(object):
         :arg groups: list of the groups in which this fake user is
             supposed to be.
         """
+        if isinstance(groups, basestring):
+            groups = [groups]
         self.groups = groups
         self.username = username
         self.name = username
         self.approved_memberships = [FakeGroup('packager'),
-            FakeGroup('cla_done')]
+            FakeGroup('design-team')]
         self.dic = {}
         self.dic['timezone'] = 'Europe/Paris'
+        self.cla_done = True
 
     def __getitem__(self, key):
         return self.dic[key]

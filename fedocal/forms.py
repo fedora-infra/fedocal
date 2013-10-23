@@ -226,17 +226,23 @@ class AddMeetingForm(wtf.Form):
 
 class DeleteMeetingForm(wtf.Form):
     """ Form used to delete a meeting. """
-    confirm_delete = wtforms.BooleanField('Yes I want to delete this meeting')
+    confirm_delete = wtforms.BooleanField(
+        'Yes I want to delete this meeting')
     confirm_futher_delete = wtforms.BooleanField(
         'Yes, I want to delete all futher meetings.')
 
 
 class DeleteCalendarForm(wtf.Form):
     """ Form used to delete a calendar. """
-    confirm_delete = wtforms.BooleanField('Yes I want to delete this calendar')
+    confirm_delete = wtforms.BooleanField(
+        'Yes I want to delete this calendar')
 
 
 class LoginForm(wtf.Form):
     """ Form to log in the application. """
-    username = wtforms.TextField('Username', [wtforms.validators.Required()])
-    password = wtforms.PasswordField('Password', [wtforms.validators.Required()])
+    username = wtforms.TextField(
+        'Username',
+        [wtforms.validators.Required()])
+    password = wtforms.PasswordField(
+        'Password',
+        [wtforms.validators.Required()])

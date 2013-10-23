@@ -851,3 +851,14 @@ def edit_calendar(calendar_name):
         form = forms.AddCalendarForm(calendar=calendarobj, status=status)
     return flask.render_template('edit_calendar.html', form=form,
                                  calendar=calendarobj)
+
+
+@APP.route('/markdown/', methods=['POST'])
+@cla_plus_one_required
+def markdown_preview():
+    """ Return the provided markdown text in html.
+
+    The text has to be provided via the parameter 'content' of a POST query.
+    """
+    return flask.render_template(
+        'markdown.html', content=flask.request.form['content'])

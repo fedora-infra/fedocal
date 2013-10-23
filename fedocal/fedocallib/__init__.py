@@ -943,6 +943,8 @@ def edit_meeting(
             new_meeting = Meeting.copy(meeting)
             new_meeting.meeting_date = meeting_date + timedelta(
                 days=meeting.recursion_frequency)
+            new_meeting.meeting_date_end = meeting_date_end + timedelta(
+                days=meeting.recursion_frequency)
 
             dt_start = datetime(
                 new_meeting.meeting_date.year,
@@ -959,9 +961,12 @@ def edit_meeting(
                 new_meeting.meeting_time_start.minute,
                 tzinfo=pytz.utc)
 
-            free_time = agenda_is_free(
+            free_time = agenda_is_free_in_future(
                 session, calendarobj,
-                dt_start, dt_stop)
+                dt_start.date(), dt_stop.date(),
+                meeting.recursion_ends,
+                dt_start.time(), dt_stop.time(),
+                meeting_id=meeting.meeting_id)
 
             if not bool(calendarobj.calendar_multiple_meetings) and \
                     bool(free_time):

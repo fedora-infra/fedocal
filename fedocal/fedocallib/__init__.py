@@ -659,6 +659,7 @@ def add_meeting_to_vcal(ical, meeting):
     if meeting.full_day:
         start.value = meeting.meeting_date
         stop.value = meeting.meeting_date_end
+        entry.add('transp').value = 'TRANSPARENT'
     else:
         meeting.meeting_time_start = meeting.meeting_time_start.replace(
             tzinfo=utc)

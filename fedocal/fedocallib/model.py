@@ -432,10 +432,11 @@ class Meeting(BASE):
                 (Meeting.meeting_date_end <= start_date),
             ))
 
-        query = query1.union(query2).union( query3).union(query4).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name)
+        query = query1.union(query2).union(query3).union(query4).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        )
 
         return list(set(query.all()))
 
@@ -452,10 +453,13 @@ class Meeting(BASE):
             and_(
                 (Meeting.calendar == calendar),
                 (Meeting.meeting_date == meeting_date),
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name)
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        )
+
         if full_day is not None:
             query = query.filter(Meeting.full_day == full_day)
         return query.all()
@@ -478,10 +482,13 @@ class Meeting(BASE):
                 (Meeting.calendar == calendar),
                 (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends != None),
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name)
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        )
+
         if full_day is not None:
             meetings = meetings.filter(Meeting.full_day == full_day)
         return meetings.all()
@@ -526,10 +533,12 @@ class Meeting(BASE):
                 (Meeting.calendar == calendar),
                 (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends != None),
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name)
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        )
         if full_day is not None:
             meetings = meetings.filter(Meeting.full_day == full_day)
         return meetings.all()
@@ -566,10 +575,12 @@ class Meeting(BASE):
                 (Meeting.meeting_date >= start_date),
                 (Meeting.meeting_date < stop_date),
                 (Meeting.meeting_region == region)
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name).all()
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        ).all()
 
     @classmethod
     def get_by_time(
@@ -583,10 +594,12 @@ class Meeting(BASE):
                 (Meeting.meeting_date == meetingdate),
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_stop < stop_time)
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name).all()
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        ).all()
 
     @classmethod
     def get_at_time(cls, session, calendar, meetingdate, t_time):
@@ -598,10 +611,12 @@ class Meeting(BASE):
                 (Meeting.meeting_date == meetingdate),
                 (Meeting.meeting_time_start <= t_time),
                 (Meeting.meeting_time_stop > t_time)
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name).all()
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        ).all()
 
     @classmethod
     def get_past_meeting_of_user(cls, session, username, start_date):
@@ -613,10 +628,12 @@ class Meeting(BASE):
             and_(
                 (Meeting.meeting_date < start_date),
                 (Meeting.meeting_manager.like('%%%s%%' % username))
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name).all()
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        ).all()
 
     # pylint: disable=C0103
     @classmethod
@@ -631,10 +648,12 @@ class Meeting(BASE):
                 (Meeting.meeting_date >= start_date),
                 (Meeting.recursion_frequency == None),
                 (Meeting.meeting_manager.like('%%%s,%%' % username))
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name).all()
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        ).all()
 
     # pylint: disable=C0103
     @classmethod
@@ -649,10 +668,13 @@ class Meeting(BASE):
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.recursion_frequency != None),
                 (Meeting.meeting_manager.like('%%%s,%%' % username))
-            )).order_by(
-                    Meeting.meeting_date,
-                    Meeting.meeting_time_start,
-                    Meeting.meeting_name).all()
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        ).all()
+
         return meetings
 
     @classmethod
@@ -689,10 +711,9 @@ class Meeting(BASE):
                     break
                 meeting_date = meeting_date + timedelta(
                     days=meeting.recursion_frequency)
-        meetings.sort(key=operator.attrgetter( 'meeting_date',
-            'meeting_time_start', 'meeting_name'))
+        meetings.sort(key=operator.attrgetter(
+            'meeting_date', 'meeting_time_start', 'meeting_name'))
         return meetings
-
 
     @staticmethod
     def expand_regular_meetings(
@@ -741,8 +762,8 @@ class Meeting(BASE):
                         days=meeting.recursion_frequency * cnt)
             else:
                 meetings.append(meeting)
-        meetings.sort(key=operator.attrgetter( 'meeting_date',
-            'meeting_time_start', 'meeting_name'))
+        meetings.sort(key=operator.attrgetter(
+            'meeting_date', 'meeting_time_start', 'meeting_name'))
         return meetings
 
 

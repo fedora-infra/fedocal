@@ -102,7 +102,10 @@ class AddMeetingForm(wtf.Form):
         'Meeting name',
         [wtforms.validators.Required()])
 
-    meeting_date = wtforms.DateField('Date', [wtforms.validators.Required()])
+    meeting_date = wtforms.DateField(
+        'Date',
+        [wtforms.validators.Required()])
+
     meeting_date_end = wtforms.DateField(
         'End date',
         [wtforms.validators.optional()])
@@ -141,10 +144,13 @@ class AddMeetingForm(wtf.Form):
                  ('7', '7 days'),
                  ('14', '14 days')]
     )
-    end_repeats = wtforms.DateField('End date', [wtforms.validators.optional()])
+    end_repeats = wtforms.DateField(
+        'End date',
+        [wtforms.validators.optional()])
 
     # Recursive edit
-    recursive_edit = wtforms.BooleanField('Yes I want to edit all the meetings')
+    recursive_edit = wtforms.BooleanField(
+        'Yes I want to edit all the meetings')
 
     # Reminder
     remind_when = wtforms.SelectField(

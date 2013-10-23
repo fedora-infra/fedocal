@@ -59,8 +59,8 @@ class Week(object):
             self.meetings, end_date=self.stop_date,
             start_date=self.start_date)
         # Sort the meetings by date, time_start and name
-        self.meetings.sort(key=operator.attrgetter('meeting_date',
-            'meeting_time_start', 'meeting_name'))
+        self.meetings.sort(key=operator.attrgetter(
+            'meeting_date', 'meeting_time_start', 'meeting_name'))
 
     def get_full_day_meetings(self):
         """ Retrieve all the full day meetings for this week. """
@@ -83,8 +83,8 @@ class Week(object):
             self.full_day_meetings, end_date=self.stop_date,
             start_date=self.start_date)
         # Sort the meetings by date, time_start and name
-        self.full_day_meetings.sort(key=operator.attrgetter('meeting_date',
-            'meeting_time_start', 'meeting_name'))
+        self.full_day_meetings.sort(key=operator.attrgetter(
+            'meeting_date', 'meeting_time_start', 'meeting_name'))
 
     def __repr__(self):
         """ Representation of the Week object when printed.

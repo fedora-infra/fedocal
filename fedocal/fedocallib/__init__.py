@@ -911,7 +911,7 @@ def edit_meeting(
             meeting_time_start.date(), meeting_time_stop.date(),
             recursion_ends,
             meeting_time_start.time(), meeting_time_stop.time(),
-            meeting_id = meeting.meeting_id)
+            meeting_id=meeting.meeting_id)
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
                 not agenda_free:

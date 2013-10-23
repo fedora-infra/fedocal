@@ -444,7 +444,7 @@ def add_calendar():
                 form.calendar_multiple_meetings.data),
             calendar_regional_meetings=bool(
                 form.calendar_regional_meetings.data),
-            calendar_status = form.calendar_status.data
+            calendar_status=form.calendar_status.data
         )
         try:
             calendarobj.save(SESSION)

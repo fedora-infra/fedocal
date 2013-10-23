@@ -171,10 +171,7 @@ class AddMeetingForm(wtf.Form):
         """
         super(AddMeetingForm, self).__init__(*args, **kwargs)
         if 'timezone' in kwargs:
-            self.meeting_timezone.choices = [
-                (tzone, tzone) for tzone in common_timezones]
-            self.meeting_timezone.choices.insert(
-                0, (kwargs['timezone'], kwargs['timezone']))
+            self.meeting_timezone.data = kwargs['timezone']
 
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']

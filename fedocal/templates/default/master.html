@@ -128,19 +128,20 @@
                 <li><a href="https://fedorahosted.org/fedocal/report">Bugs & Improvements</a></li>
             </ul>
             </div>
+            </div>
             {% if calendar %}
             <ul class="checkmark-list">
                 {% if calendar.calendar_admin_group %}
                 <li>Administrators: {{ calendar.calendar_admin_group }}</li>
                 {% endif %}
                 {% if calendar.calendar_editor_group %}
-                <li>Managers: {{ calendar.calendar_editor_group }}</li>
+                <li>Editors: {{ calendar.calendar_editor_group }}</li>
                 {% else %}
                 <li>Managers: CLA+1</li>
                 {% endif %}
             </ul>
             {% endif %}
-            </div>
+
         </aside>
         <footer>
             <a href="https://fedorahosted.org/fedocal/"

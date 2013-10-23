@@ -177,10 +177,7 @@ class AddMeetingForm(wtf.Form):
         """
         super(AddMeetingForm, self).__init__(*args, **kwargs)
         if 'timezone' in kwargs:
-            self.meeting_timezone.choices = [
-                (tzone, tzone) for tzone in common_timezones]
-            self.meeting_timezone.choices.insert(
-                0, (kwargs['timezone'], kwargs['timezone']))
+            self.meeting_timezone.data = kwargs['timezone']
 
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']
@@ -216,7 +213,7 @@ class AddMeetingForm(wtf.Form):
                 '%s,' % flask.g.fas_user.username, '')
             self.comanager.data = meeting_manager
             self.meeting_region.data = meeting.meeting_region
-            self.frequency.data = meeting.recursion_frequency
+            self.frequency.data = str(meeting.recursion_frequency)
             self.end_repeats.data = meeting.recursion_ends
             self.full_day.data = meeting.full_day
             if meeting.reminder_id:

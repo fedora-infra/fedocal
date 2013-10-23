@@ -16,10 +16,17 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.alter_column('calendars', column_name='calendar_manager_group',
-                    name='calendar_editor_group')
+    op.alter_column('calendars',
+                    column_name='calendar_manager_group',
+                    name='calendar_editor_group',
+                    existing_type=sa.String(100),
+                    existing_nullable=True
+                    )
 
 
 def downgrade():
     op.alter_column('calendars', column_name='calendar_editor_group',
-                    name='calendar_manager_group')
+                    name='calendar_manager_group',
+                    existing_type=sa.String(100),
+                    existing_nullable=True
+                )

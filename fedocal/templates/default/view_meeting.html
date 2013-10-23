@@ -28,11 +28,11 @@
 
     {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
-    {% if meeting.recursion %}
+    {% if meeting.recursion_frequency and meeting.recursion_ends %}
     <p>
         This meeting is recurrent, it occures every
-        {{ meeting.recursion.recursion_frequency }} days until
-        {{ meeting.recursion.recursion_ends }}
+        {{ meeting.recursion_frequency }} days until
+        {{ meeting.recursion_ends }}
     </p>
     {% endif %}
 

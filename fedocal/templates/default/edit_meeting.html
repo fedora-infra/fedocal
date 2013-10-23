@@ -22,10 +22,12 @@
             {{ render_field_in_row(form.full_day) }}
             {{ render_field_in_row(form.meeting_timezone) }}
             {{ render_field_in_row(form.comanager) }}
-            {{ render_field_in_row(form.information,
-                                   after="Supports the <a href='http://daringfireball.net/projects/markdown/syntax'
-                                          target='_blank'>Markdown syntax</a>",
-                                   escape_after=True) }}
+            {{ render_field_in_row(
+                form.information,
+                    after="Supports the <a href='http://daringfireball.net/projects/markdown/syntax'
+                    target='_blank'>Markdown syntax</a>
+                    <input type='button' class='event' value='Preview'>",
+                    escape_after=True) }}
             {% if calendar.calendar_regional_meetings %}
                 {{ render_field_in_row(form.meeting_region) }}
             {% endif %}
@@ -87,6 +89,34 @@
             dateFormat: "yy-mm-dd",
         });
         $('#meeting_time_start,#meeting_time_stop').timespinner();
+    });
+</script>
+<script type="text/javascript">
+    $(function(){
+        $('.event').click(function(){
+            console.log('click');
+            var _txt = $('textarea#information').val();
+            var _url = "{{ url_for('markdown_preview') }}";
+            console.log(_txt);
+            $.ajax({
+                url: _url ,
+                type: 'POST',
+                data: {content: _txt},
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $('<div title="Preview">' + res + '</div>');
+                    _elt.dialog({
+                        height: 350,
+                        width: '50%',
+                        modal: true
+                    });
+                },
+                error: function() {
+                    alert('Unable to generate preview!');
+                }
+            });
+            return false;
+        });
     });
 </script>
 {% endblock %}

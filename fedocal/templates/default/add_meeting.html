@@ -81,10 +81,8 @@
 <script type="text/javascript">
     $(function(){
         $('.event').click(function(){
-            console.log('click');
             var _txt = $('textarea#information').val();
             var _url = "{{ url_for('markdown_preview') }}";
-            console.log(_txt);
             $.ajax({
                 url: _url ,
                 type: 'POST',

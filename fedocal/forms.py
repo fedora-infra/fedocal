@@ -74,6 +74,12 @@ class AddCalendarForm(wtf.Form):
         value of the form with the value from the Calendar object.
         """
         super(AddCalendarForm, self).__init__(*args, **kwargs)
+        if 'status' in kwargs:
+            self.calendar_status.choices = [
+                (status.status, status.status)
+                for status in kwargs['status']
+            ]
+
         if 'calendar' in kwargs:
             calendar = kwargs['calendar']
 
@@ -88,12 +94,8 @@ class AddCalendarForm(wtf.Form):
                 calendar.calendar_multiple_meetings)
             self.calendar_regional_meetings.data = bool(
                 calendar.calendar_regional_meetings)
+            self.calendar_status.data = calendar.calendar_status
 
-        if 'status' in kwargs:
-            self.calendar_status.choices = [
-                (status.status, status.status)
-                for status in kwargs['status']
-            ]
 
 
 class AddMeetingForm(wtf.Form):

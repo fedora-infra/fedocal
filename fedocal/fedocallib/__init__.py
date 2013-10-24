@@ -969,8 +969,9 @@ def edit_meeting(
                 dt_start.time(), dt_stop.time(),
                 meeting_id=meeting.meeting_id)
 
-            if not bool(calendarobj.calendar_multiple_meetings) and \
-                    bool(free_time):
+            if free_time or \
+                    (not free_time
+                     and not bool(calendarobj.calendar_multiple_meetings)):
                 new_meeting.save(session)
 
     meeting.meeting_name = meeting_name

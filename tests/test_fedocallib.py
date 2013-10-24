@@ -1279,8 +1279,8 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Test meeting with reminder-2',
-            date.today() + timedelta(days=1), date.today() + timedelta(
-                days=3),
+            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=3),
             time(23, 0), time(23, 59), None,
             'Information2', None, 'Europe/Paris',
             7, TODAY + timedelta(days=30),
@@ -1302,8 +1302,8 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Test meeting with reminder-2.3',
-            date.today() + timedelta(days=1), date.today() + timedelta(
-                days=2),
+            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=2),
             time(23, 0), time(23, 59), None,
             'Information3', None, 'Europe/Paris',
             None, None,  # Recursion

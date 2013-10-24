@@ -82,7 +82,12 @@ class Modeltests(unittest.TestCase):
         if os.path.exists(DB_PATH):
             os.unlink(DB_PATH)
         if DB_PATH.startswith('postgres'):
-            model.drop_tables(DB_PATH, self.session.bind)
+            if 'localhost' in DB_PATH:
+                model.drop_tables(DB_PATH, self.session.bind)
+            else:
+                db_name = DB_PATH.rsplit('/', 1)[1]
+                requests.get(
+                    'http://209.132.184.152/faitout/clean/%s' % db_name)
 
 
 

@@ -25,7 +25,8 @@ def upgrade():
     )
 
     for str_status in ['Enabled', 'Disabled']:
-        ins = status.insert().values(status=str_status)
+        ins = "INSERT INTO calendar_status (status) VALUES ('%s');" % (
+            str_status)
         op.execute(ins)
 
 

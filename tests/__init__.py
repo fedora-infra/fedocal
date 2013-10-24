@@ -46,8 +46,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from fedocal.fedocallib import model, get_start_week
 
-#DB_PATH = '%s/test.db' % (os.path.dirname(
-                                    #os.path.abspath(__file__)))
+
 DB_PATH = 'sqlite:///:memory:'
 try:
     import requests
@@ -57,6 +56,7 @@ try:
         print 'Using faitout at: %s' % DB_PATH
 except:
     pass
+
 
 TODAY = get_start_week(date.today().year, date.today().month,
     date.today().day) + timedelta(days=2)
@@ -82,9 +82,8 @@ class Modeltests(unittest.TestCase):
         if os.path.exists(DB_PATH):
             os.unlink(DB_PATH)
         if DB_PATH.startswith('postgres'):
-            db_name = DB_PATH.rsplit('/', 1)[1]
-            print requests.get(
-                'http://209.132.184.152/faitout/clean/%s' % db_name).text
+            model.drop_tables(DB_PATH, self.session.bind)
+
 
 
 class FakeGroup(object):

@@ -1014,8 +1014,11 @@ def edit_meeting(
             meeting.reminder = reminder
             session.flush()
     elif meeting.reminder_id:
-        meeting.reminder.delete(session)
+        reminder = meeting.reminder
         meeting.reminder_id = None
+        session.flush()
+        session.delete(reminder)
+        session.expunge(reminder)
 
     if remove_recursion:
         meeting.recursion_frequency = None

@@ -834,7 +834,7 @@ class Fedocallibtests(Modeltests):
 
 
         # Correctly insert a meeting
-        fedocallib.add_meeting(
+        mtg = fedocallib.add_meeting(
             session=self.session,
             calendarobj=calendarobj,
             fas_user=fasuser,
@@ -852,7 +852,7 @@ class Fedocallibtests(Modeltests):
             remind_when=None,
             remind_who=None,
             full_day=False)
-        meeting = model.Meeting.by_id(self.session, 1)
+        meeting = model.Meeting.by_id(self.session, mtg.meeting_id)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Name')
         self.assertEqual(meeting.meeting_manager, 'username,')
@@ -885,7 +885,7 @@ class Fedocallibtests(Modeltests):
 
 
         # Correctly insert a meeting
-        fedocallib.add_meeting(
+        mtg = fedocallib.add_meeting(
             session=self.session,
             calendarobj=calendarobj,
             fas_user=fasuser,
@@ -903,7 +903,7 @@ class Fedocallibtests(Modeltests):
             remind_when=None,
             remind_who=None,
             full_day=False)
-        meeting = model.Meeting.by_id(self.session, 1)
+        meeting = model.Meeting.by_id(self.session, mtg.meeting_id)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Name')
         self.assertEqual(meeting.meeting_manager, 'username,')

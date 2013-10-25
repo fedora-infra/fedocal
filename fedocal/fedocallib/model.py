@@ -74,7 +74,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     return scopedsession
 
 
-def drop_tables(db_url, engine):
+def drop_tables(db_url, engine):  # pragma: no cover
     """ Drops the tables in the database using the information from the
     url obtained.
 

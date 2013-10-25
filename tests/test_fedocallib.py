@@ -786,7 +786,33 @@ class Fedocallibtests(Modeltests):
             full_day=False)
         self.session.rollback()
 
-        self.assertRaises(InvalidMeeting, fedocallib.add_meeting,
+        # Fail because stop date is earlier than start date
+        self.assertRaises(
+            InvalidMeeting,
+            fedocallib.add_meeting,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Name',
+            meeting_date=date.today() + timedelta(days=2),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_region=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
+            full_day=False)
+        self.session.rollback()
+
+        # Fail because stop time is earlier than start time
+        self.assertRaises(
+            InvalidMeeting,
+            fedocallib.add_meeting,
             session=self.session,
             calendarobj=calendarobj,
             fas_user=fasuser,

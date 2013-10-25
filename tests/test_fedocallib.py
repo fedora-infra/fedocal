@@ -908,7 +908,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_name, 'Name')
         self.assertEqual(meeting.meeting_manager, 'username,')
         self.assertEqual(meeting.meeting_date,
-                         date.today() + timedelta(days=21))
+                         date.today() + timedelta(days=5))
 
         # Fails because it conflicts with an existing recursive meeting
         self.assertRaises(

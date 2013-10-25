@@ -1414,7 +1414,7 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_information, 'Information2')
         self.assertEqual(meeting.meeting_region, None)
         self.assertEqual(meeting.recursion_frequency, None)
-        self.assertEqual(meeting.recursion_ends, date(2025, 12, 31))
+        self.assertEqual(meeting.recursion_ends, None)
         self.assertEqual(meeting.reminder, None)
 
         meeting = model.Meeting.by_id(self.session, 9)
@@ -1461,6 +1461,34 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
         self.assertEqual(meeting.meeting_date_end, date.today() +
             timedelta(days=3))
+
+        meeting = model.Meeting.by_id(self.session, 9)
+        fedocallib.edit_meeting(
+            self.session, meeting, calendarobj, fasuser,
+            'Test meeting with reminder-2.4',
+            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=2),
+            time(23, 0), time(23, 59), None,
+            'Information', None, 'Europe/Paris',
+            None, None,  # Recursion
+            None, None,  # Reminder
+            full_day=True,
+            edit_all_meeting=False)
+        meeting = model.Meeting.by_id(self.session, 9)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name,
+            'Test meeting with reminder-2.4')
+        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_information, 'Information')
+        self.assertEqual(meeting.reminder, None)
+        self.assertEqual(meeting.recursion_ends, None)
+        self.assertEqual(meeting.recursion_frequency, None)
+        self.assertEqual(meeting.meeting_date,
+                         date.today() + timedelta(days=1))
+        self.assertEqual(meeting.meeting_time_start, time(0, 0))
+        self.assertEqual(meeting.meeting_time_stop, time(0, 0))
+        self.assertEqual(meeting.meeting_date_end,
+                         date.today() + timedelta(days=3))
 
         meeting = model.Meeting.by_id(self.session, 9)
         fedocallib.edit_meeting(

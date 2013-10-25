@@ -1002,7 +1002,7 @@ def edit_meeting(
         recursion_frequency = None
     meeting.recursion_frequency = recursion_frequency
 
-    if not recursion_ends:
+    if recursion_frequency and not recursion_ends:
         recursion_ends = date(2025, 12, 31)
     meeting.recursion_ends = recursion_ends
 

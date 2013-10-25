@@ -1100,6 +1100,38 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_information, 'Information')
         self.assertEqual(meeting.meeting_time_stop.minute, 59)
 
+        fedocallib.add_meeting(
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name='Full day',
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=None,
+            meeting_time_start=time(23, 0),
+            meeting_time_stop=time(23, 59),
+            comanager=None,
+            meeting_information='Information',
+            meeting_region='EMEA',
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
+            full_day=True)
+        meeting = model.Meeting.by_id(self.session, 11)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'Full day')
+        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_information, 'Information')
+        self.assertEqual(meeting.meeting_date,
+                         date.today() + timedelta(days=1))
+        self.assertEqual(meeting.meeting_time_start.hour, 0)
+        self.assertEqual(meeting.meeting_time_start.minute, 0)
+        self.assertEqual(meeting.meeting_date_end,
+                         date.today() + timedelta(days=2))
+        self.assertEqual(meeting.meeting_time_stop.hour, 0)
+        self.assertEqual(meeting.meeting_time_stop.minute, 0)
+
     def test_edit_meeting_fail(self):
         """ Test the edit_meeting function for when edit fails. """
         self.__setup_meeting()

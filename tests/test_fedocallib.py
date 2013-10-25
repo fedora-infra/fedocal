@@ -1215,10 +1215,13 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.reminder.reminder_offset, 'H-24')
         self.assertEqual(meeting.reminder.reminder_to, 'test@example.org')
 
+        dstart = date.today() + timedelta(days=1)
+        if dstart == TODAY + timedelta(days=3):
+            dstart = dstart + timedelta(days=1)
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Fedora-fr-meeting_edited2',
-            date.today() + timedelta(days=1), None,
+            dstart, None,
             time(22, 0), time(23, 0), None,
             'Information', 'EMEA', 'Europe/Paris',
             7, TODAY + timedelta(days=30),
@@ -1279,7 +1282,7 @@ class Fedocallibtests(Modeltests):
         fedocallib.edit_meeting(
             self.session, meeting, calendarobj, fasuser,
             'Test meeting with reminder-2',
-            date.today() + timedelta(days=1),
+            dstart,
             date.today() + timedelta(days=3),
             time(23, 0), time(23, 59), None,
             'Information2', None, 'Europe/Paris',

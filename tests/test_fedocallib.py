@@ -1514,6 +1514,14 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_date_end, date.today() +
             timedelta(days=2))
 
+    def test_get_calendar_statuses(self):
+        """ Test the get_calendar_statuses function from fedocallib. """
+        statuses = [status.status
+                    for status in fedocallib.get_calendar_statuses(
+                        self.session)
+                    ]
+        self.assertEqual(statuses, ['Enabled', 'Disabled'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

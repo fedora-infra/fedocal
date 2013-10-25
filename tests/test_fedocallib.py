@@ -1498,7 +1498,7 @@ class Fedocallibtests(Modeltests):
             date.today() + timedelta(days=2),
             time(23, 0), time(23, 59), None,
             'Information3', None, 'Europe/Paris',
-            None, None,  # Recursion
+            7, None,  # Recursion
             None, None,  # Reminder
             full_day=False,
             edit_all_meeting=False)
@@ -1509,8 +1509,8 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_manager, 'username,')
         self.assertEqual(meeting.meeting_information, 'Information3')
         self.assertEqual(meeting.reminder, None)
-        self.assertEqual(meeting.recursion_ends, None)
-        self.assertEqual(meeting.recursion_frequency, None)
+        self.assertEqual(meeting.recursion_ends, date(2025, 12, 31))
+        self.assertEqual(meeting.recursion_frequency, 7)
         self.assertEqual(meeting.meeting_date_end, date.today() +
             timedelta(days=2))
 

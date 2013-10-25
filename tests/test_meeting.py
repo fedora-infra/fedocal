@@ -401,6 +401,29 @@ class Meetingtests(Modeltests):
             'This is a test meeting')
         self.assertEqual(obj[1].reminder, None)
 
+        obj = model.Meeting.get_at_date(self.session, cal,
+                TODAY, full_day=True)
+
+        self.assertNotEqual(obj, None)
+        self.assertEqual(len(obj), 0)
+
+        obj = model.Meeting.get_at_date(self.session, cal,
+                TODAY, full_day=False)
+
+        self.assertEqual(obj[0].meeting_name, 'Another test meeting2')
+        self.assertEqual(obj[0].meeting_manager, 'pingou,')
+        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[0].meeting_information,
+            'This is a test meeting with recursion2')
+        self.assertEqual(obj[0].reminder, None)
+
+        self.assertEqual(obj[1].meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(obj[1].meeting_manager, 'pingou, shaiton,')
+        self.assertEqual(obj[1].calendar.calendar_name, 'test_calendar')
+        self.assertEqual(obj[1].meeting_information,
+            'This is a test meeting')
+        self.assertEqual(obj[1].reminder, None)
+
     def test_get_at_time(self):
         """ Test the get_at_time function. """
         self.test_init_meeting()

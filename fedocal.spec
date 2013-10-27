@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.2.0
+Version:        0.2.9
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -98,6 +98,9 @@ install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi
 
 
 %changelog
+* Mon Oct 28 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.9-1
+- First pre-release before 0.3.0
+
 * Fri Sep 27 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.0-1
 - Update to release 0.2.0
 

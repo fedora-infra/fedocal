@@ -77,3 +77,21 @@ and avoid sending multiple reminder for one meeting.
 
 
 This field defaults to ``CRON_FREQUENCY=30``.
+
+
+Dedicated theme
+---------------
+
+Fedocal supports having multiple theme. To make your own theme, copy the
+theme `default` and adjust it as desired.
+
+Remember:
+* All the templates from the default theme should exists in your own theme
+* Copy the templates and the static files
+
+You can then change from one theme to another simply by using the configuration
+key ``THEME_FOLDER`` in the configuration file.
+
+.. note:: the template and static file of the theme should be located under
+        the default ``template`` and ``static`` folder, where are currently
+        located to folder named ``default`` representing the default theme.

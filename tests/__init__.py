@@ -59,7 +59,7 @@ except:
 
 
 TODAY = get_start_week(date.today().year, date.today().month,
-    date.today().day) + timedelta(days=2)
+                       date.today().day) + timedelta(days=2)
 
 
 class Modeltests(unittest.TestCase):
@@ -90,7 +90,6 @@ class Modeltests(unittest.TestCase):
                     'http://209.132.184.152/faitout/clean/%s' % db_name)
 
 
-
 class FakeGroup(object):
     """ Fake object used to make the FakeUser object closer to the
     expectations.
@@ -118,7 +117,8 @@ class FakeUser(object):
         self.groups = groups
         self.username = username
         self.name = username
-        self.approved_memberships = [FakeGroup('packager'),
+        self.approved_memberships = [
+            FakeGroup('packager'),
             FakeGroup('design-team')]
         self.dic = {}
         self.dic['timezone'] = 'Europe/Paris'

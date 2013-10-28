@@ -292,7 +292,7 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
         while t_time < stopdt:
             if t_time < week_start \
                     or t_time >= (week_start + timedelta(days=7)
-                    ):  # pragma: no cover
+                                  ):  # pragma: no cover
                 # Skip meeting start or ending in another week
                 t_time = t_time + timedelta(minutes=30)
                 continue

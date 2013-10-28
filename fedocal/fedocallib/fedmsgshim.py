@@ -13,5 +13,5 @@ def publish(*args, **kwargs):
     try:
         import fedmsg
         fedmsg.publish(*args, **kwargs)
-    except Exception, e:
-        warnings.warn(str(e))
+    except Exception, err:
+        warnings.warn(str(err))

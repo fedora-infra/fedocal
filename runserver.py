@@ -5,5 +5,5 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 from fedocal import APP
-APP.debug=True
+APP.debug = True
 APP.run()

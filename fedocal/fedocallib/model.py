@@ -18,7 +18,6 @@ __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 import operator
 
-from datetime import datetime
 from datetime import date
 from datetime import timedelta
 

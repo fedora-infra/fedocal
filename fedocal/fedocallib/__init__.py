@@ -28,12 +28,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
-from week import Week
-from model import CalendarStatus, Calendar, Reminder, Meeting
+from fedocal.fedocallib.week import Week
+from fedocal.fedocallib.model import (
+    CalendarStatus, Calendar, Reminder, Meeting)
 import dbaction as dbaction
-from exceptions import UserNotAllowed, InvalidMeeting
+from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 
-from fedora_calendar import FedocalCalendar
+from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 
 
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
@@ -292,7 +293,7 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
         while t_time < stopdt:
             if t_time < week_start \
                     or t_time >= (week_start + timedelta(days=7)
-                    ):  # pragma: no cover
+                                  ):  # pragma: no cover
                 # Skip meeting start or ending in another week
                 t_time = t_time + timedelta(minutes=30)
                 continue

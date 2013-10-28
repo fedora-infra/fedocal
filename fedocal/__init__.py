@@ -40,9 +40,8 @@ from flask_fas_openid import FAS
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 
-import forms as forms
+import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
-import fedocallib.dbaction
 from fedocal.fedocallib.exceptions import FedocalException
 from fedocal.fedocallib.model import (Calendar, Meeting)
 
@@ -77,6 +76,7 @@ work.
 """
     @wraps(function)
     def decorated_function(*args, **kwargs):
+        """ Decorated function, actually does the work. """
         if flask.g.fas_user is None:
             flask.flash('Login required', 'errors')
             return flask.redirect(flask.url_for('auth_login',
@@ -146,16 +146,16 @@ def is_admin():
     return not groups.isdisjoint(admins)
 
 
-def is_calendar_admin(calendar):
+def is_calendar_admin(calendarobj):
     """ Return whether the user is admin for the specified calendar
     (object).
     """
     if not flask.g.fas_user:
         return False
-    elif calendar.calendar_admin_group:
+    elif calendarobj.calendar_admin_group:
         admin_groups = [
             item.strip()
-            for item in calendar.calendar_admin_group.split(',')
+            for item in calendarobj.calendar_admin_group.split(',')
         ]
         if set(flask.g.fas_user.groups).intersection(set(admin_groups)):
             return True
@@ -163,7 +163,7 @@ def is_calendar_admin(calendar):
         return False
 
 
-def is_calendar_manager(calendar):
+def is_calendar_manager(calendarobj):
     """ Return whether the user is a manager for the specified calendar
     (object).
     """
@@ -172,7 +172,7 @@ def is_calendar_manager(calendar):
     else:
         editor_groups = [
             item.strip()
-            for item in calendar.calendar_editor_group.split(',')
+            for item in calendarobj.calendar_editor_group.split(',')
         ]
         if len(editor_groups) == 0:
             return True
@@ -201,11 +201,11 @@ def get_timezone():
     return tzone
 
 
-def chunks(item_list, n):
+def chunks(item_list, chunks_size):
     """ Yield successive n-sized chunks from item_list.
     """
-    for i in xrange(0, len(item_list), n):
-        yield item_list[i:i+n]
+    for i in xrange(0, len(item_list), chunks_size):
+        yield item_list[i: i + chunks_size]
 
 
 ## Flask application
@@ -344,9 +344,9 @@ def ical_all():
     endd = datetime.date.today() + datetime.timedelta(days=180)
     ical = vobject.iCalendar()
     meetings = []
-    for calendar in Calendar.get_all(SESSION):
+    for calendarobj in Calendar.get_all(SESSION):
         meetings.extend(fedocallib.get_meetings_by_date(
-            SESSION, calendar.calendar_name, startd, endd))
+            SESSION, calendarobj.calendar_name, startd, endd))
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
 
@@ -573,7 +573,7 @@ def edit_meeting(meeting_id):
                     'meetings anymore.' % calendarobj.calendar_status,
                     'errors')
         return flask.redirect(flask.url_for('calendar',
-                              calendar_name=calendar_name))
+                              calendar_name=calendarobj.calendar_name))
 
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(calendarobj)
@@ -716,10 +716,13 @@ def delete_meeting(meeting_id):
 
     if meeting.calendar.calendar_status != 'Enabled':
         flask.flash('This calendar is "%s", you are not allowed to delete '
-                    'its meetings anymore.' % calendarobj.calendar_status,
+                    'its meetings anymore.' % (
+                        meeting.calendar.calendar_status),
                     'errors')
-        return flask.redirect(flask.url_for('calendar',
-                              calendar_name=calendar_name))
+        return flask.redirect(
+            flask.url_for('calendar',
+                          calendar_name=meeting.calendar.calendar_name)
+        )
 
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(meeting.calendar)

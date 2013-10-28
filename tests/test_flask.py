@@ -112,8 +112,9 @@ class Flasktests(Modeltests):
         self.__setup_db()
 
         today = date.today()
-        output = self.app.get('/test_calendar/%s/%s/%s/' % (today.year,
-            today.month, today.day))
+        output = self.app.get(
+            '/test_calendar/%s/%s/%s/' % (
+                today.year, today.month, today.day))
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title> test_calendar  - Fedocal</title>' in output.data)
@@ -121,12 +122,13 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
-        output = self.app.get('/test_calendar/%s/%s/%s' % (today.year,
-            today.month, today.day))
+        output = self.app.get(
+            '/test_calendar/%s/%s/%s' % (
+                today.year, today.month, today.day))
         self.assertEqual(output.status_code, 301)
 
-        output = self.app.get('/test_calendar/%s/%s/%s/' % (today.year,
-            today.month, today.day), follow_redirects=True)
+        output = self.app.get('/test_calendar/%s/%s/%s/' % (
+            today.year, today.month, today.day), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title> test_calendar  - Fedocal</title>' in output.data)
@@ -178,8 +180,9 @@ class Flasktests(Modeltests):
         self.assertEqual(output.status_code, 200)
         self.assertTrue('BEGIN:VCALENDAR' in output.data)
         self.assertTrue('SUMMARY:test-meeting2' in output.data)
-        self.assertTrue('DESCRIPTION:This is a test meeting with '\
-            'recursion' in output.data)
+        self.assertTrue(
+            'DESCRIPTION:This is a test meeting with recursion'
+            in output.data)
         self.assertTrue('ORGANIZER:pingou' in output.data)
         self.assertEqual(output.data.count('BEGIN:VEVENT'), 49)
         self.assertEqual(output.data.count('END:VEVENT'), 49)
@@ -192,8 +195,9 @@ class Flasktests(Modeltests):
         self.assertEqual(output.status_code, 200)
         self.assertTrue('BEGIN:VCALENDAR' in output.data)
         self.assertTrue('SUMMARY:test-meeting2' in output.data)
-        self.assertTrue('DESCRIPTION:This is a test meeting with '\
-            'recursion' in output.data)
+        self.assertTrue(
+            'DESCRIPTION:This is a test meeting with recursion'
+            in output.data)
         self.assertTrue('ORGANIZER:pingou' in output.data)
         self.assertEqual(output.data.count('BEGIN:VEVENT'), 54)
         self.assertEqual(output.data.count('END:VEVENT'), 54)
@@ -204,12 +208,15 @@ class Flasktests(Modeltests):
 
         output = self.app.get('/meeting/5/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
+        self.assertTrue(
+            '<title> test-meeting-st-1  - Fedocal</title>'
             in output.data)
-        self.assertTrue('<h4> Meeting: test-meeting-st-1</h4>' \
+        self.assertTrue(
+            '<h4> Meeting: test-meeting-st-1</h4>'
             in output.data)
-        self.assertTrue('This is a test meeting at the same time' in
-            output.data)
+        self.assertTrue(
+            'This is a test meeting at the same time'
+            in output.data)
 
     def test_view_meeting_page(self):
         """ Test the view_meeting_page function. """
@@ -217,21 +224,27 @@ class Flasktests(Modeltests):
 
         output = self.app.get('/meeting/5/1/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
+        self.assertTrue(
+            '<title> test-meeting-st-1  - Fedocal</title>'
             in output.data)
-        self.assertTrue('<h4> Meeting: test-meeting-st-1</h4>' \
+        self.assertTrue(
+            '<h4> Meeting: test-meeting-st-1</h4>'
             in output.data)
-        self.assertTrue('This is a test meeting at the same time' in
-            output.data)
+        self.assertTrue(
+            'This is a test meeting at the same time'
+            in output.data)
 
         output = self.app.get('/meeting/5/0/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<title> test-meeting-st-1  - Fedocal</title>' \
+        self.assertTrue(
+            '<title> test-meeting-st-1  - Fedocal</title>'
             not in output.data)
-        self.assertTrue('<h4> Meeting: test-meeting-st-1</h4>' \
+        self.assertTrue(
+            '<h4> Meeting: test-meeting-st-1</h4>'
             in output.data)
-        self.assertTrue('This is a test meeting at the same time' in
-            output.data)
+        self.assertTrue(
+            'This is a test meeting at the same time'
+            in output.data)
 
     def test_is_admin(self):
         """ Test the is_admin function. """

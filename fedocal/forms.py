@@ -32,7 +32,7 @@ from pytz import common_timezones
 
 import wtforms
 
-import fedocallib
+import fedocal.fedocallib as fedocallib
 
 
 def validate_time(form, field):
@@ -95,7 +95,6 @@ class AddCalendarForm(wtf.Form):
             self.calendar_regional_meetings.data = bool(
                 calendar.calendar_regional_meetings)
             self.calendar_status.data = calendar.calendar_status
-
 
 
 class AddMeetingForm(wtf.Form):

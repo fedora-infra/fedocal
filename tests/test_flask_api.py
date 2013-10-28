@@ -74,8 +74,10 @@ class FlaskApitests(Modeltests):
 
         output = self.app.get('/api/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<title> API   - Fedocal</title>' in output.data)
-        self.assertTrue('<h1 class="title">API documentation</h1>' in output.data)
+        self.assertTrue(
+            '<title> API   - Fedocal</title>' in output.data)
+        self.assertTrue(
+            '<h1 class="title">API documentation</h1>' in output.data)
         #self.assertTrue('<code>/api/date/calendar_name/</code>' \
             #in output.data)
         #self.assertTrue('<code>/api/place/region/calendar_name/</code>' \
@@ -87,56 +89,86 @@ class FlaskApitests(Modeltests):
         self.assertEqual(output.status_code, 200)
         start_date = date.today() - timedelta(days=30)
         end_date = date.today() + timedelta(days=180)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
-            '"calendar": "foobar", "end": "%s", "region": null}}'
-            % (start_date.strftime('%Y-%m-%d'),
-            end_date.strftime('%Y-%m-%d')))
+            '"calendar": "foobar", "end": "%s", "region": null}}' % (
+                start_date.strftime('%Y-%m-%d'),
+                end_date.strftime('%Y-%m-%d')
+            )
+        )
 
         self.__setup_db()
 
         output = self.app.get('/api/meetings/?calendar=test_calendar')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue(' "meeting_manager": "pingou, shaiton,",' in \
-            output.data)
-        self.assertTrue('"meeting_name": "test-meeting2"' in output.data)
-        self.assertEqual(output.data.count('meeting_name'), 49)
+        self.assertTrue(
+            ' "meeting_manager": "pingou, shaiton,",'
+            in output.data)
+        self.assertTrue(
+            '"meeting_name": "test-meeting2"' in output.data)
+        self.assertEqual(
+            output.data.count('meeting_name'),
+            49)
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4')
-        self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('meeting_name'), 3)
+        self.assertEqual(
+            output.status_code,
+            200)
+        self.assertEqual(
+            output.data.count('meeting_name'),
+            3)
 
     def test_api_date(self):
         """ Test the api_date function. """
         end_date = TODAY + timedelta(days=10)
-        output = self.app.get('/api/meetings/?calendar=foobar&start=%s&end=%s'
-            % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=foobar&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
-            '"calendar": "foobar", "end": "%s", "region": null}}'
-            % (TODAY.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+            '"calendar": "foobar", "end": "%s", "region": null}}' % (
+                TODAY.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')
+            )
+        )
 
         self.__setup_db()
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar'
-            '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
-        self.assertTrue(' "meeting_manager": "pingou, shaiton,",' in \
-            output.data)
-        self.assertTrue('"meeting_name": "Another test meeting2",' in \
-            output.data)
-        self.assertEqual(output.data.count('meeting_name'), 8)
+        self.assertTrue(
+            ' "meeting_manager": "pingou, shaiton,",'
+            in output.data)
+        self.assertTrue(
+            '"meeting_name": "Another test meeting2",'
+            in output.data)
+        self.assertEqual(
+            output.data.count('meeting_name'),
+            8)
 
         end_date = TODAY + timedelta(days=2)
-        output = self.app.get('/api/meetings/?calendar=test_calendar4'
-            '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
         end_date = TODAY + timedelta(days=2)
-        output = self.app.get('/api/meetings/?start=%s&end=%s'
-                              % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('meeting_name'), 5)
 
@@ -144,20 +176,24 @@ class FlaskApitests(Modeltests):
         """ Test the api_date function with wrong input. """
         self.__setup_db()
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar'
-            '&start=%s&end=2012-09-aw' % (TODAY))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar&start=%s&end=2012-09-aw'
+            % (TODAY))
         self.assertEqual(output.status_code, 400)
-        self.assertTrue('"error": "Invalid end date format: ' in \
-                        output.data)
+        self.assertTrue(
+            '"error": "Invalid end date format: '
+            in output.data)
 
     def test_api_place_default(self):
         """ Test the api_place_default function. """
 
-        output = self.app.get('/api/meetings/?calendar=foobar&region=EMEA')
+        output = self.app.get(
+            '/api/meetings/?calendar=foobar&region=EMEA')
         self.assertEqual(output.status_code, 200)
         start_date = date.today() - timedelta(days=30)
         end_date = date.today() + timedelta(days=180)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], '
             '"arguments": {'
             '"start": "%s", '
@@ -165,100 +201,153 @@ class FlaskApitests(Modeltests):
             '"end": "%s", '
             '"region": "EMEA"}'
             '}' % (start_date.strftime('%Y-%m-%d'),
-            end_date.strftime('%Y-%m-%d')))
+                   end_date.strftime('%Y-%m-%d')))
 
         self.__setup_db()
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=APAC')
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=APAC')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
             '"calendar": "test_calendar4", "end": "%s", '
-            '"region": "APAC"}}' %(start_date.strftime('%Y-%m-%d'),
-            end_date.strftime('%Y-%m-%d')))
+            '"region": "APAC"}}' % (
+                start_date.strftime('%Y-%m-%d'),
+                end_date.strftime('%Y-%m-%d')
+            )
+        )
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=NA')
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=NA')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('meeting_name'), 1)
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA')
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=EMEA')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
     def test_api_place(self):
         """ Test the api_place function. """
         end_date = TODAY + timedelta(days=25)
-        output = self.app.get('/api/meetings/?calendar=foobar&region=APAC'
-                              '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=foobar&region=APAC&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
             '"calendar": "foobar", "end": "%s", '
-            '"region": "APAC"}}' % (TODAY.strftime('%Y-%m-%d'),
-            end_date.strftime('%Y-%m-%d')))
+            '"region": "APAC"}}' % (
+                TODAY.strftime('%Y-%m-%d'),
+                end_date.strftime('%Y-%m-%d')
+            )
+        )
 
         self.__setup_db()
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=APAC'
-                              '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=APAC'
+            '&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
             '"calendar": "test_calendar4", "end": "%s", '
-            '"region": "APAC"}}' % (TODAY.strftime('%Y-%m-%d'),
-            end_date.strftime('%Y-%m-%d')))
+            '"region": "APAC"}}' % (
+                TODAY.strftime('%Y-%m-%d'),
+                end_date.strftime('%Y-%m-%d')
+            )
+        )
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=NA'
-                              '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=NA'
+            '&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('meeting_name'), 1)
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA'
-                              '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=EMEA'
+            '&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
-        output = self.app.get('/api/meetings/?region=EMEA'
-                              '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?region=EMEA&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('meeting_name'), 2)
 
         end_date = TODAY + timedelta(days=1)
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=NA'
-                              '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=NA'
+            '&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
             '"calendar": "test_calendar4", "end": "%s", '
-            '"region": "NA"}}' % (TODAY.strftime('%Y-%m-%d'),
-            end_date.strftime('%Y-%m-%d')))
+            '"region": "NA"}}' % (
+                TODAY.strftime('%Y-%m-%d'),
+                end_date.strftime('%Y-%m-%d')
+            )
+        )
 
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA'
-                              '&start=%s&end=%s' % (TODAY, end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=EMEA'
+            '&start=%s&end=%s' % (
+                TODAY, end_date
+            )
+        )
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
             '"calendar": "test_calendar4", "end": "%s", '
-            '"region": "EMEA"}}' % (TODAY.strftime('%Y-%m-%d'),
-            end_date.strftime('%Y-%m-%d')))
+            '"region": "EMEA"}}' % (
+                TODAY.strftime('%Y-%m-%d'),
+                end_date.strftime('%Y-%m-%d')
+            )
+        )
 
     def test_api_place_error(self):
         """ Test the api_date function with wrong input. """
         self.__setup_db()
 
         end_date = TODAY + timedelta(days=1)
-        output = self.app.get('/api/meetings/?calendar=test_calendar4&region=EMEA'
-                              '&end=%s&start=2012-12-as' % (end_date))
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar4&region=EMEA'
+            '&end=%s&start=2012-12-as' % (end_date)
+        )
         self.assertEqual(output.status_code, 400)
-        self.assertTrue('"error": "Invalid start date format: ' in \
-            output.data)
+        self.assertTrue(
+            '"error": "Invalid start date format: '
+            in output.data)
 
     def test_api_calendar(self):
         """ Test the api_calendar function. """
         output = self.app.get('/api/calendars/')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
+        self.assertEqual(
+            output.data,
             '{"calendars": []}')
 
         self.__setup_db()

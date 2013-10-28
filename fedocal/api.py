@@ -40,6 +40,9 @@ import fedocal
 
 
 def check_callback(response):
+    """ Check the callback argument provided with the request to allow
+    JQuery ajax calls.
+    """
     callback = flask.request.args.get('callback', None)
     if callback:
         response = flask.Response(
@@ -125,6 +128,7 @@ Sample response:
     """
     @flask.after_this_request
     def callback(response):
+        """ Handle case the query was an JQuery ajax call. """
         return check_callback(response)
 
     calendars = fedocallib.get_calendars(SESSION)
@@ -240,6 +244,7 @@ Filter arguments
     """
     @flask.after_this_request
     def callback(response):
+        """ Handle case the query was an JQuery ajax call. """
         return check_callback(response)
 
     startd = flask.request.args.get('start', None)
@@ -307,7 +312,7 @@ Filter arguments
         'calendar': calendar_name,
         'region': region,
     }
-    cnt = 0
+
     meetings_json = []
     for meeting in meetings:
         meetings_json.append(meeting.to_json())

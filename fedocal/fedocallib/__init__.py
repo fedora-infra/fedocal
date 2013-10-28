@@ -285,13 +285,15 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
         ) + timedelta(minutes=stop_delta)
         stopdt = convert_time(stopdt, 'UTC', tzone)
 
-        if stopdt < startdt:
+        if stopdt < startdt:  # pragma: no cover
             stopdt = stopdt + timedelta(days=1)
 
         t_time = startdt
         while t_time < stopdt:
             if t_time < week_start \
-                    or t_time >= (week_start + timedelta(days=7)):
+                    or t_time >= (week_start + timedelta(days=7)
+                    ):  # pragma: no cover
+                # Skip meeting start or ending in another week
                 t_time = t_time + timedelta(minutes=30)
                 continue
             day = t_time.weekday()
@@ -514,7 +516,7 @@ def agenda_is_free(
 
 def agenda_is_free_in_future(
         session, calendarobj, meeting_date, meeting_date_end,
-        recursion_ends,
+        recursion_ends, recursion_frequency,
         time_start, time_stop,
         meeting_id=None):
     """For recursive meeting, check for meetings happening at the
@@ -527,6 +529,7 @@ def agenda_is_free_in_future(
     :arg meeting_date_end: the end date of the meeting (as Datetime
         object)
     :arg recursion_ends: the end date of the recursion
+    :arg recursion_frequency: the frequency of the recursion
     :arg time_start: the time at which the meeting starts (as int)
     :arg time_stop: the time at which the meeting stops (as int)
     :kwarg meeting_id: a meeting identifier allowing to check if a
@@ -537,10 +540,13 @@ def agenda_is_free_in_future(
         session, calendarobj, meeting_date, recursion_ends)
     agenda_free = True
     for meeting in set(meetings):
-        if meeting.meeting_date != meeting_date:
+        if meeting.meeting_date != meeting_date \
+                and ((meeting_date - meeting.meeting_date).days
+                     % recursion_frequency) != 0:
             continue
         if meeting_id and meeting.meeting_id == meeting_id:
             continue
+
         if time_start <= meeting.meeting_time_start \
                 and meeting.meeting_time_start < time_stop:
             agenda_free = False
@@ -804,7 +810,7 @@ def add_meeting(
         futur_meeting_at_time = agenda_is_free_in_future(
             session, calendarobj,
             meeting_time_start.date(), meeting_time_stop.date(),
-            end_repeats,
+            end_repeats, frequency,
             meeting_time_start.time(), meeting_time_stop.time())
 
         if not bool(calendarobj.calendar_multiple_meetings) and \
@@ -910,7 +916,7 @@ def edit_meeting(
         agenda_free = agenda_is_free_in_future(
             session, calendarobj,
             meeting_time_start.date(), meeting_time_stop.date(),
-            recursion_ends,
+            recursion_ends, recursion_frequency,
             meeting_time_start.time(), meeting_time_stop.time(),
             meeting_id=meeting.meeting_id)
 
@@ -965,7 +971,7 @@ def edit_meeting(
             free_time = agenda_is_free_in_future(
                 session, calendarobj,
                 dt_start.date(), dt_stop.date(),
-                meeting.recursion_ends,
+                meeting.recursion_ends, meeting.recursion_frequency,
                 dt_start.time(), dt_stop.time(),
                 meeting_id=meeting.meeting_id)
 
@@ -996,7 +1002,7 @@ def edit_meeting(
         recursion_frequency = None
     meeting.recursion_frequency = recursion_frequency
 
-    if not recursion_ends:
+    if recursion_frequency and not recursion_ends:
         recursion_ends = date(2025, 12, 31)
     meeting.recursion_ends = recursion_ends
 
@@ -1014,8 +1020,11 @@ def edit_meeting(
             meeting.reminder = reminder
             session.flush()
     elif meeting.reminder_id:
-        meeting.reminder.delete(session)
+        reminder = meeting.reminder
         meeting.reminder_id = None
+        session.flush()
+        session.delete(reminder)
+        session.expunge(reminder)
 
     if remove_recursion:
         meeting.recursion_frequency = None
@@ -1028,4 +1037,8 @@ def edit_meeting(
 
 def get_calendar_statuses(session):
     """ Return the list of all the status available for the calendars. """
-    return session.query(CalendarStatus).all()
+    return session.query(
+        CalendarStatus
+    ).order_by(
+        CalendarStatus.status.desc()
+    ).all()

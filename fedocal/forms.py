@@ -97,7 +97,6 @@ class AddCalendarForm(wtf.Form):
             self.calendar_status.data = calendar.calendar_status
 
 
-
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """
     meeting_name = wtforms.TextField(

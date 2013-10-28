@@ -28,12 +28,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
-from week import Week
-from model import CalendarStatus, Calendar, Reminder, Meeting
-import dbaction as dbaction
-from exceptions import UserNotAllowed, InvalidMeeting
+from fedocal.fedocallib.week import Week
+from fedocal.fedocallib.model import (
+    CalendarStatus, Calendar, Reminder, Meeting)
+import fedocal.fedocallib.dbaction as dbaction
+from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 
-from fedora_calendar import FedocalCalendar
+from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 
 
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',

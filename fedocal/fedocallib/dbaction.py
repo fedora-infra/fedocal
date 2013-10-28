@@ -16,7 +16,7 @@ license.
 """
 
 from datetime import date
-import model
+import fedocal.fedocallib.model as model
 
 
 def add_reminder(session, remind_when, remind_who, reminder_text=None):

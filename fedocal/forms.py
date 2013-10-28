@@ -32,7 +32,7 @@ from pytz import common_timezones
 
 import wtforms
 
-import fedocallib
+import fedocal.fedocallib as fedocallib
 
 
 def validate_time(form, field):

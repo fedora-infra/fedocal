@@ -16,7 +16,7 @@ license.
 
 from datetime import timedelta
 import operator
-from model import Meeting
+from fedocal.fedocallib.model import Meeting
 
 
 # pylint: disable=R0903

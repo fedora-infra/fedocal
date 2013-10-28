@@ -80,7 +80,7 @@ def send_reminder_meeting(meeting):
         return
     string = """Dear all,
 
-You are kindly invited to the meeting : 
+You are kindly invited to the meeting :
    %s on %s from %s to %s
 
 The meeting will be about:
@@ -103,8 +103,8 @@ Please note:
     # envelope header.
     s = smtplib.SMTP(fedocal.APP.config['SMTP_SERVER'])
     s.sendmail(from_email,
-                meeting.reminder.reminder_to,
-                msg.as_string())
+               meeting.reminder.reminder_to,
+               msg.as_string())
     s.quit()
 
 
@@ -114,8 +114,8 @@ def send_reminder():
     """
     db_url = fedocal.APP.config['DB_URL']
     session = fedocallib.create_session(db_url)
-    meetings = fedocallib.retrieve_meeting_to_remind(session,
-        offset=int(fedocal.APP.config['CRON_FREQUENCY']))
+    meetings = fedocallib.retrieve_meeting_to_remind(
+        session, offset=int(fedocal.APP.config['CRON_FREQUENCY']))
     for meeting in meetings:
         send_reminder_meeting(meeting)
         fedmsg_publish(meeting)

@@ -7,5 +7,7 @@ import pkg_resources
 from fedocal import APP
 from fedocal.fedocallib import model
 
-model.create_tables(APP.config['DB_URL'],
-    APP.config['PATH_ALEMBIC_INI'], True)
+model.create_tables(
+    APP.config['DB_URL'],
+    APP.config['PATH_ALEMBIC_INI'],
+    True)

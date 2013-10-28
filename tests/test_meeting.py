@@ -44,6 +44,7 @@ from fedocal.fedocallib import model
 from tests import Modeltests, TODAY
 from test_calendar import Calendartests
 
+
 # pylint: disable=R0904
 class Meetingtests(Modeltests):
     """ Meeting tests. """
@@ -133,7 +134,7 @@ class Meetingtests(Modeltests):
             meeting_time_start=time(14, 00),
             meeting_time_stop=time(16, 00),
             meeting_information='This is a second test meeting at the'
-                ' same time',
+                                ' same time',
             calendar_name='test_calendar4',
             meeting_region='EMEA')
         obj.save(self.session)
@@ -170,8 +171,8 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj, None)
 
         # Meeting with a reminder
-        remobj = model.Reminder('H-12', 'root@localhost',
-            'Come to our test meeting')
+        remobj = model.Reminder(
+            'H-12', 'root@localhost', 'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()
         obj = model.Meeting(  # id:9
@@ -190,8 +191,8 @@ class Meetingtests(Modeltests):
 
         # Meeting with a recursion and reminder
         self.session.flush()
-        remobj = model.Reminder('H-12', 'root@localhost',
-            'Come to our test meeting')
+        remobj = model.Reminder(
+            'H-12', 'root@localhost', 'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()
         obj = model.Meeting(  # id:10
@@ -202,7 +203,7 @@ class Meetingtests(Modeltests):
             meeting_time_start=time(10, 00),
             meeting_time_stop=time(11, 00),
             meeting_information='This is a test meeting with recursion'
-                ' and reminder',
+                                ' and reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id,
             recursion_frequency=7,
@@ -281,7 +282,9 @@ class Meetingtests(Modeltests):
         self.test_init_meeting()
         obj = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(obj, None)
-        self.assertEqual(str(obj), '<Meeting(\'<Calendar(\'test_calendar\''
+        self.assertEqual(
+            str(obj),
+            '<Meeting(\'<Calendar(\'test_calendar\''
             ')>\', \'Fedora-fr-test-meeting\', \'' + str(TODAY) +
             '\')>')
 
@@ -352,8 +355,8 @@ class Meetingtests(Modeltests):
         self.assertEqual(obj.meeting_name, 'Fedora-fr-test-meeting')
         self.assertEqual(obj.meeting_manager, 'pingou, shaiton,')
         self.assertEqual(obj.calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj.calendar.calendar_description,
-            'This is a test calendar')
+        self.assertEqual(
+            obj.calendar.calendar_description, 'This is a test calendar')
         self.assertEqual(obj.reminder, None)
 
     def test_to_json_meeting(self):
@@ -381,8 +384,8 @@ class Meetingtests(Modeltests):
         """ Test the get_at_date function. """
         self.test_init_meeting()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
-        obj = model.Meeting.get_at_date(self.session, cal,
-                TODAY)
+        obj = model.Meeting.get_at_date(
+            self.session, cal, TODAY)
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 2)
@@ -390,54 +393,56 @@ class Meetingtests(Modeltests):
         self.assertEqual(obj[0].meeting_name, 'Another test meeting2')
         self.assertEqual(obj[0].meeting_manager, 'pingou,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[0].meeting_information,
+        self.assertEqual(
+            obj[0].meeting_information,
             'This is a test meeting with recursion2')
         self.assertEqual(obj[0].reminder, None)
 
         self.assertEqual(obj[1].meeting_name, 'Fedora-fr-test-meeting')
         self.assertEqual(obj[1].meeting_manager, 'pingou, shaiton,')
         self.assertEqual(obj[1].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[1].meeting_information,
-            'This is a test meeting')
+        self.assertEqual(
+            obj[1].meeting_information, 'This is a test meeting')
         self.assertEqual(obj[1].reminder, None)
 
-        obj = model.Meeting.get_at_date(self.session, cal,
-                TODAY, full_day=True)
+        obj = model.Meeting.get_at_date(
+            self.session, cal, TODAY, full_day=True)
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 0)
 
-        obj = model.Meeting.get_at_date(self.session, cal,
-                TODAY, full_day=False)
+        obj = model.Meeting.get_at_date(
+            self.session, cal, TODAY, full_day=False)
 
         self.assertEqual(obj[0].meeting_name, 'Another test meeting2')
         self.assertEqual(obj[0].meeting_manager, 'pingou,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[0].meeting_information,
+        self.assertEqual(
+            obj[0].meeting_information,
             'This is a test meeting with recursion2')
         self.assertEqual(obj[0].reminder, None)
 
         self.assertEqual(obj[1].meeting_name, 'Fedora-fr-test-meeting')
         self.assertEqual(obj[1].meeting_manager, 'pingou, shaiton,')
         self.assertEqual(obj[1].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[1].meeting_information,
-            'This is a test meeting')
+        self.assertEqual(
+            obj[1].meeting_information, 'This is a test meeting')
         self.assertEqual(obj[1].reminder, None)
 
     def test_get_at_time(self):
         """ Test the get_at_time function. """
         self.test_init_meeting()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
-        obj = model.Meeting.get_at_time(self.session, cal,
-                TODAY, time(20, 00))
+        obj = model.Meeting.get_at_time(
+            self.session, cal, TODAY, time(20, 00))
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
         self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
         self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[0].meeting_information,
-            'This is a test meeting')
+        self.assertEqual(
+            obj[0].meeting_information, 'This is a test meeting')
         self.assertEqual(obj[0].reminder, None)
 
     def test_get_by_date(self):
@@ -447,53 +452,54 @@ class Meetingtests(Modeltests):
         week_start = week_day - timedelta(days=week_day.weekday())
         week_stop = week_day + timedelta(days=6)
         cal = model.Calendar.by_id(self.session, 'test_calendar')
-        obj = model.Meeting.get_by_date(self.session, cal,
-                week_start, week_stop)
+        obj = model.Meeting.get_by_date(
+            self.session, cal, week_start, week_stop)
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 3)
 
         self.assertEqual(obj[0].meeting_name, 'Another test meeting2')
         self.assertEqual(obj[0].meeting_manager, 'pingou,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[0].meeting_information,
+        self.assertEqual(
+            obj[0].meeting_information,
             'This is a test meeting with recursion2')
         self.assertEqual(obj[0].reminder, None)
 
         self.assertEqual(obj[1].meeting_name, 'Fedora-fr-test-meeting')
         self.assertEqual(obj[1].meeting_manager, 'pingou, shaiton,')
         self.assertEqual(obj[1].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[1].meeting_information,
-            'This is a test meeting')
+        self.assertEqual(
+            obj[1].meeting_information, 'This is a test meeting')
         self.assertEqual(obj[1].reminder, None)
 
         self.assertEqual(obj[2].meeting_name, 'Full-day meeting')
         self.assertEqual(obj[2].meeting_manager, 'pingou,')
         self.assertEqual(obj[2].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[2].meeting_information,
-            'This is a full day meeting')
+        self.assertEqual(
+            obj[2].meeting_information, 'This is a full day meeting')
         self.assertEqual(obj[2].reminder, None)
 
-        obj = model.Meeting.get_by_date(self.session, cal,
-                week_start, week_stop, no_recursive=True)
+        obj = model.Meeting.get_by_date(
+            self.session, cal, week_start, week_stop, no_recursive=True)
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 2)
         self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
         self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[0].meeting_information,
-            'This is a test meeting')
+        self.assertEqual(
+            obj[0].meeting_information, 'This is a test meeting')
         self.assertEqual(obj[0].reminder, None)
 
         self.assertEqual(obj[1].meeting_name, 'Full-day meeting')
         self.assertEqual(obj[1].meeting_manager, 'pingou,')
         self.assertEqual(obj[1].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[1].meeting_information,
-            'This is a full day meeting')
+        self.assertEqual(
+            obj[1].meeting_information, 'This is a full day meeting')
         self.assertEqual(obj[1].reminder, None)
 
         week_stop = week_day + timedelta(days=12)
-        obj = model.Meeting.get_by_date(self.session, cal,
-                week_start, week_stop)
+        obj = model.Meeting.get_by_date(
+            self.session, cal, week_start, week_stop)
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 8)
 
@@ -505,31 +511,33 @@ class Meetingtests(Modeltests):
         week_stop = week_day + timedelta(days=2)
         cal = model.Calendar.by_id(self.session, 'test_calendar4')
 
-        obj = model.Meeting.get_by_date_and_region(self.session, cal,
-                week_start, week_stop, 'EMEA')
+        obj = model.Meeting.get_by_date_and_region(
+            self.session, cal, week_start, week_stop, 'EMEA')
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
         self.assertEqual(obj[0].meeting_name, 'test-meeting-st-2')
         self.assertEqual(obj[0].meeting_manager, 'test,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
-        self.assertEqual(obj[0].meeting_information,
+        self.assertEqual(
+            obj[0].meeting_information,
             'This is a second test meeting at the same time')
         self.assertEqual(obj[0].reminder, None)
 
-        obj = model.Meeting.get_by_date_and_region(self.session, cal,
-                week_start, week_stop, 'NA')
+        obj = model.Meeting.get_by_date_and_region(
+            self.session, cal, week_start, week_stop, 'NA')
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
         self.assertEqual(obj[0].meeting_name, 'test-meeting-st-1')
         self.assertEqual(obj[0].meeting_manager, 'test,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar4')
-        self.assertEqual(obj[0].meeting_information,
+        self.assertEqual(
+            obj[0].meeting_information,
             'This is a test meeting at the same time')
         self.assertEqual(obj[0].reminder, None)
 
-        obj = model.Meeting.get_by_date_and_region(self.session, cal,
-                week_start, week_stop, 'APAC')
+        obj = model.Meeting.get_by_date_and_region(
+            self.session, cal, week_start, week_stop, 'APAC')
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 0)
 
@@ -559,23 +567,24 @@ class Meetingtests(Modeltests):
         """ Test the Meeting get_by_time function. """
         self.test_init_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meetings = model.Meeting.get_by_time(self.session, calendar,
-            TODAY, time(00, 00), time(23, 59))
+        meetings = model.Meeting.get_by_time(
+            self.session, calendar, TODAY, time(00, 00), time(23, 59))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 2)
 
-        self.assertEqual(meetings[0].meeting_name,
-            'Another test meeting2')
-        self.assertEqual(meetings[1].meeting_name,
-            'Fedora-fr-test-meeting')
+        self.assertEqual(
+            meetings[0].meeting_name, 'Another test meeting2')
+        self.assertEqual(
+            meetings[1].meeting_name, 'Fedora-fr-test-meeting')
 
     def test_get_by_time_fail(self):
         """ Test the Meeting get_by_time function when there is nothing
         to return. """
         self.test_init_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meetings = model.Meeting.get_by_time(self.session, calendar,
-            TODAY + timedelta(days=1), time(00, 00), time(23, 59))
+        meetings = model.Meeting.get_by_time(
+            self.session, calendar, TODAY + timedelta(days=1),
+            time(00, 00), time(23, 59))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
@@ -583,38 +592,38 @@ class Meetingtests(Modeltests):
     def test_get_past_meeting_of_user(self):
         """ Test the Meeting get_past_meeting_of_user function. """
         self.test_init_meeting()
-        meetings = model.Meeting.get_past_meeting_of_user(self.session,
-            'pingou,', TODAY + timedelta(days=1))
+        meetings = model.Meeting.get_past_meeting_of_user(
+            self.session, 'pingou,', TODAY + timedelta(days=1))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 3)
 
-        self.assertEqual(meetings[0].meeting_name,
-            'Another past test meeting')
-        self.assertEqual(meetings[1].meeting_name,
-            'Another test meeting2')
-        self.assertEqual(meetings[2].meeting_name,
-            'Fedora-fr-test-meeting')
+        self.assertEqual(
+            meetings[0].meeting_name, 'Another past test meeting')
+        self.assertEqual(
+            meetings[1].meeting_name, 'Another test meeting2')
+        self.assertEqual(
+            meetings[2].meeting_name, 'Fedora-fr-test-meeting')
 
-        meetings = model.Meeting.get_past_meeting_of_user(self.session,
-            'shaiton,', TODAY + timedelta(days=1))
+        meetings = model.Meeting.get_past_meeting_of_user(
+            self.session, 'shaiton,', TODAY + timedelta(days=1))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 1)
-        self.assertEqual(meetings[0].meeting_name,
-            'Fedora-fr-test-meeting')
+        self.assertEqual(
+            meetings[0].meeting_name, 'Fedora-fr-test-meeting')
 
     # pylint: disable=C0103
     def test_get_past_meeting_of_user_fail(self):
         """ Test the Meeting get_past_meeting_of_user function when
         the user does not exists or there is nothing on that day. """
         self.test_init_meeting()
-        meetings = model.Meeting.get_past_meeting_of_user(self.session,
-            'fakeuser', TODAY + timedelta(days=1))
+        meetings = model.Meeting.get_past_meeting_of_user(
+            self.session, 'fakeuser', TODAY + timedelta(days=1))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
-        meetings = model.Meeting.get_past_meeting_of_user(self.session,
-            'fakeuser', TODAY - timedelta(days=1))
+        meetings = model.Meeting.get_past_meeting_of_user(
+            self.session, 'fakeuser', TODAY - timedelta(days=1))
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
@@ -623,36 +632,40 @@ class Meetingtests(Modeltests):
         """ Test the get_regular_meeting_at_date function. """
         self.test_init_meeting()
         cal = model.Calendar.by_id(self.session, 'test_calendar')
-        obj = model.Meeting.get_regular_meeting_at_date(self.session,
-            cal, TODAY + timedelta(days=19))
+        obj = model.Meeting.get_regular_meeting_at_date(
+            self.session, cal, TODAY + timedelta(days=19))
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
-        self.assertEqual(obj[0].meeting_name,
+        self.assertEqual(
+            obj[0].meeting_name,
             'Test meeting with reminder and recursion')
         self.assertEqual(obj[0].meeting_manager, 'pingou,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[0].meeting_information,
+        self.assertEqual(
+            obj[0].meeting_information,
             'This is a test meeting with recursion and reminder')
         self.assertNotEqual(obj[0].reminder, None)
 
-        obj = model.Meeting.get_regular_meeting_at_date(self.session,
-            cal, TODAY + timedelta(days=19), full_day=True)
+        obj = model.Meeting.get_regular_meeting_at_date(
+            self.session, cal, TODAY + timedelta(days=19), full_day=True)
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 0)
         self.assertEqual(obj, [])
 
-        obj = model.Meeting.get_regular_meeting_at_date(self.session,
-            cal, TODAY + timedelta(days=19), full_day=False)
+        obj = model.Meeting.get_regular_meeting_at_date(
+            self.session, cal, TODAY + timedelta(days=19), full_day=False)
 
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
-        self.assertEqual(obj[0].meeting_name,
+        self.assertEqual(
+            obj[0].meeting_name,
             'Test meeting with reminder and recursion')
         self.assertEqual(obj[0].meeting_manager, 'pingou,')
         self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(obj[0].meeting_information,
+        self.assertEqual(
+            obj[0].meeting_information,
             'This is a test meeting with recursion and reminder')
         self.assertNotEqual(obj[0].reminder, None)
 
@@ -665,14 +678,14 @@ class Meetingtests(Modeltests):
             self.session, 'pingou', TODAY)
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 4)
-        self.assertEqual(meetings[0].meeting_name,
-            'Fedora-fr-test-meeting')
-        self.assertEqual(meetings[1].meeting_name,
-            'Full-day meeting')
-        self.assertEqual(meetings[2].meeting_name,
-            'test-meeting2')
-        self.assertEqual(meetings[3].meeting_name,
-            'Test meeting with reminder')
+        self.assertEqual(
+            meetings[0].meeting_name, 'Fedora-fr-test-meeting')
+        self.assertEqual(
+            meetings[1].meeting_name, 'Full-day meeting')
+        self.assertEqual(
+            meetings[2].meeting_name, 'test-meeting2')
+        self.assertEqual(
+            meetings[3].meeting_name, 'Test meeting with reminder')
 
     # pylint: disable=C0103
     def test_get_future_single_meeting_of_user_fail(self):
@@ -702,15 +715,16 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 5)
 
-        self.assertEqual(meetings[0].meeting_name,
-            'Another past test meeting')
-        self.assertEqual(meetings[1].meeting_name,
-            'Another test meeting2')
-        self.assertEqual(meetings[2].meeting_name,
-            'Full-day meeting with recursion')
-        self.assertEqual(meetings[3].meeting_name,
-            'Another test meeting')
-        self.assertEqual(meetings[4].meeting_name,
+        self.assertEqual(
+            meetings[0].meeting_name, 'Another past test meeting')
+        self.assertEqual(
+            meetings[1].meeting_name, 'Another test meeting2')
+        self.assertEqual(
+            meetings[2].meeting_name, 'Full-day meeting with recursion')
+        self.assertEqual(
+            meetings[3].meeting_name, 'Another test meeting')
+        self.assertEqual(
+            meetings[4].meeting_name,
             'Test meeting with reminder and recursion')
 
     # pylint: disable=C0103
@@ -736,21 +750,22 @@ class Meetingtests(Modeltests):
         """ Test the Meeting get_meeting_with_reminder function. """
         self.test_init_meeting()
         for delta in [0, 7, 14, 21]:
-            meetings = model.Meeting.get_meeting_with_reminder(self.session,
-                TODAY + timedelta(days=12 + delta), time(10, 00),
-                time(10, 30), 'H-12')
+            meetings = model.Meeting.get_meeting_with_reminder(
+                self.session, TODAY + timedelta(days=12 + delta),
+                time(10, 00), time(10, 30), 'H-12')
             self.assertNotEqual(meetings, None)
             self.assertEqual(len(meetings), 1)
-            self.assertEqual(meetings[0].meeting_name,
+            self.assertEqual(
+                meetings[0].meeting_name,
                 'Test meeting with reminder and recursion')
 
-        meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(11, 00),
-            time(11, 30), 'H-12')
+        meetings = model.Meeting.get_meeting_with_reminder(
+            self.session, TODAY + timedelta(days=11),
+            time(11, 00), time(11, 30), 'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 1)
-        self.assertEqual(meetings[0].meeting_name,
-            'Test meeting with reminder')
+        self.assertEqual(
+            meetings[0].meeting_name, 'Test meeting with reminder')
 
     def test_get_meeting_with_reminder_fail(self):
         """ Test the Meeting get_meeting_with_reminder function
@@ -758,51 +773,52 @@ class Meetingtests(Modeltests):
         nothing.
         """
         self.test_init_meeting()
-        meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(11, 00), time(11, 30),
-            'H-168')
+        meetings = model.Meeting.get_meeting_with_reminder(
+            self.session, TODAY + timedelta(days=11),
+            time(11, 00), time(11, 30), 'H-168')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
-        meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(9, 00), time(9, 30), 'H-12')
+        meetings = model.Meeting.get_meeting_with_reminder(
+            self.session, TODAY + timedelta(days=11),
+            time(9, 00), time(9, 30), 'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
-        meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=100), time(11, 00), time(11, 30),
-            'H-12')
+        meetings = model.Meeting.get_meeting_with_reminder(
+            self.session, TODAY + timedelta(days=100),
+            time(11, 00), time(11, 30), 'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
-        meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(10, 30), time(11, 00),
-            'H-12')
+        meetings = model.Meeting.get_meeting_with_reminder(
+            self.session, TODAY + timedelta(days=11),
+            time(10, 30), time(11, 00), 'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
-        meetings = model.Meeting.get_meeting_with_reminder(self.session,
-            TODAY + timedelta(days=11), time(11, 30), time(12, 00),
-            'H-12')
+        meetings = model.Meeting.get_meeting_with_reminder(
+            self.session, TODAY + timedelta(days=11),
+            time(11, 30), time(12, 00), 'H-12')
         self.assertNotEqual(meetings, None)
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
         for delta in [0, 7, 14, 21]:
-            meetings = model.Meeting.get_meeting_with_reminder(self.session,
-                TODAY + timedelta(days=12 + delta), time(9, 30),
-                time(10, 00), 'H-12')
+            meetings = model.Meeting.get_meeting_with_reminder(
+                self.session, TODAY + timedelta(days=12 + delta),
+                time(9, 30), time(10, 00), 'H-12')
             self.assertNotEqual(meetings, None)
             self.assertEqual(len(meetings), 0)
             self.assertEqual(meetings, [])
 
-            meetings = model.Meeting.get_meeting_with_reminder(self.session,
-                TODAY + timedelta(days=12 + delta), time(10, 30),
-                time(11, 00), 'H-12')
+            meetings = model.Meeting.get_meeting_with_reminder(
+                self.session, TODAY + timedelta(days=12 + delta),
+                time(10, 30), time(11, 00), 'H-12')
             self.assertNotEqual(meetings, None)
             self.assertEqual(len(meetings), 0)
             self.assertEqual(meetings, [])

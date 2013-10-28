@@ -66,8 +66,8 @@ def fedmsg_publish(meeting):
         modname="fedocal",
         topic="meeting.reminder",
         msg=dict(
-            calendar=meeting.calendar.to_json()
             meeting=meeting.to_json(),
+            calendar=meeting.calendar.to_json()
         ),
     )
 

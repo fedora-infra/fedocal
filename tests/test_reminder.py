@@ -49,8 +49,9 @@ class Remindertests(Modeltests):
 
     def test_init_reminder(self):
         """ Test the Reminder init function. """
-        obj = model.Reminder('H-12',
-            'fi-apprentice@lists.fedoraproject.org,'\
+        obj = model.Reminder(
+            'H-12',
+            'fi-apprentice@lists.fedoraproject.org,'
             'ambassadors@lists.fedoraproject.org',
             'This is your friendly reminder')
         obj.save(self.session)
@@ -59,8 +60,9 @@ class Remindertests(Modeltests):
 
     def test_init_reminder_failed(self):
         """ Test the Reminder init function. """
-        obj = model.Reminder('H-36',
-            'fi-apprentice@lists.fedoraproject.org,'\
+        obj = model.Reminder(
+            'H-36',
+            'fi-apprentice@lists.fedoraproject.org,'
             'ambassadors@lists.fedoraproject.org',
             'This is your friendly reminder')
         obj.save(self.session)
@@ -75,8 +77,9 @@ class Remindertests(Modeltests):
         self.test_init_reminder()
         obj = model.Reminder.by_id(self.session, 1)
         self.assertNotEqual(obj, None)
-        self.assertEqual(str(obj), '<Reminder(\'' \
-            'fi-apprentice@lists.fedoraproject.org,'\
+        self.assertEqual(
+            str(obj),
+            '<Reminder(\'fi-apprentice@lists.fedoraproject.org,'
             'ambassadors@lists.fedoraproject.org\', \'H-12\')>')
 
     def test_get_reminder(self):
@@ -85,10 +88,12 @@ class Remindertests(Modeltests):
         obj = model.Reminder.by_id(self.session, 1)
         self.assertNotEqual(obj, None)
         self.assertEqual(obj.reminder_offset, 'H-12')
-        self.assertEqual(obj.reminder_to,
-            'fi-apprentice@lists.fedoraproject.org,'\
+        self.assertEqual(
+            obj.reminder_to,
+            'fi-apprentice@lists.fedoraproject.org,'
             'ambassadors@lists.fedoraproject.org')
-        self.assertEqual(obj.reminder_text, 'This is your friendly reminder')
+        self.assertEqual(
+            obj.reminder_text, 'This is your friendly reminder')
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Remindertests)

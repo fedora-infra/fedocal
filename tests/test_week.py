@@ -89,38 +89,54 @@ class Weektests(Modeltests):
         self.assertNotEqual(weekobj.meetings[0], None)
         self.assertEqual(len(weekobj.meetings), 4)
 
-        self.assertEqual(weekobj.meetings[0].calendar.calendar_name,
+        self.assertEqual(
+            weekobj.meetings[0].calendar.calendar_name,
             'test_calendar')
-        self.assertEqual(weekobj.meetings[0].calendar.calendar_description,
+        self.assertEqual(
+            weekobj.meetings[0].calendar.calendar_description,
             'This is a test calendar')
 
-        self.assertEqual(weekobj.meetings[0].meeting_name,
+        self.assertEqual(
+            weekobj.meetings[0].meeting_name,
             'Another past test meeting')
-        self.assertEqual(weekobj.meetings[0].meeting_manager,
+        self.assertEqual(
+            weekobj.meetings[0].meeting_manager,
             'pingou,')
-        self.assertEqual(weekobj.meetings[0].meeting_information,
+        self.assertEqual(
+            weekobj.meetings[0].meeting_information,
             'This is a past meeting with recursion')
 
-        self.assertEqual(weekobj.meetings[1].meeting_name,
+        self.assertEqual(
+            weekobj.meetings[1].meeting_name,
             'Another test meeting2')
-        self.assertEqual(weekobj.meetings[1].meeting_manager,
+        self.assertEqual(
+            weekobj.meetings[1].meeting_manager,
             'pingou,')
-        self.assertEqual(weekobj.meetings[1].meeting_information,
+        self.assertEqual(
+            weekobj.meetings[1].meeting_information,
             'This is a test meeting with recursion2')
 
-        self.assertEqual(weekobj.meetings[2].meeting_name,
+        self.assertEqual(
+            weekobj.meetings[2].meeting_name,
             'Fedora-fr-test-meeting')
-        self.assertEqual(weekobj.meetings[2].meeting_manager,
+        self.assertEqual(
+            weekobj.meetings[2].meeting_manager,
             'pingou, shaiton,')
-        self.assertEqual(weekobj.meetings[2].meeting_information,
+        self.assertEqual(
+            weekobj.meetings[2].meeting_information,
             'This is a test meeting')
-        self.assertEqual(weekobj.meetings[2].reminder, None)
+        self.assertEqual(
+            weekobj.meetings[2].reminder,
+            None)
 
-        self.assertEqual(weekobj.meetings[3].meeting_name,
+        self.assertEqual(
+            weekobj.meetings[3].meeting_name,
             'Full-day meeting')
-        self.assertEqual(weekobj.meetings[3].meeting_manager,
+        self.assertEqual(
+            weekobj.meetings[3].meeting_manager,
             'pingou,')
-        self.assertEqual(weekobj.meetings[3].meeting_information,
+        self.assertEqual(
+            weekobj.meetings[3].meeting_information,
             'This is a full day meeting')
 
     def test_meeting_in_week_full_day(self):
@@ -131,16 +147,18 @@ class Weektests(Modeltests):
         self.assertNotEqual(weekobj, None)
         self.assertEqual(len(weekobj.full_day_meetings), 1)
         self.assertNotEqual(weekobj.full_day_meetings[0], None)
-        self.assertEqual(weekobj.full_day_meetings[0].meeting_name,
+        self.assertEqual(
+            weekobj.full_day_meetings[0].meeting_name,
             'Full-day meeting')
 
-        weekobj = week.Week(self.session, calendar, (TODAY + timedelta(
-            days=15)))
+        weekobj = week.Week(
+            self.session, calendar, (TODAY + timedelta(days=15)))
 
         self.assertNotEqual(weekobj, None)
         self.assertEqual(len(weekobj.full_day_meetings), 1)
         self.assertNotEqual(weekobj.full_day_meetings[0], None)
-        self.assertEqual(weekobj.full_day_meetings[0].meeting_name,
+        self.assertEqual(
+            weekobj.full_day_meetings[0].meeting_name,
             'Full-day meeting with recursion')
 
 

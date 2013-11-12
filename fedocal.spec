@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.2.9
+Version:        0.3.0
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -84,9 +84,12 @@ mkdir -p $RPM_BUILD_ROOT/%{_datadir}/fedocal
 cp -r alembic/ $RPM_BUILD_ROOT/%{_datadir}/fedocal/
 install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi
 
+# Install the createdb script
+install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.py
+
+
 %files
 %doc README.rst LICENSE doc/
-%doc createdb.py
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/fedocal.conf
 %config(noreplace) %{_sysconfdir}/fedocal/fedocal.cfg
 %config(noreplace) %{_sysconfdir}/fedocal/alembic.ini
@@ -98,6 +101,10 @@ install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi
 
 
 %changelog
+* Wed Nov 13 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.3.0-1
+- Update to 0.3.0
+- Move the createdb script into %%{_datadir}/fedocal/
+
 * Mon Oct 28 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.9-1
 - First pre-release before 0.3.0
 

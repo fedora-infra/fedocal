@@ -53,6 +53,8 @@ def fedmsg_init():
 
     config = fedmsg.config.load_config()
     config['active'] = True
+    config['name'] = 'relay_inbound'
+    config['cert_prefix'] = 'fedocal'
     fedmsg.init(**config)
 
 

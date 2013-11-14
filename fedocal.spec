@@ -101,7 +101,7 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
-* Wed Nov 13 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.3.0-1
+* Thu Nov 14 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.3.0-1
 - Update to 0.3.0
 - Move the createdb script into %%{_datadir}/fedocal/
 

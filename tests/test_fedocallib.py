@@ -1474,27 +1474,6 @@ class Fedocallibtests(Modeltests):
             calendarobj,
             fasuser,
             'Fedora-fr-meeting_edited',
-            date.today() - timedelta(days=2),
-            None,
-            time(23, 0),
-            time(23, 59),
-            None,
-            'Information',
-            'EMEA',
-            'UTC',
-            None, None,
-            None, None,
-            full_day=False)
-        self.session.rollback()
-
-        self.assertRaises(
-            InvalidMeeting,
-            fedocallib.edit_meeting,
-            self.session,
-            meeting,
-            calendarobj,
-            fasuser,
-            'Fedora-fr-meeting_edited',
             date.today() + timedelta(days=1),
             None,
             time(23, 0),

@@ -48,9 +48,10 @@ from fedocal.fedocallib import model, get_start_week
 
 
 DB_PATH = 'sqlite:///:memory:'
+FAITOUT_URL = 'http://209.132.184.152/faitout'
 try:
     import requests
-    req = requests.get('http://209.132.184.152/faitout/new')
+    req = requests.get('%s/new' % FAITOUT_URL)
     if req.status_code == 200:
         DB_PATH = req.text
         print 'Using faitout at: %s' % DB_PATH
@@ -86,8 +87,7 @@ class Modeltests(unittest.TestCase):
                 model.drop_tables(DB_PATH, self.session.bind)
             else:
                 db_name = DB_PATH.rsplit('/', 1)[1]
-                requests.get(
-                    'http://209.132.184.152/faitout/clean/%s' % db_name)
+                requests.get('%s/clean/%s' % (FAITOUT_URL, db_name))
 
 
 class FakeGroup(object):

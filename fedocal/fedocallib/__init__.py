@@ -899,9 +899,6 @@ def edit_meeting(
                  meeting_time_stop.minute),
         tzone, 'UTC')
 
-    if not is_date_in_future(meeting_date, meeting_time_start):
-        raise InvalidMeeting('The date you entered is in the past')
-
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
             'The start date of your meeting is later than the stop date.')

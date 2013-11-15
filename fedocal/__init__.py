@@ -27,7 +27,7 @@
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 import datetime
 import os
@@ -95,14 +95,12 @@ work.
 
 
 @APP.context_processor
-def inject_calendars():
-    """ With this decorator we add the list of all the calendars
-    available to all the function, so the variable calendars is available
-    in all templates.
+def inject_variables():
+    """ With this decorator we can set some variables to all templates.
     """
     calendars = Calendar.get_all(SESSION)
 
-    return dict(calendars=calendars)
+    return dict(calendars=calendars, version=__version__)
 
 
 @APP.template_filter('WeekHeading')

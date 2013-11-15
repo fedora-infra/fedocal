@@ -653,12 +653,6 @@ def edit_meeting(meeting_id):
                 cnt = cnt + 1
             meeting = meetingobj
 
-        if not fedocallib.is_date_in_future(
-                meeting.meeting_date,
-                meeting.meeting_time_start):
-            flask.flash('This meeting has already occured, you may not '
-                        'change it anymore', 'warnings')
-            return flask.redirect(flask.url_for('my_meetings'))
         form = forms.AddMeetingForm(meeting=meeting, timezone=tzone)
     return flask.render_template(
         'edit_meeting.html', meeting=meeting, calendar=calendarobj,

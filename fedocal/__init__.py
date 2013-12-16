@@ -739,8 +739,9 @@ def delete_meeting(meeting_id):
             except SQLAlchemyError, err:
                 SESSION.rollback()
                 print 'edit_meeting:', err
-                flask.flash('Could not update this meeting.', 'error')
-        flask.flash('Meeting deleted')
+                flask.flash('Could not delete this meeting.', 'error')
+            flask.flash('Meeting deleted')
+
         fedmsg.publish(topic="meeting.delete", msg=dict(
             agent=flask.g.fas_user.username,
             meeting=meeting.to_json(),

@@ -1028,6 +1028,8 @@ def edit_meeting(
         meeting.recursion_frequency = None
         meeting.recursion_ends = None
 
+    meeting.full_day = full_day
+
     meeting.save(session)
     session.commit()
     return meeting

@@ -907,8 +907,8 @@ def edit_meeting(
         raise InvalidMeeting(
             'The start time of your meeting is later than the stop time.')
 
-    if full_day:
-        meeting_time_stop = meeting_time_stop + timedelta(days=1)
+    if full_day and meeting_time_start == meeting_time_stop:
+        meeting_time_stop = meeting_time_start + timedelta(days=1)
 
     if recursion_frequency and recursion_ends:
         agenda_free = agenda_is_free_in_future(

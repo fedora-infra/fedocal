@@ -706,6 +706,11 @@ def delete_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
 
+    if not meeting:
+        flask.flash(
+            'No meeting with this identifier could be found.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     if meeting.calendar.calendar_status != 'Enabled':
         flask.flash('This calendar is "%s", you are not allowed to delete '
                     'its meetings anymore.' % (

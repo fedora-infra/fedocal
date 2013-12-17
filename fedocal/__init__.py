@@ -706,6 +706,11 @@ def delete_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
 
+    if not meeting:
+        flask.flash(
+            'No meeting with this identifier could be found.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     if meeting.calendar.calendar_status != 'Enabled':
         flask.flash('This calendar is "%s", you are not allowed to delete '
                     'its meetings anymore.' % (
@@ -734,13 +739,15 @@ def delete_meeting(meeting_id):
                 fedocallib.delete_recursive_meeting(SESSION, meeting)
             else:
                 meeting.delete(SESSION)
+
             try:
                 SESSION.commit()
+                flask.flash('Meeting deleted')
             except SQLAlchemyError, err:
                 SESSION.rollback()
                 print 'edit_meeting:', err
-                flask.flash('Could not update this meeting.', 'error')
-        flask.flash('Meeting deleted')
+                flask.flash('Could not delete this meeting.', 'error')
+
         fedmsg.publish(topic="meeting.delete", msg=dict(
             agent=flask.g.fas_user.username,
             meeting=meeting.to_json(),

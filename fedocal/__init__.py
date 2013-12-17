@@ -98,7 +98,6 @@ work.
 def inject_variables():
     """ With this decorator we can set some variables to all templates.
     """
-    print flask.g.fas_user.groups
     calendars = Calendar.get_all(SESSION)
 
     return dict(calendars=calendars, version=__version__)

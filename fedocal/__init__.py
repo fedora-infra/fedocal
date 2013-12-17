@@ -98,6 +98,7 @@ work.
 def inject_variables():
     """ With this decorator we can set some variables to all templates.
     """
+    print flask.g.fas_user.groups
     calendars = Calendar.get_all(SESSION)
 
     return dict(calendars=calendars, version=__version__)
@@ -739,13 +740,14 @@ def delete_meeting(meeting_id):
                 fedocallib.delete_recursive_meeting(SESSION, meeting)
             else:
                 meeting.delete(SESSION)
+
             try:
                 SESSION.commit()
+                flask.flash('Meeting deleted')
             except SQLAlchemyError, err:
                 SESSION.rollback()
                 print 'edit_meeting:', err
                 flask.flash('Could not delete this meeting.', 'error')
-            flask.flash('Meeting deleted')
 
         fedmsg.publish(topic="meeting.delete", msg=dict(
             agent=flask.g.fas_user.username,

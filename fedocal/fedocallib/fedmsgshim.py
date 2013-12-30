@@ -9,7 +9,7 @@ messages.  If it is not installed, it will return silently.
 import warnings
 
 
-def publish(*args, **kwargs):
+def publish(*args, **kwargs):  # pragma: no cover
     try:
         import fedmsg
         fedmsg.publish(*args, **kwargs)

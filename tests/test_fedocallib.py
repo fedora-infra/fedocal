@@ -827,28 +827,6 @@ class Fedocallibtests(Modeltests):
             remind_who=None,
             full_day=False)
 
-        # Fails because the meeting is in the past
-        self.assertRaises(
-            InvalidMeeting,
-            fedocallib.add_meeting,
-            session=self.session,
-            calendarobj=calendarobj,
-            fas_user=fasuser,
-            meeting_name=None,
-            meeting_date=TODAY - timedelta(days=4),
-            meeting_date_end=TODAY - timedelta(days=4),
-            meeting_time_start=time(9, 0),
-            meeting_time_stop=time(10, 0),
-            comanager=None,
-            meeting_information=None,
-            meeting_region=None,
-            tzone='UTC',
-            frequency=None,
-            end_repeats=None,
-            remind_when=None,
-            remind_who=None,
-            full_day=False)
-
         self.assertRaises(
             IntegrityError,
             fedocallib.add_meeting,

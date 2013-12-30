@@ -802,24 +802,6 @@ def add_meeting(
         meeting_time_start,
         meeting_time_stop)
 
-    if not bool(calendarobj.calendar_multiple_meetings) and \
-            not bool(free_time):
-        raise InvalidMeeting(
-            'The start or end time you have entered is already occupied.')
-
-    if frequency and end_repeats:
-        futur_meeting_at_time = agenda_is_free_in_future(
-            session, calendarobj,
-            meeting_time_start.date(), meeting_time_stop.date(),
-            end_repeats, frequency,
-            meeting_time_start.time(), meeting_time_stop.time())
-
-        if not bool(calendarobj.calendar_multiple_meetings) and \
-                not(futur_meeting_at_time):
-            raise InvalidMeeting(
-                'The start or end time you have entered is already '
-                'occupied in the future.')
-
     reminder = None
     if remind_when and remind_who:
         try:
@@ -910,20 +892,6 @@ def edit_meeting(
     if full_day and meeting_time_start == meeting_time_stop:
         meeting_time_stop = meeting_time_start + timedelta(days=1)
 
-    if recursion_frequency and recursion_ends:
-        agenda_free = agenda_is_free_in_future(
-            session, calendarobj,
-            meeting_time_start.date(), meeting_time_stop.date(),
-            recursion_ends, recursion_frequency,
-            meeting_time_start.time(), meeting_time_stop.time(),
-            meeting_id=meeting.meeting_id)
-
-        if not bool(calendarobj.calendar_multiple_meetings) and \
-                not agenda_free:
-            raise InvalidMeeting(
-                'The start or end time you have entered is already '
-                'occupied in the future.')
-
     ## The information are correct
     ## What we do now:
     # a) the meeting is not recursive -> edit the information as provided
@@ -966,17 +934,7 @@ def edit_meeting(
                 new_meeting.meeting_time_start.minute,
                 tzinfo=pytz.utc)
 
-            free_time = agenda_is_free_in_future(
-                session, calendarobj,
-                dt_start.date(), dt_stop.date(),
-                meeting.recursion_ends, meeting.recursion_frequency,
-                dt_start.time(), dt_stop.time(),
-                meeting_id=meeting.meeting_id)
-
-            if free_time or \
-                    (not free_time
-                     and not bool(calendarobj.calendar_multiple_meetings)):
-                new_meeting.save(session)
+            new_meeting.save(session)
 
     meeting.meeting_name = meeting_name
     meeting.meeting_manager = '%s,' % fas_user.username

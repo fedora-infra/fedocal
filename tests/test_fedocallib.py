@@ -943,30 +943,6 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_date,
                          date.today() + timedelta(days=21))
 
-        # Fails because in its recursivity it will conflict with an
-        # existing meeting
-        self.assertRaises(
-            InvalidMeeting,
-            fedocallib.add_meeting,
-            session=self.session,
-            calendarobj=calendarobj,
-            fas_user=fasuser,
-            meeting_name='Name2',
-            meeting_date=date.today() + timedelta(days=14),
-            meeting_date_end=date.today() + timedelta(days=14),
-            meeting_time_start=time(9, 0),
-            meeting_time_stop=time(10, 0),
-            comanager=None,
-            meeting_information=None,
-            meeting_region=None,
-            tzone='Europe/Paris',
-            frequency=7,
-            end_repeats=date.today() + timedelta(days=60),
-            remind_when=None,
-            remind_who=None,
-            full_day=False)
-        self.session.rollback()
-
         # Correctly insert a meeting
         mtg = fedocallib.add_meeting(
             session=self.session,
@@ -992,29 +968,6 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meeting.meeting_manager, 'username,')
         self.assertEqual(meeting.meeting_date,
                          date.today() + timedelta(days=5))
-
-        # Fails because it conflicts with an existing recursive meeting
-        self.assertRaises(
-            InvalidMeeting,
-            fedocallib.add_meeting,
-            session=self.session,
-            calendarobj=calendarobj,
-            fas_user=fasuser,
-            meeting_name='Name2',
-            meeting_date=date.today() + timedelta(days=12),
-            meeting_date_end=date.today() + timedelta(days=12),
-            meeting_time_start=time(9, 0),
-            meeting_time_stop=time(10, 0),
-            comanager=None,
-            meeting_information=None,
-            meeting_region=None,
-            tzone='Europe/Paris',
-            frequency=7,
-            end_repeats=date.today() + timedelta(days=60),
-            remind_when=None,
-            remind_who=None,
-            full_day=False)
-        self.session.rollback()
 
     # pylint: disable=R0915
     def test_add_meeting(self):
@@ -1057,27 +1010,6 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_time_stop.strftime('%H') == '08' or
             meeting.meeting_time_stop.strftime('%H') == '09')
         self.session.flush()
-
-        self.assertRaises(
-            InvalidMeeting,
-            fedocallib.add_meeting,
-            session=self.session,
-            calendarobj=calendarobj,
-            fas_user=fasuser,
-            meeting_name='Name',
-            meeting_date=date.today() + timedelta(days=1),
-            meeting_date_end=date.today() + timedelta(days=1),
-            meeting_time_start=time(9, 0),
-            meeting_time_stop=time(10, 0),
-            comanager=None,
-            meeting_information=None,
-            meeting_region=None,
-            tzone='Europe/Paris',
-            frequency=None,
-            end_repeats=None,
-            remind_when=None,
-            remind_who=None,
-            full_day=False)
 
         fedocallib.add_meeting(
             session=self.session,

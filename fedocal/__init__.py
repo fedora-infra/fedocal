@@ -32,11 +32,12 @@ __version__ = '0.3.1'
 import datetime
 import logging
 import os
-from dateutil.relativedelta import relativedelta
+from logging.handlers import SMTPHandler, SysLogHandler
 
 import flask
 import markdown
 import vobject
+from dateutil.relativedelta import relativedelta
 from flask_fas_openid import FAS
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
@@ -50,7 +51,6 @@ import fedocal.fedocallib.fedmsgshim as fedmsg
 
 # Create the application.
 APP = flask.Flask(__name__)
-LOG = logging.getLogger(__name__)
 
 # set up FAS
 APP.config.from_object('fedocal.default_config')
@@ -66,6 +66,34 @@ APP.static_folder = os.path.join(
 
 FAS = FAS(APP)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
+
+# Set up the logger
+## Send emails for big exception
+mail_handler = SMTPHandler(
+    APP.config.get('SMTP_SERVER', '127.0.0.1'),
+    'nobody@fedoraproject.org',
+    APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org'),
+    'Fedocal error')
+mail_handler.setFormatter(logging.Formatter('''
+    Message type:       %(levelname)s
+    Location:           %(pathname)s:%(lineno)d
+    Module:             %(module)s
+    Function:           %(funcName)s
+    Time:               %(asctime)s
+
+    Message:
+
+    %(message)s
+'''))
+mail_handler.setLevel(logging.ERROR)
+APP.logger.addHandler(mail_handler)
+
+## Send classic logs into syslog
+handler = logging.StreamHandler()
+handler.setLevel(APP.config.get('log_level', 'INFO'))
+APP.logger.addHandler(handler)
+
+LOG = APP.logger
 
 
 import fedocal.api

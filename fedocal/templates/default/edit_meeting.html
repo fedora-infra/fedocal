@@ -2,13 +2,13 @@
 
 {% block title %} Edit meeting {% endblock %}
 
-{% set title_extent = ('Edit meeting "%s"') % meeting.calendar_name %}
+{%block tag %}mymeeting{% endblock %}
 
 {% block content %}
 <section>
 
     <header>
-        <h2>New meeting</h2>
+        <h2>Edit meeting {{ form.meeting_name.data }}</h2>
         <p>Please enter your meeting details in the above form.</p>
     </header>
 

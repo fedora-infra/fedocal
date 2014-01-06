@@ -2,17 +2,17 @@
 
 {% block title %} {{ calendar.calendar_name }} {% endblock %}
 
-{% set title_extent = calendar.calendar_name %}
+{%block tag %}home{% endblock %}
 
 {% block content %}
 <section>
 {% if calendar %}
     <header>
         <h2>
-            <a href="{{url_for('ical_out',
+            <a href="{{url_for('calendar_list',
                 calendar_name=calendar.calendar_name)}}">
-            </a>
             {{ calendar.calendar_name }}
+            </a>
         </h2>
         <p>{{ calendar.calendar_description }}</p>
     </header>
@@ -30,6 +30,98 @@
         </a>
     </nav>
 {% endif %}
+    <aside id="mainmenu">
+        {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
+        <form action="{{url_for('goto')}}" id="goto_date">
+          <input type="hidden" name="calendar" value="{{calendar.calendar_name}}"/>
+          <input type="hidden" name="type" value="list"/>
+          <input type="text" name="day" placeholder="28" title="Day in decimal"/>
+          <input type="text" name="month" placeholder="02" title="Month in decimal"/>
+          <input type="text" name="year" placeholder="2014" title="Year in decimal"/>
+          <input type="submit" value="Go"/>
+        </form>
+        <p class="smaller">
+          Specify a year to see the yearly report, a month of a year to see
+          the monthly report and a complete date to see that specific date.
+        </p>
+        <div id="accordion">
+        <h4>Calendars</h4>
+        <ul id="calendars_menu" class="checkmark-list">
+            {% for calendar in calendars %}
+            {% if calendar.calendar_status == 'Enabled' %}
+            <li>
+                <a href="{{url_for('calendar',
+                    calendar_name=calendar.calendar_name)}}">
+                    {{ calendar.calendar_name }}
+                </a>
+                <ul>
+                    {% if g.fas_user %}
+                    <li>
+                        <a href="{{ url_for('add_meeting',
+                            calendar_name=calendar.calendar_name) }}">Add a meeting</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="{{ url_for('calendar_list',
+                            calendar_name=calendar.calendar_name) }}">
+                            List view
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{url_for('ical_out',
+                                           calendar_name=calendar.calendar_name)}}"
+                            title="Add this calendar to your agenda">iCal export</a>
+                    </li>
+                    <li>
+                        <a onclick="CopyToClipboard('{{url_for('ical_out',
+                                           calendar_name=calendar.calendar_name)}}')"
+                            title="Copy the iCal feed URL">Copy iCal link</a>
+                    </li>
+                    {% if calendar.calendar_contact %}
+                    <li>
+                        <a href="mailto:{{calendar.calendar_contact}}">
+                            Contact admin
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+
+        {% if admin %}
+        <h4> Admin </h4>
+        <div>
+        <ul class="checkmark-list">
+            <li>
+                <a href="{{ url_for('edit_calendar',
+                    calendar_name=calendar.calendar_name) }}"> Edit calendar </a>
+            </li>
+            <li>
+                <a href="{{ url_for('delete_calendar',
+                    calendar_name=calendar.calendar_name) }}"> Delete calendar </a>
+            </li>
+        </ul>
+        </div>
+        {% endif %}
+
+        </ul>
+      </div>
+      <ul class="checkmark-list">
+        {% if calendar.calendar_admin_group %}
+        <li>Administrators: {{ calendar.calendar_admin_group }}</li>
+        {% endif %}
+        {% if calendar.calendar_editor_group %}
+        <li>Editors: {{ calendar.calendar_editor_group }}</li>
+        {% else %}
+        <li>Editors: CLA+1</li>
+        {% endif %}
+      </ul>
+
+    </aside>
+
+    </aside>
 
 <div id='meeting_list'>
     <p> Time are expressed in the {{ tzone }} time zone.</p>

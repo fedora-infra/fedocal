@@ -19,8 +19,8 @@ BuildRequires:  python-wtforms
 BuildRequires:  python-flask-wtf
 BuildRequires:  python-vobject
 BuildRequires:  python-kitchen
-BuildRequires:  python-fedora >= 0.3.32.3-3
-BuildRequires:  python-fedora-flask
+BuildRequires:  python-fedora >= 0.3.33
+BuildRequires:  python-fedora-flask >= 0.3.33
 BuildRequires:  python-alembic
 BuildRequires:  python-dateutil <= 1.5
 BuildRequires:  python-setuptools

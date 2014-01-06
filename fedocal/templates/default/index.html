@@ -1,5 +1,7 @@
 {% extends "master.html" %}
 
+{%block tag %}home{% endblock %}
+
 {% macro render_calendars(calendars) -%}
     {% for calendar_row in calendars %}
     <div class="calendar_row">

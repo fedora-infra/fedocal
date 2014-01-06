@@ -3,7 +3,8 @@
 
 {% block title %} {{ title }} {% endblock %}
 
-{% set title_extent = 'Fedora meeting' %}
+{%block tag %}home{% endblock %}
+
 {% endif %}
 
 {% block content %}
@@ -44,12 +45,12 @@
 
     {% if editor %}
     <p>
-        <a class="button" href="{{ url_for('edit_meeting',
+        <a href="{{ url_for('edit_meeting',
             meeting_id=meeting.meeting_id) }}">
             <img src="{{ url_for('static', filename='edit.png') }}"
                 title="Edit" alt="Edit"/>
         </a>
-        <a class="button" href="{{ url_for('delete_meeting',
+        <a href="{{ url_for('delete_meeting',
             meeting_id=meeting.meeting_id) }}">
             <img src="{{ url_for('static', filename='delete.png') }}"
             title="Delete" alt="Delete"/>

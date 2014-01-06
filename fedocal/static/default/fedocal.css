@@ -1,24 +1,13 @@
 body {
     padding: 0;
-    background: url(html-bg.png)
-    repeat-x scroll 0 0 #FFF;
     height: 100%;
     margin: 0;
-    color: #2E3436;
-    font-family: Cantarell,'Droid Sans','DejaVu Sans',Arial,sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
 }
 
 h4 {
     color: #CE5C00;
     font-size: 16px;
     margin: 0.8em 0 0.4em;
-}
-
-a {
-    color: blue;
-    text-decoration: none;
 }
 
 .message {
@@ -33,7 +22,19 @@ a {
     color: orange;
 }
 
-header#mainheader, footer {
+.nobutton {
+    background:none!important;
+    border:none;
+    padding:0!important;
+    color: #0066CC;
+    text-decoration: none;
+}
+
+#header input {
+    border-radius: 10px;
+}
+
+header#mainheader{
     color: white;
     background: #426ead; /* Old browsers */
     background: -moz-linear-gradient(top, #426ead 0%, #1e4a88 100%); /* FF3.6+ */
@@ -45,25 +46,6 @@ header#mainheader, footer {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#426ead', endColorstr='#1e4a88',GradientType=0 ); /* IE6-9 */
     padding: .5em;
     margin-bottom: .5em;
-}
-
-footer a {
-    color: white;
-    display: inline-block;
-    padding: .3em 1em;
-}
-
-footer a:hover {
-    background-color: rgba(255, 255, 255, .2);
-}
-
-footer {
-    padding: .2em .5em;
-    text-align: center;
-    margin: 0;
-    left: 0;
-    right:0;
-    /*box-shadow: 0 5px 5px -3px black;*/
 }
 
 header h1,
@@ -79,6 +61,14 @@ header h1 span {
     font-weight: normal;
 }
 
+#goto_date {
+    display: block;
+}
+
+#goto_date input[type=text] {
+    width: 42px;
+}
+
 section header,
 section aside,
 section nav {
@@ -87,7 +77,6 @@ section nav {
 }
 
 #content section > header {
-    margin-left: -200px; /* Left align with menu */
     margin-bottom: .5em;
     background: url(calendar.png) 0 50% no-repeat;
     padding-left: 40px;
@@ -101,7 +90,10 @@ section nav {
 #content {
     position: relative;
     margin: .5em;
-    /* for the menu */
+    min-height: 450px;
+}
+
+#content #agenda, #content #meeting_list{
     padding-left: 210px;
 }
 
@@ -117,7 +109,6 @@ section nav {
 
 .event {
     display: block;
-    height: 100%;
     padding:.1em .2em;
     background-color:rgba(175, 221, 233, .8);
     color: #333;
@@ -125,17 +116,30 @@ section nav {
     border:1px solid #37abc8;
 }
 
+td > .event {
+    height: 100%;
+}
+
+
 .first_event {
     border-bottom:0px;
 }
 
-.middle_event {
-    border-top:0px;
-    border-bottom:0px;
+td .first_event {
+    border-bottom: solid 1px rgba(175, 221, 233, .8);
+}
+
+td .middle_event {
+    border-top: solid 1px rgba(175, 221, 233, .8);
+    border-bottom: solid 1px rgba(175, 221, 233, .8);
 }
 
 .last_event {
     border-top:0px;
+}
+
+td .last_event {
+    border-top: solid 1px rgba(175, 221, 233, .8);
 }
 
 .my_meetings td {
@@ -146,7 +150,7 @@ section nav {
 
 #agenda td {
     min-width: 100px;
-    height: 3em;
+    height: 2em;
     border: 1px solid #e6e6e6;
     background-color: #f9f9f9;
     padding: 0;
@@ -228,35 +232,6 @@ section nav {
     white-space: nowrap;
 }
 
-#home {
-    cursor: pointer;
-    position: relative;
-    margin-top: 2px;
-    padding: .5em .5em .5em 2.2em;
-    border: 1px solid #dddddd;
-    background-color: #fff;
-    background-image: url("calendar-small.png"), url(fedocal/images/ui-bg_highlight-soft_100_f6f6f6_1x100.png);
-    background-position: .5em 50%, 50% 50%;
-    background-repeat: no-repeat, repeat-x;
-    color: #3C6EB4;
-    font-size: 1.1em;
-    font-family: Helvetica,Arial,sans-serif;
-}
-
-#home:hover {
-    border: 1px solid #3c6eb4;
-    background-color: #3c6eb4;
-    background-image: url("calendar-small.png"), url(fedocal/images/ui-bg_highlight-soft_25_3c6eb4_1x100.png);
-    color: #fff;
-}
-
-#home a {
-    color: #3C6EB4;
-}
-
-#home:hover a {
-    color: #fff;
-}
 
 table.month {
     margin: 0 auto;

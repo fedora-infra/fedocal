@@ -49,18 +49,13 @@ class FedocalCalendartests(Modeltests):
     def test_formatday(self):
         """ Test the formatday function. """
         today = date.today()
-        cal = FedocalCalendar(today.year, today.month, today.day)
+        cal = FedocalCalendar(2013, 1, 6)
         self.assertEqual(
             cal.formatday(6, 1),
             '<td class="tue">6</td>')
         self.assertEqual(
             cal.formatday(7, 3),
             '<td class="thu">7</td>')
-        self.assertEqual(
-            cal.formatday(today.day, today.isoweekday() - 1),
-            '<td class="%s today">%s</td>' % (
-                today.strftime('%a').lower(), today.day)
-            )
 
     def test_formatweek(self):
         """ Test the formatweek function. """

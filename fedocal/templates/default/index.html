@@ -1,5 +1,6 @@
 {% extends "master.html" %}
 
+{% block title %}Home{% endblock %}
 {%block tag %}home{% endblock %}
 
 {% macro render_calendars(calendars) -%}
@@ -18,10 +19,6 @@
     <p>No calendar found</p>
     {% endfor %}
 {%- endmacro %}
-
-{% block title %}Home{% endblock %}
-
-{% set title_extent = "Home" %}
 
 {% block content %}
 <h2>Active Calendars</h2>

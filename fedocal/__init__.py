@@ -99,8 +99,9 @@ def inject_variables():
     """ With this decorator we can set some variables to all templates.
     """
     calendars = Calendar.get_all(SESSION)
+    admin = is_admin()
 
-    return dict(calendars=calendars, version=__version__)
+    return dict(calendars=calendars, version=__version__, admin=admin)
 
 
 @APP.template_filter('WeekHeading')
@@ -209,25 +210,24 @@ def chunks(item_list, chunks_size):
 ## Flask application
 @APP.route('/')
 def index():
-    """ Displays the index page with containing the first calendar (by
-    order of creation and if any) for the current week.
+    """ Displays the index page presenting all the calendars available.
     """
     calendars_enabled = Calendar.by_status(SESSION, 'Enabled')
     calendars_disabled = Calendar.by_status(SESSION, 'Disabled')
-    auth_form = forms.LoginForm()
-    admin = is_admin()
     return flask.render_template(
         'index.html',
         calendars=calendars_enabled,
         calendars_table=chunks(calendars_enabled, 3),
-        calendars_table2=chunks(calendars_disabled, 3),
-        auth_form=auth_form,
-        admin=admin)
+        calendars_table2=chunks(calendars_disabled, 3))
 
 
 # pylint: disable=R0914
 @APP.route('/<calendar_name>/',
            defaults={'year': None, 'month': None, 'day': None})
+@APP.route('/<calendar_name>/<int:year>/',
+           defaults={'month': None, 'day': None})
+@APP.route('/<calendar_name>/<int:year>/<int:month>/',
+           defaults={'day': None})
 @APP.route('/<calendar_name>/<int:year>/<int:month>/<int:day>/')
 def calendar(calendar_name, year, month, day):
     """ Display the week of a specific date for a specified calendar.
@@ -249,7 +249,6 @@ def calendar(calendar_name, year, month, day):
     prev_week = fedocallib.get_previous_week(
         week_start.year, week_start.month, week_start.day)
     auth_form = forms.LoginForm()
-    admin = is_admin()
     month_name = week_start.strftime('%B')
 
     day_index = None
@@ -271,8 +270,7 @@ def calendar(calendar_name, year, month, day):
         next_week=next_week,
         prev_week=prev_week,
         auth_form=auth_form,
-        curmonth_cal=curmonth_cal,
-        admin=admin)
+        curmonth_cal=curmonth_cal)
 
 
 @APP.route('/list/<calendar_name>/',
@@ -317,7 +315,6 @@ def calendar_list(calendar_name, year, month, day):
 
     month_name = datetime.date.today().strftime('%B')
     auth_form = forms.LoginForm()
-    admin = is_admin()
 
     curmonth_cal = fedocallib.get_html_monthly_cal(
         year=year, month=month, day=day, calendar_name=calendar_name)
@@ -329,8 +326,7 @@ def calendar_list(calendar_name, year, month, day):
         tzone=tzone,
         year=inyear,
         auth_form=auth_form,
-        curmonth_cal=curmonth_cal,
-        admin=admin)
+        curmonth_cal=curmonth_cal)
 
 
 @APP.route('/ical/')
@@ -381,12 +377,11 @@ def my_meetings():
         SESSION, flask.g.fas_user.username, tzone=tzone)
     past_meetings = fedocallib.get_past_meeting_of_user(
         SESSION, flask.g.fas_user.username, tzone=tzone)
-    admin = is_admin()
     return flask.render_template(
         'my_meeting.html',
         title='My meeting', regular_meetings=regular_meetings,
         single_meetings=single_meetings, pas_meetings=past_meetings,
-        admin=admin, tzone=tzone)
+        tzone=tzone)
 
 
 @APP.route('/login/', methods=('GET', 'POST'))
@@ -864,3 +859,72 @@ def markdown_preview():
     """
     return flask.render_template(
         'markdown.html', content=flask.request.form['content'])
+
+
+@APP.route('/admin/')
+def admin():
+    """ Displays the index page for the admin section.
+    """
+    calendars = Calendar.get_all(SESSION)
+    calendar = flask.request.args.get('calendar', None)
+    action = flask.request.args.get('action', None)
+    if calendar and action and action in ['edit', 'delete']:
+        if action == 'edit':
+            return flask.redirect(
+                flask.url_for('edit_calendar', calendar_name=calendar))
+        elif action == 'delete':
+            return flask.redirect(
+                flask.url_for('delete_calendar', calendar_name=calendar))
+    return flask.render_template('admin.html', calendars=calendars)
+
+
+@APP.route('/goto/')
+def goto():
+    """ Redirect the user to the begining of the requested Month of the
+    specified year.
+    """
+    calendar = flask.request.args.get('calendar', None)
+    view_type = flask.request.args.get('type', 'calendar')
+    year = flask.request.args.get('year', None)
+    month = flask.request.args.get('month', None)
+    day = flask.request.args.get('day', None)
+
+    now = datetime.datetime.utcnow()
+    if not year:
+        year = now.year
+
+    try:
+        if day:
+            day = int(day)
+        if month:
+            month = int(month)
+        if year:
+            year = int(year)
+        if year and month and day:
+            datetime.date(year, month, day)
+    except ValueError:
+        flask.flash('Invalid date specified', 'errors')
+        year = month = day = None
+
+    if year and year < 1900:
+        year = month = day = None
+        flask.flash('Dates before 1900 are not allowed', 'warnings')
+
+    if view_type not in ['calendar', 'list']:
+        view_type = 'calendar'
+
+    if view_type == 'list':
+        url = flask.redirect(
+            flask.url_for(
+                'calendar_list', calendar_name=calendar,
+                year=year, month=month, day=day
+            )
+        )
+    else:
+        url = flask.redirect(
+            flask.url_for(
+                'calendar', calendar_name=calendar,
+                year=year, month=month, day=day
+            )
+        )
+    return url

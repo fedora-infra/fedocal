@@ -1,7 +1,8 @@
 {% extends "master.html" %}
 {% from "_formhelpers.html" import render_field %}
 
-{% set title_extent = ('Add new meeting to "%s"') % calendar.calendar_name %}
+{% block title %}Add meeting{% endblock %}
+{%block tag %}home{% endblock %}
 
 {% block content %}
 <section>

@@ -80,9 +80,9 @@ class Flasktests(Modeltests):
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title>Home - Fedocal</title>' in output.data)
-        self.assertTrue(' <a href="/test_calendar/">' in output.data)
-        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
-        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+        self.assertTrue('href="/test_calendar/">' in output.data)
+        self.assertTrue('href="/test_calendar2/">' in output.data)
+        self.assertTrue('href="/test_calendar4/">' in output.data)
 
     def test_calendar(self):
         """ Test the calendar function. """
@@ -94,7 +94,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/test_calendar', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in output.data)
+            '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
@@ -102,7 +102,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/test_calendar2/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar2  - Fedocal</title>' in output.data)
+            '<title>test_calendar2 - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
@@ -117,7 +117,7 @@ class Flasktests(Modeltests):
                 today.year, today.month, today.day))
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in output.data)
+            '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
@@ -131,7 +131,7 @@ class Flasktests(Modeltests):
             today.year, today.month, today.day), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in output.data)
+            '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
@@ -145,7 +145,7 @@ class Flasktests(Modeltests):
             today.year, today.month, today.day))
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in output.data)
+            '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
@@ -158,7 +158,7 @@ class Flasktests(Modeltests):
             today.year, today.month, today.day), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in output.data)
+            '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
@@ -167,7 +167,7 @@ class Flasktests(Modeltests):
             today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test_calendar  - Fedocal</title>' in output.data)
+            '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
@@ -209,7 +209,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/meeting/5/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test-meeting-st-1  - Fedocal</title>'
+            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
             in output.data)
         self.assertTrue(
             '<h4> Meeting: test-meeting-st-1</h4>'
@@ -225,7 +225,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/meeting/5/1/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test-meeting-st-1  - Fedocal</title>'
+            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
             in output.data)
         self.assertTrue(
             '<h4> Meeting: test-meeting-st-1</h4>'
@@ -237,7 +237,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/meeting/5/0/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> test-meeting-st-1  - Fedocal</title>'
+            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
             not in output.data)
         self.assertTrue(
             '<h4> Meeting: test-meeting-st-1</h4>'

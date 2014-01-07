@@ -75,7 +75,7 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title> API   - Fedocal</title>' in output.data)
+            '<title>API - Fedocal</title>' in output.data)
         self.assertTrue(
             '<h1 class="title">API documentation</h1>' in output.data)
         #self.assertTrue('<code>/api/date/calendar_name/</code>' \

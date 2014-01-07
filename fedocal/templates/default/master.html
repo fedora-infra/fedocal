@@ -3,157 +3,85 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico')}}" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>{% block title %}{% endblock %} - Fedocal</title>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon"
+        href="{{ url_for('static', filename='favicon.ico')}}"/>
     <link rel="stylesheet" type="text/css" media="screen"
-        href="{{ url_for('static', filename='fedocal.css') }}" />
+        href="{{ url_for('static', filename='koji.css') }}"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='fedocal.css') }}"/>
     <link type="text/css" rel="stylesheet"
         href="{{ url_for('static',
             filename='fedocal/jquery-ui-1.9.2.custom.css')}}" />
-    {% block head %}{% endblock %}
-</head>
-<body>
-    {% block content_titles %}
-        <header id="mainheader">
-            <h1>
-                <img alt="Fedora Calendar{% if title_extent is defined %} - {% endif %}" src="{{ url_for('static', filename='fedora-logo.png') }}" />
-                {% if title_extent is defined %}<span>{{ title_extent }}</span>{% endif %}
-            </h1>
-        </header>
-    {% endblock %}
+    {% block header %}{% endblock %}
+  </head>
+  <body id="{% block tag %}{% endblock %}">
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul class=flashes>
-        {% for category, message in messages %}
-          <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+    <div id="wrap">
+      <div id="innerwrap">
 
-    <div id="content">
-        {% block content %}{% endblock %}
+        <!-- HEADER -->
+        <div id="header">
+          <img src="{{ url_for('static', filename='fedocal-logo.png') }}"
+            alt="Fedocal Logo" id="kojiLogo"/>
+          <form action="{{url_for('index')}}" id="headerSearch">
+            <input type="text" name="term"/>
+            <input type="submit" value="Search"/>
+          </form>
+        </div><!-- end header -->
 
-        <aside id="mainmenu">
-            {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
-            <h4 id="home" class="ui-corner-all ui-helper-reset">
-                <a href="{{url_for('index')}}">Home</a>
-            </h4>
-            <div id="accordion">
-            <h4>Calendars</h4>
-            <ul id="calendars_menu" class="checkmark-list">
-                {% for calendar in calendars %}
-                {% if calendar.calendar_status == 'Enabled' %}
-                <li>
-                    <a href="{{url_for('calendar',
-                        calendar_name=calendar.calendar_name)}}">
-                        {{ calendar.calendar_name }}
-                    </a>
-                    <ul>
-                        {% if g.fas_user %}
-                        <li>
-                            <a href="{{ url_for('add_meeting',
-                                calendar_name=calendar.calendar_name) }}">Add a meeting</a>
-                        </li>
-                        {% endif %}
-                        <li>
-                            <a href="{{ url_for('calendar_list',
-                                calendar_name=calendar.calendar_name) }}">
-                                List view
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{url_for('ical_out',
-                                               calendar_name=calendar.calendar_name)}}"
-                                title="Add this calendar to your agenda">iCal export</a>
-                        </li>
-                        <li>
-                            <a onclick="CopyToClipboard('{{url_for('ical_out',
-                                               calendar_name=calendar.calendar_name)}}')"
-                                title="Copy the iCal feed URL">Copy iCal link</a>
-                        </li>
-                        {% if calendar.calendar_contact %}
-                        <li>
-                            <a href="mailto:{{calendar.calendar_contact}}">
-                                Contact admin
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </li>
-                {% endif %}
-                {% endfor %}
-            </ul>
-            {% if not g.fas_user %}
-            <h4> <a class="toDisable" href={{ url_for("auth_login", next=request.url) }}>FAS Log in</a> </h4>
-            <div></div>
-            {% else %}
-            <h4> User </h4>
-            <div>
-                <p> Welcome, {{ g.fas_user.username }}</p>
-                <ul class="checkmark-list">
-                    <li><a href="{{ url_for('my_meetings') }}"> Manage your meetings </a></li>
-                    <li><a href="{{ url_for('auth_logout') }}"> Log-out </a></li>
-                </ul>
-            </div>
+        <!-- MAIN NAVIGATION -->
+        <div id="mainNav">
+          <h4 class="hide">Main Site Links:</h4>
+          <ul>
+            <li id="homeTab"><a href="{{url_for('index')}}">Home</a></li>
+            {% if g.fas_user %}
+            <li id="mymeetingTab"><a href="{{url_for('my_meetings')}}">My meeting</a></li>
             {% endif %}
             {% if admin %}
-            <h4> Admin </h4>
-            <div>
-            <ul class="checkmark-list">
-                <li>
-                    <a href="{{ url_for('add_calendar') }}"> Add a calendar </a>
-                </li>
-                {% if calendar %}
-                <li>
-                    <a href="{{ url_for('edit_calendar',
-                        calendar_name=calendar.calendar_name) }}"> Edit calendar </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('delete_calendar',
-                        calendar_name=calendar.calendar_name) }}"> Delete calendar </a>
-                </li>
-                {% endif %}
-            </ul>
-            </div>
+            <li id="adminTab"><a href="{{url_for('admin')}}">Admin</a></li>
             {% endif %}
-            <h4>Information</h4>
-            <div>
-            <ul class="checkmark-list">
-                <li><a href="https://fedorahosted.org/fedocal/">Project page</a></li>
-                <li><a href="http://fedocal.rtfd.org/">Documentation</a></li>
-                <li><a href="{{ url_for('api') }}">API</a></li>
-                <li><a href="https://fedorahosted.org/fedocal/report">Bugs & Improvements</a></li>
-            </ul>
-            </div>
-            </div>
-            {% if calendar %}
-            <ul class="checkmark-list">
-                {% if calendar.calendar_admin_group %}
-                <li>Administrators: {{ calendar.calendar_admin_group }}</li>
-                {% endif %}
-                {% if calendar.calendar_editor_group %}
-                <li>Editors: {{ calendar.calendar_editor_group }}</li>
-                {% else %}
-                <li>Editors: CLA+1</li>
-                {% endif %}
-            </ul>
-            {% endif %}
+          </ul>
+        </div><!-- end mainNav -->
 
-        </aside>
-        <footer>
-            <a href="https://fedorahosted.org/fedocal/"
-                target="_blank">Fedocal</a> -
-            <a href="http://fedocal.rtfd.org/"
-                target="_blank">Documentation</a> -
-            <a href="{{ url_for('api') }}">API</a> -
-            <a href="http://fedocal.readthedocs.org/en/latest/contributors.html">Author</a> -
-            <a href="https://fedorahosted.org/fedocal/report"
-                target="_blank">Bugs & Improvements</a>
-            -- {{ version }}
-        </footer>
+        <span id="loginInfo">
+          {% if g.fas_user %}
+            <span class="text">logged in as </span>
+            <a href="{{url_for('my_meetings',)}}">{{ g.fas_user.username }}</a> |
+            <a href="{{ url_for('auth_logout') }}?next={{request.url}}">log out</a>
+          {% else %}
+        <a href="{{ url_for('auth_login') }}?next={{request.url}}">login</a>
+          {% endif %}
+        </span>
+
+        <div id="content">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if category, messages %}
+                <ul id="flashes">
+                    {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+        </div>
+
+        <p id="footer">
+          Copyright &copy; 2012-2014 Red Hat
+          <a href="https://fedorahosted.org/fedocal/">fedocal</a>
+          -- {{version}}
+          -- <a href="http://fedocal.rtfd.org"
+                target="_blank">Documentation</a>
+          -- <a href="http://fedocal.readthedocs.org/en/latest/contributors.html">Authors</a>
+          -- <a href="{{ url_for('api') }}">API</a>
+        </p>
+
+      </div>
     </div>
 
     {% block jscripts %}

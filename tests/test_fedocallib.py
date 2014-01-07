@@ -1743,7 +1743,7 @@ class Fedocallibtests(Modeltests):
             time(0, 0))
         self.assertEqual(
             meeting.meeting_date_end,
-            date.today() + timedelta(days=3))
+            date.today() + timedelta(days=2))
 
         meeting = model.Meeting.by_id(self.session, 9)
         fedocallib.edit_meeting(

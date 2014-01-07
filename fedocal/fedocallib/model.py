@@ -600,42 +600,6 @@ class Meeting(BASE):
         ).all()
 
     @classmethod
-    def get_by_time(
-            cls, session, calendar, meetingdate, start_time, stop_time):
-        """ Retrieve the list of meetings for a given date and between
-        two times for a specific calendar.
-        """
-        return session.query(cls).filter(
-            and_(
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date == meetingdate),
-                (Meeting.meeting_time_start >= start_time),
-                (Meeting.meeting_time_stop < stop_time)
-            )
-        ).order_by(
-            Meeting.meeting_date,
-            Meeting.meeting_time_start,
-            Meeting.meeting_name
-        ).all()
-
-    @classmethod
-    def get_at_time(cls, session, calendar, meetingdate, t_time):
-        """ Returns the meeting occuring at this specific time point.
-        """
-        return session.query(cls).filter(
-            and_(
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date == meetingdate),
-                (Meeting.meeting_time_start <= t_time),
-                (Meeting.meeting_time_stop > t_time)
-            )
-        ).order_by(
-            Meeting.meeting_date,
-            Meeting.meeting_time_start,
-            Meeting.meeting_name
-        ).all()
-
-    @classmethod
     def get_past_meeting_of_user(cls, session, username, start_date):
         """ Retrieve the list of meetings which specified username
         is among the managers and which date is older than the specified

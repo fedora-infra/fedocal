@@ -30,12 +30,14 @@ import pkg_resources
 __version__ = '0.3.1'
 
 import datetime
+import logging
 import os
-from dateutil.relativedelta import relativedelta
+from logging.handlers import SMTPHandler
 
 import flask
 import markdown
 import vobject
+from dateutil.relativedelta import relativedelta
 from flask_fas_openid import FAS
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
@@ -49,6 +51,7 @@ import fedocal.fedocallib.fedmsgshim as fedmsg
 
 # Create the application.
 APP = flask.Flask(__name__)
+
 # set up FAS
 APP.config.from_object('fedocal.default_config')
 
@@ -63,6 +66,34 @@ APP.static_folder = os.path.join(
 
 FAS = FAS(APP)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
+
+# Set up the logger
+## Send emails for big exception
+mail_handler = SMTPHandler(
+    APP.config.get('SMTP_SERVER', '127.0.0.1'),
+    'nobody@fedoraproject.org',
+    APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org'),
+    'Fedocal error')
+mail_handler.setFormatter(logging.Formatter('''
+    Message type:       %(levelname)s
+    Location:           %(pathname)s:%(lineno)d
+    Module:             %(module)s
+    Function:           %(funcName)s
+    Time:               %(asctime)s
+
+    Message:
+
+    %(message)s
+'''))
+mail_handler.setLevel(logging.ERROR)
+APP.logger.addHandler(mail_handler)
+
+## Send classic logs into syslog
+handler = logging.StreamHandler()
+handler.setLevel(APP.config.get('log_level', 'INFO'))
+APP.logger.addHandler(handler)
+
+LOG = APP.logger
 
 
 import fedocal.api
@@ -444,7 +475,8 @@ def add_calendar():
             SESSION.commit()
         except SQLAlchemyError, err:
             SESSION.rollback()
-            print 'add_calendar:', err
+            LOG.debug('Error in add_calendar')
+            LOG.exception(err)
             flask.flash('Could not add this calendar to the database',
                         'errors')
             return flask.render_template('add_calendar.html',
@@ -524,7 +556,8 @@ def add_meeting(calendar_name):
                 tzone=tzone)
         except SQLAlchemyError, err:
             SESSION.rollback()
-            print 'add_meeting:', err
+            LOG.debug('Error in add_meeting')
+            LOG.exception(err)
             flask.flash('Could not add this meeting to this calendar',
                         'errors')
             return flask.render_template(
@@ -611,7 +644,8 @@ def edit_meeting(meeting_id):
                 form=form, tzone=tzone)
         except SQLAlchemyError, err:
             SESSION.rollback()
-            print 'edit_meeting:', err
+            LOG.debug('Error in edit_meeting')
+            LOG.exception(err)
             flask.flash('Could not update this meeting.', 'errors')
             return flask.render_template(
                 'edit_meeting.html', meeting=meeting,
@@ -740,7 +774,8 @@ def delete_meeting(meeting_id):
                 flask.flash('Meeting deleted')
             except SQLAlchemyError, err:
                 SESSION.rollback()
-                print 'edit_meeting:', err
+                LOG.debug('Error in edit_meeting - 2')
+                LOG.exception(err)
                 flask.flash('Could not delete this meeting.', 'error')
 
         fedmsg.publish(topic="meeting.delete", msg=dict(
@@ -782,7 +817,8 @@ def delete_calendar(calendar_name):
                 SESSION.commit()
             except SQLAlchemyError, err:
                 SESSION.rollback()
-                print 'delete_calendar:', err
+                LOG.debug('Error in delete_calendar')
+                LOG.exception(err)
                 flask.flash('Could not delete this calendar.', 'errors')
         flask.flash('Calendar deleted')
         fedmsg.publish(topic="calendar.delete", msg=dict(
@@ -832,7 +868,8 @@ def edit_calendar(calendar_name):
             SESSION.commit()
         except SQLAlchemyError, err:
             SESSION.rollback()
-            print 'edit_calendar:', err
+            LOG.debug('Error in edit_calendar')
+            LOG.exception(err)
             flask.flash('Could not update this calendar.', 'errors')
             return flask.render_template(
                 'edit_calendar.html', form=form, calendar=calendarobj)

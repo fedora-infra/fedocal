@@ -801,14 +801,10 @@ def add_meeting(
 
     reminder = None
     if remind_when and remind_who:
-        try:
-            reminder = dbaction.add_reminder(
-                session=session,
-                remind_when=remind_when,
-                remind_who=remind_who)
-        except SQLAlchemyError, err:  # pragma: no cover
-            print 'add_reminder:', err
-            raise SQLAlchemyError(err)
+        reminder = dbaction.add_reminder(
+            session=session,
+            remind_when=remind_when,
+            remind_who=remind_who)
 
     reminder_id = None
     if reminder:

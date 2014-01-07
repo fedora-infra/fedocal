@@ -582,6 +582,7 @@ def edit_meeting(meeting_id):
     # pylint: disable=E1101
     if form.validate_on_submit():
         tzone = form.meeting_timezone.data or tzone
+        action = flask.request.form.get('action', 'Edit')
         try:
             fedocallib.edit_meeting(
                 session=SESSION,
@@ -602,7 +603,7 @@ def edit_meeting(meeting_id):
                 remind_when=form.remind_when.data,
                 remind_who=form.remind_who.data,
                 full_day=form.full_day.data,
-                edit_all_meeting=form.recursive_edit.data,
+                edit_all_meeting=action == 'Edit all',
                 admin=is_admin())
         except FedocalException, err:
             flask.flash(err, 'warnings')

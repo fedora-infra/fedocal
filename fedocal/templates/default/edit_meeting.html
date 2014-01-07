@@ -49,20 +49,16 @@
             {{ render_field_in_row(form.remind_who) }}
         </table>
 
-        {% if meeting.recursion_frequency %}
-            <h4>Edit all?</h4>
-            <p>This meeting is a recursive meeting, by default your
-            changes will only affect this meeting unless you explecitely
-            say otherwise:
-            </p>
-            {{ render_field_invert(form.recursive_edit) }}
-        {% endif %}
+        {{ form.csrf_token }}
 
         <p class="buttons indent">
-            <input type="submit" class="submit positive button" value="Edit">
-            <input type="button" value="Cancel" class="button" onclick="history.back();">
-            {{ form.csrf_token }}
+            <input type="submit" name="action" class="submit positive button" value="Edit"/>
+        {% if meeting.recursion_frequency %}
+            <input type="submit" name="action" class="submit positive button" value="Edit all"/>
+        {% endif %}
+            <input type="button" name="action" value="Cancel" class="button" onclick="history.back();"/>
         </p>
+
     </form>
 </section>
 {% endblock %}

@@ -241,6 +241,7 @@ class Meeting(BASE):
     meeting_date_end = Column(Date, default=safunc.now(), nullable=False)
     meeting_time_start = Column(Time, default=safunc.now(), nullable=False)
     meeting_time_stop = Column(Time, default=safunc.now(), nullable=False)
+    meeting_timezone = Column(Text, nullable=False, default='UTC')
     meeting_information = Column(Text, nullable=True)
     meeting_region = Column(String(10), default=None, nullable=True)
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
@@ -256,8 +257,8 @@ class Meeting(BASE):
             self, meeting_name, meeting_manager,
             meeting_date, meeting_date_end,
             meeting_time_start, meeting_time_stop,
-            meeting_information, calendar_name, reminder_id=None,
-            meeting_region=None, recursion_frequency=None,
+            meeting_information, calendar_name, meeting_timezone='UTC',
+            reminder_id=None, meeting_region=None, recursion_frequency=None,
             recursion_ends=None, full_day=False):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
@@ -266,6 +267,7 @@ class Meeting(BASE):
         self.meeting_date_end = meeting_date_end
         self.meeting_time_start = meeting_time_start
         self.meeting_time_stop = meeting_time_stop
+        self.meeting_timezone = meeting_timezone
         self.meeting_information = meeting_information
         self.calendar_name = calendar_name
         self.reminder_id = reminder_id
@@ -295,6 +297,7 @@ class Meeting(BASE):
             meeting_date_end=self.meeting_date_end.strftime('%Y-%m-%d'),
             meeting_time_start=self.meeting_time_start.strftime('%H:%M:%S'),
             meeting_time_stop=self.meeting_time_stop.strftime('%H:%M:%S'),
+            meeting_timezone=self.meeting_timezone,
             meeting_information=self.meeting_information,
             meeting_region=self.meeting_region,
             calendar_name=self.calendar_name
@@ -321,6 +324,7 @@ class Meeting(BASE):
             #meeting.meeting_date = self.meeting_date
             meeting.meeting_time_start = self.meeting_time_start
             meeting.meeting_time_stop = self.meeting_time_stop
+            meeting.meeting_timezone = self.meeting_timezone
             meeting.calendar_name = self.calendar_name
             meeting.calendar = self.calendar
             meeting.reminder_id = self.reminder_id
@@ -336,6 +340,7 @@ class Meeting(BASE):
                 meeting_date_end=self.meeting_date_end,
                 meeting_time_start=self.meeting_time_start,
                 meeting_time_stop=self.meeting_time_stop,
+                meeting_timezone=self.meeting_timezone,
                 meeting_information=self.meeting_information,
                 calendar_name=self.calendar_name,
                 reminder_id=self.reminder_id,

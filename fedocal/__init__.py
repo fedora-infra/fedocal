@@ -32,7 +32,7 @@ __version__ = '0.3.1'
 import datetime
 import logging
 import os
-from logging.handlers import SMTPHandler, SysLogHandler
+from logging.handlers import SMTPHandler
 
 import flask
 import markdown

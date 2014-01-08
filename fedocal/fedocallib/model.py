@@ -111,6 +111,15 @@ class CalendarStatus(BASE):
         """
         return "<CalendarStatus('%s')>" % (self.status)
 
+    @classmethod
+    def all(cls, session):
+        """ Return all the CalendarStatus. """
+        return session.query(
+            cls
+        ).order_by(
+            cls.status.desc()
+        ).all()
+
 
 class Calendar(BASE):
     """ Calendar table.

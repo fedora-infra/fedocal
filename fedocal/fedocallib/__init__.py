@@ -977,8 +977,4 @@ def edit_meeting(
 
 def get_calendar_statuses(session):
     """ Return the list of all the status available for the calendars. """
-    return session.query(
-        CalendarStatus
-    ).order_by(
-        CalendarStatus.status.desc()
-    ).all()
+    return CalendarStatus.all(session)

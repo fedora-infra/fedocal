@@ -58,7 +58,7 @@ The SMTP server address
 Fedocal sends reminder emails for the meeting for which it has been asked.
 This tasks is performed by a cron job.
 The ``SMTP_SERVER`` field in the configuration file refers to the address
-of the `SMTP <http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol>`
+of the `SMTP <http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol>`_
 server to use to send these reminders.
 
 

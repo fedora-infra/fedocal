@@ -22,6 +22,7 @@ from datetime import datetime
 from datetime import date
 from datetime import time
 from datetime import timedelta
+from dateutil import zoneinfo
 
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
@@ -253,6 +254,8 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
     fmt = '%Hh%M'
     #week_start = convert_time(week_start, 'UTC', tzone)
     for meeting in meeting_list:
+        meeting = convert_meeting_timezone(
+            meeting, meeting.meeting_timezone, tzone)
         start_delta = 0
         if meeting.meeting_time_start.minute < 15:
             start_delta = - meeting.meeting_time_start.minute
@@ -275,7 +278,7 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
             meeting.meeting_time_start.hour,
             meeting.meeting_time_start.minute, 0
         ) + timedelta(minutes=start_delta)
-        startdt = convert_time(startdt, 'UTC', tzone)
+        startdt = convert_time(startdt, meeting.meeting_timezone, tzone)
 
         stopdt = datetime(
             meeting.meeting_date_end.year,
@@ -284,7 +287,7 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
             meeting.meeting_time_stop.hour,
             meeting.meeting_time_stop.minute, 0
         ) + timedelta(minutes=stop_delta)
-        stopdt = convert_time(stopdt, 'UTC', tzone)
+        stopdt = convert_time(stopdt, meeting.meeting_timezone, tzone)
 
         if stopdt < startdt:  # pragma: no cover
             stopdt = stopdt + timedelta(days=1)
@@ -409,7 +412,8 @@ def get_past_meeting_of_user(
         end_date=from_date)
     meetings = []
     for meeting in meetings_tmp:
-        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
+        meetings.append(convert_meeting_timezone(
+            meeting, meeting.meeting_timezone, tzone))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 
@@ -432,7 +436,8 @@ def get_future_single_meeting_of_user(
         session, username, from_date)
     meetings = []
     for meeting in meetings_tmp:
-        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
+        meetings.append(convert_meeting_timezone(
+            meeting, meeting.meeting_timezone, tzone))
     return meetings
 
 
@@ -454,7 +459,8 @@ def get_future_regular_meeting_of_user(
         session, username, from_date)
     meetings = []
     for meeting in meetings_tmp:
-        meetings.append(convert_meeting_timezone(meeting, 'UTC', tzone))
+        meetings.append(convert_meeting_timezone(
+            meeting, meeting.meeting_timezone, tzone))
     return meetings
 
 
@@ -486,7 +492,7 @@ def agenda_is_free(
             meeting.meeting_date.day,
             meeting.meeting_time_start.hour,
             meeting.meeting_time_start.minute,
-            tzinfo=pytz.utc)
+            tzinfo=pytz.timezone(meeting.meeting_timezone))
 
         meeting_stop_date_time = datetime(
             meeting.meeting_date_end.year,
@@ -494,7 +500,7 @@ def agenda_is_free(
             meeting.meeting_date_end.day,
             meeting.meeting_time_stop.hour,
             meeting.meeting_time_stop.minute,
-            tzinfo=pytz.utc)
+            tzinfo=pytz.timezone(meeting.meeting_timezone))
 
         if meeting_date <= meeting_start_date_time \
                 and meeting_date_end > meeting_start_date_time:
@@ -655,7 +661,6 @@ def add_meeting_to_vcal(ical, meeting):
     :arg meeting: a single fedocal.model.Meeting object to convert to
         iCal and add to the provided calendar.
     """
-    utc = vobject.icalendar.utc
     entry = ical.add('vevent')
     entry.add('summary').value = meeting.meeting_name
     entry.add('description').value = meeting.meeting_information
@@ -669,11 +674,11 @@ def add_meeting_to_vcal(ical, meeting):
         entry.add('transp').value = 'TRANSPARENT'
     else:
         meeting.meeting_time_start = meeting.meeting_time_start.replace(
-            tzinfo=utc)
+            tzinfo=zoneinfo.gettz(meeting.meeting_timezone))
         start.value = datetime.combine(meeting.meeting_date,
                                        meeting.meeting_time_start)
         meeting.meeting_time_stop = meeting.meeting_time_stop.replace(
-            tzinfo=utc)
+            tzinfo=zoneinfo.gettz(meeting.meeting_timezone))
         stop.value = datetime.combine(meeting.meeting_date_end,
                                       meeting.meeting_time_stop)
 
@@ -737,7 +742,7 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
     meetings = []
     for meeting in list(set(meetings_utc)):
         meetings.append(convert_meeting_timezone(
-            meeting, 'UTC', tzone))
+            meeting, meeting.meeting_timezone, tzone))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 
@@ -822,6 +827,7 @@ def add_meeting(
         meeting_date_end=meeting_time_stop.date(),
         meeting_time_start=meeting_time_start,
         meeting_time_stop=meeting_time_stop,
+        meeting_timezone=tzone,
         meeting_information=meeting_information,
         calendarobj=calendarobj,
         reminder_id=reminder_id,
@@ -837,7 +843,7 @@ def add_meeting(
 def edit_meeting(
         session, meeting, calendarobj, fas_user,
         meeting_name, meeting_date, meeting_date_end,
-        meeting_time_start, meeting_time_stop, comanager,
+        meeting_time_start, meeting_time_stop,comanager,
         meeting_information,
         meeting_region, tzone,
         recursion_frequency, recursion_ends,
@@ -911,21 +917,6 @@ def edit_meeting(
                 days=meeting.recursion_frequency)
             new_meeting.meeting_date_end = meeting_date_end + timedelta(
                 days=meeting.recursion_frequency)
-
-            dt_start = datetime(
-                new_meeting.meeting_date.year,
-                new_meeting.meeting_date.month,
-                new_meeting.meeting_date.day,
-                new_meeting.meeting_time_start.hour,
-                new_meeting.meeting_time_start.minute,
-                tzinfo=pytz.utc)
-            dt_stop = datetime(
-                new_meeting.meeting_date_end.year,
-                new_meeting.meeting_date_end.month,
-                new_meeting.meeting_date_end.day,
-                new_meeting.meeting_time_start.hour,
-                new_meeting.meeting_time_start.minute,
-                tzinfo=pytz.utc)
 
             new_meeting.save(session)
 

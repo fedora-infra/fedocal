@@ -429,22 +429,6 @@ class Meetingtests(Modeltests):
             obj[1].meeting_information, 'This is a test meeting')
         self.assertEqual(obj[1].reminder, None)
 
-    def test_get_at_time(self):
-        """ Test the get_at_time function. """
-        self.test_init_meeting()
-        cal = model.Calendar.by_id(self.session, 'test_calendar')
-        obj = model.Meeting.get_at_time(
-            self.session, cal, TODAY, time(20, 00))
-
-        self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 1)
-        self.assertEqual(obj[0].meeting_name, 'Fedora-fr-test-meeting')
-        self.assertEqual(obj[0].meeting_manager, 'pingou, shaiton,')
-        self.assertEqual(obj[0].calendar.calendar_name, 'test_calendar')
-        self.assertEqual(
-            obj[0].meeting_information, 'This is a test meeting')
-        self.assertEqual(obj[0].reminder, None)
-
     def test_get_by_date(self):
         """ Test the query of a list of meetings between two dates. """
         self.test_init_meeting()
@@ -562,32 +546,6 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 0)
         self.assertEqual(obj, [])
-
-    def test_get_by_time(self):
-        """ Test the Meeting get_by_time function. """
-        self.test_init_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meetings = model.Meeting.get_by_time(
-            self.session, calendar, TODAY, time(00, 00), time(23, 59))
-        self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 2)
-
-        self.assertEqual(
-            meetings[0].meeting_name, 'Another test meeting2')
-        self.assertEqual(
-            meetings[1].meeting_name, 'Fedora-fr-test-meeting')
-
-    def test_get_by_time_fail(self):
-        """ Test the Meeting get_by_time function when there is nothing
-        to return. """
-        self.test_init_meeting()
-        calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meetings = model.Meeting.get_by_time(
-            self.session, calendar, TODAY + timedelta(days=1),
-            time(00, 00), time(23, 59))
-        self.assertNotEqual(meetings, None)
-        self.assertEqual(len(meetings), 0)
-        self.assertEqual(meetings, [])
 
     def test_get_past_meeting_of_user(self):
         """ Test the Meeting get_past_meeting_of_user function. """

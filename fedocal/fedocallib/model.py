@@ -748,6 +748,26 @@ class Meeting(BASE):
             'meeting_date', 'meeting_time_start', 'meeting_name'))
         return meetings
 
+    @classmethod
+    def search(cls, session, keyword):
+        """ Searches the meetings table to return all the meetings having
+        the provided keyword in their name or description.
+        """
+        query = session.query(
+            cls
+        ).filter(
+            or_(
+                cls.meeting_name.like(keyword),
+                cls.meeting_information.like(keyword)
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        )
+
+        return query.all()
+
 
 class Reminder(BASE):
     """ Reminders table.

@@ -1,6 +1,7 @@
 {% extends "master.html" %}
 
-{% block title %}{{ calendar.calendar_name }}{% endblock %}
+{% block title %}{% if calendar %}{{ calendar.calendar_name
+}}{% else %}Search{% endif %}{% endblock %}
 
 {%block tag %}home{% endblock %}
 
@@ -29,9 +30,17 @@
             &gt;
         </a>
     </nav>
+{% else %}
+<header>
+    <h2>
+        Search
+    </h2>
+    <p>Result of your search for "{{ keyword }}"</p>
+</header>
 {% endif %}
     <aside id="mainmenu">
         {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
+        {% if calendar %}
         <form action="{{url_for('goto')}}" id="goto_date">
           <input type="hidden" name="calendar" value="{{calendar.calendar_name}}"/>
           <input type="hidden" name="type" value="list"/>
@@ -44,6 +53,7 @@
           Specify a year to see the yearly report, a month of a year to see
           the monthly report and a complete date to see that specific date.
         </p>
+        {% endif %}
         <div id="accordion">
         <h4>Calendars</h4>
         <ul id="calendars_menu" class="checkmark-list">
@@ -90,7 +100,7 @@
             {% endfor %}
         </ul>
 
-        {% if admin %}
+        {% if calendar and admin %}
         <h4> Admin </h4>
         <div>
         <ul class="checkmark-list">
@@ -108,6 +118,8 @@
 
         </ul>
       </div>
+
+      {% if calendar %}
       <ul class="checkmark-list">
         {% if calendar.calendar_admin_group %}
         <li>Administrators: {{ calendar.calendar_admin_group }}</li>
@@ -118,6 +130,7 @@
         <li>Editors: CLA+1</li>
         {% endif %}
       </ul>
+      {% endif %}
 
     </aside>
 

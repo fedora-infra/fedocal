@@ -107,6 +107,7 @@
         });
 
         $('.check').click(function(){
+            $('span#res').html();
             var _cal = "{{ calendar.calendar_name }}";
             var _sdate = $('input#meeting_date').val();
             var _edate = $('input#meeting_date_end').val();
@@ -140,8 +141,9 @@
                             '<img src="{{ url_for("static", filename="Denied.png") }}" />');
                     }
                 },
-                error: function() {
-                    alert('Unable to generate preview!');
+                error: function(res) {
+                    res = JSON.parse(res.responseText);
+                    alert(res['error']);
                 }
             });
             return false;

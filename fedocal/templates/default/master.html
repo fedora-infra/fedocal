@@ -36,8 +36,9 @@
           <h4 class="hide">Main Site Links:</h4>
           <ul>
             <li id="homeTab"><a href="{{url_for('index')}}">Home</a></li>
+            <li id="apiTab"><a href="{{url_for('api')}}">API</a></li>
             {% if g.fas_user %}
-            <li id="mymeetingTab"><a href="{{url_for('my_meetings')}}">My meeting</a></li>
+            <li id="mymeetingTab"><a href="{{url_for('my_meetings')}}">My meetings</a></li>
             {% endif %}
             {% if admin %}
             <li id="adminTab"><a href="{{url_for('admin')}}">Admin</a></li>

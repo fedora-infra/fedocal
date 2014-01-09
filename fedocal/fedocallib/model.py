@@ -125,8 +125,6 @@ class Calendar(BASE):
     # 3 groups (3*32)
     calendar_editor_group = Column(String(100), nullable=True)
     calendar_admin_group = Column(String(100), nullable=True)
-    calendar_multiple_meetings = Column(Boolean, default=False)
-    calendar_regional_meetings = Column(Boolean, default=False)
     calendar_status = Column(String(50),
                              ForeignKey('calendar_status.status'),
                              default='Enabled',
@@ -135,8 +133,6 @@ class Calendar(BASE):
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,
             calendar_editor_group, calendar_admin_group=None,
-            calendar_multiple_meetings=False,
-            calendar_regional_meetings=False,
             calendar_status='Enabled'):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name
@@ -144,8 +140,6 @@ class Calendar(BASE):
         self.calendar_description = calendar_description
         self.calendar_editor_group = calendar_editor_group
         self.calendar_admin_group = calendar_admin_group
-        self.calendar_multiple_meetings = calendar_multiple_meetings
-        self.calendar_regional_meetings = calendar_regional_meetings
         self.calendar_status = calendar_status
 
     def __repr__(self):
@@ -162,8 +156,6 @@ class Calendar(BASE):
             calendar_description=self.calendar_description,
             calendar_editor_group=self.calendar_editor_group,
             calendar_admin_group=self.calendar_admin_group,
-            calendar_multiple_meetings=self.calendar_multiple_meetings,
-            calendar_regional_meetings=self.calendar_regional_meetings,
             calendar_status=self.calendar_status
         )
 
@@ -243,7 +235,7 @@ class Meeting(BASE):
     meeting_time_stop = Column(Time, default=safunc.now(), nullable=False)
     meeting_timezone = Column(Text, nullable=False, default='UTC')
     meeting_information = Column(Text, nullable=True)
-    meeting_region = Column(String(10), default=None, nullable=True)
+    meeting_location = Column(String(100), default=None, nullable=True)
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
                          nullable=True)
     reminder = relationship("Reminder")
@@ -258,7 +250,7 @@ class Meeting(BASE):
             meeting_date, meeting_date_end,
             meeting_time_start, meeting_time_stop,
             meeting_information, calendar_name, meeting_timezone='UTC',
-            reminder_id=None, meeting_region=None, recursion_frequency=None,
+            reminder_id=None, meeting_location=None, recursion_frequency=None,
             recursion_ends=None, full_day=False):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
@@ -271,7 +263,7 @@ class Meeting(BASE):
         self.meeting_information = meeting_information
         self.calendar_name = calendar_name
         self.reminder_id = reminder_id
-        self.meeting_region = meeting_region
+        self.meeting_location = meeting_location
         self.recursion_frequency = recursion_frequency
         self.recursion_ends = recursion_ends
         self.full_day = full_day
@@ -299,7 +291,7 @@ class Meeting(BASE):
             meeting_time_stop=self.meeting_time_stop.strftime('%H:%M:%S'),
             meeting_timezone=self.meeting_timezone,
             meeting_information=self.meeting_information,
-            meeting_region=self.meeting_region,
+            meeting_location=self.meeting_location,
             calendar_name=self.calendar_name
         )
 
@@ -328,7 +320,7 @@ class Meeting(BASE):
             meeting.calendar_name = self.calendar_name
             meeting.calendar = self.calendar
             meeting.reminder_id = self.reminder_id
-            meeting.meeting_region = self.meeting_region
+            meeting.meeting_location = self.meeting_location
             meeting.recursion_frequency = self.recursion_frequency
             meeting.recursion_ends = self.recursion_ends
             meeting.full_day = self.full_day
@@ -344,7 +336,7 @@ class Meeting(BASE):
                 meeting_information=self.meeting_information,
                 calendar_name=self.calendar_name,
                 reminder_id=self.reminder_id,
-                meeting_region=self.meeting_region,
+                meeting_location=self.meeting_location,
                 recursion_frequency=self.recursion_frequency,
                 recursion_ends=self.recursion_ends,
                 full_day=self.full_day
@@ -581,9 +573,9 @@ class Meeting(BASE):
 
     # pylint: disable=R0913
     @classmethod
-    def get_by_date_and_region(
-            cls, session, calendar, start_date, stop_date, region):
-        """ Retrieve the list of meetings in a region between two date.
+    def get_by_date_and_location(
+            cls, session, calendar, start_date, stop_date, location):
+        """ Retrieve the list of meetings in a location between two date.
         We include the start date and exclude the stop date.
         """
         return session.query(cls).filter(
@@ -591,7 +583,7 @@ class Meeting(BASE):
                 (Meeting.calendar == calendar),
                 (Meeting.meeting_date >= start_date),
                 (Meeting.meeting_date < stop_date),
-                (Meeting.meeting_region == region)
+                (Meeting.meeting_location == location)
             )
         ).order_by(
             Meeting.meeting_date,

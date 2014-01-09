@@ -279,7 +279,6 @@ def calendar(calendar_name, year, month, day):
         week_start.year, week_start.month, week_start.day)
     prev_week = fedocallib.get_previous_week(
         week_start.year, week_start.month, week_start.day)
-    auth_form = forms.LoginForm()
     month_name = week_start.strftime('%B')
 
     day_index = None
@@ -300,7 +299,6 @@ def calendar(calendar_name, year, month, day):
         tzone=tzone,
         next_week=next_week,
         prev_week=prev_week,
-        auth_form=auth_form,
         curmonth_cal=curmonth_cal)
 
 
@@ -345,7 +343,6 @@ def calendar_list(calendar_name, year, month, day):
         SESSION, calendarobj, start_date, end_date, tzone)
 
     month_name = datetime.date.today().strftime('%B')
-    auth_form = forms.LoginForm()
 
     curmonth_cal = fedocallib.get_html_monthly_cal(
         year=year, month=month, day=day, calendar_name=calendar_name)
@@ -356,7 +353,6 @@ def calendar_list(calendar_name, year, month, day):
         meetings=meetings,
         tzone=tzone,
         year=inyear,
-        auth_form=auth_form,
         curmonth_cal=curmonth_cal)
 
 
@@ -466,8 +462,6 @@ def add_calendar():
             calendar_admin_group=form.calendar_admin_groups.data,
             calendar_multiple_meetings=bool(
                 form.calendar_multiple_meetings.data),
-            calendar_regional_meetings=bool(
-                form.calendar_regional_meetings.data),
             calendar_status=form.calendar_status.data
         )
         try:
@@ -541,7 +535,7 @@ def add_meeting(calendar_name):
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,
                 meeting_information=form.information.data,
-                meeting_region=form.meeting_region.data,
+                meeting_location=form.meeting_location.data,
                 tzone=tzone,
                 frequency=form.frequency.data,
                 end_repeats=form.end_repeats.data,
@@ -629,7 +623,7 @@ def edit_meeting(meeting_id):
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,
                 meeting_information=form.information.data,
-                meeting_region=form.meeting_region.data,
+                meeting_location=form.meeting_location.data,
                 tzone=tzone,
                 recursion_frequency=form.frequency.data,
                 recursion_ends=form.end_repeats.data,
@@ -710,7 +704,6 @@ def view_meeting_page(meeting_id, full):
         return flask.redirect(flask.url_for('index'))
     meeting = fedocallib.convert_meeting_timezone(
         meeting, meeting.meeting_timezone, tzone)
-    auth_form = forms.LoginForm()
     editor = is_admin()
     if not editor:
         if is_meeting_manager(meeting) or is_calendar_admin(
@@ -722,8 +715,7 @@ def view_meeting_page(meeting_id, full):
         meeting=meeting,
         tzone=tzone,
         title=meeting.meeting_name,
-        editor=editor,
-        auth_form=auth_form)
+        editor=editor)
 
 
 @APP.route('/meeting/delete/<int:meeting_id>/', methods=('GET', 'POST'))
@@ -863,8 +855,6 @@ def edit_calendar(calendar_name):
                 form.calendar_admin_groups.data
             calendarobj.calendar_multiple_meetings = bool(
                 form.calendar_multiple_meetings.data)
-            calendarobj.calendar_regional_meetings = bool(
-                form.calendar_regional_meetings.data)
             calendarobj.calendar_status = form.calendar_status.data
             calendarobj.save(SESSION)
             SESSION.commit()

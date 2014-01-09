@@ -28,9 +28,7 @@
                     target='_blank'>Markdown syntax</a>
                     <input type='button' class='event' value='Preview'>",
                     escape_after=True) }}
-            {% if calendar.calendar_regional_meetings %}
-                {{ render_field_in_row(form.meeting_region) }}
-            {% endif %}
+            {{ render_field_in_row(form.meeting_location) }}
         </table>
 
         <h4>Recursive event</h4>

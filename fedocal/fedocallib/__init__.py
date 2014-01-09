@@ -360,8 +360,8 @@ def get_meetings_by_date(session, calendar_name, start_date, end_date):
     return get_by_date(session, calendar, start_date, end_date)
 
 
-def get_meetings_by_date_and_region(
-        session, calendar, start_date, end_date, region):
+def get_meetings_by_date_and_location(
+        session, calendar, start_date, end_date, location):
     """ Return a list of meetings which have or will occur in between
     the two provided dates.
 
@@ -371,11 +371,11 @@ def get_meetings_by_date_and_region(
         meetings (this day is included in the selection).
     :arg start_date: the date until which we would like to retrieve the
         meetings (this day is excluded from the selection).
-    :arg region: the region in which the meetings should occur.
+    :arg location: the location in which the meetings occurs.
     """
     calendar = Calendar.by_id(session, calendar)
-    return Meeting.get_by_date_and_region(session, calendar, start_date,
-                                          end_date, region)
+    return Meeting.get_by_date_and_location(session, calendar, start_date,
+                                          end_date, location)
 
 
 def is_date_in_future(indate, start_time):
@@ -753,7 +753,7 @@ def add_meeting(
         meeting_name, meeting_date, meeting_date_end,
         meeting_time_start, meeting_time_stop, comanager,
         meeting_information,
-        meeting_region, tzone,
+        meeting_location, tzone,
         frequency, end_repeats,
         remind_when, remind_who,
         full_day,
@@ -831,7 +831,7 @@ def add_meeting(
         meeting_information=meeting_information,
         calendarobj=calendarobj,
         reminder_id=reminder_id,
-        meeting_region=meeting_region,
+        meeting_location=meeting_location,
         recursion_frequency=frequency,
         recursion_ends=end_repeats,
         full_day=full_day)
@@ -845,7 +845,7 @@ def edit_meeting(
         meeting_name, meeting_date, meeting_date_end,
         meeting_time_start, meeting_time_stop,comanager,
         meeting_information,
-        meeting_region, tzone,
+        meeting_location, tzone,
         recursion_frequency, recursion_ends,
         remind_when, remind_who,
         full_day,
@@ -931,11 +931,7 @@ def edit_meeting(
     meeting.meeting_time_start = meeting_time_start.time()
     meeting.meeting_time_stop = meeting_time_stop.time()
     meeting.meeting_information = meeting_information
-
-    region = meeting_region
-    if not region:
-        region = None
-    meeting.meeting_region = region
+    meeting.meeting_location = meeting_location or None
 
     recursion_frequency = recursion_frequency
     if not recursion_frequency:

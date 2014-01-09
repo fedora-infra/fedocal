@@ -679,7 +679,7 @@ def edit_meeting(meeting_id):
         form = forms.AddMeetingForm(meeting=meeting, timezone=tzone)
     return flask.render_template(
         'edit_meeting.html', meeting=meeting, calendar=calendarobj,
-        form=form, tzone=tzone)
+        form=form, tzone=tzone, meeting_id=meeting_id)
 
 
 @APP.route('/meeting/<int:meeting_id>/', methods=('GET', 'POST'))
@@ -907,6 +907,7 @@ def check_date():
     time_start = flask.request.form.get('time_start', None)
     time_stop = flask.request.form.get('time_stop', None)
     timezone = flask.request.form.get('timezone', 'UTC')
+    meeting_id = flask.request.form.get('meeting_id', None)
 
     if not recursion_ends:
         recursion_ends = meeting_date_end
@@ -977,6 +978,17 @@ def check_date():
             status=400,
             mimetype='application/json')
 
+    if meeting_id:
+        try:
+            meeting_id = int(meeting_id)
+        except ValueError:
+            output = {"meetings": [],
+                      "error": "Invalid meeting identifier: %s" % meeting_id}
+            return flask.Response(
+                response=flask.json.dumps(output),
+                status=400,
+                mimetype='application/json')
+
     if not time_stop or not time_start or not meeting_date \
             or not meeting_date_end:
         output = {"meetings": [],
@@ -987,27 +999,27 @@ def check_date():
             mimetype='application/json')
 
     time_start = fedocallib.convert_time(
-        datetime(
+        datetime.datetime(
             meeting_date.year,
             meeting_date.month,
             meeting_date.day,
             time_start.hour,
             time_start.minute),
-        timezone, 'UTC')
+        timezone, 'UTC').time()
 
     time_stop = fedocallib.convert_time(
-        datetime(
+        datetime.datetime(
             meeting_date_end.year,
             meeting_date_end.month,
             meeting_date_end.day,
             time_stop.hour,
             time_stop.minute),
-        timezone, 'UTC')
+        timezone, 'UTC').time()
 
     available = fedocallib.agenda_is_free_in_future(
         SESSION, calendarobj, meeting_date, meeting_date_end,
         recursion_ends, recursion_frequency,
-        time_start, time_stop)
+        time_start, time_stop, meeting_id)
 
     output = {'Date available': available}
 

@@ -550,6 +550,7 @@ def agenda_is_free_in_future(
         meeting = convert_meeting_timezone(
             meeting, meeting.meeting_timezone, 'UTC')
         if meeting.meeting_date != meeting_date \
+                and recursion_frequency \
                 and ((meeting_date - meeting.meeting_date).days
                      % recursion_frequency) != 0:
             continue

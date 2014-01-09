@@ -547,6 +547,8 @@ def agenda_is_free_in_future(
         session, calendarobj, meeting_date, recursion_ends)
     agenda_free = True
     for meeting in set(meetings):
+        meeting = convert_meeting_timezone(
+            meeting, meeting.meeting_timezone, 'UTC')
         if meeting.meeting_date != meeting_date \
                 and ((meeting_date - meeting.meeting_date).days
                      % recursion_frequency) != 0:
@@ -554,20 +556,19 @@ def agenda_is_free_in_future(
         if meeting_id and meeting.meeting_id == meeting_id:
             continue
 
-        if time_start <= meeting.meeting_time_start \
-                and meeting.meeting_time_start < time_stop:
+        # time_start is included w/in an existing meeting
+        if time_start >= meeting.meeting_time_start \
+                and time_start <= meeting.meeting_time_stop:
             agenda_free = False
             break
-        elif time_start < meeting.meeting_time_stop \
-                and meeting.meeting_time_stop <= time_stop:
+        # time_stop is included w/in an existing meeting
+        elif time_stop >= meeting.meeting_time_start \
+                and time_stop <= meeting.meeting_time_stop:
             agenda_free = False
             break
-        elif time_start < meeting.meeting_time_start \
-                and time_stop > meeting.meeting_time_stop:
-            agenda_free = False
-            break
-        elif time_start > meeting.meeting_time_start \
-                and time_stop < meeting.meeting_time_stop:
+        # time_start and time_stop surround an existing meeting
+        elif time_start <= meeting.meeting_time_start \
+                and time_stop >= meeting.meeting_time_stop:
             agenda_free = False
             break
     return agenda_free

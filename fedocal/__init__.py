@@ -32,6 +32,7 @@ __version__ = '0.3.1'
 import datetime
 import logging
 import os
+from dateutil import parser
 from logging.handlers import SMTPHandler
 
 import flask
@@ -888,6 +889,132 @@ def markdown_preview():
     """
     return flask.render_template(
         'markdown.html', content=flask.request.form['content'])
+
+
+@APP.route('/checkdate/', methods=['POST'])
+@cla_plus_one_required
+def check_date():
+    """ Return a json object containing a boolean specifying if the date
+    asked is available or not in the future.
+    """
+    calendar = flask.request.form.get('calendar', None)
+    meeting_date = flask.request.form.get('meeting_date', None)
+    meeting_date_end = flask.request.form.get(
+        'meeting_date_end', meeting_date)
+    recursion_ends = flask.request.form.get('recursion_ends', None)
+    recursion_frequency = flask.request.form.get(
+        'recursion_frequency', meeting_date_end)
+    time_start = flask.request.form.get('time_start', None)
+    time_stop = flask.request.form.get('time_stop', None)
+    timezone = flask.request.form.get('timezone', 'UTC')
+
+    if not recursion_ends:
+        recursion_ends = meeting_date_end
+    if recursion_frequency:
+        recursion_frequency = None
+
+    calendarobj = None
+    if calendar:
+        calendarobj = Calendar.by_id(SESSION, calendar)
+
+    if not calendarobj:
+        output = {"meetings": [],
+                  "error": "Invalid calendar provided: %s" % calendar}
+        return flask.Response(
+            response=flask.json.dumps(output),
+            status=400,
+            mimetype='application/json')
+
+    try:
+        meeting_date = parser.parse(meeting_date).date()
+    except ValueError:
+        output = {"meetings": [],
+                  "error": "Invalid meeting date format: %s" % meeting_date}
+        return flask.Response(
+            response=flask.json.dumps(output),
+            status=400,
+            mimetype='application/json')
+
+    try:
+        meeting_date_end = parser.parse(meeting_date_end).date()
+    except ValueError:
+        output = {"meetings": [],
+                  "error": "Invalid meeting end date format: %s" %
+                  meeting_date_end}
+        return flask.Response(
+            response=flask.json.dumps(output),
+            status=400,
+            mimetype='application/json')
+
+    try:
+        recursion_ends = parser.parse(recursion_ends).date()
+    except ValueError:
+        output = {"meetings": [],
+                  "error": "Invalid recursion end date format: %s" %
+                  recursion_ends}
+        return flask.Response(
+            response=flask.json.dumps(output),
+            status=400,
+            mimetype='application/json')
+
+    try:
+        time_start = parser.parse(time_start).time()
+    except ValueError:
+        output = {"meetings": [],
+                  "error": "Invalid time start format: %s" % time_start}
+        return flask.Response(
+            response=flask.json.dumps(output),
+            status=400,
+            mimetype='application/json')
+
+    try:
+        time_stop = parser.parse(time_stop).time()
+    except ValueError:
+        output = {"meetings": [],
+                  "error": "Invalid time stop format: %s" % time_stop}
+        return flask.Response(
+            response=flask.json.dumps(output),
+            status=400,
+            mimetype='application/json')
+
+    if not time_stop or not time_start or not meeting_date \
+            or not meeting_date_end:
+        output = {"meetings": [],
+                  "error": "Incomplete request"}
+        return flask.Response(
+            response=flask.json.dumps(output),
+            status=400,
+            mimetype='application/json')
+
+    time_start = fedocallib.convert_time(
+        datetime(
+            meeting_date.year,
+            meeting_date.month,
+            meeting_date.day,
+            time_start.hour,
+            time_start.minute),
+        timezone, 'UTC')
+
+    time_stop = fedocallib.convert_time(
+        datetime(
+            meeting_date_end.year,
+            meeting_date_end.month,
+            meeting_date_end.day,
+            time_stop.hour,
+            time_stop.minute),
+        timezone, 'UTC')
+
+    available = fedocallib.agenda_is_free_in_future(
+        SESSION, calendarobj, meeting_date, meeting_date_end,
+        recursion_ends, recursion_frequency,
+        time_start, time_stop)
+
+    output = {'Date available': available}
+
+    return flask.Response(
+            response=flask.json.dumps(output),
+            status=200,
+            mimetype='application/json')
 
 
 @APP.route('/admin/')

@@ -619,10 +619,10 @@ class Fedocallibtests(Modeltests):
             self.assertEqual(meeting.meeting_manager, 'pingou,')
 
     # pylint: disable=C0103
-    def test_get_meetings_by_date_and_region(self):
-        """ Test the get_meetings_by_date_and_region function. """
+    def test_get_meetings_by_date_and_location(self):
+        """ Test the get_meetings_by_date_and_location function. """
         self.__setup_meeting()
-        obj = fedocallib.get_meetings_by_date_and_region(
+        obj = fedocallib.get_meetings_by_date_and_location(
             self.session,
             'test_calendar4',
             TODAY,
@@ -646,7 +646,7 @@ class Fedocallibtests(Modeltests):
             'This is a second test meeting at the same time')
         self.assertEqual(obj[0].reminder, None)
 
-        obj = fedocallib.get_meetings_by_date_and_region(
+        obj = fedocallib.get_meetings_by_date_and_location(
             self.session,
             'test_calendar4',
             TODAY,
@@ -671,7 +671,7 @@ class Fedocallibtests(Modeltests):
             obj[0].reminder,
             None)
 
-        obj = fedocallib.get_meetings_by_date_and_region(
+        obj = fedocallib.get_meetings_by_date_and_location(
             self.session,
             'test_calendar4',
             TODAY,
@@ -752,7 +752,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone=None,
             frequency=None,
             end_repeats=None,
@@ -774,7 +774,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone=None,
             frequency=None,
             end_repeats=None,
@@ -797,7 +797,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone=None,
             frequency=None,
             end_repeats=None,
@@ -819,7 +819,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone=None,
             frequency=None,
             end_repeats=None,
@@ -840,7 +840,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -863,7 +863,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -886,7 +886,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(9, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -907,7 +907,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=60),
@@ -933,7 +933,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=60),
@@ -966,7 +966,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager=None,
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -1000,7 +1000,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(11, 0),
             comanager='pingou',
             meeting_information=None,
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -1034,7 +1034,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(12, 0),
             comanager='pingou',
             meeting_information='Information',
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -1064,7 +1064,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(14, 0),
             comanager='pingou',
             meeting_information='Information',
-            meeting_region=None,
+            meeting_location=None,
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -1083,7 +1083,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_information,
             'Information')
         self.assertEqual(
-            meeting.meeting_region,
+            meeting.meeting_location,
             None)
 
         calendarobj = model.Calendar.by_id(self.session, 'test_calendar4')
@@ -1100,7 +1100,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(10, 0),
             comanager='pingou',
             meeting_information='Information',
-            meeting_region='EMEA',
+            meeting_location='EMEA',
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -1119,7 +1119,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_information,
             'Information')
         self.assertEqual(
-            meeting.meeting_region,
+            meeting.meeting_location,
             'EMEA')
 
         fedocallib.add_meeting(
@@ -1133,7 +1133,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(11, 0),
             comanager='pingou',
             meeting_information='Information',
-            meeting_region='EMEA',
+            meeting_location='EMEA',
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=None,
@@ -1152,7 +1152,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_information,
             'Information')
         self.assertEqual(
-            meeting.meeting_region,
+            meeting.meeting_location,
             'EMEA')
         self.assertEqual(
             meeting.recursion_frequency,
@@ -1169,7 +1169,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(12, 0),
             comanager='pingou',
             meeting_information='Information',
-            meeting_region='EMEA',
+            meeting_location='EMEA',
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=28),
@@ -1188,7 +1188,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_information,
             'Information')
         self.assertEqual(
-            meeting.meeting_region,
+            meeting.meeting_location,
             'EMEA')
         self.assertEqual(
             meeting.recursion_frequency,
@@ -1208,7 +1208,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(13, 0),
             comanager='pingou',
             meeting_information='Information',
-            meeting_region='EMEA',
+            meeting_location='EMEA',
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=28),
@@ -1227,7 +1227,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_information,
             'Information')
         self.assertEqual(
-            meeting.meeting_region,
+            meeting.meeting_location,
             'EMEA')
         self.assertEqual(
             meeting.recursion_frequency,
@@ -1247,7 +1247,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(14, 0),
             comanager='pingou',
             meeting_information='Information',
-            meeting_region='EMEA',
+            meeting_location='EMEA',
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=28),
@@ -1266,7 +1266,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_information,
             'Information')
         self.assertEqual(
-            meeting.meeting_region,
+            meeting.meeting_location,
             'EMEA')
         self.assertEqual(
             meeting.recursion_frequency,
@@ -1289,7 +1289,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(23, 59),
             comanager=None,
             meeting_information='Information',
-            meeting_region='EMEA',
+            meeting_location='EMEA',
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -1322,7 +1322,7 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(23, 59),
             comanager=None,
             meeting_information='Information',
-            meeting_region='EMEA',
+            meeting_location='EMEA',
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
@@ -1602,7 +1602,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_information,
             'Information2')
         self.assertEqual(
-            meeting.meeting_region,
+            meeting.meeting_location,
             None)
         self.assertEqual(
             meeting.recursion_frequency,

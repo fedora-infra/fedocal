@@ -36,6 +36,7 @@
           <h4 class="hide">Main Site Links:</h4>
           <ul>
             <li id="homeTab"><a href="{{url_for('index')}}">Home</a></li>
+            <li id="locationsTab"><a href="{{url_for('locations')}}">Locations</a></li>
             <li id="apiTab"><a href="{{url_for('api')}}">API</a></li>
             {% if g.fas_user %}
             <li id="mymeetingTab"><a href="{{url_for('my_meetings')}}">My meetings</a></li>

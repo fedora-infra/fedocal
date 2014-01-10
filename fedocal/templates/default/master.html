@@ -25,8 +25,8 @@
         <div id="header">
           <img src="{{ url_for('static', filename='fedocal-logo.png') }}"
             alt="Fedocal Logo" id="kojiLogo"/>
-          <form action="{{url_for('index')}}" id="headerSearch">
-            <input type="text" name="term"/>
+          <form action="{{url_for('search')}}" id="headerSearch">
+            <input type="text" name="keyword" title="Search for meetings, you may use '*'"/>
             <input type="submit" value="Search"/>
           </form>
         </div><!-- end header -->

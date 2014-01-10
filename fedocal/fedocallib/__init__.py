@@ -977,8 +977,11 @@ def edit_meeting(
 
 def get_calendar_statuses(session):
     """ Return the list of all the status available for the calendars. """
-    return session.query(
-        CalendarStatus
-    ).order_by(
-        CalendarStatus.status.desc()
-    ).all()
+    return CalendarStatus.all(session)
+
+
+def search_meetings(session, keyword):
+    """ Return the list of meetings matching the provided keyword.
+    """
+    keyword = keyword.replace('*', '%')
+    return Meeting.search(session, keyword)

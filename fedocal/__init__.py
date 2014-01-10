@@ -1096,3 +1096,26 @@ def goto():
             )
         )
     return url
+
+
+@APP.route('/search/')
+@APP.route('/search/<keyword>')
+def search(keyword=None):
+    """ Returns the list of meeting matching the provided keyword.
+    """
+    keyword = keyword or flask.request.args.get('keyword', None)
+    if not keyword:
+        flask.flash('No keyword provided for the search', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
+    meetings = fedocallib.search_meetings(SESSION, keyword)
+
+    tzone = get_timezone()
+
+    curmonth_cal = fedocallib.get_html_monthly_cal()
+    return flask.render_template(
+        'meeting_list.html',
+        meetings=meetings,
+        tzone=tzone,
+        curmonth_cal=curmonth_cal,
+        keyword=keyword)

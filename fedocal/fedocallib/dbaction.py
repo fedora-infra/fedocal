@@ -43,7 +43,7 @@ def add_meeting(
         calendarobj,
         meeting_timezone='UTC',
         reminder_id=None,
-        meeting_region=None,
+        meeting_location=None,
         recursion_frequency=None,
         recursion_ends=None,
         full_day=False):
@@ -54,9 +54,6 @@ def add_meeting(
         recursion_frequency = None
     if not recursion_ends and recursion_frequency:
         recursion_ends = date(2025, 12, 31)
-
-    if not calendarobj.calendar_regional_meetings or not meeting_region:
-        meeting_region = None
 
     # Unless we test directly dbaction we will never hit this as
     # fedocallib.add_meeting already covers it
@@ -74,7 +71,7 @@ def add_meeting(
         meeting_information=meeting_information,
         calendar_name=calendarobj.calendar_name,
         reminder_id=reminder_id,
-        meeting_region=meeting_region,
+        meeting_location=meeting_location,
         recursion_frequency=recursion_frequency,
         recursion_ends=recursion_ends,
         full_day=full_day)

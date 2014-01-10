@@ -121,7 +121,7 @@ class Meetingtests(Modeltests):
             meeting_time_stop=time(16, 00),
             meeting_information='This is a test meeting at the same time',
             calendar_name='test_calendar4',
-            meeting_region='NA')
+            meeting_location='NA')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -136,7 +136,7 @@ class Meetingtests(Modeltests):
             meeting_information='This is a second test meeting at the'
                                 ' same time',
             calendar_name='test_calendar4',
-            meeting_region='EMEA')
+            meeting_location='EMEA')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -221,7 +221,7 @@ class Meetingtests(Modeltests):
             meeting_time_stop=time(18, 00),
             meeting_information='This is a second test meeting in EMEA',
             calendar_name='test_calendar4',
-            meeting_region='EMEA')
+            meeting_location='EMEA')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -313,7 +313,7 @@ class Meetingtests(Modeltests):
         self.assertEqual(obj.meeting_information, obj2.meeting_information)
         self.assertEqual(obj.calendar_name, obj2.calendar_name)
         self.assertEqual(obj.reminder_id, obj2.reminder_id)
-        self.assertEqual(obj.meeting_region, obj2.meeting_region)
+        self.assertEqual(obj.meeting_location, obj2.meeting_location)
         self.assertEqual(obj.recursion_frequency, obj2.recursion_frequency)
         self.assertEqual(obj.recursion_ends, obj2.recursion_ends)
 
@@ -332,7 +332,7 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj.meeting_time_stop, obj2.meeting_time_stop)
         self.assertNotEqual(obj.meeting_information, obj2.meeting_information)
         self.assertEqual(obj.reminder_id, obj2.reminder_id)
-        self.assertEqual(obj.meeting_region, obj2.meeting_region)
+        self.assertEqual(obj.meeting_location, obj2.meeting_location)
         self.assertEqual(obj.recursion_frequency, obj2.recursion_frequency)
         self.assertEqual(obj.recursion_ends, obj2.recursion_ends)
 
@@ -371,7 +371,7 @@ class Meetingtests(Modeltests):
             "meeting_time_start": "19:50:00",
             "meeting_time_stop": "20:50:00",
             "meeting_information": "This is a test meeting",
-            "meeting_region": None,
+            "meeting_location": None,
             "calendar_name": "test_calendar"
             }
         obs = obj.to_json()
@@ -495,7 +495,7 @@ class Meetingtests(Modeltests):
         week_stop = week_day + timedelta(days=2)
         cal = model.Calendar.by_id(self.session, 'test_calendar4')
 
-        obj = model.Meeting.get_by_date_and_region(
+        obj = model.Meeting.get_by_date_and_location(
             self.session, cal, week_start, week_stop, 'EMEA')
 
         self.assertNotEqual(obj, None)
@@ -508,7 +508,7 @@ class Meetingtests(Modeltests):
             'This is a second test meeting at the same time')
         self.assertEqual(obj[0].reminder, None)
 
-        obj = model.Meeting.get_by_date_and_region(
+        obj = model.Meeting.get_by_date_and_location(
             self.session, cal, week_start, week_stop, 'NA')
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 1)
@@ -520,7 +520,7 @@ class Meetingtests(Modeltests):
             'This is a test meeting at the same time')
         self.assertEqual(obj[0].reminder, None)
 
-        obj = model.Meeting.get_by_date_and_region(
+        obj = model.Meeting.get_by_date_and_location(
             self.session, cal, week_start, week_stop, 'APAC')
         self.assertNotEqual(obj, None)
         self.assertEqual(len(obj), 0)

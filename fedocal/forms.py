@@ -58,10 +58,6 @@ class AddCalendarForm(wtf.Form):
     calendar_description = wtforms.TextField('Description')
     calendar_editor_groups = wtforms.TextField('Editor groups')
     calendar_admin_groups = wtforms.TextField('Admin groups')
-    calendar_multiple_meetings = wtforms.BooleanField(
-        'Multiple meetings on the same day?')
-    calendar_regional_meetings = wtforms.BooleanField(
-        'Meetings can be regional?')
     calendar_status = wtforms.SelectField(
         'Status',
         [wtforms.validators.Required()],
@@ -90,10 +86,6 @@ class AddCalendarForm(wtf.Form):
                 calendar.calendar_editor_group
             self.calendar_admin_groups.data = \
                 calendar.calendar_admin_group
-            self.calendar_multiple_meetings.data = bool(
-                calendar.calendar_multiple_meetings)
-            self.calendar_regional_meetings.data = bool(
-                calendar.calendar_regional_meetings)
             self.calendar_status.data = calendar.calendar_status
 
 
@@ -128,13 +120,9 @@ class AddMeetingForm(wtf.Form):
 
     information = wtforms.TextAreaField('Information')
 
-    meeting_region = wtforms.SelectField(
-        'Region',
-        [wtforms.validators.optional()],
-        choices=[('APAC', 'APAC'),
-                 ('EMEA', 'EMEA'),
-                 ('LATAM', 'LATAM'),
-                 ('NA', 'NA')]
+    meeting_location = wtforms.TextField(
+        'Location',
+        [wtforms.validators.optional()]
     )
 
     # Recursion
@@ -209,7 +197,7 @@ class AddMeetingForm(wtf.Form):
             meeting_manager = meeting.meeting_manager.replace(
                 '%s,' % flask.g.fas_user.username, '')
             self.comanager.data = meeting_manager
-            self.meeting_region.data = meeting.meeting_region
+            self.meeting_location.data = meeting.meeting_location
             self.frequency.data = str(meeting.recursion_frequency)
             self.end_repeats.data = meeting.recursion_ends
             self.full_day.data = meeting.full_day
@@ -231,12 +219,3 @@ class DeleteCalendarForm(wtf.Form):
     confirm_delete = wtforms.BooleanField(
         'Yes I want to delete this calendar')
 
-
-class LoginForm(wtf.Form):
-    """ Form to log in the application. """
-    username = wtforms.TextField(
-        'Username',
-        [wtforms.validators.Required()])
-    password = wtforms.PasswordField(
-        'Password',
-        [wtforms.validators.Required()])

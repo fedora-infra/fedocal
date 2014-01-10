@@ -131,9 +131,7 @@
             <td>Time</td>
             <td>Meeting</td>
             <td>Description</td>
-            {% if calendar.calendar_regional_meetings %}
-            <td>Region</td>
-            {% endif %}
+            <td>Location</td>
         </tr>
         {% for meeting in meetings %}
         <tr>
@@ -155,9 +153,7 @@
                 </a>
             </td>
             <td>{% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}</td>
-            {% if calendar.calendar_regional_meetings %}
-            <td> {{ meeting.meeting_region }} </td>
-            {% endif %}
+            <td> {{ meeting.meeting_location }} </td>
         </tr>
         {% endfor %}
     </table>

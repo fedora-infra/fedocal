@@ -73,15 +73,11 @@ is explicitly requested, in which case fedocal returns the
 appropriate ``application/javascript``).
 
     """
-    auth_form = forms.LoginForm()
-    admin = fedocal.is_admin()
     api_html = load_doc(api)
     meetings_api_html = load_doc(api_meetings)
     calendars_api_html = load_doc(api_calendars)
     return flask.render_template(
         'api.html',
-        auth_form=auth_form,
-        admin=admin,
         api_html=api_html,
         calendars_api_html=calendars_api_html,
         meetings_api_html=meetings_api_html)
@@ -106,21 +102,17 @@ Sample response:
     {
         "calendars": [
             {
-                "calendar_multiple_meetings": false,
                 "calendar_description": "test",
                 "calendar_editor_group": "packager2",
                 "calendar_admin_group": "packager",
                 "calendar_contact": "test",
-                "calendar_regional_meetings": false,
                 "calendar_name": "test"
             },
             {
-                "calendar_multiple_meetings": false,
                 "calendar_description": "asd",
                 "calendar_editor_group": "",
                 "calendar_admin_group": "",
                 "calendar_contact": "asd",
-                "calendar_regional_meetings": false,
                 "calendar_name": "Another test"
             }
         ]
@@ -170,7 +162,7 @@ Sample response:
                 "meeting_manager": "pingou2,",
                 "meeting_date": "2013-05-27",
                 "meeting_name": "test1.5",
-                "meeting_region": "None"
+                "meeting_location": "None"
             },
             {
                 "meeting_time_start": "06:00:00",
@@ -181,7 +173,7 @@ Sample response:
                 "meeting_manager": "pingou,",
                 "meeting_date": "2013-05-28",
                 "meeting_name": "test3",
-                "meeting_region": null
+                "meeting_location": null
             }
         ],
         "arguments": {
@@ -276,16 +268,18 @@ Filter arguments
                 mimetype='application/json')
 
     calendar_name = flask.request.args.get('calendar', None)
+    location = flask.request.args.get('location', None)
     region = flask.request.args.get('region', None)
+    location = location or region
 
     status = 200
     meetings = []
     try:
         if calendar_name:
-            if region:
+            if location:
                 #print "calendar and region"
-                meetings = fedocallib.get_meetings_by_date_and_region(
-                    SESSION, calendar_name, startd, endd, region)
+                meetings = fedocallib.get_meetings_by_date_and_location(
+                    SESSION, calendar_name, startd, endd, location)
             else:
                 #print "calendar and no region"
                 meetings = fedocallib.get_meetings_by_date(
@@ -293,11 +287,14 @@ Filter arguments
         else:
             meetings = []
             for calendar in fedocallib.get_calendars(SESSION):
-                if region:
+                if location:
                     #print "no calendar and region"
-                    meetings.extend(fedocallib.get_meetings_by_date_and_region(
-                        SESSION, calendar.calendar_name, startd, endd,
-                        region))
+                    meetings.extend(
+                        fedocallib.get_meetings_by_date_and_location(
+                            SESSION, calendar.calendar_name, startd, endd,
+                            location
+                        )
+                    )
                 else:
                     #print "no calendar and no region"
                     meetings.extend(fedocallib.get_meetings_by_date(
@@ -310,7 +307,7 @@ Filter arguments
         'start': startd.strftime('%Y-%m-%d'),
         'end': endd.strftime('%Y-%m-%d'),
         'calendar': calendar_name,
-        'region': region,
+        'location': location,
     }
 
     meetings_json = []

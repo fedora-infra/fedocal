@@ -51,8 +51,7 @@ class Calendartests(Modeltests):
             calendar_contact='test@example.com',
             calendar_description='This is a test calendar',
             calendar_editor_group='fi-apprentice',
-            calendar_admin_group='infrastructure-main',
-            calendar_multiple_meetings=False)
+            calendar_admin_group='infrastructure-main')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -61,8 +60,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar2',
             calendar_contact='test2@example.com',
             calendar_description='This is another test calendar',
-            calendar_editor_group='packager',
-            calendar_multiple_meetings=True)
+            calendar_editor_group='packager')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -71,8 +69,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar3',
             calendar_contact='test3@example.com',
             calendar_description='This is the third test calendar',
-            calendar_editor_group='packager',
-            calendar_multiple_meetings=True)
+            calendar_editor_group='packager')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -81,9 +78,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar4',
             calendar_contact='test4@example.com',
             calendar_description='This is yet another test calendar',
-            calendar_editor_group='packager',
-            calendar_multiple_meetings=True,
-            calendar_regional_meetings=True)
+            calendar_editor_group='packager')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)

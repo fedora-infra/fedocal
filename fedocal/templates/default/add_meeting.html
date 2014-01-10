@@ -19,16 +19,18 @@
             {{ render_field_in_row(form.meeting_time_start, after="%s time" % tzone) }}
             {{ render_field_in_row(form.meeting_time_stop, after="%s time" % tzone) }}
             {{ render_field_in_row(form.full_day) }}
-            {{ render_field_in_row(form.meeting_timezone) }}
+            {{ render_field_in_row(
+                    form.meeting_timezone,
+                    after="<input type='button' class='event check'
+                        value='Check date availability'><span id='res'></span>",
+                    escape_after=True) }}
             {{ render_field_in_row(
                     form.information,
                     after="Supports the <a href='http://daringfireball.net/projects/markdown/syntax'
                     target='_blank'>Markdown syntax</a>
-                    <input type='button' class='event' value='Preview'>",
+                    <input type='button' class='event preview' value='Preview'>",
                     escape_after=True) }}
-            {% if calendar.calendar_regional_meetings %}
-                {{ render_field_in_row(form.meeting_region) }}
-            {% endif %}
+            {{ render_field_in_row(form.meeting_location) }}
         </table>
 
         <h4>Recursive event</h4>
@@ -81,7 +83,7 @@
 </script>
 <script type="text/javascript">
     $(function(){
-        $('.event').click(function(){
+        $('.preview').click(function(){
             var _txt = $('textarea#information').val();
             var _url = "{{ url_for('markdown_preview') }}";
             $.ajax({
@@ -99,6 +101,49 @@
                 },
                 error: function() {
                     alert('Unable to generate preview!');
+                }
+            });
+            return false;
+        });
+
+        $('.check').click(function(){
+            $('span#res').html();
+            var _cal = "{{ calendar.calendar_name }}";
+            var _sdate = $('input#meeting_date').val();
+            var _edate = $('input#meeting_date_end').val();
+            var _stime = $('input#meeting_time_start').val();
+            var _etime = $('input#meeting_time_stop').val();
+            var _recf = $('input#frequency').val();
+            var _rece = $('input#end_repeats').val();
+            var _tz = $('input#meeting_timezone').val();
+
+            var _url = "{{ url_for('check_date') }}";
+            $.ajax({
+                url: _url ,
+                type: 'POST',
+                data: {
+                    calendar: _cal,
+                    meeting_date: _sdate,
+                    meeting_date_end: _edate,
+                    time_start: _stime,
+                    time_stop: _etime,
+                    timezone: _tz,
+                    recursion_frequency: _recf,
+                    recursion_ends: _rece,
+                },
+                dataType: 'json',
+                success: function(res) {
+                    if (res['Date available']) {
+                        $('span#res').html(
+                            '<img src="{{ url_for("static", filename="Approved.png") }}" />');
+                    } else {
+                        $('span#res').html(
+                            '<img src="{{ url_for("static", filename="Denied.png") }}" />');
+                    }
+                },
+                error: function(res) {
+                    res = JSON.parse(res.responseText);
+                    alert(res['error']);
                 }
             });
             return false;

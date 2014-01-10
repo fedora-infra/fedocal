@@ -1127,6 +1127,7 @@ def search(keyword=None):
         curmonth_cal=curmonth_cal,
         keyword=keyword)
 
+
 @APP.route('/locations/')
 def locations():
     """ Returns the list of all locations where meetings happen and thus

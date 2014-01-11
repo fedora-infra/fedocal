@@ -37,6 +37,8 @@ import fedocal.fedocallib as fedocallib
 
 def validate_time(form, field):
     """ Validate if the data set in the given field is a valid time. """
+    if isinstance(field.data, time):
+        return
     import re
     if not re.match(r'\d?\d:\d\d?', field.data):
         raise wtforms.ValidationError('Time must be of type "HH:MM"')

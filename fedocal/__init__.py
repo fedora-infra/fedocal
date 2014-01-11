@@ -588,6 +588,7 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
+    calendars = Calendar.get_all(SESSION)
 
     if calendarobj.calendar_status != 'Enabled':
         flask.flash('This calendar is "%s", you are not allowed to edit its '
@@ -606,9 +607,11 @@ def edit_meeting(meeting_id):
                                             meeting_id=meeting_id))
 
     tzone = get_timezone()
-    form = forms.AddMeetingForm(timezone=tzone)
+    form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
     # pylint: disable=E1101
     if form.validate_on_submit():
+        if meeting.calendar_name != form.calendar_name.data:
+            calendarobj = Calendar.by_id(SESSION, form.calendar_name.data)
         tzone = form.meeting_timezone.data or tzone
         action = flask.request.form.get('action', 'Edit')
         try:
@@ -676,7 +679,8 @@ def edit_meeting(meeting_id):
                 cnt = cnt + 1
             meeting = meetingobj
 
-        form = forms.AddMeetingForm(meeting=meeting, timezone=tzone)
+        form = forms.AddMeetingForm(
+            meeting=meeting, timezone=tzone, calendars=calendars)
     return flask.render_template(
         'edit_meeting.html', meeting=meeting, calendar=calendarobj,
         form=form, tzone=tzone, meeting_id=meeting_id)
@@ -854,8 +858,6 @@ def edit_calendar(calendar_name):
                 form.calendar_editor_groups.data
             calendarobj.calendar_admin_group = \
                 form.calendar_admin_groups.data
-            calendarobj.calendar_multiple_meetings = bool(
-                form.calendar_multiple_meetings.data)
             calendarobj.calendar_status = form.calendar_status.data
             calendarobj.save(SESSION)
             SESSION.commit()

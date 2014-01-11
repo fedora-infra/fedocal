@@ -91,6 +91,11 @@ class AddCalendarForm(wtf.Form):
 
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """
+    calendar_name = wtforms.SelectField(
+        'Calendar',
+        [wtforms.validators.Required()],
+        choices=[(el, el) for el in []])
+
     meeting_name = wtforms.TextField(
         'Meeting name',
         [wtforms.validators.Required()])
@@ -164,6 +169,13 @@ class AddMeetingForm(wtf.Form):
         if 'timezone' in kwargs:
             self.meeting_timezone.data = kwargs['timezone']
 
+        if 'calendars' in kwargs:
+            calendars = kwargs['calendars']
+            self.calendar_name.choices = [
+                (calendar.calendar_name, calendar.calendar_name)
+                for calendar in calendars
+            ]
+
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']
             tzone = 'UTC'
@@ -187,6 +199,7 @@ class AddMeetingForm(wtf.Form):
             startdt = fedocallib.convert_time(startdt, 'UTC', tzone)
             stopdt = fedocallib.convert_time(stopdt, 'UTC', tzone)
 
+            self.calendar_name.data = meeting.calendar_name
             self.meeting_name.data = meeting.meeting_name
             self.meeting_date.data = startdt.date()
             self.meeting_date_end.data = meeting.meeting_date_end

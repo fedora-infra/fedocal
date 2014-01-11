@@ -944,6 +944,9 @@ def edit_meeting(
     if full_day and meeting_time_start == meeting_time_stop:
         meeting_time_stop = meeting_time_start + timedelta(days=1)
 
+    if meeting.calendar_name != calendarobj.calendar_name:
+        meeting.calendar_name = calendarobj.calendar_name
+
     ## The information are correct
     ## What we do now:
     # a) the meeting is not recursive -> edit the information as provided

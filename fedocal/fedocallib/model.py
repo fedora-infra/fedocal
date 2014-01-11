@@ -212,7 +212,7 @@ class Calendar(BASE):
     @classmethod
     def get_all(cls, session):
         """ Retrieve all the Calendar available."""
-        return session.query(cls).all()
+        return session.query(cls).order_by(cls.calendar_name).all()
 
     @classmethod
     def by_status(cls, session, status):
@@ -428,7 +428,6 @@ class Meeting(BASE):
             only select meetings which do not take the full day.  None will
             not restrict.  Default to None
         """
-        print location, start_date, stop_date, full_day
         query = session.query(
             cls
         ).filter(

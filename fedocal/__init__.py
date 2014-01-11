@@ -1033,6 +1033,13 @@ def check_date():
 def admin():
     """ Displays the index page for the admin section.
     """
+    if not flask.g.fas_user:
+        return flask.redirect(flask.url_for('index'))
+    if not is_admin():
+        flask.flash('You are not a fedocal admin, you are not allowed '
+                    'to add calendars.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendars = Calendar.get_all(SESSION)
     calendar = flask.request.args.get('calendar', None)
     action = flask.request.args.get('action', None)

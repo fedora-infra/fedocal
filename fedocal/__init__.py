@@ -500,6 +500,7 @@ def add_meeting(calendar_name):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    calendars = Calendar.get_all(SESSION)
 
     if calendarobj.calendar_status != 'Enabled':
         flask.flash('This calendar is "%s", you are not allowed to add '
@@ -519,7 +520,8 @@ def add_meeting(calendar_name):
                                             calendar_name=calendar_name))
 
     tzone = get_timezone()
-    form = forms.AddMeetingForm(timezone=tzone)
+    form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
+    form.calendar_name.data = calendar_name
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     # pylint: disable=E1101
     if form.validate_on_submit():

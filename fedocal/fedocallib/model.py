@@ -139,6 +139,7 @@ class Calendar(BASE):
                              ForeignKey('calendar_status.status'),
                              default='Enabled',
                              nullable=False)
+    meetings = relationship("Meeting")
 
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,

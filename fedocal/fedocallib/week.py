@@ -17,6 +17,7 @@ license.
 from datetime import timedelta
 import operator
 from fedocal.fedocallib.model import Meeting
+from fedocal.fedocallib.exceptions import FedocalException
 
 
 # pylint: disable=R0903
@@ -37,7 +38,7 @@ class Week(object):
 
         """
         if not calendar and not location:
-            raise Exception(
+            raise FedocalException(
                 'Either calendar or location should be specified')
 
         self.session = session

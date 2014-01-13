@@ -139,6 +139,7 @@ class Calendar(BASE):
                              ForeignKey('calendar_status.status'),
                              default='Enabled',
                              nullable=False)
+    meetings = relationship("Meeting")
 
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,
@@ -853,6 +854,18 @@ class Meeting(BASE):
         )
 
         return [el[0] for el in query.all()]
+
+    @classmethod
+    def clear_from_calendar(cls, session, calendar):
+        """ Remove all the meetings associated with the calendar provided.
+        """
+        query = session.query(
+            cls
+        ).filter(
+            cls.calendar == calendar
+        )
+
+        return query.delete()
 
 
 class Reminder(BASE):

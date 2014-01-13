@@ -183,6 +183,8 @@ def is_calendar_admin(calendarobj):
     """
     if not flask.g.fas_user:
         return False
+    elif is_admin():
+        return True
     elif calendarobj.calendar_admin_group:
         admin_groups = [
             item.strip()
@@ -300,7 +302,8 @@ def calendar(calendar_name, year, month, day):
         tzone=tzone,
         next_week=next_week,
         prev_week=prev_week,
-        curmonth_cal=curmonth_cal)
+        curmonth_cal=curmonth_cal,
+        calendar_admin=is_calendar_admin(calendarobj))
 
 
 @APP.route('/list/<calendar_name>/',
@@ -354,7 +357,8 @@ def calendar_list(calendar_name, year, month, day):
         meetings=meetings,
         tzone=tzone,
         year=inyear,
-        curmonth_cal=curmonth_cal)
+        curmonth_cal=curmonth_cal,
+        calendar_admin=is_calendar_admin(calendarobj))
 
 
 @APP.route('/ical/')
@@ -829,6 +833,44 @@ def delete_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
     return flask.render_template(
         'delete_calendar.html', form=deleteform, calendarobj=calendarobj)
+
+
+@APP.route('/calendar/clear/<calendar_name>/', methods=('GET', 'POST'))
+def clear_calendar(calendar_name):
+    """ Clear the specified calendar from all its meetings.
+
+    :arg calendar_name: the identifier of the calendar to delete.
+    """
+    if not flask.g.fas_user:
+        return flask.redirect(flask.url_for('index'))
+
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+
+    if not is_calendar_admin(calendarobj):
+        flask.flash('You are not an admin of this calendar, you are not '
+                    'allowed to clear the calendar.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
+    clearform = forms.ClearCalendarForm()
+    # pylint: disable=E1101
+    if clearform.validate_on_submit():
+        if clearform.confirm_delete.data:
+            try:
+                fedocallib.clear_calendar(SESSION, calendarobj)
+                SESSION.commit()
+                flask.flash('Calendar cleared')
+            except SQLAlchemyError, err:
+                SESSION.rollback()
+                LOG.debug('Error in clear_calendar')
+                LOG.exception(err)
+                flask.flash('Could not clear this calendar.', 'errors')
+        fedmsg.publish(topic="calendar.clear", msg=dict(
+            agent=flask.g.fas_user.username,
+            calendar=calendarobj.to_json(),
+        ))
+        return flask.redirect(flask.url_for('index'))
+    return flask.render_template(
+        'clear_calendar.html', form=clearform, calendarobj=calendarobj)
 
 
 # pylint: disable=R0915,R0912,R0911

@@ -234,3 +234,8 @@ class DeleteCalendarForm(wtf.Form):
     confirm_delete = wtforms.BooleanField(
         'Yes I want to delete this calendar')
 
+
+class ClearCalendarForm(wtf.Form):
+    """ Form used to delete a calendar. """
+    confirm_delete = wtforms.BooleanField(
+        'Yes I want to clear this calendar')

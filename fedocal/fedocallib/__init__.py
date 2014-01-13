@@ -199,6 +199,23 @@ def get_week(session, calendar, year=None, month=None, day=None):
     week = Week(session, calendar, week_start)
     return week
 
+def get_week_of_location(session, location, year=None, month=None, day=None):
+    """ For a given date, retrieve the corresponding week.
+    For any missing parameters (ie: None), use the value of the current
+    day.
+
+    :arg session: the database session to use
+    :arg calendar: the Calendar object of interest.
+    :kwarg year: year to consider when searching a week.
+    :kwarg month: month to consider when searching a week.
+    :kwarg day: day to consider when searching a week.
+    :return a Week object corresponding to the week asked either based
+        on the current utc date of based on the information specified.
+    """
+    week_start = get_start_week(year, month, day)
+    week = Week(session, None, week_start, location)
+    return week
+
 
 def get_week_days(year=None, month=None, day=None):
     """ For a given date, retrieve the corresponding week and return the
@@ -330,6 +347,37 @@ def get_meetings(
     week_start = pytz.timezone(tzone).localize(
         datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     week = get_week(session, calendar, year, month, day)
+
+    # Prepare empty data structure in which we will then insert the meetings
+    # This is pretty much the table that will get displayed.
+    meetings = {}
+    for hour in HOURS[:-1]:
+        for key in ['%sh00', '%sh30']:
+            key = key % (hour)
+            # pylint: disable=W0612
+            meetings[key] = [None for cnt2 in range(0, 7)]
+
+    meetings = _format_week_meeting(meetings, week.meetings, tzone,
+                                    week_start)
+    return meetings
+
+# pylint: disable=R0913,R0914
+def get_meetings_at_location(
+        session, location, year=None, month=None, day=None, tzone='UTC'):
+    """ Return a Week object containing all the meeting for the said week.
+
+    :arg session: the database session to use
+    :arg location: the location of interest.
+    :kwarg year: year to consider when searching a week.
+    :kwarg month: month to consider when searching a week.
+    :kwarg day: day to consider when searching a week.
+    :kwarg tzone: the timezone in which the meetings should be displayed
+        defaults to UTC.
+    """
+    week_start = get_start_week(year, month, day)
+    week_start = pytz.timezone(tzone).localize(
+        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
+    week = get_week_of_location(session, location, year, month, day)
 
     # Prepare empty data structure in which we will then insert the meetings
     # This is pretty much the table that will get displayed.
@@ -699,13 +747,15 @@ def add_meetings_to_vcal(ical, meetings):
 
 
 def get_html_monthly_cal(
-        day=None, month=None, year=None, calendar_name=None):
+        day=None, month=None, year=None, calendar_name=None, loc_name=None):
     """ Display a monthly calendar as HTML.
 
     :kwarg day: optionnal day (as int). Defaults to current day
     :kwarg month: optionnal month (as int). Defaults to current month
     :kwarg year: optionnal year. Defaults to current year.
     :kwarg calendar_name: the name of the calendar to which the links
+        should point.
+    :kwarg loc_name: the name of the location to which the links
         should point.
     """
     cur_date = date.today()
@@ -719,7 +769,8 @@ def get_html_monthly_cal(
         day = cur_date.day
 
     htmlcal = FedocalCalendar(day=day, year=year, month=month,
-                              calendar_name=calendar_name)
+                              calendar_name=calendar_name,
+                              loc_name=loc_name)
     curmonth_cal_nf = htmlcal.formatmonth()
 
     return curmonth_cal_nf
@@ -985,3 +1036,7 @@ def search_meetings(session, keyword):
     """
     keyword = keyword.replace('*', '%')
     return Meeting.search(session, keyword)
+
+
+def get_locations(session):
+    return Meeting.get_locations(session)

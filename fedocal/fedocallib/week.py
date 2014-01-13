@@ -25,13 +25,24 @@ class Week(object):
     all its meetings.
     """
 
-    def __init__(self, session, calendar, start_date=None):
+    def __init__(self, session, calendar=None, start_date=None,
+                 location=None):
         """ Constructor, instanciate a week object for a given calendar.
-        :arg calendar, the name of the calendar to use.
+
+        One of calendar or location should be specified!
+
+        :kwarg calendar, the name of the calendar to use.
         :kwarg start_date, the starting date of the week.
+        :kwarg location, the name of the location of the meetings.
+
         """
+        if not calendar and not location:
+            raise Exception(
+                'Either calendar or location should be specified')
+
         self.session = session
         self.calendar = calendar
+        self.location = location
         self.start_date = start_date
         self.stop_date = start_date + timedelta(days=6)
         self.meetings = []
@@ -42,12 +53,22 @@ class Week(object):
     def get_meetings(self):
         """ Retrieves the list of this week's meeting from the database.
         """
-        self.meetings = Meeting.get_by_date(
-            self.session, self.calendar, self.start_date, self.stop_date)
+        if self.calendar:
+            self.meetings = Meeting.get_by_date(
+                self.session, self.calendar, self.start_date, self.stop_date)
 
-        for meeting in Meeting.get_active_regular_meeting(
+            meetings = Meeting.get_active_regular_meeting(
                 self.session, self.calendar,
-                self.start_date, self.stop_date):
+                self.start_date, self.stop_date)
+        else:
+            self.meetings = Meeting.get_by_date_at_location(
+                self.session, self.location, self.start_date, self.stop_date)
+
+            meetings = Meeting.get_active_regular_meeting_at_location(
+                self.session, self.location,
+                self.start_date, self.stop_date)
+
+        for meeting in meetings:
             for delta in range(0, 7):
                 day = self.start_date + timedelta(days=delta)
                 if ((meeting.meeting_date - day).days %
@@ -64,14 +85,24 @@ class Week(object):
 
     def get_full_day_meetings(self):
         """ Retrieve all the full day meetings for this week. """
-        self.full_day_meetings = Meeting.get_by_date(
-            self.session, self.calendar, self.start_date,
-            self.stop_date, full_day=True)
+        if self.calendar:
+            self.full_day_meetings = Meeting.get_by_date(
+                self.session, self.calendar, self.start_date,
+                self.stop_date, full_day=True)
 
-        for meeting in Meeting.get_active_regular_meeting(
+            meetings = Meeting.get_active_regular_meeting(
                 self.session, self.calendar,
-                self.start_date, self.stop_date,
-                full_day=True):
+                self.start_date, self.stop_date, full_day=True)
+        else:
+            self.full_day_meetings = Meeting.get_by_date_at_location(
+                self.session, self.location, self.start_date,
+                self.stop_date, full_day=True)
+
+            meetings = Meeting.get_active_regular_meeting_at_location(
+                self.session, self.location,
+                self.start_date, self.stop_date, full_day=True)
+
+        for meeting in meetings:
             for delta in range(0, 7):
                 day = self.start_date + timedelta(days=delta)
                 if ((meeting.meeting_date - day).days %

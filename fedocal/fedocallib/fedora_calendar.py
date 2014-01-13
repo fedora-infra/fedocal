@@ -25,7 +25,7 @@ class FedocalCalendar(HTMLCalendar):
     html validation and some features 'locally required'
     """
 
-    def __init__(self, year, month, day, calendar_name=None):
+    def __init__(self, year, month, day, calendar_name=None, loc_name=None):
         """ Constructor.
         Stores the year and the month asked.
         """
@@ -34,6 +34,7 @@ class FedocalCalendar(HTMLCalendar):
         self.month = month
         self.day = day
         self.calendar_name = calendar_name
+        self.loc_name = loc_name
 
     def formatday(self, day, weekday):
         """
@@ -44,6 +45,7 @@ class FedocalCalendar(HTMLCalendar):
             return '<td class="noday">&nbsp;</td>'  # day outside month
         else:
             link_day = day
+
             if self.calendar_name:
                 link_day = '<a href="%s">%d</a>' % (
                     flask.url_for(
@@ -51,6 +53,14 @@ class FedocalCalendar(HTMLCalendar):
                         calendar_name=self.calendar_name, year=self.year,
                         month=self.month, day=day),
                     day)
+            elif self.loc_name:
+                link_day = '<a href="%s">%d</a>' % (
+                    flask.url_for(
+                        'location',
+                        loc_name=self.loc_name, year=self.year,
+                        month=self.month, day=day),
+                    day)
+
             if day == cur_date.day \
                     and self.month == cur_date.month \
                     and self.year == cur_date.year:

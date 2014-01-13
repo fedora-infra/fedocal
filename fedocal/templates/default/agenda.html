@@ -1,22 +1,34 @@
 {% extends "master.html" %}
 
-{% block title %}{{ calendar.calendar_name }}{% endblock %}
+{% block title %}{% if calendar %}{{ calendar.calendar_name }}{%
+else %}{{ location }}{% endif %}{% endblock %}
 
-{%block tag %}home{% endblock %}
+{%block tag %}{% if calendar %}home{% else %}locations{% endif %}{% endblock %}
 
 {% block content %}
 <section>
-  {% if calendar %}
+
       <header>
           <h2>
+              {% if calendar %}
               <a href="{{url_for('calendar',
                   calendar_name=calendar.calendar_name)}}">
               {{ calendar.calendar_name }}
+              {% else %}
+              <a href="{{url_for('location',
+                  loc_name=location) }}">
+              {{ location }}
+              {% endif %}
               </a>
           </h2>
+          {% if calendar %}
           <p>{{ calendar.calendar_description }}</p>
+          {% else %}
+          <p> - </p>
+          {% endif %}
       </header>
       <nav id="weeks">
+          {% if calendar %}
           <a href="{{url_for('calendar',
               calendar_name=calendar.calendar_name, year=prev_week.year,
               month=prev_week.month, day=prev_week.day)}}" class="button">
@@ -28,12 +40,28 @@
               month=next_week.month, day=next_week.day)}}" class="button">
               &gt;
           </a>
+          {% else %}
+          <a href="{{url_for('location',
+              loc_name=location, year=prev_week.year,
+              month=prev_week.month, day=prev_week.day)}}" class="button">
+              &lt;
+          </a>
+          {{ weekdays | WeekHeading }}
+          <a href="{{url_for('location',
+              loc_name=location, year=next_week.year,
+              month=next_week.month, day=next_week.day)}}" class="button">
+              &gt;
+          </a>
+          {% endif %}
       </nav>
-  {% endif %}
     <aside id="mainmenu">
         {% autoescape off%}{{ curmonth_cal }}{% endautoescape %}
         <form action="{{url_for('goto')}}" id="goto_date">
+          {% if calendar %}
           <input type="hidden" name="calendar" value="{{calendar.calendar_name}}"/>
+          {% else %}
+          <input type="hidden" name="location" value="{{location}}"/>
+          {% endif %}
           <input type="text" name="day" placeholder="28" title="Day in decimal"/>
           <input type="text" name="month" placeholder="02" title="Month in decimal"/>
           <input type="text" name="year" placeholder="2014" title="Year in decimal"/>
@@ -85,7 +113,7 @@
             {% endfor %}
         </ul>
 
-        {% if admin %}
+        {% if admin and calendar %}
         <h4> Admin </h4>
         <div>
         <ul class="checkmark-list">
@@ -103,6 +131,7 @@
 
         </ul>
       </div>
+      {% if calendar %}
       <ul class="checkmark-list">
         {% if calendar.calendar_admin_group %}
         <li>Administrators: {{ calendar.calendar_admin_group }}</li>
@@ -113,6 +142,7 @@
         <li>Editors: CLA+1</li>
         {% endif %}
       </ul>
+      {% endif %}
 
     </aside>
     <div id='agenda'>

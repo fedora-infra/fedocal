@@ -1,0 +1,26 @@
+{% extends "master.html" %}
+
+{% block title %}Home{% endblock %}
+{%block tag %}locations{% endblock %}
+
+{% macro render_locations(calendars) -%}
+    {% for location_row in locations %}
+    <div class="calendar_row">
+        {% for location in location_row %}
+            <a class="calendar_link"
+                href="{{ url_for('location', loc_name=location) }}">
+                <span class="calendar_name">{{ location }}</span>
+            </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No locations found</p>
+    {% endfor %}
+{%- endmacro %}
+
+{% block content %}
+<h2>Locations</h2>
+<section class="calendar_list">
+    {{ render_locations(locations) }}
+</section>
+{% endblock %}

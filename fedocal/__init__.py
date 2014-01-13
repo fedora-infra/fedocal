@@ -1033,6 +1033,13 @@ def check_date():
 def admin():
     """ Displays the index page for the admin section.
     """
+    if not flask.g.fas_user:
+        return flask.redirect(flask.url_for('index'))
+    if not is_admin():
+        flask.flash('You are not a fedocal admin, you are not allowed '
+                    'to add calendars.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendars = Calendar.get_all(SESSION)
     calendar = flask.request.args.get('calendar', None)
     action = flask.request.args.get('action', None)
@@ -1043,7 +1050,7 @@ def admin():
         elif action == 'delete':
             return flask.redirect(
                 flask.url_for('delete_calendar', calendar_name=calendar))
-    return flask.render_template('admin.html', calendars=calendars)
+    return flask.render_template('admin.html')
 
 
 @APP.route('/goto/')
@@ -1119,3 +1126,65 @@ def search(keyword=None):
         tzone=tzone,
         curmonth_cal=curmonth_cal,
         keyword=keyword)
+
+@APP.route('/locations/')
+def locations():
+    """ Returns the list of all locations where meetings happen and thus
+    enable to see calendar for a specific location.
+    """
+    locations = fedocallib.get_locations(SESSION)
+    return flask.render_template(
+        'locations.html',
+        locations=chunks(locations, 3))
+
+
+
+# pylint: disable=R0914
+@APP.route('/location/<loc_name>/',
+           defaults={'year': None, 'month': None, 'day': None})
+@APP.route('/location/<loc_name>/<int:year>/',
+           defaults={'month': None, 'day': None})
+@APP.route('/location/<loc_name>/<int:year>/<int:month>/',
+           defaults={'day': None})
+@APP.route('/location/<loc_name>/<int:year>/<int:month>/<int:day>/')
+def location(loc_name, year, month, day):
+    """ Display the week of a specific date for a specified location.
+
+    :arg calendar_name: the name of the calendar that one would like to
+        consult.
+    :arg year: the year of the date one would like to consult.
+    :arg month: the month of the date one would like to consult.
+    :arg day: the day of the date one would like to consult.
+    """
+    week_start = fedocallib.get_start_week(year, month, day)
+    weekdays = fedocallib.get_week_days(year, month, day)
+    tzone = get_timezone()
+
+    meetings = fedocallib.get_meetings_at_location(
+        SESSION, loc_name, year, month, day, tzone=tzone)
+
+    next_week = fedocallib.get_next_week(
+        week_start.year, week_start.month, week_start.day)
+    prev_week = fedocallib.get_previous_week(
+        week_start.year, week_start.month, week_start.day)
+    month_name = week_start.strftime('%B')
+
+    day_index = None
+    today = datetime.date.today()
+    if today > week_start and today < week_start + datetime.timedelta(days=7):
+        day_index = fedocallib.get_week_day_index(
+            today.year, today.month, today.day)
+
+    curmonth_cal = fedocallib.get_html_monthly_cal(
+        year=year, month=month, day=day, loc_name=loc_name)
+    return flask.render_template(
+        'agenda.html',
+        location=loc_name,
+        month=month_name,
+        weekdays=weekdays,
+        day_index=day_index,
+        meetings=meetings,
+        tzone=tzone,
+        next_week=next_week,
+        prev_week=prev_week,
+        curmonth_cal=curmonth_cal)

@@ -25,6 +25,7 @@ from sqlalchemy import (
     Boolean,
     create_engine,
     Column,
+    distinct,
     Date,
     Enum,
     ForeignKey,
@@ -211,7 +212,7 @@ class Calendar(BASE):
     @classmethod
     def get_all(cls, session):
         """ Retrieve all the Calendar available."""
-        return session.query(cls).all()
+        return session.query(cls).order_by(cls.calendar_name).all()
 
     @classmethod
     def by_status(cls, session, status):
@@ -244,7 +245,7 @@ class Meeting(BASE):
     meeting_time_stop = Column(Time, default=safunc.now(), nullable=False)
     meeting_timezone = Column(Text, nullable=False, default='UTC')
     meeting_information = Column(Text, nullable=True)
-    meeting_location = Column(String(100), default=None, nullable=True)
+    meeting_location = Column(Text, default=None, nullable=True)
     reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
                          nullable=True)
     reminder = relationship("Reminder")
@@ -416,6 +417,45 @@ class Meeting(BASE):
         return query.all()
 
     @classmethod
+    def get_by_date_at_location(cls, session, location, start_date,
+            stop_date, full_day=None, no_recursive=False):
+        """ Retrieve the list of meetings between two date at a specific
+        location.
+        We include the start date and exclude the stop date.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
+        """
+        query = session.query(
+            cls
+        ).filter(
+            Meeting.meeting_location == location
+        ).filter(
+            or_(
+                and_(
+                    (Meeting.meeting_date >= start_date),
+                    (Meeting.meeting_date <= stop_date),
+                ),
+                and_(
+                    (Meeting.meeting_date_end >= start_date),
+                    (Meeting.meeting_date_end <= stop_date),
+                )
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name)
+
+        if full_day is not None:
+            query = query.filter(Meeting.full_day == full_day)
+        if no_recursive:
+            query = query.filter(Meeting.recursion_frequency == None)
+
+        return query.all()
+
+    @classmethod
     def get_overlaping_meetings(
             cls, session, calendar, start_date, stop_date):
         """ Retrieve the list of meetings overlaping with the date
@@ -498,6 +538,35 @@ class Meeting(BASE):
                 (Meeting.meeting_date <= end_date),
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.calendar == calendar),
+                (Meeting.recursion_frequency != None),
+                (Meeting.recursion_ends != None),
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        )
+
+        if full_day is not None:
+            meetings = meetings.filter(Meeting.full_day == full_day)
+        return meetings.all()
+
+    @classmethod
+    def get_active_regular_meeting_at_location(
+            cls, session, location, start_date, end_date, full_day=None):
+        """ Retrieve the list of recursive meetings occuring before the
+        end_date at the specified location.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
+        """
+        meetings = session.query(cls).filter(
+            and_(
+                (Meeting.meeting_date <= end_date),
+                (Meeting.recursion_ends >= start_date),
+                (Meeting.meeting_location == location),
                 (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends != None),
             )
@@ -767,6 +836,23 @@ class Meeting(BASE):
         )
 
         return query.all()
+
+    @classmethod
+    def get_locations(cls, session):
+        """ Return the list of all the locations where meetings happen.
+        """
+
+        query = session.query(
+            distinct(cls.meeting_location)
+        ).filter(
+            cls.meeting_location != None
+        ).filter(
+            cls.meeting_location != 'None'
+        ).order_by(
+            cls.meeting_location
+        )
+
+        return [el[0] for el in query.all()]
 
 
 class Reminder(BASE):

@@ -183,6 +183,8 @@ def is_calendar_admin(calendarobj):
     """
     if not flask.g.fas_user:
         return False
+    elif is_admin():
+        return True
     elif calendarobj.calendar_admin_group:
         admin_groups = [
             item.strip()
@@ -300,7 +302,8 @@ def calendar(calendar_name, year, month, day):
         tzone=tzone,
         next_week=next_week,
         prev_week=prev_week,
-        curmonth_cal=curmonth_cal)
+        curmonth_cal=curmonth_cal,
+        calendar_admin=is_calendar_admin(calendarobj))
 
 
 @APP.route('/list/<calendar_name>/',
@@ -354,7 +357,8 @@ def calendar_list(calendar_name, year, month, day):
         meetings=meetings,
         tzone=tzone,
         year=inyear,
-        curmonth_cal=curmonth_cal)
+        curmonth_cal=curmonth_cal,
+        calendar_admin=is_calendar_admin(calendarobj))
 
 
 @APP.route('/ical/')

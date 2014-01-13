@@ -697,6 +697,13 @@ def retrieve_meeting_to_remind(session, offset=30):
         new_date = _generate_date_rounded_to_the_hour(today,
                                                       reminder_time)
         end_date = new_date + timedelta(minutes=offset)
+
+        if new_date.date() != end_date.date():
+            # in case the end_date is day after (ie: 23:45 + 30min), make
+            # the end_date as start_date at 23:59
+            end_date = datetime(
+                new_date.year, new_date.month, new_date.day, 23, 59)
+
         meetings.extend(Meeting.get_meeting_with_reminder(
             session, new_date.date(), new_date.time(), end_date.time(),
             'H-%s' % reminder_time))

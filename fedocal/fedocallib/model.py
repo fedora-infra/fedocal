@@ -747,6 +747,7 @@ class Meeting(BASE):
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_start < stop_time),
                 (Meeting.reminder_id.in_(reminders)))).all()
+
         # Add recursive meetings
         recursive_meetings = session.query(cls).filter(
             and_(

@@ -854,6 +854,18 @@ class Meeting(BASE):
 
         return [el[0] for el in query.all()]
 
+    @classmethod
+    def clear_from_calendar(cls, session, calendar):
+        """ Remove all the meetings associated with the calendar provided.
+        """
+        query = session.query(
+            cls
+        ).filter(
+            cls.calendar == calendar
+        )
+
+        return query.delete()
+
 
 class Reminder(BASE):
     """ Reminders table.

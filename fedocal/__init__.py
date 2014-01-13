@@ -1074,9 +1074,9 @@ def check_date():
     output = {'Date available': available}
 
     return flask.Response(
-            response=flask.json.dumps(output),
-            status=200,
-            mimetype='application/json')
+        response=flask.json.dumps(output),
+        status=200,
+        mimetype='application/json')
 
 
 @APP.route('/admin/')
@@ -1199,7 +1199,6 @@ def locations():
     return flask.render_template(
         'locations.html',
         locations=chunks(locations, 3))
-
 
 
 # pylint: disable=R0914

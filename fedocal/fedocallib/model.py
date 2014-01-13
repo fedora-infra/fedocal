@@ -418,8 +418,9 @@ class Meeting(BASE):
         return query.all()
 
     @classmethod
-    def get_by_date_at_location(cls, session, location, start_date,
-            stop_date, full_day=None, no_recursive=False):
+    def get_by_date_at_location(
+            cls, session, location, start_date, stop_date, full_day=None,
+            no_recursive=False):
         """ Retrieve the list of meetings between two date at a specific
         location.
         We include the start date and exclude the stop date.

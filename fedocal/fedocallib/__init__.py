@@ -199,6 +199,7 @@ def get_week(session, calendar, year=None, month=None, day=None):
     week = Week(session, calendar, week_start)
     return week
 
+
 def get_week_of_location(session, location, year=None, month=None, day=None):
     """ For a given date, retrieve the corresponding week.
     For any missing parameters (ie: None), use the value of the current
@@ -361,6 +362,7 @@ def get_meetings(
                                     week_start)
     return meetings
 
+
 # pylint: disable=R0913,R0914
 def get_meetings_at_location(
         session, location, year=None, month=None, day=None, tzone='UTC'):
@@ -423,7 +425,7 @@ def get_meetings_by_date_and_location(
     """
     calendar = Calendar.by_id(session, calendar)
     return Meeting.get_by_date_and_location(session, calendar, start_date,
-                                          end_date, location)
+                                            end_date, location)
 
 
 def is_date_in_future(indate, start_time):
@@ -896,7 +898,7 @@ def add_meeting(
 def edit_meeting(
         session, meeting, calendarobj, fas_user,
         meeting_name, meeting_date, meeting_date_end,
-        meeting_time_start, meeting_time_stop,comanager,
+        meeting_time_start, meeting_time_stop, comanager,
         meeting_information,
         meeting_location, tzone,
         recursion_frequency, recursion_ends,

@@ -1135,19 +1135,31 @@ def goto():
         view_type = 'calendar'
 
     if view_type == 'list':
-        url = flask.redirect(
-            flask.url_for(
-                'calendar_list', calendar_name=calendar,
-                year=year, month=month, day=day
-            )
-        )
+        if year and month and day:
+            url = flask.redirect(
+                flask.url_for('calendar_list', calendar_name=calendar,
+                              year=year, month=month, day=day))
+        elif year and month:
+            url = flask.redirect(
+                flask.url_for('calendar_list', calendar_name=calendar,
+                              year=year, month=month))
+        else:
+            url = flask.redirect(
+                flask.url_for('calendar_list', calendar_name=calendar,
+                              year=year))
     else:
-        url = flask.redirect(
-            flask.url_for(
-                'calendar', calendar_name=calendar,
-                year=year, month=month, day=day
-            )
-        )
+        if year and month and day:
+            url = flask.redirect(
+                flask.url_for('calendar', calendar_name=calendar,
+                              year=year, month=month, day=day))
+        elif year and month:
+            url = flask.redirect(
+                flask.url_for('calendar', calendar_name=calendar,
+                              year=year, month=month))
+        else:
+            url = flask.redirect(
+                flask.url_for('calendar', calendar_name=calendar,
+                              year=year))
     return url
 
 

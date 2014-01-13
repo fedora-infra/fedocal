@@ -335,9 +335,13 @@ def calendar_list(calendar_name, year, month, day):
         inday = 1
     start_date = datetime.date(inyear, inmonth, inday)
     if not month and not day:
-        end_date = start_date + relativedelta(years=+1)
+        end_date = start_date \
+            + relativedelta(years=+1) \
+            - datetime.timedelta(days=1)
     elif not day:
-        end_date = start_date + relativedelta(months=+1)
+        end_date = start_date \
+            + relativedelta(months=+1) \
+            - datetime.timedelta(days=1)
     else:
         end_date = start_date + relativedelta(days=+1)
 

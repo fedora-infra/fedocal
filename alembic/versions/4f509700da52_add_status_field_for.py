@@ -13,7 +13,8 @@ down_revision = '43bc10530adb'
 from alembic import op
 import sqlalchemy as sa
 
-status = sa.sql.table('calendar_status',
+status = sa.sql.table(
+    'calendar_status',
     sa.sql.column('status', sa.String(50))
 )
 

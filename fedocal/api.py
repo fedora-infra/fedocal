@@ -32,11 +32,9 @@ from dateutil import parser
 from sqlalchemy.exc import SQLAlchemyError
 
 import fedocal.fedocallib as fedocallib
-import fedocal.forms as forms
 from fedocal.doc_utils import load_doc
 
 from fedocal import APP, SESSION
-import fedocal
 
 
 def check_callback(response):

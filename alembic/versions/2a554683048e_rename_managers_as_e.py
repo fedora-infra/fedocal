@@ -29,4 +29,4 @@ def downgrade():
                     name='calendar_manager_group',
                     existing_type=sa.String(100),
                     existing_nullable=True
-                )
+                    )

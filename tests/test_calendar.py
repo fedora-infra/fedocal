@@ -78,7 +78,7 @@ class Calendartests(Modeltests):
             calendar_name='test_calendar4',
             calendar_contact='test4@example.com',
             calendar_description='This is yet another test calendar',
-            calendar_editor_group='packager')
+            calendar_editor_group='fi-apprentice')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)

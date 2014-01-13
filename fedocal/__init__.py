@@ -131,9 +131,9 @@ def inject_variables():
     """ With this decorator we can set some variables to all templates.
     """
     calendars = Calendar.get_all(SESSION)
-    admin = is_admin()
+    user_admin = is_admin()
 
-    return dict(calendars=calendars, version=__version__, admin=admin)
+    return dict(calendars=calendars, version=__version__, admin=user_admin)
 
 
 @APP.template_filter('WeekHeading')
@@ -335,9 +335,13 @@ def calendar_list(calendar_name, year, month, day):
         inday = 1
     start_date = datetime.date(inyear, inmonth, inday)
     if not month and not day:
-        end_date = start_date + relativedelta(years=+1)
+        end_date = start_date \
+            + relativedelta(years=+1) \
+            - datetime.timedelta(days=1)
     elif not day:
-        end_date = start_date + relativedelta(months=+1)
+        end_date = start_date \
+            + relativedelta(months=+1) \
+            - datetime.timedelta(days=1)
     else:
         end_date = start_date + relativedelta(days=+1)
 
@@ -943,7 +947,7 @@ def check_date():
     """ Return a json object containing a boolean specifying if the date
     asked is available or not in the future.
     """
-    calendar = flask.request.form.get('calendar', None)
+    calendar_name = flask.request.form.get('calendar', None)
     meeting_date = flask.request.form.get('meeting_date', None)
     meeting_date_end = flask.request.form.get(
         'meeting_date_end', meeting_date)
@@ -961,12 +965,12 @@ def check_date():
         recursion_frequency = None
 
     calendarobj = None
-    if calendar:
-        calendarobj = Calendar.by_id(SESSION, calendar)
+    if calendar_name:
+        calendarobj = Calendar.by_id(SESSION, calendar_name)
 
     if not calendarobj:
         output = {"meetings": [],
-                  "error": "Invalid calendar provided: %s" % calendar}
+                  "error": "Invalid calendar provided: %s" % calendar_name}
         return flask.Response(
             response=flask.json.dumps(output),
             status=400,
@@ -1063,16 +1067,16 @@ def check_date():
         timezone, 'UTC').time()
 
     available = fedocallib.agenda_is_free_in_future(
-        SESSION, calendarobj, meeting_date, meeting_date_end,
+        SESSION, calendarobj, meeting_date,
         recursion_ends, recursion_frequency,
         time_start, time_stop, meeting_id)
 
     output = {'Date available': available}
 
     return flask.Response(
-            response=flask.json.dumps(output),
-            status=200,
-            mimetype='application/json')
+        response=flask.json.dumps(output),
+        status=200,
+        mimetype='application/json')
 
 
 @APP.route('/admin/')
@@ -1086,16 +1090,17 @@ def admin():
                     'to add calendars.', 'errors')
         return flask.redirect(flask.url_for('index'))
 
-    calendars = Calendar.get_all(SESSION)
-    calendar = flask.request.args.get('calendar', None)
+    calendar_name = flask.request.args.get('calendar', None)
     action = flask.request.args.get('action', None)
-    if calendar and action and action in ['edit', 'delete']:
+    if calendar_name and action and action in ['edit', 'delete']:
         if action == 'edit':
             return flask.redirect(
-                flask.url_for('edit_calendar', calendar_name=calendar))
+                flask.url_for(
+                    'edit_calendar', calendar_name=calendar_name))
         elif action == 'delete':
             return flask.redirect(
-                flask.url_for('delete_calendar', calendar_name=calendar))
+                flask.url_for(
+                    'delete_calendar', calendar_name=calendar_name))
     return flask.render_template('admin.html')
 
 
@@ -1104,7 +1109,7 @@ def goto():
     """ Redirect the user to the begining of the requested Month of the
     specified year.
     """
-    calendar = flask.request.args.get('calendar', None)
+    calendar_name = flask.request.args.get('calendar', None)
     view_type = flask.request.args.get('type', 'calendar')
     year = flask.request.args.get('year', None)
     month = flask.request.args.get('month', None)
@@ -1135,19 +1140,31 @@ def goto():
         view_type = 'calendar'
 
     if view_type == 'list':
-        url = flask.redirect(
-            flask.url_for(
-                'calendar_list', calendar_name=calendar,
-                year=year, month=month, day=day
-            )
-        )
+        if year and month and day:
+            url = flask.redirect(
+                flask.url_for('calendar_list', calendar_name=calendar_name,
+                              year=year, month=month, day=day))
+        elif year and month:
+            url = flask.redirect(
+                flask.url_for('calendar_list', calendar_name=calendar_name,
+                              year=year, month=month))
+        else:
+            url = flask.redirect(
+                flask.url_for('calendar_list', calendar_name=calendar_name,
+                              year=year))
     else:
-        url = flask.redirect(
-            flask.url_for(
-                'calendar', calendar_name=calendar,
-                year=year, month=month, day=day
-            )
-        )
+        if year and month and day:
+            url = flask.redirect(
+                flask.url_for('calendar', calendar_name=calendar_name,
+                              year=year, month=month, day=day))
+        elif year and month:
+            url = flask.redirect(
+                flask.url_for('calendar', calendar_name=calendar,
+                              year=year, month=month))
+        else:
+            url = flask.redirect(
+                flask.url_for('calendar', calendar_name=calendar_name,
+                              year=year))
     return url
 
 
@@ -1179,11 +1196,10 @@ def locations():
     """ Returns the list of all locations where meetings happen and thus
     enable to see calendar for a specific location.
     """
-    locations = fedocallib.get_locations(SESSION)
+    list_locations = fedocallib.get_locations(SESSION)
     return flask.render_template(
         'locations.html',
-        locations=chunks(locations, 3))
-
+        locations=chunks(list_locations, 3))
 
 
 # pylint: disable=R0914

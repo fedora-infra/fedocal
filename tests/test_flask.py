@@ -107,6 +107,21 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
+    def test_location(self):
+        """ Test the location calendar function. """
+        self.__setup_db()
+
+        output = self.app.get('/location/test')
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/location/test/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>test - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
     def test_calendar_fullday(self):
         """ Test the calendar_fullday function. """
         self.__setup_db()

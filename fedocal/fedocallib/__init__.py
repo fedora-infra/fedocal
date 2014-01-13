@@ -199,6 +199,7 @@ def get_week(session, calendar, year=None, month=None, day=None):
     week = Week(session, calendar, week_start)
     return week
 
+
 def get_week_of_location(session, location, year=None, month=None, day=None):
     """ For a given date, retrieve the corresponding week.
     For any missing parameters (ie: None), use the value of the current
@@ -361,6 +362,7 @@ def get_meetings(
                                     week_start)
     return meetings
 
+
 # pylint: disable=R0913,R0914
 def get_meetings_at_location(
         session, location, year=None, month=None, day=None, tzone='UTC'):
@@ -423,7 +425,7 @@ def get_meetings_by_date_and_location(
     """
     calendar = Calendar.by_id(session, calendar)
     return Meeting.get_by_date_and_location(session, calendar, start_date,
-                                          end_date, location)
+                                            end_date, location)
 
 
 def is_date_in_future(indate, start_time):
@@ -570,7 +572,7 @@ def agenda_is_free(
 
 
 def agenda_is_free_in_future(
-        session, calendarobj, meeting_date, meeting_date_end,
+        session, calendarobj, meeting_date,
         recursion_ends, recursion_frequency,
         time_start, time_stop,
         meeting_id=None):
@@ -695,6 +697,13 @@ def retrieve_meeting_to_remind(session, offset=30):
         new_date = _generate_date_rounded_to_the_hour(today,
                                                       reminder_time)
         end_date = new_date + timedelta(minutes=offset)
+
+        if new_date.date() != end_date.date():
+            # in case the end_date is day after (ie: 23:45 + 30min), make
+            # the end_date as start_date at 23:59
+            end_date = datetime(
+                new_date.year, new_date.month, new_date.day, 23, 59)
+
         meetings.extend(Meeting.get_meeting_with_reminder(
             session, new_date.date(), new_date.time(), end_date.time(),
             'H-%s' % reminder_time))
@@ -852,11 +861,6 @@ def add_meeting(
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
 
-    free_time = agenda_is_free(
-        session, calendarobj,
-        meeting_time_start,
-        meeting_time_stop)
-
     reminder = None
     if remind_when and remind_who:
         reminder = dbaction.add_reminder(
@@ -896,7 +900,7 @@ def add_meeting(
 def edit_meeting(
         session, meeting, calendarobj, fas_user,
         meeting_name, meeting_date, meeting_date_end,
-        meeting_time_start, meeting_time_stop,comanager,
+        meeting_time_start, meeting_time_stop, comanager,
         meeting_information,
         meeting_location, tzone,
         recursion_frequency, recursion_ends,
@@ -1042,6 +1046,9 @@ def search_meetings(session, keyword):
 
 
 def get_locations(session):
+    """ Return the list of all the locations where meetings happen according
+    to the database.
+    """
     return Meeting.get_locations(session)
 
 

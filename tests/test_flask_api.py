@@ -78,10 +78,6 @@ class FlaskApitests(Modeltests):
             '<title>API - Fedocal</title>' in output.data)
         self.assertTrue(
             '<h1 class="title">API documentation</h1>' in output.data)
-        #self.assertTrue('<code>/api/date/calendar_name/</code>' \
-            #in output.data)
-        #self.assertTrue('<code>/api/place/location/calendar_name/</code>' \
-            #in output.data)
 
     def test_api_date_default(self):
         """ Test the api_date_default function. """
@@ -355,6 +351,11 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/calendars/')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data.count('calendar_name'), 4)
+
+        output = self.app.get('/api/calendars/?callback="abcd"')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('calendar_name'), 4)
+        self.assertTrue(output.data.startswith('"abcd"([\'{"calendars":'))
 
 
 if __name__ == '__main__':

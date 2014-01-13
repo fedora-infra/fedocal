@@ -490,7 +490,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -505,7 +504,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -520,7 +518,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -535,7 +532,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -550,10 +546,24 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
+
+         # is meeting 1 - 19:50-20:50 - no conflict
+        today_dt_start = datetime(
+            TODAY.year, TODAY.month, TODAY.day, 20, 00, tzinfo=pytz.utc)
+        today_dt_stop = datetime(
+            TODAY.year, TODAY.month, TODAY.day, 20, 30, tzinfo=pytz.utc)
+        rec_end = today_dt_stop + timedelta(days=60)
+        self.assertTrue(
+            fedocallib.agenda_is_free_in_future(
+                self.session, cal,
+                today_dt_start.date(),
+                rec_end.date(), 7,
+                today_dt_start.time(),
+                today_dt_stop.time(),
+                1))
 
     def test_agenda_is_free(self):
         """ Test the agenda_is_free function. """
@@ -1165,7 +1175,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_location,
             None)
 
-        calendarobj = model.Calendar.by_id(self.session, 'test_calendar4')
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar3')
         fasuser = FakeUser(['packager'])
 
         fedocallib.add_meeting(
@@ -1543,6 +1553,39 @@ class Fedocallibtests(Modeltests):
             meeting,
             calendarobj,
             fasuser,
+            'Fedora-fr-meeting_edited',
+            date.today() + timedelta(days=1),
+            None,
+            time(23, 0),
+            time(23, 0),
+            None,
+            'Information',
+            'EMEA',
+            'Europe/Paris',
+            None, None,
+            None, None,
+            full_day=True)
+        meeting = model.Meeting.by_id(self.session, 1)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(
+            meeting.meeting_name,
+            'Fedora-fr-meeting_edited')
+        self.assertEqual(
+            meeting.meeting_manager,
+            'username,')
+        self.assertEqual(
+            meeting.meeting_information,
+            'Information')
+        self.assertEqual(
+            meeting.meeting_date, date.today() + timedelta(days=1))
+        self.assertEqual(
+            meeting.meeting_date_end, date.today() + timedelta(days=2))
+
+        fedocallib.edit_meeting(
+            self.session,
+            meeting,
+            calendarobj,
+            fasuser,
             'Fedora-fr-meeting_edited2',
             date.today() + timedelta(days=1),
             None,
@@ -1772,6 +1815,7 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_date_end,
             date.today() + timedelta(days=3))
 
+        # Remove recursion
         meeting = model.Meeting.by_id(self.session, 9)
         fedocallib.edit_meeting(
             self.session,
@@ -1824,6 +1868,8 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_date_end,
             date.today() + timedelta(days=2))
 
+        # Set the recursion to 7 days - end recursion will be filled
+        # automatically
         meeting = model.Meeting.by_id(self.session, 9)
         fedocallib.edit_meeting(
             self.session,
@@ -1867,6 +1913,54 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_date_end,
             date.today() + timedelta(days=2))
 
+        # Move the meeting to another calendar
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar4')
+        meeting = model.Meeting.by_id(self.session, 9)
+        fedocallib.edit_meeting(
+            self.session,
+            meeting,
+            calendarobj,
+            fasuser,
+            'Test meeting with reminder-2.3',
+            date.today() + timedelta(days=1),
+            date.today() + timedelta(days=2),
+            time(23, 0),
+            time(23, 59),
+            None,
+            'Information3',
+            None,
+            'Europe/Paris',
+            7, None,  # Recursion
+            None, None,  # Reminder
+            full_day=False,
+            edit_all_meeting=False)
+        meeting = model.Meeting.by_id(self.session, 9)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(
+            meeting.meeting_name,
+            'Test meeting with reminder-2.3')
+        self.assertEqual(
+            meeting.meeting_manager,
+            'username,')
+        self.assertEqual(
+            meeting.meeting_information,
+            'Information3')
+        self.assertEqual(
+            meeting.reminder,
+            None)
+        self.assertEqual(
+            meeting.recursion_ends,
+            None)
+        self.assertEqual(
+            meeting.recursion_frequency,
+            None)
+        self.assertEqual(
+            meeting.meeting_date_end,
+            date.today() + timedelta(days=2))
+        self.assertEqual(
+            meeting.calendar_name,
+            'test_calendar4')
+
     def test_get_calendar_statuses(self):
         """ Test the get_calendar_statuses function from fedocallib. """
         statuses = [status.status
@@ -1875,6 +1969,33 @@ class Fedocallibtests(Modeltests):
                     ]
         self.assertEqual(statuses, ['Enabled', 'Disabled'])
 
+    def test_search_meetings(self):
+        """ Test the search_meetings function of fedocallib. """
+        self.assertEqual(fedocallib.search_meetings(self.session, '*'), [])
+        self.__setup_meeting()
+        self.assertEqual(
+            len(fedocallib.search_meetings(self.session, '*')), 14)
+        self.assertEqual(
+            len(fedocallib.search_meetings(self.session, '*-fr*')), 1)
+        self.assertEqual(
+            len(fedocallib.search_meetings(self.session, 'fedora-fr*')), 1)
+
+    def test_get_locations(self):
+        """ Test the get_locations function of fedocallib. """
+        self.assertEqual(
+            fedocallib.get_locations(self.session), [])
+
+    def test_clear_calendar(self):
+        """ Test the clear_calendar function of fedocallib. """
+        self.__setup_meeting()
+        self.assertEqual(
+            len(fedocallib.search_meetings(self.session, '*')), 14)
+
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar4')
+        fedocallib.clear_calendar(self.session, calendarobj)
+
+        self.assertEqual(
+            len(fedocallib.search_meetings(self.session, '*')), 11)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

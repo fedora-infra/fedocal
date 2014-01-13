@@ -418,8 +418,9 @@ class Meeting(BASE):
         return query.all()
 
     @classmethod
-    def get_by_date_at_location(cls, session, location, start_date,
-            stop_date, full_day=None, no_recursive=False):
+    def get_by_date_at_location(
+            cls, session, location, start_date, stop_date, full_day=None,
+            no_recursive=False):
         """ Retrieve the list of meetings between two date at a specific
         location.
         We include the start date and exclude the stop date.
@@ -746,6 +747,7 @@ class Meeting(BASE):
                 (Meeting.meeting_time_start >= start_time),
                 (Meeting.meeting_time_start < stop_time),
                 (Meeting.reminder_id.in_(reminders)))).all()
+
         # Add recursive meetings
         recursive_meetings = session.query(cls).filter(
             and_(
@@ -827,8 +829,8 @@ class Meeting(BASE):
             cls
         ).filter(
             or_(
-                cls.meeting_name.like(keyword),
-                cls.meeting_information.like(keyword)
+                cls.meeting_name.ilike(keyword),
+                cls.meeting_information.ilike(keyword)
             )
         ).order_by(
             Meeting.meeting_date,

@@ -34,7 +34,7 @@ def modify_rst(rst):
     try:
         # The rst features we need were introduced in this version
         minimum = [0, 9]
-        version = map(int, docutils.__version__.split('.'))
+        version = [int(el) for el in docutils.__version__.split('.')]
 
         # If we're at or later than that version, no need to downgrade
         if version >= minimum:

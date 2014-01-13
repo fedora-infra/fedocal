@@ -296,7 +296,9 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
             meeting.meeting_time_start.hour,
             meeting.meeting_time_start.minute, 0
         ) + timedelta(minutes=start_delta)
-        startdt = convert_time(startdt, meeting.meeting_timezone, tzone)
+        # Required to add the tz info, does not actually convert
+        startdt = convert_time(
+            startdt, meeting.meeting_timezone, meeting.meeting_timezone)
 
         stopdt = datetime(
             meeting.meeting_date_end.year,
@@ -305,7 +307,9 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
             meeting.meeting_time_stop.hour,
             meeting.meeting_time_stop.minute, 0
         ) + timedelta(minutes=stop_delta)
-        stopdt = convert_time(stopdt, meeting.meeting_timezone, tzone)
+        # Required to add the tz info
+        stopdt = convert_time(
+            stopdt, meeting.meeting_timezone, meeting.meeting_timezone)
 
         if stopdt < startdt:  # pragma: no cover
             stopdt = stopdt + timedelta(days=1)

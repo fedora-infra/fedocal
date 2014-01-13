@@ -67,6 +67,16 @@ else %}{{ location }}{% endif %}{% endblock %}
           <input type="text" name="year" placeholder="2014" title="Year in decimal"/>
           <input type="submit" value="Go"/>
         </form>
+        <form action="{{ url_for('update_tz') }}" id="update_tz">
+            <select name="tzone", id="tzones">
+                {% for tz in tzones %}
+                {% if tz == tzone %}<option value="{{tz}}" selected>{{ tz }}</option>
+                {% else %}<option value="{{tz}}">{{ tz }}</option>{% endif %}
+                {% endfor %}
+            </select>
+            <input type="submit" value="Go"/>
+        </form>
+
         <div id="accordion">
         <h4>Calendars</h4>
         <ul id="calendars_menu" class="checkmark-list">

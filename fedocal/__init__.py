@@ -32,6 +32,7 @@ __version__ = '0.3.1'
 import datetime
 import logging
 import os
+import urlparse
 from dateutil import parser
 from logging.handlers import SMTPHandler
 
@@ -41,6 +42,7 @@ import vobject
 from dateutil.relativedelta import relativedelta
 from flask_fas_openid import FAS
 from functools import wraps
+from pytz import common_timezones
 from sqlalchemy.exc import SQLAlchemyError
 
 import fedocal.forms as forms
@@ -133,7 +135,11 @@ def inject_variables():
     calendars = Calendar.get_all(SESSION)
     user_admin = is_admin()
 
-    return dict(calendars=calendars, version=__version__, admin=user_admin)
+    return dict(
+        calendars=calendars,
+        version=__version__,
+        admin=user_admin,
+        user_tz=get_timezone())
 
 
 @APP.template_filter('WeekHeading')
@@ -231,6 +237,7 @@ def get_timezone():
     if flask.g.fas_user:
         if flask.g.fas_user['timezone']:
             tzone = flask.g.fas_user['timezone']
+    tzone = flask.request.args.get('tzone', tzone)
     return tzone
 
 
@@ -239,6 +246,17 @@ def chunks(item_list, chunks_size):
     """
     for i in xrange(0, len(item_list), chunks_size):
         yield item_list[i: i + chunks_size]
+
+
+def is_safe_url(target):
+    """ Checks that the target url is safe and sending to the current
+    website not some other malicious one.
+    """
+    ref_url = urlparse.urlparse(flask.request.host_url)
+    test_url = urlparse.urlparse(
+        urlparse.urljoin(flask.request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
 
 
 ## Flask application
@@ -292,6 +310,7 @@ def calendar(calendar_name, year, month, day):
 
     curmonth_cal = fedocallib.get_html_monthly_cal(
         year=year, month=month, day=day, calendar_name=calendar_name)
+
     return flask.render_template(
         'agenda.html',
         calendar=calendarobj,
@@ -300,6 +319,7 @@ def calendar(calendar_name, year, month, day):
         day_index=day_index,
         meetings=meetings,
         tzone=tzone,
+        tzones=common_timezones,
         next_week=next_week,
         prev_week=prev_week,
         curmonth_cal=curmonth_cal,
@@ -1251,3 +1271,20 @@ def location(loc_name, year, month, day):
         next_week=next_week,
         prev_week=prev_week,
         curmonth_cal=curmonth_cal)
+
+
+@APP.route('/updatetz/')
+def update_tz():
+    """ Update the timezone using the value set in the drop-down list and
+    send back the user to where it came from.
+    """
+    url = flask.request.referrer.split('?', 1)[0]
+
+    if not is_safe_url(url):
+        url = url_for('index')
+        flask.flash('Invalid refferred url')
+    tzone = flask.request.args.get('tzone', None)
+    if tzone:
+        return flask.redirect('%s?tzone=%s' % (url, tzone))
+    else:
+        return flask.redirect(url)

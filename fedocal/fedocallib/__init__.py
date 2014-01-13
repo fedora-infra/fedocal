@@ -1043,3 +1043,9 @@ def search_meetings(session, keyword):
 
 def get_locations(session):
     return Meeting.get_locations(session)
+
+
+def clear_calendar(session, calendar):
+    """ Remove all the meetings from the specified calendar.
+    """
+    return Meeting.clear_from_calendar(session, calendar)

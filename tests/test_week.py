@@ -41,6 +41,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from fedocal.fedocallib import model
 from fedocal.fedocallib import week
+from fedocal.fedocallib import exceptions
 
 from tests import Modeltests
 from test_meeting import Meetingtests, TODAY
@@ -161,6 +162,17 @@ class Weektests(Modeltests):
             weekobj.full_day_meetings[0].meeting_name,
             'Full-day meeting with recursion')
 
+    def test_week_exception(self):
+        """ Test that week raises an exception if the arguments provided
+        are incomplete.
+        """
+        self.assertRaises(
+            exceptions.FedocalException,
+            week.Week,
+            self.session,
+            None,
+            (TODAY + timedelta(days=15))
+        )
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Weektests)

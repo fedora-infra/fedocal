@@ -63,7 +63,7 @@ class AddCalendarForm(wtf.Form):
     calendar_status = wtforms.SelectField(
         'Status',
         [wtforms.validators.Required()],
-        choices=[(item, item) for item in []]
+        choices=[]
     )
 
     def __init__(self, *args, **kwargs):
@@ -96,7 +96,7 @@ class AddMeetingForm(wtf.Form):
     calendar_name = wtforms.SelectField(
         'Calendar',
         [wtforms.validators.Required()],
-        choices=[(el, el) for el in []])
+        choices=[])
 
     meeting_name = wtforms.TextField(
         'Meeting name',

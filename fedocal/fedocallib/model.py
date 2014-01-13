@@ -828,8 +828,8 @@ class Meeting(BASE):
             cls
         ).filter(
             or_(
-                cls.meeting_name.like(keyword),
-                cls.meeting_information.like(keyword)
+                cls.meeting_name.ilike(keyword),
+                cls.meeting_information.ilike(keyword)
             )
         ).order_by(
             Meeting.meeting_date,

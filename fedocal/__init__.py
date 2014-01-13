@@ -291,6 +291,12 @@ def calendar(calendar_name, year, month, day):
     :arg day: the day of the date one would like to consult.
     """
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
     tzone = get_timezone()
@@ -366,6 +372,12 @@ def calendar_list(calendar_name, year, month, day):
         end_date = start_date + relativedelta(days=+1)
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     tzone = get_timezone()
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, start_date, end_date, tzone)
@@ -617,7 +629,18 @@ def edit_meeting(meeting_id):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
+    if not meeting:
+        flask.flash(
+            'The meeting #%s could not be found' % meeting_id, 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendars = Calendar.get_all(SESSION)
 
     if calendarobj.calendar_status != 'Enabled':
@@ -837,6 +860,11 @@ def delete_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
     deleteform = forms.DeleteCalendarForm()
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
@@ -869,6 +897,11 @@ def clear_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
 
     if not is_calendar_admin(calendarobj):
         flask.flash('You are not an admin of this calendar, you are not '
@@ -914,6 +947,12 @@ def edit_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     status = fedocallib.get_calendar_statuses(SESSION)
     form = forms.AddCalendarForm(status=status)
     # pylint: disable=E1101

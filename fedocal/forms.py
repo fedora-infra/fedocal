@@ -37,6 +37,8 @@ import fedocal.fedocallib as fedocallib
 
 def validate_time(form, field):
     """ Validate if the data set in the given field is a valid time. """
+    if isinstance(field.data, time):
+        return
     import re
     if not re.match(r'\d?\d:\d\d?', field.data):
         raise wtforms.ValidationError('Time must be of type "HH:MM"')
@@ -61,7 +63,7 @@ class AddCalendarForm(wtf.Form):
     calendar_status = wtforms.SelectField(
         'Status',
         [wtforms.validators.Required()],
-        choices=[(item, item) for item in []]
+        choices=[]
     )
 
     def __init__(self, *args, **kwargs):
@@ -91,6 +93,11 @@ class AddCalendarForm(wtf.Form):
 
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """
+    calendar_name = wtforms.SelectField(
+        'Calendar',
+        [wtforms.validators.Required()],
+        choices=[])
+
     meeting_name = wtforms.TextField(
         'Meeting name',
         [wtforms.validators.Required()])
@@ -164,6 +171,13 @@ class AddMeetingForm(wtf.Form):
         if 'timezone' in kwargs:
             self.meeting_timezone.data = kwargs['timezone']
 
+        if 'calendars' in kwargs:
+            calendars = kwargs['calendars']
+            self.calendar_name.choices = [
+                (calendar.calendar_name, calendar.calendar_name)
+                for calendar in calendars
+            ]
+
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']
             tzone = 'UTC'
@@ -187,6 +201,7 @@ class AddMeetingForm(wtf.Form):
             startdt = fedocallib.convert_time(startdt, 'UTC', tzone)
             stopdt = fedocallib.convert_time(stopdt, 'UTC', tzone)
 
+            self.calendar_name.data = meeting.calendar_name
             self.meeting_name.data = meeting.meeting_name
             self.meeting_date.data = startdt.date()
             self.meeting_date_end.data = meeting.meeting_date_end

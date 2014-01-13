@@ -572,7 +572,7 @@ def agenda_is_free(
 
 
 def agenda_is_free_in_future(
-        session, calendarobj, meeting_date, meeting_date_end,
+        session, calendarobj, meeting_date,
         recursion_ends, recursion_frequency,
         time_start, time_stop,
         meeting_id=None):
@@ -854,11 +854,6 @@ def add_meeting(
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
 
-    free_time = agenda_is_free(
-        session, calendarobj,
-        meeting_time_start,
-        meeting_time_stop)
-
     reminder = None
     if remind_when and remind_who:
         reminder = dbaction.add_reminder(
@@ -1044,6 +1039,9 @@ def search_meetings(session, keyword):
 
 
 def get_locations(session):
+    """ Return the list of all the locations where meetings happen according
+    to the database.
+    """
     return Meeting.get_locations(session)
 
 

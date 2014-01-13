@@ -490,7 +490,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -505,7 +504,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -520,7 +518,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -535,7 +532,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))
@@ -550,7 +546,6 @@ class Fedocallibtests(Modeltests):
             fedocallib.agenda_is_free_in_future(
                 self.session, cal,
                 today_dt_start.date(),
-                today_dt_stop.date(),
                 rec_end.date(), 7,
                 today_dt_start.time(),
                 today_dt_stop.time()))

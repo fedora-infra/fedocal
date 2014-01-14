@@ -23,6 +23,7 @@ from datetime import date
 from datetime import time
 from datetime import timedelta
 from dateutil import zoneinfo
+import dateutil.rrule as rrule
 
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
@@ -677,6 +678,19 @@ def add_meeting_to_vcal(ical, meeting):
             meeting.meeting_date_end, meeting.meeting_time_stop)
         stop.value = dti_end.replace(tzinfo=tz)
 
+    if meeting.recursion_frequency and meeting.recursion_ends:
+        newrule = rrule.rruleset()
+        freq = 1
+        if meeting.recursion_frequency == 14:
+            freq = 2
+        newrule.rrule(
+            rrule.rrule(
+                freq=rrule.WEEKLY,
+                interval=freq,
+                dtstart=start.value,
+                until=meeting.recursion_ends))
+        entry.rruleset = newrule
+
 
 def add_meetings_to_vcal(ical, meetings):
     """ Convert the Meeting objects into iCal object and add them to
@@ -721,7 +735,8 @@ def get_html_monthly_cal(
     return curmonth_cal_nf
 
 
-def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
+def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC',
+                extended=True):
     """ Returns all the meetings in a given time period.
     Recursive meetings are expanded as if each was a single meeting.
 
@@ -734,9 +749,10 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
         defaults to UTC.
     """
     meetings_utc = Meeting.get_by_date(session, calendarobj, start_date,
-                                       end_date, no_recursive=True)
-    meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
-                        calendarobj, start_date, end_date))
+                                       end_date, no_recursive=extended)
+    if extended:
+        meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
+                            calendarobj, start_date, end_date))
     meetings = list(set(meetings_utc))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings

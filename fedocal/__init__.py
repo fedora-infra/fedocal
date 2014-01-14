@@ -299,9 +299,15 @@ def calendar(calendar_name, year, month, day):
 
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
+    week = fedocallib.get_week(SESSION, calendarobj, year, month, day)
+
     tzone = get_timezone()
-    meetings = fedocallib.get_meetings(
-        SESSION, calendarobj, year, month, day, tzone=tzone)
+    meetings = fedocallib.format_week_meeting(
+        week.meetings, tzone, week_start)
+    full_day_meetings = fedocallib.format_full_day_meeting(
+        week.full_day_meetings, week_start)
+
+    # Information required for the pagination
     next_week = fedocallib.get_next_week(
         week_start.year, week_start.month, week_start.day)
     prev_week = fedocallib.get_previous_week(
@@ -324,6 +330,7 @@ def calendar(calendar_name, year, month, day):
         weekdays=weekdays,
         day_index=day_index,
         meetings=meetings,
+        full_day_meetings=full_day_meetings,
         tzone=tzone,
         tzones=common_timezones,
         next_week=next_week,
@@ -1278,12 +1285,17 @@ def location(loc_name, year, month, day):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
+
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
-    tzone = get_timezone()
+    week = fedocallib.get_week_of_location(
+        SESSION, loc_name, year, month, day)
 
-    meetings = fedocallib.get_meetings_at_location(
-        SESSION, loc_name, year, month, day, tzone=tzone)
+    tzone = get_timezone()
+    meetings = fedocallib.format_week_meeting(
+        week.meetings, tzone, week_start)
+    full_day_meetings = fedocallib.format_full_day_meeting(
+        week.full_day_meetings, week_start)
 
     next_week = fedocallib.get_next_week(
         week_start.year, week_start.month, week_start.day)
@@ -1306,6 +1318,7 @@ def location(loc_name, year, month, day):
         weekdays=weekdays,
         day_index=day_index,
         meetings=meetings,
+        full_day_meetings=full_day_meetings,
         tzone=tzone,
         next_week=next_week,
         prev_week=prev_week,

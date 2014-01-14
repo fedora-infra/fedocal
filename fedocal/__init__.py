@@ -882,15 +882,17 @@ def delete_calendar(calendar_name):
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
         if deleteform.confirm_delete.data:
+            for meeting in calendarobj.meetings:
+                meeting.delete(SESSION)
             calendarobj.delete(SESSION)
             try:
                 SESSION.commit()
+                flask.flash('Calendar deleted')
             except SQLAlchemyError, err:
                 SESSION.rollback()
                 LOG.debug('Error in delete_calendar')
                 LOG.exception(err)
                 flask.flash('Could not delete this calendar.', 'errors')
-        flask.flash('Calendar deleted')
         fedmsg.publish(topic="calendar.delete", msg=dict(
             agent=flask.g.fas_user.username,
             calendar=calendarobj.to_json(),

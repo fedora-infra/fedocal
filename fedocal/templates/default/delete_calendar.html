@@ -23,10 +23,37 @@
 <form action="" method="post">
 {{ render_field_invert(form.confirm_delete) }}
 <p class="buttons indent">
-    <input type="submit" class="submit positive button" value="Delete">
+    <input id="confirm_button" type="submit" class="submit positive button"
+           value="Delete">
     <input type="button" value="Cancel" class="button" onclick="history.back();">
 </p>
 {{ form.csrf_token }}
 </form>
 
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript">
+   $(document).ready(function() {
+        var cb = $('#confirm_delete')
+        var but = $('#confirm_button');
+        if(!cb.checked) {
+            but.attr('disabled', true);
+            but.addClass('ui-state-disabled');
+        };
+   });
+   $(document).ready(function() {
+     $('#confirm_delete').click(function() {
+        var cb = $('#confirm_button');
+        if(this.checked == true) {
+            cb.removeAttr('disabled');
+            cb.removeClass('ui-state-disabled');
+        } else {
+            cb.attr('disabled', true);
+            cb.addClass('ui-state-disabled');
+        };
+     });
+ });
+</script>
 {% endblock %}

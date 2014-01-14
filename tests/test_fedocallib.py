@@ -705,88 +705,6 @@ class Fedocallibtests(Modeltests):
             cnt = cnt + 1
         self.assertEqual(cnt, len(meetings))
 
-    def test_get_meetings_by_date(self):
-        """ Test the get_meetings_by_date function. """
-        self.__setup_meeting()
-        meetings = fedocallib.get_meetings_by_date(
-            self.session,
-            'test_calendar',
-            TODAY + timedelta(days=10),
-            TODAY + timedelta(days=12)
-            )
-        self.assertEqual(len(meetings), 5)
-        for meeting in meetings:
-            self.assertTrue(
-                meeting.meeting_name in
-                ['test-meeting2',
-                 'Another test meeting', 'Test meeting with reminder',
-                 'Test meeting with reminder and recursion',
-                 'Full-day meeting with recursion'])
-            self.assertEqual(meeting.meeting_manager, 'pingou,')
-
-    # pylint: disable=C0103
-    def test_get_meetings_by_date_and_location(self):
-        """ Test the get_meetings_by_date_and_location function. """
-        self.__setup_meeting()
-        obj = fedocallib.get_meetings_by_date_and_location(
-            self.session,
-            'test_calendar4',
-            TODAY,
-            TODAY + timedelta(days=2),
-            'EMEA'
-            )
-
-        self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 1)
-        self.assertEqual(
-            obj[0].meeting_name,
-            'test-meeting-st-2')
-        self.assertEqual(
-            obj[0].meeting_manager,
-            'test,')
-        self.assertEqual(
-            obj[0].calendar.calendar_name,
-            'test_calendar4')
-        self.assertEqual(
-            obj[0].meeting_information,
-            'This is a second test meeting at the same time')
-        self.assertEqual(obj[0].reminder, None)
-
-        obj = fedocallib.get_meetings_by_date_and_location(
-            self.session,
-            'test_calendar4',
-            TODAY,
-            TODAY + timedelta(days=2),
-            'NA'
-            )
-        self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 1)
-        self.assertEqual(
-            obj[0].meeting_name,
-            'test-meeting-st-1')
-        self.assertEqual(
-            obj[0].meeting_manager,
-            'test,')
-        self.assertEqual(
-            obj[0].calendar.calendar_name,
-            'test_calendar4')
-        self.assertEqual(
-            obj[0].meeting_information,
-            'This is a test meeting at the same time')
-        self.assertEqual(
-            obj[0].reminder,
-            None)
-
-        obj = fedocallib.get_meetings_by_date_and_location(
-            self.session,
-            'test_calendar4',
-            TODAY,
-            TODAY + timedelta(days=2),
-            'APAC'
-            )
-        self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 0)
-
     def test_get_html_monthly_cal(self):
         """ Test the get_html_monthly_call function. """
         today = date.today()
@@ -826,17 +744,6 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(output, None)
         self.assertEqual(len(output), 0)
         self.assertEqual(output, [])
-
-    def test_get_by_date(self):
-        """ Test the get_by_date function. """
-        self.__setup_meeting()
-        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
-        self.assertNotEqual(calendarobj, None)
-        output = fedocallib.get_by_date(
-            self.session, calendarobj, TODAY,
-            TODAY + relativedelta(years=+1))
-        self.assertNotEqual(output, None)
-        self.assertEqual(len(output), 47)
 
     # pylint: disable=R0915
     def test_add_meeting_fail(self):

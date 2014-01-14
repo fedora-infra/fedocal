@@ -30,6 +30,7 @@
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
+import json
 import unittest
 import sys
 import os
@@ -81,18 +82,15 @@ class FlaskApitests(Modeltests):
 
     def test_api_date_default(self):
         """ Test the api_date_default function. """
-        output = self.app.get('/api/meetings/?calendar=foobar')
-        self.assertEqual(output.status_code, 200)
-        start_date = date.today() - timedelta(days=30)
-        end_date = date.today() + timedelta(days=180)
+        output = self.app.get('/api/meetings/?calendar=test_calendar')
+        self.assertEqual(output.status_code, 400)
         self.assertEqual(
             output.data,
-            '{"meetings": [], "arguments": {"start": "%s", '
-            '"calendar": "foobar", "end": "%s", "location": null}}' % (
-                start_date.strftime('%Y-%m-%d'),
-                end_date.strftime('%Y-%m-%d')
-            )
-        )
+            '{"meetings": [], '
+            '"error": "Invalid calendar provided: test_calendar"}')
+
+        start_date = date.today() - timedelta(days=30)
+        end_date = date.today() + timedelta(days=180)
 
         self.__setup_db()
 
@@ -106,6 +104,10 @@ class FlaskApitests(Modeltests):
         self.assertEqual(
             output.data.count('meeting_name'),
             49)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data['arguments']['start'],
+            start_date.strftime('%Y-%m-%d'))
 
         output = self.app.get('/api/meetings/?calendar=test_calendar4')
         self.assertEqual(
@@ -123,16 +125,27 @@ class FlaskApitests(Modeltests):
                 TODAY, end_date
             )
         )
-        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.status_code, 400)
+        self.assertEqual(
+            output.data,
+            '{"meetings": [], '
+            '"error": "Invalid calendar provided: foobar"}')
+
+        self.__setup_db()
+
+        output = self.app.get(
+            '/api/meetings/?calendar=test_calendar&start=%s&end=%s' % (
+                TODAY - timedelta(days=50), end_date - timedelta(days=45)
+            )
+        )
         self.assertEqual(
             output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
-            '"calendar": "foobar", "end": "%s", "location": null}}' % (
-                TODAY.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')
+            '"calendar": "test_calendar", "end": "%s", "location": null}}' % (
+                (TODAY - timedelta(days=50)).strftime('%Y-%m-%d'),
+                (end_date - timedelta(days=45)).strftime('%Y-%m-%d')
             )
         )
-
-        self.__setup_db()
 
         output = self.app.get(
             '/api/meetings/?calendar=test_calendar&start=%s&end=%s' % (
@@ -184,7 +197,7 @@ class FlaskApitests(Modeltests):
         """ Test the api_place_default function. """
 
         output = self.app.get(
-            '/api/meetings/?calendar=foobar&location=EMEA')
+            '/api/meetings/?location=EMEA')
         self.assertEqual(output.status_code, 200)
         start_date = date.today() - timedelta(days=30)
         end_date = date.today() + timedelta(days=180)
@@ -193,7 +206,7 @@ class FlaskApitests(Modeltests):
             '{"meetings": [], '
             '"arguments": {'
             '"start": "%s", '
-            '"calendar": "foobar", '
+            '"calendar": null, '
             '"end": "%s", '
             '"location": "EMEA"}'
             '}' % (start_date.strftime('%Y-%m-%d'),
@@ -228,7 +241,7 @@ class FlaskApitests(Modeltests):
         """ Test the api_place function. """
         end_date = TODAY + timedelta(days=25)
         output = self.app.get(
-            '/api/meetings/?calendar=foobar&location=APAC&start=%s&end=%s' % (
+            '/api/meetings/?location=APAC&start=%s&end=%s' % (
                 TODAY, end_date
             )
         )
@@ -236,7 +249,7 @@ class FlaskApitests(Modeltests):
         self.assertEqual(
             output.data,
             '{"meetings": [], "arguments": {"start": "%s", '
-            '"calendar": "foobar", "end": "%s", '
+            '"calendar": null, "end": "%s", '
             '"location": "APAC"}}' % (
                 TODAY.strftime('%Y-%m-%d'),
                 end_date.strftime('%Y-%m-%d')

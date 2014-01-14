@@ -56,18 +56,20 @@ class Week(object):
         """
         if self.calendar:
             self.meetings = Meeting.get_by_date(
-                self.session, self.calendar, self.start_date, self.stop_date)
+                self.session, self.calendar,
+                self.start_date, self.stop_date, full_day=False)
 
             meetings = Meeting.get_active_regular_meeting(
                 self.session, self.calendar,
-                self.start_date, self.stop_date)
+                self.start_date, self.stop_date, full_day=False)
         else:
             self.meetings = Meeting.get_by_date_at_location(
-                self.session, self.location, self.start_date, self.stop_date)
+                self.session, self.location,
+                self.start_date, self.stop_date, full_day=False)
 
             meetings = Meeting.get_active_regular_meeting_at_location(
                 self.session, self.location,
-                self.start_date, self.stop_date)
+                self.start_date, self.stop_date, full_day=False)
 
         for meeting in meetings:
             for delta in range(0, 7):

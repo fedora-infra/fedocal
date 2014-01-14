@@ -68,7 +68,8 @@ class Weektests(Modeltests):
         self.assertNotEqual(weekobj, None)
         self.assertEqual(weekobj.start_date, TODAY)
         self.assertEqual(weekobj.stop_date, end_date)
-        self.assertEqual(len(weekobj.meetings), 4)
+        self.assertEqual(len(weekobj.meetings), 3)
+        self.assertEqual(len(weekobj.full_day_meetings), 1)
 
     def test_repr_week(self):
         """ Test if the week string representation is correct. """
@@ -88,7 +89,8 @@ class Weektests(Modeltests):
         # Test the meeting in the week
         self.assertNotEqual(weekobj, None)
         self.assertNotEqual(weekobj.meetings[0], None)
-        self.assertEqual(len(weekobj.meetings), 4)
+        self.assertEqual(len(weekobj.meetings), 3)
+        self.assertEqual(len(weekobj.full_day_meetings), 1)
 
         self.assertEqual(
             weekobj.meetings[0].calendar.calendar_name,
@@ -131,13 +133,13 @@ class Weektests(Modeltests):
             None)
 
         self.assertEqual(
-            weekobj.meetings[3].meeting_name,
+            weekobj.full_day_meetings[0].meeting_name,
             'Full-day meeting')
         self.assertEqual(
-            weekobj.meetings[3].meeting_manager,
+            weekobj.full_day_meetings[0].meeting_manager,
             'pingou,')
         self.assertEqual(
-            weekobj.meetings[3].meeting_information,
+            weekobj.full_day_meetings[0].meeting_information,
             'This is a full day meeting')
 
     def test_meeting_in_week_full_day(self):

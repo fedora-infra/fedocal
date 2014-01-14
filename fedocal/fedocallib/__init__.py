@@ -269,6 +269,8 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
     """ Return a dictionnary representing the meeting of the week in the
     appropriate format for the meeting provided in the meeting_list.
     """
+    week_start = pytz.timezone(tzone).localize(
+        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     fmt = '%Hh%M'
     #week_start = convert_time(week_start, 'UTC', tzone)
     for meeting in meeting_list:
@@ -349,8 +351,6 @@ def get_meetings(
         defaults to UTC.
     """
     week_start = get_start_week(year, month, day)
-    week_start = pytz.timezone(tzone).localize(
-        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     week = get_week(session, calendar, year, month, day)
 
     # Prepare empty data structure in which we will then insert the meetings

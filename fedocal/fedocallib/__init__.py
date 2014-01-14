@@ -265,10 +265,31 @@ def get_week_day_index(year=None, month=None, day=None):
     return date(year, month, day).isoweekday()
 
 
-def _format_week_meeting(meetings, meeting_list, tzone, week_start):
+def format_full_day_meeting(meeting_list, week_start):
+    """ Return a list of list corresponding to an entry per day and for
+    each day the list of full_day meeting associated.
+    """
+    meetings = []
+    for cnt in range(7):
+        meetings.append([])
+
+    for meeting in meeting_list:
+        idx = meeting.meeting_date - week_start
+        meetings[int(idx.days)].append(meeting)
+
+    return meetings
+
+def format_week_meeting(meeting_list, tzone, week_start):
     """ Return a dictionnary representing the meeting of the week in the
     appropriate format for the meeting provided in the meeting_list.
     """
+    meetings = {}
+    for hour in HOURS[:-1]:
+        for key in ['%sh00', '%sh30']:
+            key = key % (hour)
+            # pylint: disable=W0612
+            meetings[key] = [None for cnt2 in range(0, 7)]
+
     week_start = pytz.timezone(tzone).localize(
         datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     fmt = '%Hh%M'
@@ -332,70 +353,6 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
                 else:
                     meetings[key][day] = [meeting]
             t_time = t_time + timedelta(minutes=30)
-    return meetings
-
-
-# pylint: disable=R0913,R0914
-def get_meetings(
-        session, calendar, year=None, month=None, day=None, tzone='UTC'):
-    """ Return a hash of {time: [meeting]} for the asked week. The week
-    is returned based either on the current utc week or based on the
-    information provided.
-
-    :arg session: the database session to use
-    :arg calendar: the name of the calendar of interest.
-    :kwarg year: year to consider when searching a week.
-    :kwarg month: month to consider when searching a week.
-    :kwarg day: day to consider when searching a week.
-    :kwarg tzone: the timezone in which the meetings should be displayed
-        defaults to UTC.
-    """
-    week_start = get_start_week(year, month, day)
-    week = get_week(session, calendar, year, month, day)
-
-    # Prepare empty data structure in which we will then insert the meetings
-    # This is pretty much the table that will get displayed.
-    meetings = {}
-    for hour in HOURS[:-1]:
-        for key in ['%sh00', '%sh30']:
-            key = key % (hour)
-            # pylint: disable=W0612
-            meetings[key] = [None for cnt2 in range(0, 7)]
-
-    meetings = _format_week_meeting(meetings, week.meetings, tzone,
-                                    week_start)
-    return meetings
-
-
-# pylint: disable=R0913,R0914
-def get_meetings_at_location(
-        session, location, year=None, month=None, day=None, tzone='UTC'):
-    """ Return a Week object containing all the meeting for the said week.
-
-    :arg session: the database session to use
-    :arg location: the location of interest.
-    :kwarg year: year to consider when searching a week.
-    :kwarg month: month to consider when searching a week.
-    :kwarg day: day to consider when searching a week.
-    :kwarg tzone: the timezone in which the meetings should be displayed
-        defaults to UTC.
-    """
-    week_start = get_start_week(year, month, day)
-    week_start = pytz.timezone(tzone).localize(
-        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
-    week = get_week_of_location(session, location, year, month, day)
-
-    # Prepare empty data structure in which we will then insert the meetings
-    # This is pretty much the table that will get displayed.
-    meetings = {}
-    for hour in HOURS[:-1]:
-        for key in ['%sh00', '%sh30']:
-            key = key % (hour)
-            # pylint: disable=W0612
-            meetings[key] = [None for cnt2 in range(0, 7)]
-
-    meetings = _format_week_meeting(meetings, week.meetings, tzone,
-                                    week_start)
     return meetings
 
 

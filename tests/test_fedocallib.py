@@ -191,11 +191,16 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(days, expectdays)
 
     # pylint: disable=R0912
-    def test_get_meetings(self):
-        """ Test the get_meetings function. """
+    def test_format_week_meeting(self):
+        """ Test the format_week_meeting function. """
         self.__setup_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meetings = fedocallib.get_meetings(self.session, calendar)
+        week = fedocallib.get_week(self.session, calendar)
+        week_start = fedocallib.get_start_week()
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         self.assertNotEqual(meetings, None)
         cnt = 0
         for meeting in meetings['20h00']:
@@ -209,9 +214,16 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings['15h00'][0], None)
 
         new_day = TODAY + timedelta(days=10)
-        meetings = fedocallib.get_meetings(
-            self.session, calendar,
+
+        week = fedocallib.get_week(
+            self.session, calendar, new_day.year, new_day.month,
+            new_day.day)
+        week_start = fedocallib.get_start_week(
             new_day.year, new_day.month, new_day.day)
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         self.assertNotEqual(meetings, None)
         cnt = 0
         for meeting in meetings['14h30']:
@@ -243,9 +255,16 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(meetings['19h00'][0], None)
 
         new_day = TODAY + timedelta(days=20)
-        meetings = fedocallib.get_meetings(
-            self.session, calendar,
+
+        week = fedocallib.get_week(
+            self.session, calendar, new_day.year, new_day.month,
+            new_day.day)
+        week_start = fedocallib.get_start_week(
             new_day.year, new_day.month, new_day.day)
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         self.assertNotEqual(meetings, None)
         cnt = 0
         for meeting in meetings['23h00']:
@@ -258,12 +277,18 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(cnt, 6)
 
     # pylint: disable=C0103
-    def test_get_meetings_with_multiple_same_time(self):
+    def test_format_week_meeting_with_multiple_same_time(self):
         """ Test the get_meetings function when there are several
         meetings at the same time. """
         self.__setup_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar4')
-        meetings = fedocallib.get_meetings(self.session, calendar)
+
+        week = fedocallib.get_week(self.session, calendar)
+        week_start = fedocallib.get_start_week()
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         cnt = 0
         for meeting in meetings['14h00']:
             if meeting is not None:

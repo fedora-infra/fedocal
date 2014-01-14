@@ -415,7 +415,7 @@ def ical_all():
     meetings = []
     for calendarobj in Calendar.get_all(SESSION):
         meetings.extend(fedocallib.get_by_date(
-            SESSION, calendarobj, startd, endd))
+            SESSION, calendarobj, startd, endd, extended=False))
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
 
@@ -439,7 +439,7 @@ def ical_out(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     meetings = fedocallib.get_by_date(
-        SESSION, calendarobj, startd, endd)
+        SESSION, calendarobj, startd, endd, extended=False)
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')

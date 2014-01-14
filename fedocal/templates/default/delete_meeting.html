@@ -33,7 +33,7 @@ meetings as well)</p>
 {% endif %}
 <p class="buttons indent">
     <input id="confirm_button" type="submit" class="submit positive button"
-           value="Delete" disabled="disabled">
+           value="Delete">
     <input type="button" value="Cancel" class="button" onclick="history.back();">
 </p>
 {{ form.csrf_token }}
@@ -45,15 +45,23 @@ meetings as well)</p>
 {{ super() }}
 <script type="text/javascript">
    $(document).ready(function() {
+        var cb = $('#confirm_delete')
+        var but = $('#confirm_button');
+        if(!cb.checked) {
+            but.attr('disabled', true);
+            but.addClass('ui-state-disabled');
+        };
+   });
+   $(document).ready(function() {
      $('#confirm_delete').click(function() {
         var cb = $('#confirm_button');
         if(this.checked == true) {
-           cb.removeAttr('disabled');
-           cb.removeClass('ui-state-disabled')
+            cb.removeAttr('disabled');
+            cb.removeClass('ui-state-disabled');
         } else {
-           cb.attr('disabled', true);
-           cb.addClass('ui-state-disabled')
-        }
+            cb.attr('disabled', true);
+            cb.addClass('ui-state-disabled');
+        };
      });
  });
 </script>

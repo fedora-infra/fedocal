@@ -414,8 +414,8 @@ def ical_all():
     ical = vobject.iCalendar()
     meetings = []
     for calendarobj in Calendar.get_all(SESSION):
-        meetings.extend(fedocallib.get_meetings_by_date(
-            SESSION, calendarobj.calendar_name, startd, endd))
+        meetings.extend(fedocallib.get_by_date(
+            SESSION, calendarobj, startd, endd))
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
 
@@ -430,8 +430,16 @@ def ical_out(calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    meetings = fedocallib.get_meetings_by_date(
-        SESSION, calendar_name, startd, endd)
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
+    meetings = fedocallib.get_by_date(
+        SESSION, calendarobj, startd, endd)
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
@@ -508,8 +516,6 @@ def add_calendar():
             calendar_description=form.calendar_description.data,
             calendar_editor_group=form.calendar_editor_groups.data,
             calendar_admin_group=form.calendar_admin_groups.data,
-            calendar_multiple_meetings=bool(
-                form.calendar_multiple_meetings.data),
             calendar_status=form.calendar_status.data
         )
         try:

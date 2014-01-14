@@ -32,6 +32,7 @@ __version__ = '0.3.1'
 import datetime
 import logging
 import os
+import urlparse
 from dateutil import parser
 from logging.handlers import SMTPHandler
 
@@ -41,6 +42,7 @@ import vobject
 from dateutil.relativedelta import relativedelta
 from flask_fas_openid import FAS
 from functools import wraps
+from pytz import common_timezones
 from sqlalchemy.exc import SQLAlchemyError
 
 import fedocal.forms as forms
@@ -133,7 +135,11 @@ def inject_variables():
     calendars = Calendar.get_all(SESSION)
     user_admin = is_admin()
 
-    return dict(calendars=calendars, version=__version__, admin=user_admin)
+    return dict(
+        calendars=calendars,
+        version=__version__,
+        admin=user_admin,
+        user_tz=get_timezone())
 
 
 @APP.template_filter('WeekHeading')
@@ -231,6 +237,7 @@ def get_timezone():
     if flask.g.fas_user:
         if flask.g.fas_user['timezone']:
             tzone = flask.g.fas_user['timezone']
+    tzone = flask.request.args.get('tzone', tzone)
     return tzone
 
 
@@ -239,6 +246,17 @@ def chunks(item_list, chunks_size):
     """
     for i in xrange(0, len(item_list), chunks_size):
         yield item_list[i: i + chunks_size]
+
+
+def is_safe_url(target):
+    """ Checks that the target url is safe and sending to the current
+    website not some other malicious one.
+    """
+    ref_url = urlparse.urlparse(flask.request.host_url)
+    test_url = urlparse.urlparse(
+        urlparse.urljoin(flask.request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
 
 
 ## Flask application
@@ -273,6 +291,12 @@ def calendar(calendar_name, year, month, day):
     :arg day: the day of the date one would like to consult.
     """
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
     tzone = get_timezone()
@@ -292,6 +316,7 @@ def calendar(calendar_name, year, month, day):
 
     curmonth_cal = fedocallib.get_html_monthly_cal(
         year=year, month=month, day=day, calendar_name=calendar_name)
+
     return flask.render_template(
         'agenda.html',
         calendar=calendarobj,
@@ -300,6 +325,7 @@ def calendar(calendar_name, year, month, day):
         day_index=day_index,
         meetings=meetings,
         tzone=tzone,
+        tzones=common_timezones,
         next_week=next_week,
         prev_week=prev_week,
         curmonth_cal=curmonth_cal,
@@ -346,6 +372,12 @@ def calendar_list(calendar_name, year, month, day):
         end_date = start_date + relativedelta(days=+1)
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     tzone = get_timezone()
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, start_date, end_date, tzone)
@@ -597,7 +629,18 @@ def edit_meeting(meeting_id):
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
+    if not meeting:
+        flask.flash(
+            'The meeting #%s could not be found' % meeting_id, 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendars = Calendar.get_all(SESSION)
 
     if calendarobj.calendar_status != 'Enabled':
@@ -817,6 +860,11 @@ def delete_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
     deleteform = forms.DeleteCalendarForm()
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
@@ -849,6 +897,11 @@ def clear_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
 
     if not is_calendar_admin(calendarobj):
         flask.flash('You are not an admin of this calendar, you are not '
@@ -894,6 +947,12 @@ def edit_calendar(calendar_name):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     status = fedocallib.get_calendar_statuses(SESSION)
     form = forms.AddCalendarForm(status=status)
     # pylint: disable=E1101
@@ -1251,3 +1310,20 @@ def location(loc_name, year, month, day):
         next_week=next_week,
         prev_week=prev_week,
         curmonth_cal=curmonth_cal)
+
+
+@APP.route('/updatetz/')
+def update_tz():
+    """ Update the timezone using the value set in the drop-down list and
+    send back the user to where it came from.
+    """
+    url = flask.request.referrer.split('?', 1)[0]
+
+    if not is_safe_url(url):
+        url = url_for('index')
+        flask.flash('Invalid refferred url')
+    tzone = flask.request.args.get('tzone', None)
+    if tzone:
+        return flask.redirect('%s?tzone=%s' % (url, tzone))
+    else:
+        return flask.redirect(url)

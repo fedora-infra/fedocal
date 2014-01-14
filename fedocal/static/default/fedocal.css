@@ -69,6 +69,10 @@ header h1 span {
     width: 42px;
 }
 
+#tzones {
+    width: 152px;
+}
+
 section header,
 section aside,
 section nav {

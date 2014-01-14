@@ -98,7 +98,7 @@
     <script type="text/javascript">
         function CopyToClipboard (text) {
             window.prompt('Press CTRL+C, then ENTER',
-                         '{{ request.url_root }}' + text);
+                         '{{ request.host_url }}' + text);
             return false;
         }
         $(".toDisable").on("click", function (){document.location = this.href;});

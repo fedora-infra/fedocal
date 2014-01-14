@@ -358,39 +358,6 @@ def format_week_meeting(meeting_list, tzone, week_start):
     return meetings
 
 
-def get_meetings_by_date(session, calendar_name, start_date, end_date):
-    """ Return a list of meetings which have or will occur in between
-    the two provided dates.
-
-    :arg session: the database session to use
-    :arg calendar_name: the name of the calendar of interest.
-    :arg start_date: the date from which we would like to retrieve the
-        meetings (this day is included in the selection).
-    :arg start_date: the date until which we would like to retrieve the
-        meetings (this day is excluded from the selection).
-    """
-    calendar = Calendar.by_id(session, calendar_name)
-    return get_by_date(session, calendar, start_date, end_date)
-
-
-def get_meetings_by_date_and_location(
-        session, calendar, start_date, end_date, location):
-    """ Return a list of meetings which have or will occur in between
-    the two provided dates.
-
-    :arg session: the database session to use
-    :arg calendar: the name of the calendar of interest.
-    :arg start_date: the date from which we would like to retrieve the
-        meetings (this day is included in the selection).
-    :arg start_date: the date until which we would like to retrieve the
-        meetings (this day is excluded from the selection).
-    :arg location: the location in which the meetings occurs.
-    """
-    calendar = Calendar.by_id(session, calendar)
-    return Meeting.get_by_date_and_location(session, calendar, start_date,
-                                            end_date, location)
-
-
 def is_date_in_future(indate, start_time):
     """ Return whether the date is in the future or the past.
 
@@ -695,14 +662,15 @@ def add_meeting_to_vcal(ical, meeting):
         stop.value = meeting.meeting_date_end
         entry.add('transp').value = 'TRANSPARENT'
     else:
-        meeting.meeting_time_start = meeting.meeting_time_start.replace(
-            tzinfo=zoneinfo.gettz(meeting.meeting_timezone))
-        start.value = datetime.combine(meeting.meeting_date,
-                                       meeting.meeting_time_start)
-        meeting.meeting_time_stop = meeting.meeting_time_stop.replace(
-            tzinfo=zoneinfo.gettz(meeting.meeting_timezone))
-        stop.value = datetime.combine(meeting.meeting_date_end,
-                                      meeting.meeting_time_stop)
+        tz = zoneinfo.gettz(meeting.meeting_timezone)
+
+        dti_start = datetime.combine(
+            meeting.meeting_date, meeting.meeting_time_start)
+        start.value = dti_start.replace(tzinfo=tz)
+
+        dti_end = datetime.combine(
+            meeting.meeting_date_end, meeting.meeting_time_stop)
+        stop.value = dti_end.replace(tzinfo=tz)
 
 
 def add_meetings_to_vcal(ical, meetings):
@@ -764,10 +732,47 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
                                        end_date, no_recursive=True)
     meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
                         calendarobj, start_date, end_date))
-    meetings = []
-    for meeting in list(set(meetings_utc)):
-        meetings.append(convert_meeting_timezone(
-            meeting, meeting.meeting_timezone, tzone))
+    meetings = list(set(meetings_utc))
+    meetings.sort(key=operator.attrgetter('meeting_date'))
+    return meetings
+
+
+def get_meetings_by_date_and_location(
+        session, calendar, start_date, end_date, location):
+    """ Return a list of meetings which have or will occur in between
+    the two provided dates.
+
+    :arg session: the database session to use
+    :arg calendar: the name of the calendar of interest.
+    :arg start_date: the date from which we would like to retrieve the
+        meetings (this day is included in the selection).
+    :arg start_date: the date until which we would like to retrieve the
+        meetings (this day is excluded from the selection).
+    :arg location: the location in which the meetings occurs.
+    """
+    calendar = Calendar.by_id(session, calendar)
+    return Meeting.get_by_date_and_location(session, calendar, start_date,
+                                            end_date, location)
+
+
+def get_by_date_at_location(
+        session, location, start_date, end_date, tzone='UTC'):
+    """ Returns all the meetings in a given time period at a given location.
+    Recursive meetings are expanded as if each was a single meeting.
+
+    :arg session: the database session to use
+    :arg calendarobj: the calendar (object) of interest.
+    :arg start_date: a Date object representing the beginning of the
+        period
+    :arg start_date: a Date object representing the ending of the period
+    :kwarg tzone: the timezone in which the meetings should be displayed
+        defaults to UTC.
+    """
+    meetings_utc = Meeting.get_by_date_at_location(
+        session, location, start_date, end_date, no_recursive=True)
+    meetings_utc.extend(Meeting.get_regular_meeting_by_date_at_location(
+        session, location, start_date, end_date))
+    meetings = list(set(meetings_utc))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 

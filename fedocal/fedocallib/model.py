@@ -417,6 +417,26 @@ class Meeting(BASE):
 
         return query.all()
 
+    # pylint: disable=R0913
+    @classmethod
+    def get_by_date_and_location(
+            cls, session, calendar, start_date, stop_date, location):
+        """ Retrieve the list of meetings in a location between two date.
+        We include the start date and exclude the stop date.
+        """
+        return session.query(cls).filter(
+            and_(
+                (Meeting.calendar == calendar),
+                (Meeting.meeting_date >= start_date),
+                (Meeting.meeting_date < stop_date),
+                (Meeting.meeting_location == location)
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        ).all()
+
     @classmethod
     def get_by_date_at_location(
             cls, session, location, start_date, stop_date, full_day=None,
@@ -633,6 +653,33 @@ class Meeting(BASE):
         return meetings.all()
 
     @classmethod
+    def get_active_regular_meeting_by_date_at_location(
+            cls, session, location, start_date, full_day=None):
+        """ Retrieve the list of recursive meetings occuring after the
+        start_date in the specified location.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
+        """
+        meetings = session.query(cls).filter(
+            and_(
+                (Meeting.recursion_ends >= start_date),
+                (Meeting.meeting_location == location),
+                (Meeting.recursion_frequency != None),
+                (Meeting.recursion_ends != None),
+            )
+        ).order_by(
+            Meeting.meeting_date,
+            Meeting.meeting_time_start,
+            Meeting.meeting_name
+        )
+        if full_day is not None:
+            meetings = meetings.filter(Meeting.full_day == full_day)
+        return meetings.all()
+
+    @classmethod
     def get_regular_meeting_by_date(
             cls, session, calendar, start_date, end_date, full_day=None):
         """ Retrieve the list of recursive meetings happening in between
@@ -651,25 +698,24 @@ class Meeting(BASE):
             'meeting_date', 'meeting_time_start', 'meeting_name'))
         return meetings
 
-    # pylint: disable=R0913
     @classmethod
-    def get_by_date_and_location(
-            cls, session, calendar, start_date, stop_date, location):
-        """ Retrieve the list of meetings in a location between two date.
-        We include the start date and exclude the stop date.
+    def get_regular_meeting_by_date_at_location(
+            cls, session, location, start_date, end_date, full_day=None):
+        """ Retrieve the list of recursive meetings happening in between
+        the two specified dates at a specific location.
+
+        :kwarg full_day: Can be True, False or None.  True will
+            restrict to only meetings which take up the full day.  False will
+            only select meetings which do not take the full day.  None will
+            not restrict.  Default to None
         """
-        return session.query(cls).filter(
-            and_(
-                (Meeting.calendar == calendar),
-                (Meeting.meeting_date >= start_date),
-                (Meeting.meeting_date < stop_date),
-                (Meeting.meeting_location == location)
-            )
-        ).order_by(
-            Meeting.meeting_date,
-            Meeting.meeting_time_start,
-            Meeting.meeting_name
-        ).all()
+        meetings = cls.expand_regular_meetings(
+            cls.get_active_regular_meeting_by_date_at_location(
+                session, location, start_date, full_day),
+            end_date=end_date, start_date=start_date)
+        meetings.sort(key=operator.attrgetter(
+            'meeting_date', 'meeting_time_start', 'meeting_name'))
+        return meetings
 
     @classmethod
     def get_past_meeting_of_user(cls, session, username, start_date):

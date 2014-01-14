@@ -265,10 +265,40 @@ def get_week_day_index(year=None, month=None, day=None):
     return date(year, month, day).isoweekday()
 
 
-def _format_week_meeting(meetings, meeting_list, tzone, week_start):
+def format_full_day_meeting(meeting_list, week_start):
+    """ Return a list of list corresponding to an entry per day and for
+    each day the list of full_day meeting associated.
+    """
+    meetings = []
+    for cnt in range(7):
+        meetings.append([])
+
+    for meeting in meeting_list:
+        idx = meeting.meeting_date - week_start
+        if idx.days < 0:
+            # Skip meetings finishing exactly at 00:00 on the day the week
+            # starts
+            if meeting.meeting_date_end == week_start + timedelta(days=7) \
+                    and meeting.meeting_time_stop.hour == 0:
+                continue
+            idx = idx + timedelta(days=abs(idx.days))
+        meetings[int(idx.days)].append(meeting)
+
+    return meetings
+
+def format_week_meeting(meeting_list, tzone, week_start):
     """ Return a dictionnary representing the meeting of the week in the
     appropriate format for the meeting provided in the meeting_list.
     """
+    meetings = {}
+    for hour in HOURS[:-1]:
+        for key in ['%sh00', '%sh30']:
+            key = key % (hour)
+            # pylint: disable=W0612
+            meetings[key] = [None for cnt2 in range(0, 7)]
+
+    week_start = pytz.timezone(tzone).localize(
+        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     fmt = '%Hh%M'
     #week_start = convert_time(week_start, 'UTC', tzone)
     for meeting in meeting_list:
@@ -331,105 +361,6 @@ def _format_week_meeting(meetings, meeting_list, tzone, week_start):
                     meetings[key][day] = [meeting]
             t_time = t_time + timedelta(minutes=30)
     return meetings
-
-
-# pylint: disable=R0913,R0914
-def get_meetings(
-        session, calendar, year=None, month=None, day=None, tzone='UTC'):
-    """ Return a hash of {time: [meeting]} for the asked week. The week
-    is returned based either on the current utc week or based on the
-    information provided.
-
-    :arg session: the database session to use
-    :arg calendar: the name of the calendar of interest.
-    :kwarg year: year to consider when searching a week.
-    :kwarg month: month to consider when searching a week.
-    :kwarg day: day to consider when searching a week.
-    :kwarg tzone: the timezone in which the meetings should be displayed
-        defaults to UTC.
-    """
-    week_start = get_start_week(year, month, day)
-    week_start = pytz.timezone(tzone).localize(
-        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
-    week = get_week(session, calendar, year, month, day)
-
-    # Prepare empty data structure in which we will then insert the meetings
-    # This is pretty much the table that will get displayed.
-    meetings = {}
-    for hour in HOURS[:-1]:
-        for key in ['%sh00', '%sh30']:
-            key = key % (hour)
-            # pylint: disable=W0612
-            meetings[key] = [None for cnt2 in range(0, 7)]
-
-    meetings = _format_week_meeting(meetings, week.meetings, tzone,
-                                    week_start)
-    return meetings
-
-
-# pylint: disable=R0913,R0914
-def get_meetings_at_location(
-        session, location, year=None, month=None, day=None, tzone='UTC'):
-    """ Return a Week object containing all the meeting for the said week.
-
-    :arg session: the database session to use
-    :arg location: the location of interest.
-    :kwarg year: year to consider when searching a week.
-    :kwarg month: month to consider when searching a week.
-    :kwarg day: day to consider when searching a week.
-    :kwarg tzone: the timezone in which the meetings should be displayed
-        defaults to UTC.
-    """
-    week_start = get_start_week(year, month, day)
-    week_start = pytz.timezone(tzone).localize(
-        datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
-    week = get_week_of_location(session, location, year, month, day)
-
-    # Prepare empty data structure in which we will then insert the meetings
-    # This is pretty much the table that will get displayed.
-    meetings = {}
-    for hour in HOURS[:-1]:
-        for key in ['%sh00', '%sh30']:
-            key = key % (hour)
-            # pylint: disable=W0612
-            meetings[key] = [None for cnt2 in range(0, 7)]
-
-    meetings = _format_week_meeting(meetings, week.meetings, tzone,
-                                    week_start)
-    return meetings
-
-
-def get_meetings_by_date(session, calendar_name, start_date, end_date):
-    """ Return a list of meetings which have or will occur in between
-    the two provided dates.
-
-    :arg session: the database session to use
-    :arg calendar_name: the name of the calendar of interest.
-    :arg start_date: the date from which we would like to retrieve the
-        meetings (this day is included in the selection).
-    :arg start_date: the date until which we would like to retrieve the
-        meetings (this day is excluded from the selection).
-    """
-    calendar = Calendar.by_id(session, calendar_name)
-    return get_by_date(session, calendar, start_date, end_date)
-
-
-def get_meetings_by_date_and_location(
-        session, calendar, start_date, end_date, location):
-    """ Return a list of meetings which have or will occur in between
-    the two provided dates.
-
-    :arg session: the database session to use
-    :arg calendar: the name of the calendar of interest.
-    :arg start_date: the date from which we would like to retrieve the
-        meetings (this day is included in the selection).
-    :arg start_date: the date until which we would like to retrieve the
-        meetings (this day is excluded from the selection).
-    :arg location: the location in which the meetings occurs.
-    """
-    calendar = Calendar.by_id(session, calendar)
-    return Meeting.get_by_date_and_location(session, calendar, start_date,
-                                            end_date, location)
 
 
 def is_date_in_future(indate, start_time):
@@ -736,14 +667,15 @@ def add_meeting_to_vcal(ical, meeting):
         stop.value = meeting.meeting_date_end
         entry.add('transp').value = 'TRANSPARENT'
     else:
-        meeting.meeting_time_start = meeting.meeting_time_start.replace(
-            tzinfo=zoneinfo.gettz(meeting.meeting_timezone))
-        start.value = datetime.combine(meeting.meeting_date,
-                                       meeting.meeting_time_start)
-        meeting.meeting_time_stop = meeting.meeting_time_stop.replace(
-            tzinfo=zoneinfo.gettz(meeting.meeting_timezone))
-        stop.value = datetime.combine(meeting.meeting_date_end,
-                                      meeting.meeting_time_stop)
+        tz = zoneinfo.gettz(meeting.meeting_timezone)
+
+        dti_start = datetime.combine(
+            meeting.meeting_date, meeting.meeting_time_start)
+        start.value = dti_start.replace(tzinfo=tz)
+
+        dti_end = datetime.combine(
+            meeting.meeting_date_end, meeting.meeting_time_stop)
+        stop.value = dti_end.replace(tzinfo=tz)
 
 
 def add_meetings_to_vcal(ical, meetings):
@@ -805,10 +737,47 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC'):
                                        end_date, no_recursive=True)
     meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
                         calendarobj, start_date, end_date))
-    meetings = []
-    for meeting in list(set(meetings_utc)):
-        meetings.append(convert_meeting_timezone(
-            meeting, meeting.meeting_timezone, tzone))
+    meetings = list(set(meetings_utc))
+    meetings.sort(key=operator.attrgetter('meeting_date'))
+    return meetings
+
+
+def get_meetings_by_date_and_location(
+        session, calendar, start_date, end_date, location):
+    """ Return a list of meetings which have or will occur in between
+    the two provided dates.
+
+    :arg session: the database session to use
+    :arg calendar: the name of the calendar of interest.
+    :arg start_date: the date from which we would like to retrieve the
+        meetings (this day is included in the selection).
+    :arg start_date: the date until which we would like to retrieve the
+        meetings (this day is excluded from the selection).
+    :arg location: the location in which the meetings occurs.
+    """
+    calendar = Calendar.by_id(session, calendar)
+    return Meeting.get_by_date_and_location(session, calendar, start_date,
+                                            end_date, location)
+
+
+def get_by_date_at_location(
+        session, location, start_date, end_date, tzone='UTC'):
+    """ Returns all the meetings in a given time period at a given location.
+    Recursive meetings are expanded as if each was a single meeting.
+
+    :arg session: the database session to use
+    :arg calendarobj: the calendar (object) of interest.
+    :arg start_date: a Date object representing the beginning of the
+        period
+    :arg start_date: a Date object representing the ending of the period
+    :kwarg tzone: the timezone in which the meetings should be displayed
+        defaults to UTC.
+    """
+    meetings_utc = Meeting.get_by_date_at_location(
+        session, location, start_date, end_date, no_recursive=True)
+    meetings_utc.extend(Meeting.get_regular_meeting_by_date_at_location(
+        session, location, start_date, end_date))
+    meetings = list(set(meetings_utc))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 

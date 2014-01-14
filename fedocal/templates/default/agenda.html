@@ -22,7 +22,7 @@ else %}{{ location }}{% endif %}{% endblock %}
               </a>
           </h2>
           {% if calendar %}
-          <p>{{ calendar.calendar_description }}</p>
+          <p>{{ calendar.calendar_description or '-' }}</p>
           {% else %}
           <p> - </p>
           {% endif %}
@@ -226,6 +226,21 @@ else %}{{ location }}{% endif %}{% endblock %}
               <th> {{ day.strftime('%A %d') }}</th>
               {% endfor %}
           </tr>
+          <tr id="full_day">
+              <th></th>
+              {% for meetings in full_day_meetings %}
+                <td>
+                    {% for meeting in meetings %}
+                    <a class="event meeting_{{ meeting.meeting_id }}"
+                        href="{{ url_for('view_meeting',
+                            meeting_id=meeting.meeting_id) }}">
+                        {{ meeting.meeting_name }}
+                    </a>
+                    {% endfor %}
+                </td>
+              {% endfor %}
+          </tr>
+          <tr></tr>
           <tr>
               <th class="time" rowspan="2">00h00</th>
               <td colspan="7" class="empty"></td>

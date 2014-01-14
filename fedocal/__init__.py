@@ -299,9 +299,15 @@ def calendar(calendar_name, year, month, day):
 
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
+    week = fedocallib.get_week(SESSION, calendarobj, year, month, day)
+
     tzone = get_timezone()
-    meetings = fedocallib.get_meetings(
-        SESSION, calendarobj, year, month, day, tzone=tzone)
+    meetings = fedocallib.format_week_meeting(
+        week.meetings, tzone, week_start)
+    full_day_meetings = fedocallib.format_full_day_meeting(
+        week.full_day_meetings, week_start)
+
+    # Information required for the pagination
     next_week = fedocallib.get_next_week(
         week_start.year, week_start.month, week_start.day)
     prev_week = fedocallib.get_previous_week(
@@ -324,6 +330,7 @@ def calendar(calendar_name, year, month, day):
         weekdays=weekdays,
         day_index=day_index,
         meetings=meetings,
+        full_day_meetings=full_day_meetings,
         tzone=tzone,
         tzones=common_timezones,
         next_week=next_week,
@@ -407,8 +414,8 @@ def ical_all():
     ical = vobject.iCalendar()
     meetings = []
     for calendarobj in Calendar.get_all(SESSION):
-        meetings.extend(fedocallib.get_meetings_by_date(
-            SESSION, calendarobj.calendar_name, startd, endd))
+        meetings.extend(fedocallib.get_by_date(
+            SESSION, calendarobj, startd, endd))
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
 
@@ -423,8 +430,16 @@ def ical_out(calendar_name):
     """
     startd = datetime.date.today() - datetime.timedelta(days=30)
     endd = datetime.date.today() + datetime.timedelta(days=180)
-    meetings = fedocallib.get_meetings_by_date(
-        SESSION, calendar_name, startd, endd)
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
+    meetings = fedocallib.get_by_date(
+        SESSION, calendarobj, startd, endd)
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     return flask.Response(ical.serialize(), mimetype='text/calendar')
@@ -501,8 +516,6 @@ def add_calendar():
             calendar_description=form.calendar_description.data,
             calendar_editor_group=form.calendar_editor_groups.data,
             calendar_admin_group=form.calendar_admin_groups.data,
-            calendar_multiple_meetings=bool(
-                form.calendar_multiple_meetings.data),
             calendar_status=form.calendar_status.data
         )
         try:
@@ -1278,12 +1291,17 @@ def location(loc_name, year, month, day):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
+
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)
-    tzone = get_timezone()
+    week = fedocallib.get_week_of_location(
+        SESSION, loc_name, year, month, day)
 
-    meetings = fedocallib.get_meetings_at_location(
-        SESSION, loc_name, year, month, day, tzone=tzone)
+    tzone = get_timezone()
+    meetings = fedocallib.format_week_meeting(
+        week.meetings, tzone, week_start)
+    full_day_meetings = fedocallib.format_full_day_meeting(
+        week.full_day_meetings, week_start)
 
     next_week = fedocallib.get_next_week(
         week_start.year, week_start.month, week_start.day)
@@ -1306,6 +1324,7 @@ def location(loc_name, year, month, day):
         weekdays=weekdays,
         day_index=day_index,
         meetings=meetings,
+        full_day_meetings=full_day_meetings,
         tzone=tzone,
         next_week=next_week,
         prev_week=prev_week,

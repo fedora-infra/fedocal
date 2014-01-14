@@ -136,7 +136,8 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(week, None)
         self.assertEqual(week.calendar.calendar_name, 'test_calendar')
         self.assertNotEqual(week.meetings, None)
-        self.assertEqual(len(week.meetings), 4)
+        self.assertEqual(len(week.meetings), 3)
+        self.assertEqual(len(week.full_day_meetings), 1)
 
         self.assertEqual(
             week.meetings[0].meeting_name,
@@ -160,13 +161,13 @@ class Fedocallibtests(Modeltests):
             'This is a test meeting')
 
         self.assertEqual(
-            week.meetings[3].meeting_name,
+            week.full_day_meetings[0].meeting_name,
             'Full-day meeting')
         self.assertEqual(
-            week.meetings[3].meeting_manager,
+            week.full_day_meetings[0].meeting_manager,
             'pingou,')
         self.assertEqual(
-            week.meetings[3].meeting_information,
+            week.full_day_meetings[0].meeting_information,
             'This is a full day meeting')
 
     def test_get_week_empty(self):
@@ -190,37 +191,46 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(days, expectdays)
 
     # pylint: disable=R0912
-    def test_get_meetings(self):
-        """ Test the get_meetings function. """
+    def test_format_week_meeting(self):
+        """ Test the format_week_meeting function. """
         self.__setup_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
-        meetings = fedocallib.get_meetings(self.session, calendar)
+        week = fedocallib.get_week(self.session, calendar)
+        week_start = fedocallib.get_start_week()
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         self.assertNotEqual(meetings, None)
         cnt = 0
         for meeting in meetings['20h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertTrue(
-                        meet.meeting_name in
-                        ['Fedora-fr-test-meeting', 'Full-day meeting'])
+                    self.assertEqual(
+                        meet.meeting_name, 'Fedora-fr-test-meeting')
             else:
                 cnt = cnt + 1
-        self.assertEqual(cnt, 5)
+        self.assertEqual(cnt, 6)
         self.assertEqual(meetings['15h00'][0], None)
 
         new_day = TODAY + timedelta(days=10)
-        meetings = fedocallib.get_meetings(
-            self.session, calendar,
+
+        week = fedocallib.get_week(
+            self.session, calendar, new_day.year, new_day.month,
+            new_day.day)
+        week_start = fedocallib.get_start_week(
             new_day.year, new_day.month, new_day.day)
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         self.assertNotEqual(meetings, None)
         cnt = 0
         for meeting in meetings['14h30']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertTrue(
-                        meet.meeting_name in
-                        ['test-meeting2',
-                         'Full-day meeting with recursion'])
+                    self.assertEqual(
+                        meet.meeting_name, 'test-meeting2')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -228,10 +238,8 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['15h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertTrue(
-                        meet.meeting_name in
-                        ['test-meeting2',
-                         'Full-day meeting with recursion'])
+                    self.assertEqual(
+                        meet.meeting_name, 'test-meeting2')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
@@ -239,39 +247,48 @@ class Fedocallibtests(Modeltests):
         for meeting in meetings['02h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertTrue(
-                        meet.meeting_name in
-                        ['Another test meeting',
-                         'Full-day meeting with recursion'])
+                    self.assertEqual(
+                        meet.meeting_name, 'Another test meeting')
             else:
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
         self.assertEqual(meetings['19h00'][0], None)
 
         new_day = TODAY + timedelta(days=20)
-        meetings = fedocallib.get_meetings(
-            self.session, calendar,
+
+        week = fedocallib.get_week(
+            self.session, calendar, new_day.year, new_day.month,
+            new_day.day)
+        week_start = fedocallib.get_start_week(
             new_day.year, new_day.month, new_day.day)
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         self.assertNotEqual(meetings, None)
         cnt = 0
         for meeting in meetings['23h00']:
             if meeting is not None:
                 for meet in meeting:
-                    self.assertTrue(
-                        meet.meeting_name in
-                        ['test-meeting23h59',
-                         'Full-day meeting with recursion'])
+                    self.assertEqual(
+                        meet.meeting_name, 'test-meeting23h59')
             else:
                 cnt = cnt + 1
-        self.assertEqual(cnt, 5)
+        self.assertEqual(cnt, 6)
 
     # pylint: disable=C0103
-    def test_get_meetings_with_multiple_same_time(self):
+    def test_format_week_meeting_with_multiple_same_time(self):
         """ Test the get_meetings function when there are several
         meetings at the same time. """
         self.__setup_meeting()
         calendar = model.Calendar.by_id(self.session, 'test_calendar4')
-        meetings = fedocallib.get_meetings(self.session, calendar)
+
+        week = fedocallib.get_week(self.session, calendar)
+        week_start = fedocallib.get_start_week()
+        tzone = 'UTC'
+        meetings = fedocallib.format_week_meeting(
+            week.meetings, tzone, week_start)
+
         cnt = 0
         for meeting in meetings['14h00']:
             if meeting is not None:
@@ -688,88 +705,6 @@ class Fedocallibtests(Modeltests):
             cnt = cnt + 1
         self.assertEqual(cnt, len(meetings))
 
-    def test_get_meetings_by_date(self):
-        """ Test the get_meetings_by_date function. """
-        self.__setup_meeting()
-        meetings = fedocallib.get_meetings_by_date(
-            self.session,
-            'test_calendar',
-            TODAY + timedelta(days=10),
-            TODAY + timedelta(days=12)
-            )
-        self.assertEqual(len(meetings), 5)
-        for meeting in meetings:
-            self.assertTrue(
-                meeting.meeting_name in
-                ['test-meeting2',
-                 'Another test meeting', 'Test meeting with reminder',
-                 'Test meeting with reminder and recursion',
-                 'Full-day meeting with recursion'])
-            self.assertEqual(meeting.meeting_manager, 'pingou,')
-
-    # pylint: disable=C0103
-    def test_get_meetings_by_date_and_location(self):
-        """ Test the get_meetings_by_date_and_location function. """
-        self.__setup_meeting()
-        obj = fedocallib.get_meetings_by_date_and_location(
-            self.session,
-            'test_calendar4',
-            TODAY,
-            TODAY + timedelta(days=2),
-            'EMEA'
-            )
-
-        self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 1)
-        self.assertEqual(
-            obj[0].meeting_name,
-            'test-meeting-st-2')
-        self.assertEqual(
-            obj[0].meeting_manager,
-            'test,')
-        self.assertEqual(
-            obj[0].calendar.calendar_name,
-            'test_calendar4')
-        self.assertEqual(
-            obj[0].meeting_information,
-            'This is a second test meeting at the same time')
-        self.assertEqual(obj[0].reminder, None)
-
-        obj = fedocallib.get_meetings_by_date_and_location(
-            self.session,
-            'test_calendar4',
-            TODAY,
-            TODAY + timedelta(days=2),
-            'NA'
-            )
-        self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 1)
-        self.assertEqual(
-            obj[0].meeting_name,
-            'test-meeting-st-1')
-        self.assertEqual(
-            obj[0].meeting_manager,
-            'test,')
-        self.assertEqual(
-            obj[0].calendar.calendar_name,
-            'test_calendar4')
-        self.assertEqual(
-            obj[0].meeting_information,
-            'This is a test meeting at the same time')
-        self.assertEqual(
-            obj[0].reminder,
-            None)
-
-        obj = fedocallib.get_meetings_by_date_and_location(
-            self.session,
-            'test_calendar4',
-            TODAY,
-            TODAY + timedelta(days=2),
-            'APAC'
-            )
-        self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 0)
-
     def test_get_html_monthly_cal(self):
         """ Test the get_html_monthly_call function. """
         today = date.today()
@@ -809,17 +744,6 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(output, None)
         self.assertEqual(len(output), 0)
         self.assertEqual(output, [])
-
-    def test_get_by_date(self):
-        """ Test the get_by_date function. """
-        self.__setup_meeting()
-        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
-        self.assertNotEqual(calendarobj, None)
-        output = fedocallib.get_by_date(
-            self.session, calendarobj, TODAY,
-            TODAY + relativedelta(years=+1))
-        self.assertNotEqual(output, None)
-        self.assertEqual(len(output), 47)
 
     # pylint: disable=R0915
     def test_add_meeting_fail(self):
@@ -894,28 +818,7 @@ class Fedocallibtests(Modeltests):
             remind_who=None,
             full_day=False)
 
-        # Fails because the timezone provided is None
-        self.assertRaises(
-            AttributeError,
-            fedocallib.add_meeting,
-            session=self.session,
-            calendarobj=calendarobj,
-            fas_user=fasuser,
-            meeting_name=None,
-            meeting_date=TODAY - timedelta(days=4),
-            meeting_date_end=TODAY - timedelta(days=4),
-            meeting_time_start=time(9, 0),
-            meeting_time_stop=time(10, 0),
-            comanager=None,
-            meeting_information=None,
-            meeting_location=None,
-            tzone=None,
-            frequency=None,
-            end_repeats=None,
-            remind_when=None,
-            remind_who=None,
-            full_day=False)
-
+        # Fails because the meeting name is None
         self.assertRaises(
             IntegrityError,
             fedocallib.add_meeting,
@@ -1070,12 +973,10 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(
             meeting.meeting_manager,
             'username,')
-        self.assertTrue(
-            meeting.meeting_time_start.strftime('%H') == '07' or
-            meeting.meeting_time_start.strftime('%H') == '08')
-        self.assertTrue(
-            meeting.meeting_time_stop.strftime('%H') == '08' or
-            meeting.meeting_time_stop.strftime('%H') == '09')
+        self.assertEqual(
+            meeting.meeting_time_start.strftime('%H'), '09')
+        self.assertEqual(
+            meeting.meeting_time_stop.strftime('%H'), '10')
         self.session.flush()
 
         fedocallib.add_meeting(
@@ -1104,12 +1005,10 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(
             meeting.meeting_manager,
             'username,pingou')
-        self.assertTrue(
-            meeting.meeting_time_start.strftime('%H') == '08' or
-            meeting.meeting_time_start.strftime('%H') == '09')
-        self.assertTrue(
-            meeting.meeting_time_stop.strftime('%H') == '09' or
-            meeting.meeting_time_stop.strftime('%H') == '10')
+        self.assertEqual(
+            meeting.meeting_time_start.strftime('%H'), '10')
+        self.assertEqual(
+            meeting.meeting_time_stop.strftime('%H'), '11')
         self.session.commit()
 
         fedocallib.add_meeting(

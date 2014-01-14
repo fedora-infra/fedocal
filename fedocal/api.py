@@ -34,7 +34,8 @@ from sqlalchemy.exc import SQLAlchemyError
 import fedocal.fedocallib as fedocallib
 from fedocal.doc_utils import load_doc
 
-from fedocal import APP, SESSION
+from fedocal import APP, SESSION, LOG
+from fedocal.fedocallib.model import Calendar
 
 
 def check_callback(response):
@@ -270,6 +271,19 @@ Filter arguments
     region = flask.request.args.get('region', None)
     location = location or region
 
+    if calendar_name:
+        calendarobj = Calendar.by_id(SESSION, calendar_name)
+
+        if not calendarobj:
+            output = {"meetings": [],
+                      "error": "Invalid calendar provided: %s" %
+                      calendar_name}
+            return flask.Response(
+                response=json.dumps(output),
+                status=400,
+                mimetype='application/json')
+
+
     status = 200
     meetings = []
     try:
@@ -280,25 +294,25 @@ Filter arguments
                     SESSION, calendar_name, startd, endd, location)
             else:
                 #print "calendar and no region"
-                meetings = fedocallib.get_meetings_by_date(
-                    SESSION, calendar_name, startd, endd)
+                meetings = fedocallib.get_by_date(
+                    SESSION, calendarobj, startd, endd)
         else:
             meetings = []
-            for calendar in fedocallib.get_calendars(SESSION):
-                if location:
-                    #print "no calendar and region"
-                    meetings.extend(
-                        fedocallib.get_meetings_by_date_and_location(
-                            SESSION, calendar.calendar_name, startd, endd,
-                            location
-                        )
-                    )
-                else:
-                    #print "no calendar and no region"
-                    meetings.extend(fedocallib.get_meetings_by_date(
-                        SESSION, calendar.calendar_name, startd, endd))
-    except SQLAlchemyError:  # pragma: no cover
+            if location:
+                #print "no calendar and region"
+                meetings.extend(
+                    fedocallib.get_by_date_at_location(
+                        SESSION, location, startd, endd)
+                )
+            else:
+                #print "no calendar and no region"
+                for calendar in fedocallib.get_calendars(SESSION):
+                    meetings.extend(fedocallib.get_by_date(
+                        SESSION, calendar, startd, endd))
+    except SQLAlchemyError, err:  # pragma: no cover
         status = 500
+        LOG.debug('Error in api_meetings')
+        LOG.exception(err)
 
     output = {}
     output['arguments'] = {

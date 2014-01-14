@@ -22,7 +22,7 @@ else %}{{ location }}{% endif %}{% endblock %}
               </a>
           </h2>
           {% if calendar %}
-          <p>{{ calendar.calendar_description }}</p>
+          <p>{{ calendar.calendar_description or '-' }}</p>
           {% else %}
           <p> - </p>
           {% endif %}

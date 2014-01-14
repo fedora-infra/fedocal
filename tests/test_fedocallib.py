@@ -894,28 +894,7 @@ class Fedocallibtests(Modeltests):
             remind_who=None,
             full_day=False)
 
-        # Fails because the timezone provided is None
-        self.assertRaises(
-            AttributeError,
-            fedocallib.add_meeting,
-            session=self.session,
-            calendarobj=calendarobj,
-            fas_user=fasuser,
-            meeting_name=None,
-            meeting_date=TODAY - timedelta(days=4),
-            meeting_date_end=TODAY - timedelta(days=4),
-            meeting_time_start=time(9, 0),
-            meeting_time_stop=time(10, 0),
-            comanager=None,
-            meeting_information=None,
-            meeting_location=None,
-            tzone=None,
-            frequency=None,
-            end_repeats=None,
-            remind_when=None,
-            remind_who=None,
-            full_day=False)
-
+        # Fails because the meeting name is None
         self.assertRaises(
             IntegrityError,
             fedocallib.add_meeting,
@@ -1070,12 +1049,10 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(
             meeting.meeting_manager,
             'username,')
-        self.assertTrue(
-            meeting.meeting_time_start.strftime('%H') == '07' or
-            meeting.meeting_time_start.strftime('%H') == '08')
-        self.assertTrue(
-            meeting.meeting_time_stop.strftime('%H') == '08' or
-            meeting.meeting_time_stop.strftime('%H') == '09')
+        self.assertEqual(
+            meeting.meeting_time_start.strftime('%H'), '09')
+        self.assertEqual(
+            meeting.meeting_time_stop.strftime('%H'), '10')
         self.session.flush()
 
         fedocallib.add_meeting(
@@ -1104,12 +1081,10 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(
             meeting.meeting_manager,
             'username,pingou')
-        self.assertTrue(
-            meeting.meeting_time_start.strftime('%H') == '08' or
-            meeting.meeting_time_start.strftime('%H') == '09')
-        self.assertTrue(
-            meeting.meeting_time_stop.strftime('%H') == '09' or
-            meeting.meeting_time_stop.strftime('%H') == '10')
+        self.assertEqual(
+            meeting.meeting_time_start.strftime('%H'), '10')
+        self.assertEqual(
+            meeting.meeting_time_stop.strftime('%H'), '11')
         self.session.commit()
 
         fedocallib.add_meeting(

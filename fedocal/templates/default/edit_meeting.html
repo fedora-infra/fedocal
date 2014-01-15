@@ -145,10 +145,12 @@
                 success: function(res) {
                     if (res['Date available']) {
                         $('span#res').html(
-                            '<img src="{{ url_for("static", filename="Approved.png") }}" />');
+                            '<img src="{{ url_for("static", filename="Approved.png") }}"'
+                            + ' title="Time slot available" />');
                     } else {
                         $('span#res').html(
-                            '<img src="{{ url_for("static", filename="Denied.png") }}" />');
+                            '<img src="{{ url_for("static", filename="Denied.png") }}"'
+                            + ' title="Time slot not available" />');
                     }
                 },
                 error: function() {

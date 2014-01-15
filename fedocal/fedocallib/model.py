@@ -897,6 +897,8 @@ class Meeting(BASE):
             cls.meeting_location != None
         ).filter(
             cls.meeting_location != 'None'
+        ).filter(
+            cls.meeting_location != ''
         ).order_by(
             cls.meeting_location
         )

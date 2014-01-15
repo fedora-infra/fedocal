@@ -446,7 +446,15 @@ def ical_all():
         meetings.extend(fedocallib.get_by_date(
             SESSION, calendarobj, startd, endd, extended=False))
     fedocallib.add_meetings_to_vcal(ical, meetings)
-    return flask.Response(ical.serialize(), mimetype='text/calendar')
+    headers = {}
+    filename = secure_filename('all_calendars-%s.ical' %(
+        datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
+    )
+    headers["Content-Disposition"] = "attachment; filename=%s" % filename
+    return flask.Response(
+        ical.serialize(),
+        mimetype='text/calendar',
+        headers=headers)
 
 
 @APP.route('/ical/<calendar_name>/')
@@ -472,8 +480,11 @@ def ical_out(calendar_name):
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     headers = {}
-    headers["Content-Disposition"] = "attachment; filename=%s-%s.ical" % (
-        secure_filename(calendar_name), datetime.datetime.utcnow())
+    filename = secure_filename('%s-%s.ical' %(
+        calendar_name,
+        datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
+    )
+    headers["Content-Disposition"] = "attachment; filename=%s" % filename
     return flask.Response(
         ical.serialize(),
         mimetype='text/calendar',

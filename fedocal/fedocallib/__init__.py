@@ -974,6 +974,7 @@ def edit_meeting(
     meeting.meeting_time_stop = meeting_time_stop.time()
     meeting.meeting_information = meeting_information
     meeting.meeting_location = meeting_location or None
+    meeting.meeting_timezone = tzone
 
     recursion_frequency = recursion_frequency
     if not recursion_frequency:

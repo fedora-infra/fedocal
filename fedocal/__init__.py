@@ -30,6 +30,7 @@ import pkg_resources
 __version__ = '0.3.1'
 
 import datetime
+import HTMLParser
 import logging
 import os
 import urlparse
@@ -1373,7 +1374,8 @@ def update_tz():
     """ Update the timezone using the value set in the drop-down list and
     send back the user to where it came from.
     """
-    url = flask.request.referrer.split('?', 1)[0]
+    parser = HTMLParser.HTMLParser()
+    url = parser.unescape(flask.request.referrer.split('?', 1)[0])
 
     if not is_safe_url(url):
         url = url_for('index')

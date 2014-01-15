@@ -32,6 +32,7 @@ __version__ = '0.3.1'
 import datetime
 import logging
 import os
+import urllib
 import urlparse
 from dateutil import parser
 from logging.handlers import SMTPHandler
@@ -470,7 +471,13 @@ def ical_out(calendar_name):
         SESSION, calendarobj, startd, endd, extended=False)
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
-    return flask.Response(ical.serialize(), mimetype='text/calendar')
+    headers = {}
+    headers["Content-Disposition"] = "attachment; filename=%s-%s.ical" % (
+        secure_filename(calendar_name), datetime.datetime.utcnow())
+    return flask.Response(
+        ical.serialize(),
+        mimetype='text/calendar',
+        headers=headers)
 
 
 # CLA + 1
@@ -601,7 +608,7 @@ def add_meeting(calendar_name):
                                             calendar_name=calendar_name))
 
     tzone = get_timezone()
-    form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
+    form = forms.AddMeetingForm(calendars=calendars)
     form.calendar_name.data = calendar_name
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     # pylint: disable=E1101
@@ -653,6 +660,8 @@ def add_meeting(calendar_name):
             year=form.meeting_date.data.year,
             month=form.meeting_date.data.month,
             day=form.meeting_date.data.day))
+    else:
+        form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
 
     return flask.render_template(
         'add_meeting.html', calendar=calendarobj, form=form, tzone=tzone)
@@ -701,7 +710,7 @@ def edit_meeting(meeting_id):
                                             meeting_id=meeting_id))
 
     tzone = get_timezone()
-    form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
+    form = forms.AddMeetingForm(calendars=calendars)
     # pylint: disable=E1101
     if form.validate_on_submit():
         if meeting.calendar_name != form.calendar_name.data:
@@ -795,7 +804,7 @@ def view_meeting_page(meeting_id, full):
 
     :arg meeting_id: the identifier of the meeting to visualize.
     """
-    meeting = Meeting.by_id(SESSION, meeting_id)
+    org_meeting = meeting = Meeting.by_id(SESSION, meeting_id)
     tzone = get_timezone()
     if not meeting:
         flask.flash('No meeting could be found for this identifier',
@@ -812,6 +821,7 @@ def view_meeting_page(meeting_id, full):
         'view_meeting.html',
         full=full,
         meeting=meeting,
+        org_meeting=org_meeting,
         tzone=tzone,
         title=meeting.meeting_name,
         editor=editor)
@@ -1366,7 +1376,7 @@ def update_tz():
     """ Update the timezone using the value set in the drop-down list and
     send back the user to where it came from.
     """
-    url = flask.request.referrer.split('?', 1)[0]
+    url = urllib.unquote(flask.request.referrer.split('?', 1)[0])
 
     if not is_safe_url(url):
         url = url_for('index')

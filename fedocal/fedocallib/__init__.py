@@ -14,6 +14,7 @@ See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
 
+import copy
 import vobject
 import pytz
 import operator
@@ -68,6 +69,8 @@ def convert_meeting_timezone(meeting, tzfrom, tzto):
     :arg tzfrom: the timezone from which to convert
     :arg tzto: the timezone to which to convert
     """
+    # Prevents the actual SQLAlchemy object from being changed
+    meeting = copy.copy(meeting)
     meeting_start = convert_time(
         datetime(
             meeting.meeting_date.year,
@@ -971,6 +974,7 @@ def edit_meeting(
     meeting.meeting_time_stop = meeting_time_stop.time()
     meeting.meeting_information = meeting_information
     meeting.meeting_location = meeting_location or None
+    meeting.meeting_timezone = tzone
 
     recursion_frequency = recursion_frequency
     if not recursion_frequency:

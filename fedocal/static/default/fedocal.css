@@ -331,3 +331,8 @@ th.month .ui-button-text {
 .calendar_row[a] {
     display: block;
 }
+
+#information {
+    width: 500px;
+    height: 200px;
+}

@@ -61,9 +61,8 @@ else %}{{ location }}{% endif %}{% endblock %}
               title="Next week">
               &gt;
           </a>
-          <a href="{{url_for('calendar',
-              calendar_name=calendar.calendar_name)}}" class="button"
-              title="Today">
+          <a href="{{url_for('location', loc_name=location,)}}"
+            class="button" title="Today">
               <img src="{{url_for('static', filename='home.png')}}"
                 alt="today" />
           </a>

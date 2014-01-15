@@ -1417,7 +1417,7 @@ def upload_calendar(calendar_name):
         try:
             fedocallib.add_vcal_file(
                 SESSION, calendarobj, ical_file, flask.g.fas_user)
-            flask.flash('Calendar upload')
+            flask.flash('Calendar uploaded')
         except SQLAlchemyError, err:
             SESSION.rollback()
             LOG.debug('Error in upload_calendar')

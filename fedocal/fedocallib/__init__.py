@@ -1038,7 +1038,7 @@ def clear_calendar(session, calendar):
 
 
 def add_vcal_file(session, calendar, stream, fas_user):
-    """ Add the meeting from the iCalendar stream provided into the calendar
+    """ Add the meetings from the iCalendar stream provided into the calendar
     specified.
     """
     meetings = vobject.readOne(stream)

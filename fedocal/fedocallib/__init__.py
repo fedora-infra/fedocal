@@ -658,7 +658,8 @@ def add_meeting_to_vcal(ical, meeting):
     """
     entry = ical.add('vevent')
     entry.add('summary').value = meeting.meeting_name
-    entry.add('description').value = meeting.meeting_information
+    if meeting.meeting_information:
+        entry.add('description').value = meeting.meeting_information
     entry.add('organizer').value = meeting.meeting_manager
 
     start = entry.add('dtstart')

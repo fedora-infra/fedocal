@@ -15,7 +15,7 @@
             {{ calendar.calendar_name }}
             </a>
         </h2>
-        <p>{{ calendar.calendar_description }}</p>
+        <p>{{ calendar.calendar_description or '-' }}</p>
     </header>
     <nav id="weeks">
         <a href="{{url_for('calendar_list',

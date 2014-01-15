@@ -226,6 +226,6 @@ class ClearCalendarForm(wtf.Form):
 
 class UploadIcsForm(wtf.Form):
     ''' Form to upload an ics file into a calendar. '''
-    ics_file = wtf.FileField(
+    ics_file = wtforms.FileField(
         'ics file <span class="error">*</span>',
         [wtf.validators.Required()])

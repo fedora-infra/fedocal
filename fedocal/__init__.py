@@ -801,7 +801,7 @@ def view_meeting_page(meeting_id, full):
 
     :arg meeting_id: the identifier of the meeting to visualize.
     """
-    meeting = Meeting.by_id(SESSION, meeting_id)
+    org_meeting = meeting = Meeting.by_id(SESSION, meeting_id)
     tzone = get_timezone()
     if not meeting:
         flask.flash('No meeting could be found for this identifier',
@@ -818,6 +818,7 @@ def view_meeting_page(meeting_id, full):
         'view_meeting.html',
         full=full,
         meeting=meeting,
+        org_meeting=org_meeting,
         tzone=tzone,
         title=meeting.meeting_name,
         editor=editor)

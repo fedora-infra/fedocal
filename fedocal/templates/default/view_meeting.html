@@ -20,11 +20,20 @@
 
     <h4> Meeting: {{ meeting.meeting_name}}</h4>
 
+    <p>Displayed in: {{tzone}}</p>
     <ul>
-        <li>Start date: {{ meeting.meeting_date }} </li>
-        <li>End date: {{ meeting.meeting_date_end }} </li>
-        <li>Starting time: {{ meeting.meeting_time_start }} {{tzone}}</li>
-        <li>Ending time: {{ meeting.meeting_time_stop }} {{tzone}}</li>
+        <li>Start: {{ meeting.meeting_date }} - {{ meeting.meeting_time_start
+            }} {{ tzone }} </li>
+        <li>End: {{ meeting.meeting_date_end }} - {{ meeting.meeting_time_stop
+            }} {{ tzone }} </li>
+    </ul>
+
+    <p>Stored in: {{org_meeting.meeting_timezone}}</p>
+    <ul>
+        <li>Start: {{ org_meeting.meeting_date }} - {{ org_meeting.meeting_time_start
+            }} {{ org_meeting.meeting_timezone }} </li>
+        <li>End: {{ org_meeting.meeting_date_end }} - {{ org_meeting.meeting_time_stop
+            }} {{ org_meeting.meeting_timezone }} </li>
     </ul>
 
     {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}

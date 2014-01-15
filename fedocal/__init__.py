@@ -44,6 +44,7 @@ from flask_fas_openid import FAS
 from functools import wraps
 from pytz import common_timezones
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug import secure_filename
 
 import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
@@ -156,7 +157,8 @@ def markdown_filter(text):
     """ Template filter converting a string into html content using the
     markdown library.
     """
-    return markdown.markdown(text)
+    if text:
+        return markdown.markdown(text)
 
 
 # pylint: disable=W0613
@@ -257,6 +259,32 @@ def is_safe_url(target):
         urlparse.urljoin(flask.request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
            ref_url.netloc == test_url.netloc
+
+
+def validate_input_file(input_file):
+    ''' Validate the submitted input file.
+
+    This validation has four layers:
+      - extension of the file provided
+      - MIMETYPE of the file provided
+
+    :arg input_file: a File object of the candidate submitted/uploaded and
+        for which we want to check that it compliants with our expectations.
+    '''
+
+    extension = os.path.splitext(
+        secure_filename(input_file.filename))[1][1:].lower()
+    if extension not in APP.config.get('ALLOWED_EXTENSIONS', []):
+        raise FedocalException(
+            'The submitted candidate has the file extension "%s" which is '
+            'not an allowed format' % extension)
+
+    mimetype = input_file.mimetype.lower()
+    if mimetype not in APP.config.get(
+            'ALLOWED_MIMETYPES', []):  # pragma: no cover
+        raise FedocalException(
+            'The submitted candidate has the MIME type "%s" which is '
+            'not an allowed MIME type' % mimetype)
 
 
 ## Flask application
@@ -1348,3 +1376,64 @@ def update_tz():
         return flask.redirect('%s?tzone=%s' % (url, tzone))
     else:
         return flask.redirect(url)
+
+
+@APP.route('/calendar/upload/<calendar_name>/', methods=('GET', 'POST'))
+@cla_plus_one_required
+def upload_calendar(calendar_name):
+    """ Page used to upload a iCalendar file into a specific calendar.
+    """
+    if not flask.g.fas_user:
+        return flask.redirect(flask.url_for('index'))
+
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
+    if not is_calendar_admin(calendarobj):
+        flask.flash('You are not an admin for this calendar, you are not '
+                    'allowed to upload a iCalendar file to it.', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
+    form = forms.UploadIcsForm()
+    # pylint: disable=E1101
+    if form.validate_on_submit():
+        ical_file = flask.request.files['ics_file']
+
+        try:
+            validate_input_file(ical_file)
+        except FedocalException as err:
+            LOG.debug('ERROR: Uploaded file is invalid - user: "%s" '
+                      'file: "%s"',
+                      flask.g.fas_user.username, ical_file.filename)
+            LOG.exception(err)
+            flask.flash(err.message, 'error')
+            return flask.render_template(
+                'upload_calendar.html', form=form, calendar=calendarobj)
+
+        try:
+            fedocallib.add_vcal_file(
+                SESSION, calendarobj, ical_file, flask.g.fas_user)
+            flask.flash('Calendar upload')
+        except SQLAlchemyError, err:
+            SESSION.rollback()
+            LOG.debug('Error in upload_calendar')
+            LOG.exception(err)
+            flask.flash('Could not upload this iCalendar file.', 'errors')
+            return flask.render_template(
+                'upload_calendar.html', form=form, calendar=calendarobj)
+
+        fedmsg.publish(topic="calendar.upload", msg=dict(
+            agent=flask.g.fas_user.username,
+            calendar=calendarobj.to_json(),
+        ))
+        return flask.redirect(flask.url_for(
+            'calendar', calendar_name=calendarobj.calendar_name))
+
+    return flask.render_template(
+        'upload_calendar.html', form=form, calendar=calendarobj)
+
+

@@ -1,0 +1,30 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %}Upload calendar{% endblock %}
+
+{%block tag %}admin{% endblock %}
+
+{% block content %}
+<section>
+    <header>
+        <h2>Upload calendar</h2>
+        <p>
+            Upload a calendar file using the <a
+            href="http://en.wikipedia.org/wiki/ICalendar">iCalendar</a>
+            format
+        </p>
+    </header>
+
+    <form action="" method="post" enctype="multipart/form-data">
+        <table>
+        {{ render_field_in_row(form.ics_file) }}
+        </table>
+        <p class="buttons indent">
+            <input type="submit" class="submit positive button" value="Upload">
+            <input type="button" value="Cancel" class="button" onclick="history.back();">
+            {{ form.csrf_token }}
+        </p>
+    </form>
+</section>
+{% endblock %}

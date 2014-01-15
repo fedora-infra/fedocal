@@ -180,33 +180,15 @@ class AddMeetingForm(wtf.Form):
 
         if 'meeting' in kwargs:
             meeting = kwargs['meeting']
-            tzone = 'UTC'
-            if 'timezone' in kwargs:
-                tzone = kwargs['timezone']
-
-            # Convert time to user's timezone
-            startdt = datetime(
-                meeting.meeting_date.year,
-                meeting.meeting_date.month,
-                meeting.meeting_date.day,
-                meeting.meeting_time_start.hour,
-                meeting.meeting_time_start.minute, 0)
-            stopdt = datetime(
-                meeting.meeting_date_end.year,
-                meeting.meeting_date_end.month,
-                meeting.meeting_date_end.day,
-                meeting.meeting_time_stop.hour,
-                meeting.meeting_time_stop.minute, 0)
-
-            startdt = fedocallib.convert_time(startdt, 'UTC', tzone)
-            stopdt = fedocallib.convert_time(stopdt, 'UTC', tzone)
 
             self.calendar_name.data = meeting.calendar_name
             self.meeting_name.data = meeting.meeting_name
-            self.meeting_date.data = startdt.date()
+            self.meeting_date.data = meeting.meeting_date
             self.meeting_date_end.data = meeting.meeting_date_end
-            self.meeting_time_start.data = startdt.time().strftime('%H:%M')
-            self.meeting_time_stop.data = stopdt.time().strftime('%H:%M')
+            self.meeting_time_start.data = meeting.meeting_time_start.strftime(
+                '%H:%M')
+            self.meeting_time_stop.data = meeting.meeting_time_stop.strftime(
+                '%H:%M')
             self.meeting_timezone.data = meeting.meeting_timezone
             self.information.data = meeting.meeting_information
             # You are not allowed to remove yourself from the managers.

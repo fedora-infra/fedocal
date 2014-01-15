@@ -658,7 +658,8 @@ def add_meeting_to_vcal(ical, meeting):
     """
     entry = ical.add('vevent')
     entry.add('summary').value = meeting.meeting_name
-    entry.add('description').value = meeting.meeting_information
+    if meeting.meeting_information:
+        entry.add('description').value = meeting.meeting_information
     entry.add('organizer').value = meeting.meeting_manager
 
     start = entry.add('dtstart')
@@ -1034,3 +1035,59 @@ def clear_calendar(session, calendar):
     """ Remove all the meetings from the specified calendar.
     """
     return Meeting.clear_from_calendar(session, calendar)
+
+
+def add_vcal_file(session, calendar, stream, fas_user):
+    """ Add the meetings from the iCalendar stream provided into the calendar
+    specified.
+    """
+    meetings = vobject.readOne(stream)
+    for meeting in meetings.components():
+        meeting_name = ', '.join(
+            [el.value for el in meeting.contents.get('summary')])
+        meeting_description = ', '.join(
+            [el.value for el in meeting.contents.get('description', [])]
+        ) or None
+
+        tzone='UTC'
+        full_day = False
+        if meeting.contents.get('transp', False):
+            full_day = True
+
+        meeting_date = meeting.dtstart.value
+        meeting_time_start = time(0, 0)
+        if isinstance(meeting_date, datetime):
+            tzone = str(meeting_date.tzname())
+            meeting_time_start = meeting_date.time()
+            meeting_date = meeting_date.date()
+
+        meeting_date_end = meeting_date
+        meeting_time_stop = time(0, 0)
+        if meeting.name == 'VEVENT':
+            meeting_date_end = meeting.dtend.value
+        else:
+            full_day = True
+
+        if isinstance(meeting_date_end, datetime):
+            meeting_time_stop = meeting_date_end.time()
+            meeting_date_end = meeting_date_end.date()
+
+        add_meeting(
+            session,
+            calendarobj=calendar,
+            fas_user=fas_user,
+            meeting_name=meeting_name,
+            meeting_date=meeting_date,
+            meeting_date_end=meeting_date_end,
+            meeting_time_start=meeting_time_start,
+            meeting_time_stop=meeting_time_stop,
+            comanager=fas_user.username,
+            meeting_information=meeting_description,
+            meeting_location=None,
+            tzone=tzone,
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
+            full_day=full_day,
+            admin=False)

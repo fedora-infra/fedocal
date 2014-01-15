@@ -50,3 +50,8 @@ PATH_ALEMBIC_INI = os.path.join(
 # Name of the folder containing the desired theme inside the traditional
 # template folder. Defaults to 'default'.
 THEME_FOLDER = 'default'
+
+ALLOWED_EXTENSIONS = ['ics', 'ical', 'ifb', 'icalendar']
+ALLOWED_MIMETYPES = [
+    'text/calendar',
+]

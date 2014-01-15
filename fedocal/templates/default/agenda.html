@@ -142,6 +142,10 @@ else %}{{ location }}{% endif %}{% endblock %}
                 <a href="{{ url_for('clear_calendar',
                     calendar_name=calendar.calendar_name) }}"> Clear calendar </a>
             </li>
+            <li>
+                <a href="{{ url_for('upload_calendar',
+                    calendar_name=calendar.calendar_name) }}"> Upload iCalendar </a>
+            </li>
             {% endif %}
         </ul>
         </div>
@@ -234,7 +238,8 @@ else %}{{ location }}{% endif %}{% endblock %}
                     <a class="event meeting_{{ meeting.meeting_id }}"
                         href="{{ url_for('view_meeting',
                             meeting_id=meeting.meeting_id) }}">
-                        {{ meeting.meeting_name }}
+                        {{ meeting.meeting_name[:22] }}
+                        {% if meeting.meeting_name > 22 %}...{% endif %}
                     </a>
                     {% endfor %}
                 </td>

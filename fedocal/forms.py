@@ -239,3 +239,10 @@ class ClearCalendarForm(wtf.Form):
     """ Form used to delete a calendar. """
     confirm_delete = wtforms.BooleanField(
         'Yes I want to clear this calendar')
+
+
+class UploadIcsForm(wtf.Form):
+    ''' Form to upload an ics file into a calendar. '''
+    ics_file = wtf.FileField(
+        'ics file <span class="error">*</span>',
+        [wtf.validators.Required()])

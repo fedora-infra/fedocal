@@ -31,26 +31,41 @@ else %}{{ location }}{% endif %}{% endblock %}
           {% if calendar %}
           <a href="{{url_for('calendar',
               calendar_name=calendar.calendar_name, year=prev_week.year,
-              month=prev_week.month, day=prev_week.day)}}" class="button">
+              month=prev_week.month, day=prev_week.day)}}" class="button"
+              title="Previous week">
               &lt;
           </a>
           {{ weekdays | WeekHeading }}
           <a href="{{url_for('calendar',
               calendar_name=calendar.calendar_name, year=next_week.year,
-              month=next_week.month, day=next_week.day)}}" class="button">
+              month=next_week.month, day=next_week.day)}}" class="button"
+              title="Next week">
               &gt;
+          </a>
+          <a href="{{url_for('calendar',
+              calendar_name=calendar.calendar_name)}}" class="button">
+              <img src="{{url_for('static', filename='home.png')}}"
+                alt="today" title="Today" />
           </a>
           {% else %}
           <a href="{{url_for('location',
               loc_name=location, year=prev_week.year,
-              month=prev_week.month, day=prev_week.day)}}" class="button">
+              month=prev_week.month, day=prev_week.day)}}" class="button"
+              title="Previous week">
               &lt;
           </a>
           {{ weekdays | WeekHeading }}
           <a href="{{url_for('location',
               loc_name=location, year=next_week.year,
-              month=next_week.month, day=next_week.day)}}" class="button">
+              month=next_week.month, day=next_week.day)}}" class="button"
+              title="Next week">
               &gt;
+          </a>
+          <a href="{{url_for('calendar',
+              calendar_name=calendar.calendar_name)}}" class="button"
+              title="Today">
+              <img src="{{url_for('static', filename='home.png')}}"
+                alt="today" />
           </a>
           {% endif %}
       </nav>

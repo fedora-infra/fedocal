@@ -52,16 +52,16 @@ def validate_time(form, field):
 class AddCalendarForm(wtf.Form):
     """ Form used to create a new calendar. """
     calendar_name = wtforms.TextField(
-        'Calendar',
+        'Calendar <span class="error">*</span>',
         [wtforms.validators.Required()])
     calendar_contact = wtforms.TextField(
-        'Contact email',
+        'Contact email <span class="error">*</span>',
         [wtforms.validators.Required()])
     calendar_description = wtforms.TextField('Description')
     calendar_editor_groups = wtforms.TextField('Editor groups')
     calendar_admin_groups = wtforms.TextField('Admin groups')
     calendar_status = wtforms.SelectField(
-        'Status',
+        'Status <span class="error">*</span>',
         [wtforms.validators.Required()],
         choices=[]
     )
@@ -94,16 +94,16 @@ class AddCalendarForm(wtf.Form):
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """
     calendar_name = wtforms.SelectField(
-        'Calendar',
+        'Calendar <span class="error">*</span>',
         [wtforms.validators.Required()],
         choices=[])
 
     meeting_name = wtforms.TextField(
-        'Meeting name',
+        'Meeting name <span class="error">*</span>',
         [wtforms.validators.Required()])
 
     meeting_date = wtforms.DateField(
-        'Date',
+        'Date <span class="error">*</span>',
         [wtforms.validators.Required()])
 
     meeting_date_end = wtforms.DateField(
@@ -111,15 +111,15 @@ class AddMeetingForm(wtf.Form):
         [wtforms.validators.optional()])
 
     meeting_time_start = wtforms.TextField(
-        'Start time',
+        'Start time <span class="error">*</span>',
         [wtforms.validators.Required(), validate_time])
 
     meeting_time_stop = wtforms.TextField(
-        'Stop time',
+        'Stop time <span class="error">*</span>',
         [wtforms.validators.Required(), validate_time])
 
     meeting_timezone = wtforms.SelectField(
-        'Time zone',
+        'Time zone <span class="error">*</span>',
         [wtforms.validators.Required()],
         choices=[(tzone, tzone) for tzone in common_timezones])
 

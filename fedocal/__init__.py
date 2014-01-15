@@ -608,7 +608,7 @@ def add_meeting(calendar_name):
                                             calendar_name=calendar_name))
 
     tzone = get_timezone()
-    form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
+    form = forms.AddMeetingForm(calendars=calendars)
     form.calendar_name.data = calendar_name
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     # pylint: disable=E1101
@@ -660,6 +660,8 @@ def add_meeting(calendar_name):
             year=form.meeting_date.data.year,
             month=form.meeting_date.data.month,
             day=form.meeting_date.data.day))
+    else:
+        form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
 
     return flask.render_template(
         'add_meeting.html', calendar=calendarobj, form=form, tzone=tzone)
@@ -708,7 +710,7 @@ def edit_meeting(meeting_id):
                                             meeting_id=meeting_id))
 
     tzone = get_timezone()
-    form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
+    form = forms.AddMeetingForm(calendars=calendars)
     # pylint: disable=E1101
     if form.validate_on_submit():
         if meeting.calendar_name != form.calendar_name.data:

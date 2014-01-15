@@ -29,6 +29,11 @@
             class="button">
             &gt;
         </a>
+        <a href="{{url_for('calendar_list',
+            calendar_name=calendar.calendar_name)}}" class="button">
+            <img src="{{url_for('static', filename='home.png')}}"
+                alt="today" title="Today" />
+        </a>
     </nav>
 {% else %}
 <header>

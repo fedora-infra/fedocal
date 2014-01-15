@@ -472,7 +472,7 @@ def ical_out(calendar_name):
     fedocallib.add_meetings_to_vcal(ical, meetings)
     headers = {}
     headers["Content-Disposition"] = "attachment; filename=%s-%s.ical" % (
-        calendar_name, datetime.datetime.utcnow())
+        secure_filename(calendar_name), datetime.datetime.utcnow())
     return flask.Response(
         ical.serialize(),
         mimetype='text/calendar',

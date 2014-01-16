@@ -25,7 +25,7 @@ You are removing this meeting from the calendar
 </p>
 <form action="" method="post">
 {{ render_field_invert(form.confirm_delete) }}
-{% if meeting.recursion %}
+{% if meeting.recursion_frequency %}
 <p>This meeting is a regular meeting, are you sure you want to delete all
 of them or just this one ? (Check only if you want to delete all future
 meetings as well)</p>
@@ -34,7 +34,8 @@ meetings as well)</p>
 <p class="buttons indent">
     <input id="confirm_button" type="submit" class="submit positive button"
            value="Delete">
-    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    <input type="button" value="Cancel" class="button"
+           onclick="history.back();">
 </p>
 {{ form.csrf_token }}
 </form>

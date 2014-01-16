@@ -213,7 +213,7 @@ def is_calendar_manager(calendarobj):
     """
     if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
         return False
-    elif is_admin():
+    elif is_calendar_admin(calendarobj):
         return True
     else:
         editor_groups = []
@@ -624,9 +624,7 @@ def add_meeting(calendar_name):
                               calendar_name=calendar_name))
 
     if calendarobj.calendar_editor_group and \
-       not (is_calendar_manager(calendarobj)
-            or is_calendar_admin(calendarobj)
-            or is_admin()):
+       not is_calendar_manager(calendarobj):
         flask.flash('You are not one of the editors of this calendar, '
                     'or one of its admins, you are not allowed to add '
                     'new meetings.', 'errors')
@@ -665,7 +663,7 @@ def add_meeting(calendar_name):
             return flask.render_template(
                 'add_meeting.html', calendar=calendarobj, form=form,
                 tzone=tzone)
-        except SQLAlchemyError, err:
+        except SQLAlchemyError, err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in add_meeting')
             LOG.exception(err)
@@ -711,11 +709,14 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
-    if not calendarobj:
-        flask.flash(
-            'No calendar named %s could not be found' % calendar_name,
-            'errors')
-        return flask.redirect(flask.url_for('index'))
+
+    if calendarobj.calendar_editor_group and \
+       not is_calendar_manager(calendarobj):
+        flask.flash('You are not one of the editors of this calendar, '
+                    'or one of its admins, you are not allowed to edit '
+                    'meetings.', 'errors')
+        return flask.redirect(flask.url_for(
+            'calendar', calendar_name=meeting.calendar_name))
 
     calendars = Calendar.get_all(SESSION)
 

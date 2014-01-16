@@ -172,7 +172,8 @@ def shutdown_session(exception=None):
 ## Local function
 def is_admin():
     """ Return whether the user is admin for this application or not. """
-    if not flask.g.fas_user \
+    if not hasattr(flask.g, 'fas_user') \
+            or not flask.g.fas_user\
             or not flask.g.fas_user.cla_done \
             or len(flask.g.fas_user.groups) < 1:
         return False
@@ -190,7 +191,7 @@ def is_calendar_admin(calendarobj):
     """ Return whether the user is admin for the specified calendar
     (object).
     """
-    if not flask.g.fas_user:
+    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
         return False
     elif is_admin():
         return True
@@ -209,7 +210,7 @@ def is_calendar_manager(calendarobj):
     """ Return whether the user is a manager for the specified calendar
     (object).
     """
-    if not flask.g.fas_user:
+    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
         return False
     elif is_admin():
         return True
@@ -230,7 +231,7 @@ def is_meeting_manager(meeting):
     """ Return whether the user is one of the manager of the specified
     meeting (object).
     """
-    if not flask.g.fas_user:
+    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
         return False
     else:
         managers = []
@@ -245,7 +246,7 @@ def is_meeting_manager(meeting):
 def get_timezone():
     """ Return the user's timezone, default to UTC. """
     tzone = 'UTC'
-    if flask.g.fas_user:
+    if hasattr(flask.g, 'fas_user') and flask.g.fas_user:
         if flask.g.fas_user['timezone']:
             tzone = flask.g.fas_user['timezone']
     tzone = flask.request.args.get('tzone', tzone)
@@ -526,7 +527,7 @@ def auth_login():
     if 'next' in flask.request.args:
         return_point = flask.request.args['next']
 
-    if flask.g.fas_user:
+    if hasattr(flask.g, 'fas_user') and flask.g.fas_user:
         return flask.redirect(return_point)
 
     return FAS.login(return_url=return_point)
@@ -535,7 +536,7 @@ def auth_login():
 @APP.route('/logout/')
 def auth_logout():
     """ Method to log out from the application. """
-    if not flask.g.fas_user:
+    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
     FAS.logout()
     flask.flash('You have been logged out')

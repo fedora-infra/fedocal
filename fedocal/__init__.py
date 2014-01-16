@@ -180,7 +180,7 @@ def is_admin():
     admins = APP.config['ADMIN_GROUP']
     if isinstance(admins, basestring):
         admins = set([admins])
-    else:
+    else:  # pragma: no cover
         admins = set(admins)
     groups = set(flask.g.fas_user.groups)
     return not groups.isdisjoint(admins)
@@ -199,8 +199,8 @@ def is_calendar_admin(calendarobj):
             item.strip()
             for item in calendarobj.calendar_admin_group.split(',')
         ]
-        if set(flask.g.fas_user.groups).intersection(set(admin_groups)):
-            return True
+        return bool(
+            set(flask.g.fas_user.groups).intersection(set(admin_groups)))
     else:
         return False
 
@@ -211,15 +211,19 @@ def is_calendar_manager(calendarobj):
     """
     if not flask.g.fas_user:
         return False
+    elif is_admin():
+        return True
     else:
-        editor_groups = [
-            item.strip()
-            for item in calendarobj.calendar_editor_group.split(',')
-        ]
+        editor_groups = []
+        if calendarobj.calendar_editor_group:
+            editor_groups = [
+                item.strip()
+                for item in calendarobj.calendar_editor_group.split(',')
+            ]
         if len(editor_groups) == 0:
             return True
-        if set(flask.g.fas_user.groups).intersection(set(editor_groups)):
-            return True
+        return bool(
+            set(flask.g.fas_user.groups).intersection(set(editor_groups)))
 
 
 def is_meeting_manager(meeting):

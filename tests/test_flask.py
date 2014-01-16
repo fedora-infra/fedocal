@@ -42,6 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import fedocal
 import fedocal.fedocallib as fedocallib
+import fedocal.fedocallib.model as model
 from tests import Modeltests, FakeUser
 
 
@@ -271,8 +272,68 @@ class Flasktests(Modeltests):
             flask.g.fas_user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
             self.assertTrue(fedocal.is_admin())
 
+    def test_is_calendar_admin(self):
+        """ Test the is_calendar_admin function. """
+        self.__setup_db()
+        app = flask.Flask('fedocal')
+        app.SESSION = self.session
+        calendar = model.Calendar.by_id(self.session, 'test_calendar')
+
+        with app.test_request_context():
+            # No fas user
+            flask.g.fas_user = None
+            self.assertFalse(fedocal.is_calendar_admin(calendar))
+
+            # User is in the wrong group
+            flask.g.fas_user = FakeUser(['gitr2spec'])
+            self.assertFalse(fedocal.is_calendar_admin(calendar))
+
+            # User is admin
+            flask.g.fas_user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
+            self.assertTrue(fedocal.is_calendar_admin(calendar))
+
+            # User is in the right group
+            flask.g.fas_user = FakeUser(['infrastructure-main2'])
+            self.assertTrue(fedocal.is_calendar_admin(calendar))
+
+            # Calendar has no admin specified
+            calendar = model.Calendar.by_id(self.session, 'test_calendar3')
+            flask.g.fas_user = FakeUser(['gitr2spec'])
+            self.assertFalse(fedocal.is_calendar_admin(calendar))
+
+    def test_is_calendar_manager(self):
+        """ Test the is_calendar_manager function. """
+        self.__setup_db()
+        app = flask.Flask('fedocal')
+        app.SESSION = self.session
+        calendar = model.Calendar.by_id(self.session, 'test_calendar')
+
+        with app.test_request_context():
+            # No user
+            flask.g.fas_user = None
+            self.assertFalse(fedocal.is_calendar_manager(calendar))
+
+            # User in the wrong group
+            flask.g.fas_user = FakeUser(['gitr2spec'])
+            self.assertFalse(fedocal.is_calendar_manager(calendar))
+
+            # User is admin
+            flask.g.fas_user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
+            self.assertTrue(fedocal.is_calendar_manager(calendar))
+
+            # User in the right group
+            flask.g.fas_user = FakeUser(['fi-apprentice'])
+            self.assertTrue(fedocal.is_calendar_manager(calendar))
+
+            calendar = model.Calendar.by_id(self.session, 'test_calendar3')
+
+            # Calendar has no editors set
+            flask.g.fas_user = FakeUser(['gitr2spec'])
+            self.assertTrue(fedocal.is_calendar_manager(calendar))
+
+
     def test_get_timezone(self):
-        """ Test the get_timezone. """
+        """ Test the get_timezone function. """
         app = flask.Flask('fedocal')
 
         with app.test_request_context():

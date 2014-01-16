@@ -828,11 +828,10 @@ def view_meeting_page(meeting_id, full):
         return flask.redirect(flask.url_for('index'))
     meeting = fedocallib.convert_meeting_timezone(
         meeting, meeting.meeting_timezone, tzone)
-    editor = is_admin()
-    if not editor:
-        if is_meeting_manager(meeting) or is_calendar_admin(
-                meeting.calendar):
-            editor = True
+    editor = False
+    if is_meeting_manager(meeting) or is_calendar_admin(
+            meeting.calendar):
+        editor = True
     return flask.render_template(
         'view_meeting.html',
         full=full,

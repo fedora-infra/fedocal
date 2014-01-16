@@ -560,6 +560,185 @@ class Flasktests(Modeltests):
                 in output.data)
 
     @flask10_only
+    def test_delete_calendar(self):
+        """ Test the delete_calendar function. """
+        self.__setup_db()
+
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/delete/1/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not a fedocal admin, you are not'
+                ' allowed to delete the calendar.</l'
+                in output.data)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>'
+                in output.data)
+
+        user = FakeUser(['packager'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/delete/50/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '"errors">No calendar named 50 could not be found</'
+                in output.data)
+            self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+
+            output = self.app.get('/calendar/delete/test_calendar/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Delete calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                "Are you positively sure that's what you want to do?"
+                in output.data)
+            self.assertTrue(
+                'name="confirm_delete" type="checkbox" value="y"><label'
+                in output.data)
+
+            # No data
+            data = {}
+
+            output = self.app.post('/calendar/delete/test_calendar/', data=data,
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Delete calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                "Are you positively sure that's what you want to do?"
+                in output.data)
+            self.assertTrue(
+                'name="confirm_delete" type="checkbox" value="y"><label'
+                in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # No delete
+            data = {
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/calendar/delete/test_calendar/',
+                                   data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<span class="calendar_name">test_calendar</span>'
+                in output.data)
+
+            # Delete
+            data = {
+                'confirm_delete': False,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/calendar/delete/test_calendar/',
+                                   data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<li class="message">Calendar deleted</li>'
+                in output.data)
+            self.assertFalse(
+                '<span class="calendar_name">test_calendar</span>'
+                in output.data)
+
+    @flask10_only
+    def test_clear_calendar(self):
+        """ Test the clear_calendar function. """
+        self.__setup_db()
+
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/clear/1/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No calendar named 1 could not be found</li>'
+                in output.data)
+
+            output = self.app.get('/calendar/clear/test_calendar/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not an admin of this calendar, '
+                'you are not allowed to clear the calendar.</l'
+                in output.data)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>'
+                in output.data)
+
+        user = FakeUser(['packager'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/clear/test_calendar/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Clear calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                "Are you positively sure that's what you want to do?"
+                in output.data)
+            self.assertTrue(
+                'name="confirm_delete" type="checkbox" value="y"><label'
+                in output.data)
+            self.assertTrue(
+                '>Yes I want to clear this calendar</label>' in output.data)
+
+            # No data
+            data = {}
+
+            output = self.app.post('/calendar/clear/test_calendar/', data=data,
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Clear calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                "Are you positively sure that's what you want to do?"
+                in output.data)
+            self.assertTrue(
+                'name="confirm_delete" type="checkbox" value="y"><label'
+                in output.data)
+
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # No delete
+            data = {
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/calendar/clear/test_calendar/',
+                                   data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<span class="calendar_name">test_calendar</span>'
+                in output.data)
+
+            # Delete
+            data = {
+                'confirm_delete': False,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/calendar/clear/test_calendar/',
+                                   data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<li class="message">Calendar cleared</li>'
+                in output.data)
+            self.assertTrue(
+                '<span class="calendar_name">test_calendar</span>'
+                in output.data)
+
+    @flask10_only
     def test_auth_logout(self):
         """ Test the auth_logout function. """
         user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
@@ -886,6 +1065,105 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 'for="meeting_date">Date <span class="error">*</span></label'
                 in output.data)
+
+    @flask10_only
+    def test_delete_meeting(self):
+        """ Test the delete_meeting function. """
+        self.__setup_db()
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/meeting/delete/50/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '"errors">No meeting with this identifier could be found.</'
+                in output.data)
+            self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+
+            output = self.app.get('/meeting/delete/1/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not one of the manager of this '
+                'meeting, or an admin, you are not allowed to delete it.</l'
+                in output.data)
+            self.assertTrue(
+                '<title>Meeting Fedora-fr-test-meeting - Fedocal</title>'
+                in output.data)
+
+        user = FakeUser(['fi-apprentice'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/meeting/delete/1/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not one of the manager of this '
+                'meeting, or an admin, you are not allowed to delete it.</l'
+                in output.data)
+            self.assertTrue(
+                '<title>Meeting Fedora-fr-test-meeting - Fedocal</title>'
+                in output.data)
+
+        user = FakeUser(['fi-apprentice'], username='pingou')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/meeting/delete/1/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Delete meeting - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h4> Meeting: Fedora-fr-test-meeting</h4>'
+                in output.data)
+            self.assertTrue(
+                "positively sure that's what you want to do?"
+                in output.data)
+            self.assertTrue(
+                'name="confirm_delete" type="checkbox" value="y"><label'
+                in output.data)
+            self.assertTrue(
+                '<input id="confirm_button" type="submit" class="submit positive'
+                in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # Do not delete
+            data = {
+                #'confirm_delete': False,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/meeting/delete/1/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>test_calendar - Fedocal</title>' in output.data)
+
+            # Delete
+            data = {
+                'confirm_delete': False,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/meeting/delete/1/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>test_calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<li class="message">Meeting deleted</li>' in output.data)
+
+            # Delete all
+            data = {
+                'confirm_delete': True,
+                'confirm_futher_delete': True,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/meeting/delete/8/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>test_calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<li class="message">Meeting deleted</li>' in output.data)
+
 
 
 if __name__ == '__main__':

@@ -603,7 +603,7 @@ def add_meeting(calendar_name):
 
     :arg calendar_name, name of the calendar in which to add the meeting.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -686,7 +686,7 @@ def add_meeting(calendar_name):
             year=form.meeting_date.data.year,
             month=form.meeting_date.data.month,
             day=form.meeting_date.data.day))
-    else:
+    elif flask.request.method == 'GET':
         form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
 
     return flask.render_template(
@@ -787,7 +787,7 @@ def edit_meeting(meeting_id):
         ))
         return flask.redirect(flask.url_for('view_meeting',
                               meeting_id=meeting_id))
-    else:
+    elif flask.request.method == 'GET':
         if meeting.recursion_frequency and meeting.recursion_ends \
                 and fedocallib.is_date_in_future(
                     meeting.recursion_ends, meeting.meeting_time_start):
@@ -1061,7 +1061,7 @@ def edit_calendar(calendar_name):
         ))
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=calendarobj.calendar_name))
-    else:
+    elif flask.request.method == 'GET':
         form = forms.AddCalendarForm(calendar=calendarobj, status=status)
     return flask.render_template('edit_calendar.html', form=form,
                                  calendar=calendarobj)

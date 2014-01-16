@@ -276,7 +276,6 @@ class Flasktests(Modeltests):
         """ Test the is_calendar_admin function. """
         self.__setup_db()
         app = flask.Flask('fedocal')
-        app.SESSION = self.session
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
 
         with app.test_request_context():
@@ -305,7 +304,6 @@ class Flasktests(Modeltests):
         """ Test the is_calendar_manager function. """
         self.__setup_db()
         app = flask.Flask('fedocal')
-        app.SESSION = self.session
         calendar = model.Calendar.by_id(self.session, 'test_calendar')
 
         with app.test_request_context():
@@ -331,6 +329,25 @@ class Flasktests(Modeltests):
             flask.g.fas_user = FakeUser(['gitr2spec'])
             self.assertTrue(fedocal.is_calendar_manager(calendar))
 
+    def test_is_meeting_manager(self):
+        """ Test the is_meeting_manager function. """
+        self.__setup_db()
+        app = flask.Flask('fedocal')
+        meeting = model.Meeting.by_id(self.session, 1)
+
+        with app.test_request_context():
+            # No user
+            flask.g.fas_user = None
+            self.assertFalse(fedocal.is_meeting_manager(meeting))
+
+            # User is not one of the managers
+            flask.g.fas_user = FakeUser(['gitr2spec'])
+            flask.g.fas_user.username = 'kevin'
+            self.assertFalse(fedocal.is_meeting_manager(meeting))
+
+            # User is one of the manager
+            flask.g.fas_user = FakeUser(['gitr2spec'])
+            self.assertFalse(fedocal.is_meeting_manager(meeting))
 
     def test_get_timezone(self):
         """ Test the get_timezone function. """

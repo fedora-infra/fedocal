@@ -233,8 +233,12 @@ def is_meeting_manager(meeting):
     if not flask.g.fas_user:
         return False
     else:
-        managers = [item.strip()
-                    for item in meeting.meeting_manager.split(',')]
+        managers = []
+        if meeting.meeting_manager:
+            managers = [
+                item.strip()
+                for item in meeting.meeting_manager.split(',')
+            ]
         return flask.g.fas_user.username in managers
 
 

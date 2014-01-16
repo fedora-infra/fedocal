@@ -55,3 +55,6 @@ ALLOWED_EXTENSIONS = ['ics', 'ical', 'ifb', 'icalendar']
 ALLOWED_MIMETYPES = [
     'text/calendar',
 ]
+
+# The email address to which the flask.log will send the errors (tracebacks)
+EMAIL_ERROR = 'pingou@pingoured.fr'

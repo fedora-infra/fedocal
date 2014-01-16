@@ -77,7 +77,7 @@ SESSION = fedocallib.create_session(APP.config['DB_URL'])
 mail_handler = SMTPHandler(
     APP.config.get('SMTP_SERVER', '127.0.0.1'),
     'nobody@fedoraproject.org',
-    APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org'),
+    APP.config.get('MAIL_ADMIN', APP.config['EMAIL_ERROR']),
     'Fedocal error')
 mail_handler.setFormatter(logging.Formatter('''
     Message type:       %(levelname)s

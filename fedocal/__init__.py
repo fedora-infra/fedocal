@@ -478,10 +478,7 @@ def ical_out(calendar_name):
     calendarobj = Calendar.by_id(SESSION, calendar_name)
 
     if not calendarobj:
-        flask.flash(
-            'No calendar named %s could not be found' % calendar_name,
-            'errors')
-        return flask.redirect(flask.url_for('index'))
+        return flask.abort(404)
 
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, startd, endd, extended=False)

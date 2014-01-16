@@ -623,8 +623,7 @@ def add_meeting(calendar_name):
         return flask.redirect(flask.url_for('calendar',
                               calendar_name=calendar_name))
 
-    if calendarobj.calendar_editor_group and \
-       not is_calendar_manager(calendarobj):
+    if not is_calendar_manager(calendarobj):
         flask.flash('You are not one of the editors of this calendar, '
                     'or one of its admins, you are not allowed to add '
                     'new meetings.', 'errors')
@@ -700,7 +699,7 @@ def edit_meeting(meeting_id):
 
     :arg meeting_id: the identifier of the meeting to edit.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
     if not meeting:
@@ -710,8 +709,7 @@ def edit_meeting(meeting_id):
 
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
 
-    if calendarobj.calendar_editor_group and \
-       not is_calendar_manager(calendarobj):
+    if not is_calendar_manager(calendarobj):
         flask.flash('You are not one of the editors of this calendar, '
                     'or one of its admins, you are not allowed to edit '
                     'meetings.', 'errors')
@@ -728,8 +726,7 @@ def edit_meeting(meeting_id):
                               calendar_name=calendarobj.calendar_name))
 
     if not (is_meeting_manager(meeting)
-            or is_calendar_admin(calendarobj)
-            or is_admin()):
+            or is_calendar_admin(calendarobj)):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to edit it.',
                     'errors')
@@ -742,6 +739,13 @@ def edit_meeting(meeting_id):
     if form.validate_on_submit():
         if meeting.calendar_name != form.calendar_name.data:
             calendarobj = Calendar.by_id(SESSION, form.calendar_name.data)
+            if calendarobj.calendar_status != 'Enabled':
+                flask.flash('This calendar is "%s", you are not allowed to '
+                            'add meetings to it anymore.' %
+                            calendarobj.calendar_status, 'errors')
+                return flask.redirect(flask.url_for('calendar',
+                                      calendar_name=
+                                        calendarobj.calendar_name))
         tzone = form.meeting_timezone.data or tzone
         action = flask.request.form.get('action', 'Edit')
         try:
@@ -771,7 +775,7 @@ def edit_meeting(meeting_id):
             return flask.render_template(
                 'edit_meeting.html', meeting=meeting, calendar=calendarobj,
                 form=form, tzone=tzone)
-        except SQLAlchemyError, err:
+        except SQLAlchemyError, err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in edit_meeting')
             LOG.exception(err)
@@ -797,7 +801,8 @@ def edit_meeting(meeting_id):
             while meetingobj.meeting_date < datetime.date.today():
                 if meetingobj.recursion_ends < meetingobj.meeting_date + \
                     datetime.timedelta(
-                        days=meetingobj.recursion_frequency * cnt):
+                        days=meetingobj.recursion_frequency * cnt
+                    ):  # pragma: no cover
                     break
                 meetingobj = Meeting.copy(meeting)
                 meetingobj.meeting_date = meetingobj.meeting_date + \

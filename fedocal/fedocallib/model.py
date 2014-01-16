@@ -143,7 +143,7 @@ class Calendar(BASE):
 
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,
-            calendar_editor_group, calendar_admin_group=None,
+            calendar_editor_group=None, calendar_admin_group=None,
             calendar_status='Enabled'):
         """ Constructor instanciating the defaults values. """
         self.calendar_name = calendar_name

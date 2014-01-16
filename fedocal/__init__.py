@@ -885,8 +885,7 @@ def delete_meeting(meeting_id):
         )
 
     if not (is_meeting_manager(meeting)
-            or is_calendar_admin(meeting.calendar)
-            or is_admin()):
+            or is_calendar_admin(meeting.calendar)):
         flask.flash('You are not one of the manager of this meeting, '
                     'or an admin, you are not allowed to delete it.',
                     'errors')

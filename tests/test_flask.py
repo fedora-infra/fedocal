@@ -108,6 +108,12 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
+        output = self.app.get('/foorbar/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="errors">No calendar named foorbar could not be found</'
+            in output.data)
+
     def test_location(self):
         """ Test the location calendar function. """
         self.__setup_db()
@@ -156,6 +162,20 @@ class Flasktests(Modeltests):
         """ Test the calendar_list function. """
         self.__setup_db()
 
+        output = self.app.get('/list/test_calendar/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/list/foorbar/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="errors">No calendar named foorbar could not be found</'
+            in output.data)
+
         today = date.today()
         output = self.app.get('/list/test_calendar/%s/%s/%s/' % (
             today.year, today.month, today.day))
@@ -202,6 +222,9 @@ class Flasktests(Modeltests):
         self.assertTrue('ORGANIZER:pingou' in output.data)
         self.assertEqual(output.data.count('BEGIN:VEVENT'), 10)
         self.assertEqual(output.data.count('END:VEVENT'), 10)
+
+        output = self.app.get('/ical/foorbar/')
+        self.assertEqual(output.status_code, 404)
 
     def test_ical_all(self):
         """ Test the ical_all function. """
@@ -260,6 +283,12 @@ class Flasktests(Modeltests):
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
+            in output.data)
+
+        output = self.app.get('/meeting/50/0/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="errors">No meeting could be found for this identifier</'
             in output.data)
 
     def test_is_admin(self):
@@ -374,6 +403,68 @@ class Flasktests(Modeltests):
             self.assertFalse(
                 fedocal.is_safe_url('https://fedoraproject.org/'))
 
+    def test_auth_login(self):
+        """ Test the auth_login function. """
+        app = flask.Flask('fedocal')
+
+        with app.test_request_context():
+            flask.g.fas_user = FakeUser(['gitr2spec'])
+            output = self.app.get('/login/')
+            self.assertEqual(output.status_code, 200)
+
+            output = self.app.get('/login/?next=http://localhost/')
+            self.assertEqual(output.status_code, 200)
+
+    def test_locations(self):
+        """ Test the locations function. """
+        self.__setup_db()
+
+        output = self.app.get('/locations/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<h2>Locations</h2>'
+            in output.data)
+        self.assertTrue('href="/location/EMEA/">' in output.data)
+        self.assertTrue(
+            '<span class="calendar_name">EMEA</span>' in output.data)
+        self.assertTrue('href="/location/NA/">' in output.data)
+        self.assertTrue(
+            '<span class="calendar_name">NA</span>' in output.data)
+
+    def test_location(self):
+        """ Test the location function. """
+        self.__setup_db()
+
+        output = self.app.get('/location/EMEA')
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/location/EMEA', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>EMEA - Fedocal</title>' in output.data)
+        self.assertTrue('<a href="/location/EMEA/">' in output.data)
+        self.assertTrue('title="Previous week">' in output.data)
+        self.assertTrue('title="Next week">' in output.data)
+        self.assertTrue(
+            '<input type="hidden" name="location" value="EMEA"/>'
+            in output.data)
+
+        output = self.app.get('/location/NA/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>NA - Fedocal</title>' in output.data)
+        self.assertTrue('<a href="/location/NA/">' in output.data)
+        self.assertTrue('title="Previous week">' in output.data)
+        self.assertTrue('title="Next week">' in output.data)
+        self.assertTrue(
+            '<input type="hidden" name="location" value="NA"/>'
+            in output.data)
+
+        output = self.app.get('/location/foobar/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="errors">No location named foobar could not be found</'
+            in output.data)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Flasktests)

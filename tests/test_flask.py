@@ -357,6 +357,23 @@ class Flasktests(Modeltests):
             flask.g.fas_user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
             self.assertEqual(fedocal.get_timezone(), 'Europe/Paris')
 
+    def test_is_safe_url(self):
+        """ Test the is_safe_url function. """
+        app = flask.Flask('fedocal')
+
+        with app.test_request_context():
+            self.assertTrue(fedocal.is_safe_url('http://localhost'))
+
+            self.assertTrue(fedocal.is_safe_url('https://localhost'))
+
+            self.assertTrue(fedocal.is_safe_url('http://localhost/test'))
+
+            self.assertFalse(
+                fedocal.is_safe_url('http://fedoraproject.org/'))
+
+            self.assertFalse(
+                fedocal.is_safe_url('https://fedoraproject.org/'))
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Flasktests)

@@ -818,7 +818,8 @@ def add_meeting(
     and then add the desired meeting.
     """
     if not is_user_managing_in_calendar(
-            session, calendarobj.calendar_name, fas_user) and not admin:
+                session, calendarobj.calendar_name, fas_user
+            ) and not admin:  # pragma: no cover
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
 

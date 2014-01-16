@@ -90,7 +90,7 @@ class Fedocallibtests(Modeltests):
         self.__setup_calendar()
         calendars = fedocallib.get_calendars(self.session)
         self.assertNotEqual(calendars, None)
-        self.assertEqual(len(calendars), 4)
+        self.assertEqual(len(calendars), 5)
         self.assertEqual(
             calendars[0].calendar_name, 'test_calendar')
         self.assertEqual(

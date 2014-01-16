@@ -82,6 +82,15 @@ class Calendartests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        obj = model.Calendar(
+            calendar_name='test_calendar_disabled',
+            calendar_contact='test4@example.com',
+            calendar_description='This is a disabled test calendar',
+            calendar_status='Disabled')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
     def test_repr_calendar(self):
         """ Test the Calendar string representation function. """
         self.test_init_calendar()
@@ -154,11 +163,12 @@ class Calendartests(Modeltests):
         self.test_init_calendar()
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 4)
+        self.assertEqual(len(obj), 5)
         self.assertEqual(obj[0].calendar_name, 'test_calendar')
         self.assertEqual(obj[1].calendar_name, 'test_calendar2')
         self.assertEqual(obj[2].calendar_name, 'test_calendar3')
         self.assertEqual(obj[3].calendar_name, 'test_calendar4')
+        self.assertEqual(obj[4].calendar_name, 'test_calendar_disabled')
 
     def test_get_all_calendar_empty_db(self):
         """ Test the Calendar get_all function when the DB is empty. """
@@ -172,7 +182,7 @@ class Calendartests(Modeltests):
         self.test_init_calendar()
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 4)
+        self.assertEqual(len(obj), 5)
         obj = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertNotEqual(obj, None)
 
@@ -181,7 +191,7 @@ class Calendartests(Modeltests):
 
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 3)
+        self.assertEqual(len(obj), 4)
         obj = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertEqual(obj, None)
 

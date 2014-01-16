@@ -363,11 +363,11 @@ class FlaskApitests(Modeltests):
 
         output = self.app.get('/api/calendars/')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('calendar_name'), 4)
+        self.assertEqual(output.data.count('calendar_name'), 5)
 
         output = self.app.get('/api/calendars/?callback="abcd"')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('calendar_name'), 4)
+        self.assertEqual(output.data.count('calendar_name'), 5)
         self.assertTrue(output.data.startswith('"abcd"([\'{"calendars":'))
 
 

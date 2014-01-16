@@ -865,7 +865,7 @@ def delete_meeting(meeting_id):
 
     :arg meeting_id: the identifier of the meeting to delete.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
 
@@ -897,6 +897,7 @@ def delete_meeting(meeting_id):
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
         if deleteform.confirm_delete.data:
+
             if deleteform.confirm_futher_delete.data:
                 fedocallib.delete_recursive_meeting(SESSION, meeting)
             else:
@@ -904,18 +905,18 @@ def delete_meeting(meeting_id):
 
             try:
                 SESSION.commit()
+                fedmsg.publish(topic="meeting.delete", msg=dict(
+                    agent=flask.g.fas_user.username,
+                    meeting=meeting.to_json(),
+                    calendar=meeting.calendar.to_json(),
+                ))
                 flask.flash('Meeting deleted')
-            except SQLAlchemyError, err:
+            except SQLAlchemyError, err:  # pragma: no cover
                 SESSION.rollback()
                 LOG.debug('Error in edit_meeting - 2')
                 LOG.exception(err)
                 flask.flash('Could not delete this meeting.', 'error')
 
-        fedmsg.publish(topic="meeting.delete", msg=dict(
-            agent=flask.g.fas_user.username,
-            meeting=meeting.to_json(),
-            calendar=meeting.calendar.to_json(),
-        ))
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=meeting.calendar_name))
     return flask.render_template(
@@ -933,7 +934,7 @@ def delete_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to delete.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragam: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
@@ -956,15 +957,15 @@ def delete_calendar(calendar_name):
             try:
                 SESSION.commit()
                 flask.flash('Calendar deleted')
-            except SQLAlchemyError, err:
+                fedmsg.publish(topic="calendar.delete", msg=dict(
+                    agent=flask.g.fas_user.username,
+                    calendar=calendarobj.to_json(),
+                ))
+            except SQLAlchemyError, err:  # pragma: no cover
                 SESSION.rollback()
                 LOG.debug('Error in delete_calendar')
                 LOG.exception(err)
                 flask.flash('Could not delete this calendar.', 'errors')
-        fedmsg.publish(topic="calendar.delete", msg=dict(
-            agent=flask.g.fas_user.username,
-            calendar=calendarobj.to_json(),
-        ))
         return flask.redirect(flask.url_for('index'))
     return flask.render_template(
         'delete_calendar.html', form=deleteform, calendarobj=calendarobj)
@@ -976,7 +977,7 @@ def clear_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to delete.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -999,7 +1000,7 @@ def clear_calendar(calendar_name):
                 fedocallib.clear_calendar(SESSION, calendarobj)
                 SESSION.commit()
                 flask.flash('Calendar cleared')
-            except SQLAlchemyError, err:
+            except SQLAlchemyError, err:  # pragma: no cover
                 SESSION.rollback()
                 LOG.debug('Error in clear_calendar')
                 LOG.exception(err)

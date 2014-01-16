@@ -91,7 +91,8 @@ mail_handler.setFormatter(logging.Formatter('''
     %(message)s
 '''))
 mail_handler.setLevel(logging.ERROR)
-APP.logger.addHandler(mail_handler)
+if not APP.debug:
+    APP.logger.addHandler(mail_handler)
 
 ## Send classic logs into syslog
 handler = logging.StreamHandler()
@@ -550,7 +551,7 @@ def add_calendar():
     """ Add a calendar to the database.
     This function is only accessible to admin of the webapp.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '

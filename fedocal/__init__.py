@@ -605,7 +605,15 @@ def add_meeting(calendar_name):
     """
     if not flask.g.fas_user:
         return flask.redirect(flask.url_for('index'))
+
     calendarobj = Calendar.by_id(SESSION, calendar_name)
+
+    if not calendarobj:
+        flask.flash(
+            'No calendar named %s could not be found' % calendar_name,
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
     calendars = Calendar.get_all(SESSION)
 
     if calendarobj.calendar_status != 'Enabled':

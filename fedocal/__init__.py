@@ -1346,6 +1346,12 @@ def location(loc_name, year, month, day):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
+    list_locations = fedocallib.get_locations(SESSION)
+    if loc_name not in list_locations:
+        flask.flash(
+            'No location named %s could not be found' % loc_name,
+            'errors')
+        return flask.redirect(flask.url_for('locations'))
 
     week_start = fedocallib.get_start_week(year, month, day)
     weekdays = fedocallib.get_week_days(year, month, day)

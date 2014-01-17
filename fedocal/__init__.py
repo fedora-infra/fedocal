@@ -1023,7 +1023,7 @@ def edit_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to edit.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
@@ -1052,7 +1052,7 @@ def edit_calendar(calendar_name):
             calendarobj.calendar_status = form.calendar_status.data
             calendarobj.save(SESSION)
             SESSION.commit()
-        except SQLAlchemyError, err:
+        except SQLAlchemyError, err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in edit_calendar')
             LOG.exception(err)

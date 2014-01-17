@@ -2,7 +2,7 @@
 # Use this file by running "$ pip install -r requirements.txt"
 alembic
 flask-wtf
-flask<0.10
+flask
 kitchen
 python-dateutil <= 1.5
 python-fedora >= 0.3.33

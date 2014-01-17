@@ -1289,7 +1289,7 @@ def update_tz():
 def upload_calendar(calendar_name):
     """ Page used to upload a iCalendar file into a specific calendar.
     """
-    if not flask.g.fas_user:
+    if not flask.g.fas_user:  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -1322,9 +1322,13 @@ def upload_calendar(calendar_name):
 
         try:
             fedocallib.add_vcal_file(
-                SESSION, calendarobj, ical_file, flask.g.fas_user)
+                SESSION, calendarobj, ical_file, flask.g.fas_user, is_admin())
             flask.flash('Calendar uploaded')
-        except SQLAlchemyError, err:
+        except FedocalException as err:  # pragma: no cover
+            flask.flash(err.message, 'error')
+            return flask.render_template(
+                'upload_calendar.html', form=form, calendar=calendarobj)
+        except SQLAlchemyError, err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in upload_calendar')
             LOG.exception(err)

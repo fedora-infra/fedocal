@@ -638,6 +638,15 @@ def add_meeting(calendar_name):
     if form.validate_on_submit():
         tzone = form.meeting_timezone.data or tzone
         try:
+            information = form.information.data
+            # If a wiki_link is specified add it at the end of the
+            # description
+            if form.wiki_link.data.strip():
+                wiki_link = form.wiki_link.data.strip()
+                if not wiki_link in information:
+                    information += '\nMore information available at:'\
+                        '\n%s%s' % (
+                            wiki_link, wiki_link)
             meeting = fedocallib.add_meeting(
                 session=SESSION,
                 calendarobj=calendarobj,
@@ -648,7 +657,7 @@ def add_meeting(calendar_name):
                 meeting_time_start=form.meeting_time_start.data,
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,
-                meeting_information=form.information.data,
+                meeting_information=information,
                 meeting_location=form.meeting_location.data,
                 tzone=tzone,
                 frequency=form.frequency.data,

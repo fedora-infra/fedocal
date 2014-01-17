@@ -1275,11 +1275,14 @@ def update_tz():
     """ Update the timezone using the value set in the drop-down list and
     send back the user to where it came from.
     """
-    url = urllib.unquote(flask.request.referrer.split('?', 1)[0])
+    url = flask.url_for('index')
+    if flask.request.referrer:  # pragma: no cover
+        urltmp = urllib.unquote(flask.request.referrer.split('?', 1)[0])
+        if is_safe_url(urltmp):
+            url = urltmp
+    else:
+        flask.flash('Invalid referred url', 'warnings')
 
-    if not is_safe_url(url):
-        url = url_for('index')
-        flask.flash('Invalid refferred url')
     tzone = flask.request.args.get('tzone', None)
     if tzone:
         return flask.redirect('%s?tzone=%s' % (url, tzone))

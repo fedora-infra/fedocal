@@ -46,7 +46,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import fedocal
 import fedocal.fedocallib as fedocallib
 import fedocal.fedocallib.model as model
-from tests import Modeltests, FakeUser, flask10_only, user_set, TODAY
+from tests import (Modeltests, FakeUser, flask10_only, user_set, TODAY,
+                   ICS_FILE, ICS_FILE_NOTOK)
 
 
 # pylint: disable=E1103
@@ -557,9 +558,10 @@ class Flasktests(Modeltests):
         with user_set(fedocal.APP, user):
             output = self.app.get('/calendar/add/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
+            # discoveryfailure happens if there is no network
             self.assertTrue(
                 '<title>OpenID transaction in progress</title>'
-                in output.data)
+                in output.data or 'discoveryfailure' in output.data)
 
         user = FakeUser(['test'])
         with user_set(fedocal.APP, user):
@@ -1457,6 +1459,73 @@ class Flasktests(Modeltests):
                         in output.data)
         self.assertTrue('<p>This is a test calendar</p>'
                         in output.data)
+
+    @flask10_only
+    def test_upload_calendar(self):
+        """ Test the upload_calendar function. """
+        self.__setup_db()
+
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/upload/1/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No calendar named 1 could not be found</li>'
+                in output.data)
+
+            output = self.app.get('/calendar/upload/test_calendar/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not an admin for this calendar, '
+                'you are not allowed to upload a iCalendar file to it.</l'
+                in output.data)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>'
+                in output.data)
+
+        user = FakeUser(['packager'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/upload/test_calendar/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<title>Upload calendar - Fedocal</title>'
+                            in output.data)
+            self.assertTrue('<h2>Upload calendar</h2>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            with open(ICS_FILE) as stream:
+                data = {
+                    'ics_file': stream,
+                    'csrf_token': csrf_token,
+                }
+                output = self.app.post('/calendar/upload/test_calendar/',
+                                       follow_redirects=True, data=data)
+                self.assertEqual(output.status_code, 200)
+                self.assertTrue('<title>test_calendar - Fedocal</title>'
+                                in output.data)
+                self.assertTrue('<p>This is a test calendar</p>'
+                                in output.data)
+                self.assertTrue('li class="message">Calendar uploaded</li>'
+                                in output.data)
+
+            with open(ICS_FILE_NOTOK) as stream:
+                data = {
+                    'ics_file': stream,
+                    'csrf_token': csrf_token,
+                }
+                output = self.app.post('/calendar/upload/test_calendar/',
+                                       follow_redirects=True, data=data)
+                self.assertEqual(output.status_code, 200)
+                self.assertTrue('<title>Upload calendar - Fedocal</title>'
+                                in output.data)
+                self.assertTrue('<li class="error">The submitted candidate '
+                                'has the file extension &#34;&#34; which is'
+                                ' not an allowed format</li>'
+                                in output.data)
 
 
 if __name__ == '__main__':

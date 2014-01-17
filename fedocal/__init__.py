@@ -1120,6 +1120,10 @@ def goto():
     month = flask.request.args.get('month', None)
     day = flask.request.args.get('day', None)
 
+    if not calendar_name:
+        flask.flash('No calendar specified', 'errors')
+        return flask.redirect(flask.url_for('index'))
+
     now = datetime.datetime.utcnow()
     if not year:
         year = now.year
@@ -1144,32 +1148,22 @@ def goto():
     if view_type not in ['calendar', 'list']:
         view_type = 'calendar'
 
+    function = 'calendar'
     if view_type == 'list':
-        if year and month and day:
-            url = flask.redirect(
-                flask.url_for('calendar_list', calendar_name=calendar_name,
-                              year=year, month=month, day=day))
-        elif year and month:
-            url = flask.redirect(
-                flask.url_for('calendar_list', calendar_name=calendar_name,
-                              year=year, month=month))
-        else:
-            url = flask.redirect(
-                flask.url_for('calendar_list', calendar_name=calendar_name,
-                              year=year))
+        function = 'calendar_list'
+
+    if year and month and day:
+        url = flask.redirect(
+            flask.url_for(function, calendar_name=calendar_name,
+                          year=year, month=month, day=day))
+    elif year and month:
+        url = flask.redirect(
+            flask.url_for(function, calendar_name=calendar_name,
+                          year=year, month=month))
     else:
-        if year and month and day:
-            url = flask.redirect(
-                flask.url_for('calendar', calendar_name=calendar_name,
-                              year=year, month=month, day=day))
-        elif year and month:
-            url = flask.redirect(
-                flask.url_for('calendar', calendar_name=calendar,
-                              year=year, month=month))
-        else:
-            url = flask.redirect(
-                flask.url_for('calendar', calendar_name=calendar_name,
-                              year=year))
+        url = flask.redirect(
+            flask.url_for(function, calendar_name=calendar_name,
+                          year=year))
     return url
 
 

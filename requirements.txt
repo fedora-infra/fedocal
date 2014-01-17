@@ -12,3 +12,4 @@ vobject
 wtforms
 Markdown
 docutils
+blinker # Required by flask >= 0.10 for the unit-tests

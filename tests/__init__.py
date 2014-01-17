@@ -64,6 +64,11 @@ except:
 TODAY = get_start_week(date.today().year, date.today().month,
                        date.today().day) + timedelta(days=2)
 
+ICS_FILE = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'ical.ics')
+ICS_FILE_NOTOK = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'ical_wrong')
+
 
 def flask10_only(function):
     """ Decorator to skip tests if the flask version is lower than 0.10 """
@@ -139,7 +144,7 @@ class FakeGroup(object):
 class FakeUser(object):
     """ Fake user used to test the fedocallib library. """
 
-    def __init__(self, groups, username='username', cla_done=True):
+    def __init__(self, groups=[], username='username', cla_done=True):
         """ Constructor.
         :arg groups: list of the groups in which this fake user is
             supposed to be.

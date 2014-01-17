@@ -510,60 +510,6 @@ def agenda_is_free(
     return agenda_free
 
 
-def agenda_is_free_in_future(
-        session, calendarobj, meeting_date,
-        recursion_ends, recursion_frequency,
-        time_start, time_stop,
-        meeting_id=None):
-    """For recursive meeting, check for meetings happening at the
-    specified time between the specified date and to the end of the
-    recursion.
-
-    :arg session: the database session to use
-    :arg calendarobj: the calendar of interest.
-    :arg meeting_date: the date of the meeting (as Datetime object)
-    :arg meeting_date_end: the end date of the meeting (as Datetime
-        object)
-    :arg recursion_ends: the end date of the recursion
-    :arg recursion_frequency: the frequency of the recursion
-    :arg time_start: the time at which the meeting starts (as int)
-    :arg time_stop: the time at which the meeting stops (as int)
-    :kwarg meeting_id: a meeting identifier allowing to check if a
-        potentially conflicting meeting isn't in fact a future iteration
-        of the current meeting.
-    """
-    meetings = get_by_date(
-        session, calendarobj, meeting_date, recursion_ends)
-    agenda_free = True
-    for meeting in set(meetings):
-        meeting = convert_meeting_timezone(
-            meeting, meeting.meeting_timezone, 'UTC')
-        if meeting.meeting_date != meeting_date \
-                and recursion_frequency \
-                and ((meeting_date - meeting.meeting_date).days
-                     % recursion_frequency) != 0:
-            continue
-        if meeting_id and meeting.meeting_id == meeting_id:
-            continue
-
-        # time_start is included w/in an existing meeting
-        if time_start >= meeting.meeting_time_start \
-                and time_start <= meeting.meeting_time_stop:
-            agenda_free = False
-            break
-        # time_stop is included w/in an existing meeting
-        elif time_stop >= meeting.meeting_time_start \
-                and time_stop <= meeting.meeting_time_stop:
-            agenda_free = False
-            break
-        # time_start and time_stop surround an existing meeting
-        elif time_start <= meeting.meeting_time_start \
-                and time_stop >= meeting.meeting_time_stop:
-            agenda_free = False
-            break
-    return agenda_free
-
-
 def is_user_managing_in_calendar(session, calendar_name, fas_user):
     """ Returns True if the user is in a group set as editor of the
     calendar and False otherwise. It will also return True if there are

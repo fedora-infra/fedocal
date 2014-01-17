@@ -120,6 +120,12 @@ class Flasktests(Modeltests):
             'class="errors">No calendar named foorbar could not be found</'
             in output.data)
 
+        output = self.app.get('/test_calendar2/?tzone=Europe/Paris',
+                              follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>test_calendar2 - Fedocal</title>' in output.data)
+
     def test_location(self):
         """ Test the location calendar function. """
         self.__setup_db()
@@ -1287,6 +1293,41 @@ class Flasktests(Modeltests):
                 '<title>test_calendar - Fedocal</title>' in output.data)
             self.assertTrue(
                 '<li class="message">Meeting deleted</li>' in output.data)
+
+    def test_update_tz(self):
+        """ Test the update_tz function. """
+        self.__setup_db()
+
+        output = self.app.get('/updatetz/?tzone=Europe/Paris',
+                              follow_redirects=True)
+        self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+        self.assertTrue('<li class="warnings">Invalid referred url</li>'
+                        in output.data)
+
+        output = self.app.get('/updatetz/',
+                              follow_redirects=True)
+        self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+        self.assertTrue('<li class="warnings">Invalid referred url</li>'
+                        in output.data)
+
+    def test_search(self):
+        """ Test the search function. """
+        self.__setup_db()
+
+        output = self.app.get('/search/?keyword=*meeting3*',
+                              follow_redirects=True)
+        self.assertTrue('<title>Search - Fedocal</title>' in output.data)
+        self.assertTrue('<p>Result of your search for "*meeting3*"</p>'
+                        in output.data)
+        self.assertTrue('href="/meeting/4/">'in output.data)
+        self.assertTrue('d> <p>Test meeting with past end_recursion.</p> </'
+                        in output.data)
+
+        output = self.app.get('/search/',
+                              follow_redirects=True)
+        self.assertTrue('<title>Home - Fedocal</title>')
+        self.assertTrue('class="errors">No keyword provided for the search</'
+                        in output.data)
 
 
 if __name__ == '__main__':

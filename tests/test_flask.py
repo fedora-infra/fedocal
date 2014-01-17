@@ -516,6 +516,40 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<option value="delete">Delete</option>' in output.data)
 
+            output = self.app.get(
+                '/admin/?calendar=test_calendar&action=edit',
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<li class="errors">No calendar named test_calendar could '
+                'not be found</li>' in output.data)
+
+            self.__setup_db()
+
+            output = self.app.get(
+                '/admin/?calendar=test_calendar&action=edit',
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Edit calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h2>Edit calendar</h2>' in output.data)
+            self.assertTrue(
+                'type="text" value="test_calendar"></td>' in output.data)
+
+            output = self.app.get(
+                '/admin/?calendar=test_calendar&action=delete',
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Delete calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h4> Calendar: test_calendar</h4>' in output.data)
+            self.assertTrue(
+                'value="Delete">' in output.data)
+
     @flask10_only
     def test_add_calendar(self):
         """ Test the add_calendar function. """
@@ -801,7 +835,7 @@ class Flasktests(Modeltests):
             output = self.app.get('/calendar/edit/test_calendar/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<title>Add calendar - Fedocal</title>' in output.data)
+                '<title>Edit calendar - Fedocal</title>' in output.data)
             self.assertTrue(
                 "<h2>Edit calendar</h2>"
                 in output.data)
@@ -816,7 +850,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<title>Add calendar - Fedocal</title>' in output.data)
+                '<title>Edit calendar - Fedocal</title>' in output.data)
             self.assertTrue(
                 "<h2>Edit calendar</h2>"
                 in output.data)

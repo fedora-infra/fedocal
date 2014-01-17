@@ -739,6 +739,104 @@ class Flasktests(Modeltests):
                 in output.data)
 
     @flask10_only
+    def test_edit_calendar(self):
+        """ Test the edit_calendar function. """
+        self.__setup_db()
+
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/edit/test_calendar/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not a fedocal admin, you are '
+                'not allowed to edit the calendar.</li>' in output.data)
+            self.assertTrue(
+                '<title>Home - Fedocal</title>'
+                in output.data)
+
+        user = FakeUser(['packager'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/calendar/edit/1/',
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No calendar named 1 could not be found</li>'
+                in output.data)
+
+            output = self.app.get('/calendar/edit/test_calendar/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Add calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                "<h2>Edit calendar</h2>"
+                in output.data)
+            self.assertTrue(
+                'class="submit positive button" value="Edit">'
+                in output.data)
+
+            # No data
+            data = {}
+
+            output = self.app.post('/calendar/edit/test_calendar/', data=data,
+                                  follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Add calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                "<h2>Edit calendar</h2>"
+                in output.data)
+            self.assertTrue(
+                'class="submit positive button" value="Edit">'
+                in output.data)
+
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # No info except the csrf token
+            data = {
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/calendar/edit/test_calendar/',
+                                   data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(
+                output.data.count('<td>This field is required.</td>'), 2)
+            self.assertTrue(
+                "<h2>Edit calendar</h2>"
+                in output.data)
+            self.assertTrue(
+                'class="submit positive button" value="Edit">'
+                in output.data)
+
+            # Edit
+            data = {
+                'calendar_name': 'Election1',
+                'calendar_contact': 'election1',
+                'calendar_status': 'Enabled',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/calendar/edit/test_calendar/',
+                                   data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Election1 - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<li class="message">Calendar updated</li>'
+                in output.data)
+            self.assertFalse(
+                '<span class="calendar_name">test_calendar</span>'
+                in output.data)
+            self.assertFalse(
+                '<span class="calendar_name">election1</span>'
+                in output.data)
+
+
+
+    @flask10_only
     def test_auth_logout(self):
         """ Test the auth_logout function. """
         user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])

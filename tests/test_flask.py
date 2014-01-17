@@ -1329,6 +1329,101 @@ class Flasktests(Modeltests):
         self.assertTrue('class="errors">No keyword provided for the search</'
                         in output.data)
 
+    def test_goto(self):
+        """ Test the goto function. """
+        self.__setup_db()
+
+        data = {
+            'calendar': 'test_calendar',
+            'view_type': 'calendar',
+            'year': 2014,
+            'month': 12,
+            'day': 1,
+        }
+
+        output = self.app.get('/goto/', follow_redirects=True)
+        self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+        self.assertTrue('<li class="errors">No calendar specified</li>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&month=3',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&month=3&day=1',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&year=2010&month=3&day=1',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&year=2010&month=3&day=a',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<li class="errors">Invalid date specified</li>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&year=2010&month=a',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<li class="errors">Invalid date specified</li>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&year=a',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<li class="errors">Invalid date specified</li>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&year=1870',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('="warnings">Dates before 1900 are not allowed</li'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&type=list',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
+        output = self.app.get('/goto/?calendar=test_calendar&type=foobar',
+                              follow_redirects=True)
+        self.assertTrue('<title>test_calendar - Fedocal</title>'
+                        in output.data)
+        self.assertTrue('<p>This is a test calendar</p>'
+                        in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Flasktests)

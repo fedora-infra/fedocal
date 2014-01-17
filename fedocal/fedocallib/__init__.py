@@ -988,14 +988,16 @@ def clear_calendar(session, calendar):
     return Meeting.clear_from_calendar(session, calendar)
 
 
-def add_vcal_file(session, calendar, stream, fas_user):
+def add_vcal_file(session, calendar, stream, fas_user, admin=False):
     """ Add the meetings from the iCalendar stream provided into the calendar
     specified.
     """
     meetings = vobject.readOne(stream)
     for meeting in meetings.components():
+        if meeting.name == 'VTIMEZONE':
+            continue
         meeting_name = ', '.join(
-            [el.value for el in meeting.contents.get('summary')])
+            [el.value for el in meeting.contents.get('summary', [])])
         meeting_description = ', '.join(
             [el.value for el in meeting.contents.get('description', [])]
         ) or None
@@ -1041,4 +1043,4 @@ def add_vcal_file(session, calendar, stream, fas_user):
             remind_when=None,
             remind_who=None,
             full_day=full_day,
-            admin=False)
+            admin=admin)

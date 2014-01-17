@@ -483,6 +483,34 @@ class Flasktests(Modeltests):
             in output.data)
 
     @flask10_only
+    def test_admin(self):
+        """ Test the admin function. """
+        user = None
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/admin/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+
+        user = FakeUser(['test'])
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/admin/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '"errors">You are not a fedocal admin, you are not allowed '
+                'to access the admin part.</' in output.data)
+
+        user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/admin/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Admin - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h2>Admin interface</h2>' in output.data)
+            self.assertTrue(
+                '<option value="delete">Delete</option>' in output.data)
+
+    @flask10_only
     def test_add_calendar(self):
         """ Test the add_calendar function. """
         user = None
@@ -833,8 +861,6 @@ class Flasktests(Modeltests):
             self.assertFalse(
                 '<span class="calendar_name">election1</span>'
                 in output.data)
-
-
 
     @flask10_only
     def test_auth_logout(self):
@@ -1261,7 +1287,6 @@ class Flasktests(Modeltests):
                 '<title>test_calendar - Fedocal</title>' in output.data)
             self.assertTrue(
                 '<li class="message">Meeting deleted</li>' in output.data)
-
 
 
 if __name__ == '__main__':

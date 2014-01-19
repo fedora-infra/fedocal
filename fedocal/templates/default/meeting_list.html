@@ -15,7 +15,7 @@
             {{ calendar.calendar_name }}
             </a>
         </h2>
-        <p>{{ calendar.calendar_description }}</p>
+        <p>{{ calendar.calendar_description or '-' }}</p>
     </header>
     <nav id="weeks">
         <a href="{{url_for('calendar_list',
@@ -28,6 +28,11 @@
             calendar_name=calendar.calendar_name, year=year + 1)}}"
             class="button">
             &gt;
+        </a>
+        <a href="{{url_for('calendar_list',
+            calendar_name=calendar.calendar_name)}}" class="button">
+            <img src="{{url_for('static', filename='home.png')}}"
+                alt="today" title="Today" />
         </a>
     </nav>
 {% else %}

@@ -105,6 +105,10 @@ LOG = APP.logger
 import fedocal.api
 
 
+def authenticated():
+    return hasattr(flask.g, 'fas_user') and flask.g.fas_user
+
+
 def cla_plus_one_required(function):
     """ Flask decorator to retrict access to CLA+1.
 To use this decorator you need to have a function named 'auth_login'.
@@ -114,7 +118,7 @@ work.
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Decorated function, actually does the work. """
-        if flask.g.fas_user is None:
+        if not authenticated():
             flask.flash('Login required', 'errors')
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
@@ -173,8 +177,7 @@ def shutdown_session(exception=None):
 ## Local function
 def is_admin():
     """ Return whether the user is admin for this application or not. """
-    if not hasattr(flask.g, 'fas_user') \
-            or not flask.g.fas_user\
+    if not authenticated() \
             or not flask.g.fas_user.cla_done \
             or len(flask.g.fas_user.groups) < 1:
         return False
@@ -192,7 +195,7 @@ def is_calendar_admin(calendarobj):
     """ Return whether the user is admin for the specified calendar
     (object).
     """
-    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+    if not authenticated():
         return False
     elif is_admin():
         return True
@@ -211,7 +214,7 @@ def is_calendar_manager(calendarobj):
     """ Return whether the user is a manager for the specified calendar
     (object).
     """
-    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+    if not authenticated():
         return False
     elif is_calendar_admin(calendarobj):
         return True
@@ -232,7 +235,7 @@ def is_meeting_manager(meeting):
     """ Return whether the user is one of the manager of the specified
     meeting (object).
     """
-    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+    if not authenticated():
         return False
     else:
         managers = []
@@ -247,7 +250,7 @@ def is_meeting_manager(meeting):
 def get_timezone():
     """ Return the user's timezone, default to UTC. """
     tzone = 'UTC'
-    if hasattr(flask.g, 'fas_user') and flask.g.fas_user:
+    if authenticated():
         if flask.g.fas_user['timezone']:
             tzone = flask.g.fas_user['timezone']
     tzone = flask.request.args.get('tzone', tzone)
@@ -528,7 +531,7 @@ def auth_login():
     if 'next' in flask.request.args:
         return_point = flask.request.args['next']
 
-    if hasattr(flask.g, 'fas_user') and flask.g.fas_user:
+    if authenticated():
         return flask.redirect(return_point)
 
     return FAS.login(return_url=return_point)
@@ -537,7 +540,7 @@ def auth_login():
 @APP.route('/logout/')
 def auth_logout():
     """ Method to log out from the application. """
-    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+    if not authenticated():
         return flask.redirect(flask.url_for('index'))
     FAS.logout()
     flask.flash('You have been logged out')
@@ -551,7 +554,7 @@ def add_calendar():
     """ Add a calendar to the database.
     This function is only accessible to admin of the webapp.
     """
-    if not flask.g.fas_user:  # pragma: no cover
+    if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
@@ -603,7 +606,7 @@ def add_meeting(calendar_name):
 
     :arg calendar_name, name of the calendar in which to add the meeting.
     """
-    if not flask.g.fas_user:  # pragma: no cover
+    if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -699,7 +702,7 @@ def edit_meeting(meeting_id):
 
     :arg meeting_id: the identifier of the meeting to edit.
     """
-    if not flask.g.fas_user:  # pragma: no cover
+    if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
     if not meeting:
@@ -865,7 +868,7 @@ def delete_meeting(meeting_id):
 
     :arg meeting_id: the identifier of the meeting to delete.
     """
-    if not flask.g.fas_user:  # pragma: no cover
+    if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     meeting = Meeting.by_id(SESSION, meeting_id)
 
@@ -934,7 +937,7 @@ def delete_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to delete.
     """
-    if not flask.g.fas_user:  # pragam: no cover
+    if not authenticated():  # pragam: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
@@ -977,7 +980,7 @@ def clear_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to delete.
     """
-    if not flask.g.fas_user:  # pragma: no cover
+    if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
@@ -1023,7 +1026,7 @@ def edit_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to edit.
     """
-    if not flask.g.fas_user:  # pragma: no cover
+    if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
@@ -1088,7 +1091,7 @@ def markdown_preview():
 def admin():
     """ Displays the index page for the admin section.
     """
-    if not flask.g.fas_user:
+    if not authenticated():
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
@@ -1289,7 +1292,7 @@ def update_tz():
 def upload_calendar(calendar_name):
     """ Page used to upload a iCalendar file into a specific calendar.
     """
-    if not flask.g.fas_user:  # pragma: no cover
+    if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)

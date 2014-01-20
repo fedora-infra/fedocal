@@ -370,6 +370,46 @@ class FlaskApitests(Modeltests):
         self.assertEqual(output.data.count('calendar_name'), 5)
         self.assertTrue(output.data.startswith('"abcd"([\'{"calendars":'))
 
+    def test_api_locations(self):
+        """ Test the api_locations function. """
+        output = self.app.get('/api/locations/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(
+            output.data,
+            '{"locations": []}')
+
+        self.__setup_db()
+
+        output = self.app.get('/api/locations/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, '{"locations": ["EMEA", "NA"]}')
+
+        output = self.app.get('/api/locations/?callback="abcd"')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(
+            output.data,
+            '"abcd"([\'{"locations": ["EMEA", "NA"]}\']);')
+
+    def test_api_search_locations(self):
+        """ Test the api_search_locations function. """
+        output = self.app.get('/api/locations/search/')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(
+            output.data,
+            '{"locations": []}')
+
+        self.__setup_db()
+
+        output = self.app.get('/api/locations/search/?keyword=ME')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, '{"locations": ["EMEA"]}')
+
+        output = self.app.get('/api/locations/?keyword=ME&callback="abcd"')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(
+            output.data,
+            '"abcd"([\'{"locations": ["EMEA"]}\']);')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApitests)

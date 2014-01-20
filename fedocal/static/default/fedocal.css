@@ -336,3 +336,7 @@ th.month .ui-button-text {
     width: 500px;
     height: 200px;
 }
+
+.ui-autocomplete {
+    width: 100px;
+}

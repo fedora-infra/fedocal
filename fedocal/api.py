@@ -133,6 +133,44 @@ Sample response:
     )
 
 
+@APP.route('/api/locations/', methods=['GET', 'POST'])
+def api_locations():
+    """
+Retrieve locations
+==================
+
+The ``/api/locations/`` endpoint returns the locations where meetings are
+happening.
+
+Response format
+---------------
+
+Sample response:
+
+.. code-block:: javascript
+
+    {
+        "locations": [
+
+        ]
+    }
+    """
+    @flask.after_this_request
+    def callback(response):
+        """ Handle case the query was an JQuery ajax call. """
+        return check_callback(response)
+
+    list_locations = fedocallib.get_locations(SESSION)
+
+    output = {"locations": list_locations}
+
+    return flask.Response(
+        response=json.dumps(output),
+        status=200,
+        mimetype='application/json'
+    )
+
+
 @APP.route('/api/meetings/', methods=['GET', 'POST'])
 @APP.route('/api/meetings', methods=['GET', 'POST'])
 def api_meetings():

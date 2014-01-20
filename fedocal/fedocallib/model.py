@@ -135,10 +135,11 @@ class Calendar(BASE):
     # 3 groups (3*32)
     calendar_editor_group = Column(String(100), nullable=True)
     calendar_admin_group = Column(String(100), nullable=True)
-    calendar_status = Column(String(50),
-                             ForeignKey('calendar_status.status'),
-                             default='Enabled',
-                             nullable=False)
+    calendar_status = Column(
+        String(50),
+        ForeignKey('calendar_status.status', onupdate="cascade"),
+        default='Enabled',
+        nullable=False)
     meetings = relationship("Meeting")
 
     def __init__(
@@ -235,8 +236,10 @@ class Meeting(BASE):
     __tablename__ = 'meetings'
     meeting_id = Column(Integer, primary_key=True)
     meeting_name = Column(String(200), nullable=False)
-    calendar_name = Column(String(80), ForeignKey('calendars.calendar_name'),
-                           nullable=False)
+    calendar_name = Column(
+        String(80),
+        ForeignKey('calendars.calendar_name', onupdate="cascade"),
+        nullable=False)
     calendar = relationship("Calendar")
     # 5 person max (32 * 5) + 5 = 165
     meeting_manager = Column(String(165), nullable=False)
@@ -247,8 +250,10 @@ class Meeting(BASE):
     meeting_timezone = Column(Text, nullable=False, default='UTC')
     meeting_information = Column(Text, nullable=True)
     meeting_location = Column(Text, default=None, nullable=True)
-    reminder_id = Column(Integer, ForeignKey('reminders.reminder_id'),
-                         nullable=True)
+    reminder_id = Column(
+        Integer,
+        ForeignKey('reminders.reminder_id', onupdate="cascade"),
+        nullable=True)
     reminder = relationship("Reminder")
     full_day = Column(Boolean, default=False)
 
@@ -885,6 +890,21 @@ class Meeting(BASE):
         )
 
         return query.all()
+
+    @classmethod
+    def search_locations(cls, session, keyword):
+        """ Searches the meetings table to return all the location having
+        the provided keyword in their location.
+        """
+        query = session.query(
+            distinct(cls.meeting_location)
+        ).filter(
+            cls.meeting_location.ilike(keyword)
+        ).order_by(
+            cls.meeting_location
+        )
+
+        return [el[0] for el in query.all()]
 
     @classmethod
     def get_locations(cls, session):

@@ -123,6 +123,8 @@ class AddMeetingForm(wtf.Form):
         [wtforms.validators.Required()],
         choices=[(tzone, tzone) for tzone in common_timezones])
 
+    wiki_link = wtforms.TextField('Wiki page')
+
     comanager = wtforms.TextField('Co-manager')
 
     information = wtforms.TextAreaField('Information')

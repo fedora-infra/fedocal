@@ -351,8 +351,8 @@ class FlaskApitests(Modeltests):
             '"error": "Invalid start date format: '
             in output.data)
 
-    def test_api_calendar(self):
-        """ Test the api_calendar function. """
+    def test_api_calendars(self):
+        """ Test the api_calendars function. """
         output = self.app.get('/api/calendars/')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(

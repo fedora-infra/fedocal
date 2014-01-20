@@ -892,7 +892,6 @@ class Flasktests(Modeltests):
             output = self.app.post('/calendar/edit/test_calendar/',
                                    data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            print output.data
             self.assertTrue(
                 '<title>Election1 - Fedocal</title>' in output.data)
             self.assertTrue(

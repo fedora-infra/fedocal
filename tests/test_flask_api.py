@@ -393,10 +393,10 @@ class FlaskApitests(Modeltests):
     def test_api_search_locations(self):
         """ Test the api_search_locations function. """
         output = self.app.get('/api/locations/search/')
-        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.status_code, 400)
         self.assertEqual(
             output.data,
-            '{"locations": []}')
+            '{"error": "no keyword provided"}')
 
         self.__setup_db()
 
@@ -404,7 +404,8 @@ class FlaskApitests(Modeltests):
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, '{"locations": ["EMEA"]}')
 
-        output = self.app.get('/api/locations/?keyword=ME&callback="abcd"')
+        output = self.app.get(
+            '/api/locations/search/?keyword=ME&callback="abcd"')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(
             output.data,

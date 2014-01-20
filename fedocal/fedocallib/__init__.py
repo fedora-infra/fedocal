@@ -510,60 +510,6 @@ def agenda_is_free(
     return agenda_free
 
 
-def agenda_is_free_in_future(
-        session, calendarobj, meeting_date,
-        recursion_ends, recursion_frequency,
-        time_start, time_stop,
-        meeting_id=None):
-    """For recursive meeting, check for meetings happening at the
-    specified time between the specified date and to the end of the
-    recursion.
-
-    :arg session: the database session to use
-    :arg calendarobj: the calendar of interest.
-    :arg meeting_date: the date of the meeting (as Datetime object)
-    :arg meeting_date_end: the end date of the meeting (as Datetime
-        object)
-    :arg recursion_ends: the end date of the recursion
-    :arg recursion_frequency: the frequency of the recursion
-    :arg time_start: the time at which the meeting starts (as int)
-    :arg time_stop: the time at which the meeting stops (as int)
-    :kwarg meeting_id: a meeting identifier allowing to check if a
-        potentially conflicting meeting isn't in fact a future iteration
-        of the current meeting.
-    """
-    meetings = get_by_date(
-        session, calendarobj, meeting_date, recursion_ends)
-    agenda_free = True
-    for meeting in set(meetings):
-        meeting = convert_meeting_timezone(
-            meeting, meeting.meeting_timezone, 'UTC')
-        if meeting.meeting_date != meeting_date \
-                and recursion_frequency \
-                and ((meeting_date - meeting.meeting_date).days
-                     % recursion_frequency) != 0:
-            continue
-        if meeting_id and meeting.meeting_id == meeting_id:
-            continue
-
-        # time_start is included w/in an existing meeting
-        if time_start >= meeting.meeting_time_start \
-                and time_start <= meeting.meeting_time_stop:
-            agenda_free = False
-            break
-        # time_stop is included w/in an existing meeting
-        elif time_stop >= meeting.meeting_time_start \
-                and time_stop <= meeting.meeting_time_stop:
-            agenda_free = False
-            break
-        # time_start and time_stop surround an existing meeting
-        elif time_start <= meeting.meeting_time_start \
-                and time_stop >= meeting.meeting_time_stop:
-            agenda_free = False
-            break
-    return agenda_free
-
-
 def is_user_managing_in_calendar(session, calendar_name, fas_user):
     """ Returns True if the user is in a group set as editor of the
     calendar and False otherwise. It will also return True if there are
@@ -818,7 +764,8 @@ def add_meeting(
     and then add the desired meeting.
     """
     if not is_user_managing_in_calendar(
-            session, calendarobj.calendar_name, fas_user) and not admin:
+                session, calendarobj.calendar_name, fas_user
+            ) and not admin:  # pragma: no cover
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
 
@@ -1041,14 +988,16 @@ def clear_calendar(session, calendar):
     return Meeting.clear_from_calendar(session, calendar)
 
 
-def add_vcal_file(session, calendar, stream, fas_user):
+def add_vcal_file(session, calendar, stream, fas_user, admin=False):
     """ Add the meetings from the iCalendar stream provided into the calendar
     specified.
     """
     meetings = vobject.readOne(stream)
     for meeting in meetings.components():
+        if meeting.name == 'VTIMEZONE':
+            continue
         meeting_name = ', '.join(
-            [el.value for el in meeting.contents.get('summary')])
+            [el.value for el in meeting.contents.get('summary', [])])
         meeting_description = ', '.join(
             [el.value for el in meeting.contents.get('description', [])]
         ) or None
@@ -1094,4 +1043,4 @@ def add_vcal_file(session, calendar, stream, fas_user):
             remind_when=None,
             remind_who=None,
             full_day=full_day,
-            admin=False)
+            admin=admin)

@@ -36,7 +36,9 @@ import os
 
 from datetime import date
 from datetime import timedelta
+from functools import wraps
 
+from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
@@ -48,7 +50,7 @@ from fedocal.fedocallib import model, get_start_week
 
 
 DB_PATH = 'sqlite:///:memory:'
-FAITOUT_URL = 'http://209.132.184.152/faitout'
+FAITOUT_URL = 'http://209.132.184.152/faitout/'
 try:
     import requests
     req = requests.get('%s/new' % FAITOUT_URL)
@@ -61,6 +63,41 @@ except:
 
 TODAY = get_start_week(date.today().year, date.today().month,
                        date.today().day) + timedelta(days=2)
+
+ICS_FILE = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'ical.ics')
+ICS_FILE_NOTOK = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'ical_wrong')
+
+
+def flask10_only(function):
+    """ Decorator to skip tests if the flask version is lower than 0.10 """
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        """ Decorated function, actually does the work. """
+        import flask
+        ver = flask.__version__.split('.')
+        if int(ver[0]) >= 0 and int(ver[1]) >= 10:
+            return function(*args, **kwargs)
+        return 'Skipped'
+    return decorated_function
+
+
+@contextmanager
+def user_set(APP, user):
+    """ Set the provided user as fas_user in the provided application."""
+
+    # Hack used to remove the before_request function set by
+    # flask.ext.fas_openid.FAS which otherwise kills our effort to set a
+    # flask.g.fas_user.
+    from flask import appcontext_pushed, g
+    APP.before_request_funcs[None] = []
+
+    def handler(sender, **kwargs):
+        g.fas_user = user
+
+    with appcontext_pushed.connected_to(handler, APP):
+        yield
 
 
 class Modeltests(unittest.TestCase):
@@ -107,7 +144,7 @@ class FakeGroup(object):
 class FakeUser(object):
     """ Fake user used to test the fedocallib library. """
 
-    def __init__(self, groups, username='username'):
+    def __init__(self, groups=[], username='username', cla_done=True):
         """ Constructor.
         :arg groups: list of the groups in which this fake user is
             supposed to be.
@@ -122,7 +159,7 @@ class FakeUser(object):
             FakeGroup('design-team')]
         self.dic = {}
         self.dic['timezone'] = 'Europe/Paris'
-        self.cla_done = True
+        self.cla_done = cla_done
 
     def __getitem__(self, key):
         return self.dic[key]

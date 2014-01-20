@@ -51,7 +51,7 @@ class Calendartests(Modeltests):
             calendar_contact='test@example.com',
             calendar_description='This is a test calendar',
             calendar_editor_group='fi-apprentice',
-            calendar_admin_group='infrastructure-main')
+            calendar_admin_group='infrastructure-main2')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -68,8 +68,7 @@ class Calendartests(Modeltests):
         obj = model.Calendar(
             calendar_name='test_calendar3',
             calendar_contact='test3@example.com',
-            calendar_description='This is the third test calendar',
-            calendar_editor_group='packager')
+            calendar_description='This is the third test calendar')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -79,6 +78,15 @@ class Calendartests(Modeltests):
             calendar_contact='test4@example.com',
             calendar_description='This is yet another test calendar',
             calendar_editor_group='fi-apprentice')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        obj = model.Calendar(
+            calendar_name='test_calendar_disabled',
+            calendar_contact='test4@example.com',
+            calendar_description='This is a disabled test calendar',
+            calendar_status='Disabled')
         obj.save(self.session)
         self.session.commit()
         self.assertNotEqual(obj, None)
@@ -98,7 +106,7 @@ class Calendartests(Modeltests):
         self.assertEqual(obj.calendar_name, 'test_calendar')
         self.assertEqual(obj.calendar_description, 'This is a test calendar')
         self.assertEqual(obj.calendar_editor_group, 'fi-apprentice')
-        self.assertEqual(obj.calendar_admin_group, 'infrastructure-main')
+        self.assertEqual(obj.calendar_admin_group, 'infrastructure-main2')
 
     def test_get_calendar_inexistant(self):
         """ Test by_id query of a non-existant Calendar. """
@@ -118,7 +126,7 @@ class Calendartests(Modeltests):
         self.test_init_calendar()
         obj = model.Calendar.get_admin_groups(self.session, 'test_calendar')
         self.assertNotEqual(obj, None)
-        self.assertEqual(obj, ['infrastructure-main'])
+        self.assertEqual(obj, ['infrastructure-main2'])
 
     # pylint: disable=C0103
     def test_get_editor_groups_inexistant_calendar(self):
@@ -155,11 +163,12 @@ class Calendartests(Modeltests):
         self.test_init_calendar()
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 4)
+        self.assertEqual(len(obj), 5)
         self.assertEqual(obj[0].calendar_name, 'test_calendar')
         self.assertEqual(obj[1].calendar_name, 'test_calendar2')
         self.assertEqual(obj[2].calendar_name, 'test_calendar3')
         self.assertEqual(obj[3].calendar_name, 'test_calendar4')
+        self.assertEqual(obj[4].calendar_name, 'test_calendar_disabled')
 
     def test_get_all_calendar_empty_db(self):
         """ Test the Calendar get_all function when the DB is empty. """
@@ -173,7 +182,7 @@ class Calendartests(Modeltests):
         self.test_init_calendar()
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 4)
+        self.assertEqual(len(obj), 5)
         obj = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertNotEqual(obj, None)
 
@@ -182,7 +191,7 @@ class Calendartests(Modeltests):
 
         obj = model.Calendar.get_all(self.session)
         self.assertNotEqual(obj, None)
-        self.assertEqual(len(obj), 3)
+        self.assertEqual(len(obj), 4)
         obj = model.Calendar.by_id(self.session, 'test_calendar')
         self.assertEqual(obj, None)
 

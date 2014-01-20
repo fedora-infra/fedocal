@@ -982,6 +982,13 @@ def get_locations(session):
     return Meeting.get_locations(session)
 
 
+def search_locations(session, keyword):
+    """ Return the list of locations matching the provided keyword.
+    """
+    keyword = keyword.replace('*', '%')
+    return Meeting.search_locations(session, keyword)
+
+
 def clear_calendar(session, calendar):
     """ Remove all the meetings from the specified calendar.
     """

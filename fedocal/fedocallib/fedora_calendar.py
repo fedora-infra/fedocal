@@ -3,8 +3,9 @@
 """
 fedora_calendar - HTML Calendar
 
-Copyright (C) 2012 Johan Cwiklinski
+Copyright (C) 2012-2014 Johan Cwiklinski
 Author: Johan Cwiklinski <johan@x-tnd.be>
+        Pierre-Yves Chibon <pingou@pingoured.fr>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

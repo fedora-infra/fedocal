@@ -193,9 +193,7 @@ class AddMeetingForm(wtf.Form):
                 '%H:%M')
             self.meeting_timezone.data = meeting.meeting_timezone
             self.information.data = meeting.meeting_information
-            # You are not allowed to remove yourself from the managers.
-            meeting_manager = meeting.meeting_manager.replace(
-                '%s,' % flask.g.fas_user.username, '')
+            meeting_manager = meeting.meeting_manager
             self.comanager.data = meeting_manager
             self.meeting_location.data = meeting.meeting_location
             self.frequency.data = str(meeting.recursion_frequency)

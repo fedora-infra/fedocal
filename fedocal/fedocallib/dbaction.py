@@ -62,7 +62,6 @@ def add_meeting(
 
     meeting = model.Meeting(
         meeting_name=meeting_name,
-        meeting_manager=meeting_manager,
         meeting_date=meeting_date,
         meeting_date_end=meeting_date_end,
         meeting_time_start=meeting_time_start.time(),
@@ -75,6 +74,7 @@ def add_meeting(
         recursion_frequency=recursion_frequency,
         recursion_ends=recursion_ends,
         full_day=full_day)
+    meeting.add_manager(session, meeting_manager)
     meeting.save(session)
     session.flush()
     return meeting

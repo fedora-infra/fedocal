@@ -609,7 +609,7 @@ def add_meeting_to_vcal(ical, meeting):
     entry.add('summary').value = meeting.meeting_name
     if meeting.meeting_information:
         entry.add('description').value = meeting.meeting_information
-    entry.add('organizer').value = meeting.meeting_manager
+    entry.add('organizer').value = ', '.join(meeting.meeting_manager)
 
     start = entry.add('dtstart')
     stop = entry.add('dtend')
@@ -895,13 +895,13 @@ def edit_meeting(
 
     remove_recursion = False
     if meeting.recursion_frequency:
-        old_meeting = Meeting.copy(meeting)
+        old_meeting = meeting.copy()
         old_meeting.recursion_ends = meeting_date - timedelta(days=1)
         if old_meeting.recursion_ends > old_meeting.meeting_date:
             old_meeting.save(session)
         if not edit_all_meeting:
             remove_recursion = True
-            new_meeting = Meeting.copy(meeting)
+            new_meeting = meeting.copy()
             new_meeting.meeting_date = meeting_date + timedelta(
                 days=meeting.recursion_frequency)
             new_meeting.meeting_date_end = meeting_date_end + timedelta(
@@ -910,10 +910,12 @@ def edit_meeting(
             new_meeting.save(session)
 
     meeting.meeting_name = meeting_name
-    meeting.meeting_manager = '%s,' % fas_user.username
+
+    meeting.clear_managers(session)
+    if fas_user.username not in meeting.meeting_manager:
+        meeting.add_manager(session, fas_user.username)
     if comanager:
-        meeting.meeting_manager = '%s%s,' % (meeting.meeting_manager,
-                                             comanager)
+        meeting.add_manager(session, comanager)
 
     meeting.meeting_date = meeting_time_start.date()
     meeting.meeting_date_end = meeting_time_stop.date()

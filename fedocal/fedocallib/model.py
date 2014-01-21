@@ -272,11 +272,13 @@ class User(BASE):
 class MeetingsUsers(BASE):
     __tablename__ = 'meetings_users'
     username = Column(String(50),
-        ForeignKey('users.username', onupdate='cascade'),
+        ForeignKey(
+            'users.username', onupdate='cascade', ondelete='cascade'),
         primary_key=True)
     meeting_id = Column(
         Integer,
-        ForeignKey('meetings.meeting_id', onupdate='cascade'),
+        ForeignKey(
+            'meetings.meeting_id', onupdate='cascade', ondelete='cascade'),
         primary_key=True)
     meeting = relationship("Meeting")
     user = relationship("User", backref="meetings")

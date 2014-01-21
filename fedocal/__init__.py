@@ -237,13 +237,7 @@ def is_meeting_manager(meeting):
     if not authenticated():
         return False
     else:
-        managers = []
-        if meeting.meeting_manager:
-            managers = [
-                item.strip()
-                for item in meeting.meeting_manager.split(',')
-            ]
-        return flask.g.fas_user.username in managers
+        return flask.g.fas_user.username in meeting.meeting_manager
 
 
 def get_timezone():

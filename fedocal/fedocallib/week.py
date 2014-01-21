@@ -80,8 +80,9 @@ class Week(object):
                         self.meetings.append(meeting)
         # Expand the regular meetings so that they appear as meeting
         self.meetings = Meeting.expand_regular_meetings(
-            self.meetings, end_date=self.stop_date,
-            start_date=self.start_date)
+            self.meetings,
+            start_date=self.start_date,
+            end_date=self.stop_date)
         # Sort the meetings by date, time_start and name
         self.meetings.sort(key=operator.attrgetter(
             'meeting_date', 'meeting_time_start', 'meeting_name'))

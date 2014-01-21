@@ -104,7 +104,7 @@ class Weektests(Modeltests):
             'Another past test meeting')
         self.assertEqual(
             weekobj.meetings[0].meeting_manager,
-            'pingou,')
+            ['pingou'])
         self.assertEqual(
             weekobj.meetings[0].meeting_information,
             'This is a past meeting with recursion')
@@ -114,7 +114,7 @@ class Weektests(Modeltests):
             'Another test meeting2')
         self.assertEqual(
             weekobj.meetings[1].meeting_manager,
-            'pingou,')
+            ['pingou'])
         self.assertEqual(
             weekobj.meetings[1].meeting_information,
             'This is a test meeting with recursion2')
@@ -124,7 +124,7 @@ class Weektests(Modeltests):
             'Fedora-fr-test-meeting')
         self.assertEqual(
             weekobj.meetings[2].meeting_manager,
-            'pingou, shaiton,')
+            ['pingou', 'shaiton'])
         self.assertEqual(
             weekobj.meetings[2].meeting_information,
             'This is a test meeting')
@@ -137,7 +137,7 @@ class Weektests(Modeltests):
             'Full-day meeting')
         self.assertEqual(
             weekobj.full_day_meetings[0].meeting_manager,
-            'pingou,')
+            ['pingou'])
         self.assertEqual(
             weekobj.full_day_meetings[0].meeting_information,
             'This is a full day meeting')

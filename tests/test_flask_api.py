@@ -97,7 +97,7 @@ class FlaskApitests(Modeltests):
         output = self.app.get('/api/meetings/?calendar=test_calendar')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            ' "meeting_manager": "pingou, shaiton,",'
+            ' "meeting_manager": ["pingou", "shaiton"],'
             in output.data)
         self.assertTrue(
             '"meeting_name": "test-meeting2"' in output.data)
@@ -154,7 +154,7 @@ class FlaskApitests(Modeltests):
         )
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            ' "meeting_manager": "pingou, shaiton,",'
+            ' "meeting_manager": ["pingou", "shaiton"],'
             in output.data)
         self.assertTrue(
             '"meeting_name": "Another test meeting2",'

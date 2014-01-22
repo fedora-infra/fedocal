@@ -104,4 +104,22 @@
         });
     });
 </script>
+<script type="text/javascript">
+  $(function() {
+    $('#meeting_location').autocomplete({
+        source: function( request, response ) {
+            $.getJSON(
+              "{{ url_for('api_locations_search') }}", {
+                keyword: request
+              },
+              function( data ) {
+                response( data.locations );
+              }
+            );
+        },
+        minLength: 3,
+        delay: 500,
+    });
+  });
+</script>
 {% endblock %}

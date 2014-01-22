@@ -133,6 +133,100 @@ Sample response:
     )
 
 
+@APP.route('/api/locations/', methods=['GET', 'POST'])
+def api_locations():
+    """
+Retrieve locations
+==================
+
+The ``/api/locations/`` endpoint returns the locations where meetings are
+happening.
+
+Response format
+---------------
+
+Sample response:
+
+.. code-block:: javascript
+
+    {
+        "locations": [
+
+        ]
+    }
+    """
+    @flask.after_this_request
+    def callback(response):
+        """ Handle case the query was an JQuery ajax call. """
+        return check_callback(response)
+
+    list_locations = fedocallib.get_locations(SESSION)
+
+    output = {"locations": list_locations}
+
+    return flask.Response(
+        response=json.dumps(output),
+        status=200,
+        mimetype='application/json'
+    )
+
+
+@APP.route('/api/locations/search/', methods=['GET'])
+def api_locations_search():
+    """
+Retrieve locations
+==================
+
+The ``/api/locations/search/`` endpoint can be used to dynamically search
+for specified locations.
+
+:arg keyword: Specified using GET parameters this keyword is used to filter
+    the list of locations having it in their name.
+
+Response format
+---------------
+
+Sample response:
+
+.. code-block:: javascript
+
+    {
+        "locations": [
+            "EMEA",
+            "#fedora-meeting@irc.freenode.net"
+        ]
+    }
+    """
+    @flask.after_this_request
+    def callback(response):
+        """ Handle case the query was an JQuery ajax call. """
+        return check_callback(response)
+
+    keyword = flask.request.args.get('keyword[term]', None)
+    keyword = flask.request.args.get('keyword', keyword)
+
+    if not keyword:
+        output = {"error": "no keyword provided"}
+        return flask.Response(
+            response=json.dumps(output),
+            status=400,
+            mimetype='application/json'
+        )
+
+    if not '*' in keyword:
+        keyword = '*%s*' % keyword
+
+    list_locations = fedocallib.search_locations(SESSION, keyword)
+
+    output = {"locations": list_locations}
+
+    return flask.Response(
+        response=json.dumps(output),
+        status=200,
+        mimetype='application/json'
+    )
+
+
 @APP.route('/api/meetings/', methods=['GET', 'POST'])
 @APP.route('/api/meetings', methods=['GET', 'POST'])
 def api_meetings():

@@ -119,7 +119,6 @@ work.
     def decorated_function(*args, **kwargs):
         """ Decorated function, actually does the work. """
         if not authenticated():
-            flask.flash('Login required', 'errors')
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         elif not flask.g.fas_user.cla_done:

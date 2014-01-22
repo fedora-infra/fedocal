@@ -4,7 +4,7 @@
 model - an object mapper to a SQL database representation of the data
         stored in this project.
 
-Copyright (C) 2012-2013 Pierre-Yves Chibon
+Copyright (C) 2012-2014 Pierre-Yves Chibon
 Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
 This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,10 @@ from sqlalchemy import (
     Date,
     Enum,
     ForeignKey,
+    ForeignKeyConstraint,
     Integer,
     String,
+    Table,
     Text,
     Time,
 )
@@ -225,6 +227,90 @@ class Calendar(BASE):
             cls.calendar_status == status
         ).all()
 
+class User(BASE):
+    """ User table.
+
+    Store the information about the users of fedocal.
+    """
+    __tablename__ = 'users'
+    username = Column(String(50), primary_key=True)
+
+    def __repr__(self):
+        """ Representation of the Reminder object when printed.
+        """
+        return "<User('%s')>" % (
+            self.username)
+
+    def save(self, session):
+        """ Save the object into the database. """
+        session.add(self)
+
+    def to_json(self):
+        """ Return a jsonify string of the object.
+        """
+        return dict(
+            username=self.username,
+        )
+
+    @classmethod
+    def get_or_create(cls, session, username):
+        """ Return an existing or a new user. """
+        user = session.query(cls).get(username)
+        if not user:
+            user = User.create(session, username)
+        return user
+
+    @classmethod
+    def create(cls, session, username):
+        """ Create a new User. """
+        user = cls(username=username)
+        session.add(user)
+        session.flush()
+        return user
+
+
+class MeetingsUsers(BASE):
+    __tablename__ = 'meetings_users'
+    username = Column(String(50),
+        ForeignKey(
+            'users.username', onupdate='cascade', ondelete='cascade'),
+        primary_key=True)
+    meeting_id = Column(
+        Integer,
+        ForeignKey(
+            'meetings.meeting_id', onupdate='cascade', ondelete='cascade'),
+        primary_key=True)
+    meeting = relationship("Meeting")
+    user = relationship("User", backref="meetings")
+
+    def __repr__(self):
+        """ Representation of the Reminder object when printed.
+        """
+        return "<MeetingsUsers('%s', '%s')>" % (
+            self.meeting_id, self.username)
+
+    @classmethod
+    def get_or_create(cls, session, meeting, user):
+        """ Return an existing or a new user. """
+        meeting_user = session.query(
+            cls
+        ).filter(
+            cls.user == user
+        ).filter(
+            cls.meeting == meeting
+        ).first()
+        if not meeting_user:
+            meeting_user = MeetingsUsers.create(session, meeting, user)
+        return meeting_user
+
+    @classmethod
+    def create(cls, session, meeting, user):
+        """ Create a new User. """
+        meeting_user = cls(meeting=meeting, user=user)
+        session.add(meeting_user)
+        session.flush()
+        return meeting_user
+
 
 # pylint: disable=R0902
 class Meeting(BASE):
@@ -240,9 +326,9 @@ class Meeting(BASE):
         String(80),
         ForeignKey('calendars.calendar_name', onupdate="cascade"),
         nullable=False)
-    calendar = relationship("Calendar")
+    calendar = relationship("Calendar", lazy='joined')
     # 5 person max (32 * 5) + 5 = 165
-    meeting_manager = Column(String(165), nullable=False)
+    meeting_manager_user = relationship('MeetingsUsers', lazy='joined')
     meeting_date = Column(Date, default=safunc.now(), nullable=False)
     meeting_date_end = Column(Date, default=safunc.now(), nullable=False)
     meeting_time_start = Column(Time, default=safunc.now(), nullable=False)
@@ -254,7 +340,7 @@ class Meeting(BASE):
         Integer,
         ForeignKey('reminders.reminder_id', onupdate="cascade"),
         nullable=True)
-    reminder = relationship("Reminder")
+    reminder = relationship("Reminder", lazy='joined')
     full_day = Column(Boolean, default=False)
 
     recursion_frequency = Column(Integer, nullable=True, default=None)
@@ -262,7 +348,7 @@ class Meeting(BASE):
 
     # pylint: disable=R0913
     def __init__(
-            self, meeting_name, meeting_manager,
+            self, meeting_name,
             meeting_date, meeting_date_end,
             meeting_time_start, meeting_time_stop,
             meeting_information, calendar_name, meeting_timezone='UTC',
@@ -270,7 +356,6 @@ class Meeting(BASE):
             recursion_ends=None, full_day=False):
         """ Constructor instanciating the defaults values. """
         self.meeting_name = meeting_name
-        self.meeting_manager = meeting_manager
         self.meeting_date = meeting_date
         self.meeting_date_end = meeting_date_end
         self.meeting_time_start = meeting_time_start
@@ -311,8 +396,38 @@ class Meeting(BASE):
             calendar_name=self.calendar_name
         )
 
+    def add_manager(self, session, meeting_manager):
+        """ Add the provided manager(s) to this meeting. """
+        if ',' in meeting_manager:
+            meeting_manager = meeting_manager.split(',')
+
+        if isinstance(meeting_manager, basestring):
+            meeting_manager = [meeting_manager]
+
+        for manager in meeting_manager:
+            manager = manager.strip()
+            if manager and manager not in self.meeting_manager:
+                self.meeting_manager_user.append(
+                    MeetingsUsers.get_or_create(
+                        session, self, User.get_or_create(session, manager)
+                    )
+                )
+
+    def clear_managers(self, session):
+        """ Remove all the managers related to this meeting. """
+        for manager in self.meeting_manager_user:
+            session.delete(manager)
+        session.commit()
+
+    @property
+    def meeting_manager(self):
+        """ Return the list of the managers. """
+        return sorted(
+            [user.username for user in self.meeting_manager_user if user])
+
     def delete(self, session):
         """ Remove the object into the database. """
+        self.clear_managers(session)
         session.delete(self)
 
     def copy(self, meeting=None):
@@ -328,7 +443,7 @@ class Meeting(BASE):
         """
         if meeting:
             meeting.meeting_name = self.meeting_name
-            meeting.meeting_manager = self.meeting_manager
+            meeting.meeting_manager_user = self.meeting_manager_user
             #meeting.meeting_date = self.meeting_date
             meeting.meeting_time_start = self.meeting_time_start
             meeting.meeting_time_stop = self.meeting_time_stop
@@ -343,7 +458,6 @@ class Meeting(BASE):
         else:
             meeting = Meeting(
                 meeting_name=self.meeting_name,
-                meeting_manager=self.meeting_manager,
                 meeting_date=self.meeting_date,
                 meeting_date_end=self.meeting_date_end,
                 meeting_time_start=self.meeting_time_start,
@@ -357,6 +471,7 @@ class Meeting(BASE):
                 recursion_ends=self.recursion_ends,
                 full_day=self.full_day
             )
+            meeting.meeting_manager_user = self.meeting_manager_user
         # Update object associated to the meeting
         meeting.reminder = self.reminder
         meeting.calendar = self.calendar
@@ -370,18 +485,6 @@ class Meeting(BASE):
         :return None if no calendar matched this identifier.
         """
         return session.query(cls).get(identifier)
-
-    @classmethod
-    def get_managers(cls, session, identifier):
-        """ Return the list of managers for a given meeting.
-        """
-        meeting = Meeting.by_id(session, identifier)
-        managers = []
-        if meeting and meeting.meeting_manager:
-            for item in meeting.meeting_manager.split(','):
-                if item.strip():
-                    managers.append(item.strip())
-        return managers
 
     @classmethod
     def get_by_date(
@@ -728,16 +831,21 @@ class Meeting(BASE):
         is among the managers and which date is older than the specified
         one.
         """
-        return session.query(cls).filter(
+        query = session.query(
+            cls
+        ).filter(
             and_(
                 (Meeting.meeting_date < start_date),
-                (Meeting.meeting_manager.like('%%%s%%' % username))
+                (MeetingsUsers.meeting_id == Meeting.meeting_id),
+                (MeetingsUsers.username == username)
             )
         ).order_by(
             Meeting.meeting_date,
             Meeting.meeting_time_start,
             Meeting.meeting_name
-        ).all()
+        )
+
+        return query.all()
 
     # pylint: disable=C0103
     @classmethod
@@ -747,17 +855,22 @@ class Meeting(BASE):
         is among the managers and which date is newer or egual than the
         specified one (which defaults to today).
         """
-        return session.query(cls).filter(
+        query = session.query(
+            cls
+        ).filter(
             and_(
                 (Meeting.meeting_date >= start_date),
                 (Meeting.recursion_frequency == None),
-                (Meeting.meeting_manager.like('%%%s,%%' % username))
+                (MeetingsUsers.meeting_id == Meeting.meeting_id),
+                (MeetingsUsers.username == username),
             )
         ).order_by(
             Meeting.meeting_date,
             Meeting.meeting_time_start,
             Meeting.meeting_name
-        ).all()
+        )
+
+        return query.all()
 
     # pylint: disable=C0103
     @classmethod
@@ -767,11 +880,14 @@ class Meeting(BASE):
         is among the managers and which end date is older or egual to
         specified one (which by default is today).
         """
-        meetings = session.query(cls).filter(
+        meetings = session.query(
+            cls
+        ).filter(
             and_(
                 (Meeting.recursion_ends >= start_date),
                 (Meeting.recursion_frequency != None),
-                (Meeting.meeting_manager.like('%%%s,%%' % username))
+                (MeetingsUsers.meeting_id == Meeting.meeting_id),
+                (MeetingsUsers.username == username),
             )
         ).order_by(
             Meeting.meeting_date,
@@ -822,7 +938,7 @@ class Meeting(BASE):
 
     @staticmethod
     def expand_regular_meetings(
-            meetings_in, end_date=None, start_date=None):
+            meetings_in, start_date=None, end_date=None):
         """ For a given list of meetings, go through all of them and if
         the meeting is recursive, expand the recursion as if they were
         all different meetings.
@@ -843,6 +959,7 @@ class Meeting(BASE):
                         meeting_date <= meeting.recursion_ends:
                     recmeeting = meeting.copy()
                     recmeeting.meeting_id = meeting.meeting_id
+                    recmeeting.meeting_manager_user = meeting.meeting_manager_user
                     recmeeting.calendar = meeting.calendar
                     if start_date \
                             and meeting_date >= start_date:

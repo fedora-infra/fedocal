@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 """
- (c) 2012-2013 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
+ (c) 2012-2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website
@@ -237,13 +237,7 @@ def is_meeting_manager(meeting):
     if not authenticated():
         return False
     else:
-        managers = []
-        if meeting.meeting_manager:
-            managers = [
-                item.strip()
-                for item in meeting.meeting_manager.split(',')
-            ]
-        return flask.g.fas_user.username in managers
+        return flask.g.fas_user.username in meeting.meeting_manager
 
 
 def get_timezone():

@@ -165,7 +165,7 @@ class Fedocallibtests(Modeltests):
             'Full-day meeting')
         self.assertEqual(
             week.full_day_meetings[0].meeting_manager,
-            'pingou,')
+            ['pingou'])
         self.assertEqual(
             week.full_day_meetings[0].meeting_information,
             'This is a full day meeting')
@@ -341,13 +341,13 @@ class Fedocallibtests(Modeltests):
 
         obj = model.Meeting(
             meeting_name='A past test meeting',
-            meeting_manager='pingou',
             meeting_date=TODAY - timedelta(days=110),
             meeting_date_end=TODAY - timedelta(days=110),
             meeting_time_start=time(12, 00),
             meeting_time_stop=time(13, 00),
             meeting_information='This is a past test meeting',
             calendar_name='test_calendar')
+        obj.add_manager(self.session, 'pingou')
         obj.save(self.session)
         self.session.commit()
         meetings = fedocallib.get_past_meeting_of_user(
@@ -564,7 +564,6 @@ class Fedocallibtests(Modeltests):
         time_end = datetime.utcnow() + timedelta(hours=13)
         meeting = model.Meeting(
             meeting_name='Test meeting with reminder',
-            meeting_manager='pingou',
             meeting_date=time_start.date(),
             meeting_date_end=time_start.date(),
             meeting_time_start=time_start.time(),
@@ -572,6 +571,7 @@ class Fedocallibtests(Modeltests):
             meeting_information='This is a test meeting with reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id)
+        meeting.add_manager(self.session, 'pingou')
         meeting.save(self.session)
         self.session.commit()
 
@@ -611,8 +611,9 @@ class Fedocallibtests(Modeltests):
             self.assertTrue(event.summary.value in [
                 'Fedora-fr-test-meeting', 'Test meeting with reminder',
                 'test-meeting2', 'Full-day meeting'])
-            self.assertTrue(event.organizer.value in [
-                'pingou,', 'pingou, shaiton,'])
+            self.assertTrue(
+                event.organizer.value in
+                ('pingou', 'pingou, shaiton'))
             cnt = cnt + 1
         self.assertEqual(cnt, len(meetings))
 
@@ -820,7 +821,7 @@ class Fedocallibtests(Modeltests):
         meeting = model.Meeting.by_id(self.session, mtg.meeting_id)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Name')
-        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_manager, ['username'])
         self.assertEqual(meeting.meeting_date,
                          date.today() + timedelta(days=21))
 
@@ -846,7 +847,7 @@ class Fedocallibtests(Modeltests):
         meeting = model.Meeting.by_id(self.session, mtg.meeting_id)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Name')
-        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_manager, ['username'])
         self.assertEqual(meeting.meeting_date,
                          date.today() + timedelta(days=5))
 
@@ -883,7 +884,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_time_start.strftime('%H'), '09')
         self.assertEqual(
@@ -915,7 +916,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_time_start.strftime('%H'), '10')
         self.assertEqual(
@@ -947,7 +948,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -977,7 +978,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1013,7 +1014,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1046,7 +1047,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1082,7 +1083,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1121,7 +1122,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1160,7 +1161,7 @@ class Fedocallibtests(Modeltests):
             'Name')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1202,7 +1203,7 @@ class Fedocallibtests(Modeltests):
             'Name23h59')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1231,7 +1232,7 @@ class Fedocallibtests(Modeltests):
         meeting = model.Meeting.by_id(self.session, 11)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Full day')
-        self.assertEqual(meeting.meeting_manager, 'username,')
+        self.assertEqual(meeting.meeting_manager, ['username'])
         self.assertEqual(meeting.meeting_information, 'Information')
         self.assertEqual(meeting.meeting_date,
                          date.today() + timedelta(days=1))
@@ -1350,7 +1351,7 @@ class Fedocallibtests(Modeltests):
             'Fedora-fr-meeting_edited')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1382,7 +1383,7 @@ class Fedocallibtests(Modeltests):
             'Fedora-fr-meeting_edited')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1415,7 +1416,7 @@ class Fedocallibtests(Modeltests):
             'Fedora-fr-meeting_edited2')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,pingou,')
+            ['pingou', 'username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information2')
@@ -1447,7 +1448,7 @@ class Fedocallibtests(Modeltests):
             'Fedora-fr-meeting_edited')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1488,7 +1489,7 @@ class Fedocallibtests(Modeltests):
             'Fedora-fr-meeting_edited2')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1529,7 +1530,7 @@ class Fedocallibtests(Modeltests):
             'Fedora-fr-meeting_edited2')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information2')
@@ -1571,7 +1572,7 @@ class Fedocallibtests(Modeltests):
             'Test meeting with reminder-2')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information2')
@@ -1611,7 +1612,7 @@ class Fedocallibtests(Modeltests):
             'Test meeting with reminder-2')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information2')
@@ -1652,7 +1653,7 @@ class Fedocallibtests(Modeltests):
             'Test meeting with reminder-2.4')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information')
@@ -1706,7 +1707,7 @@ class Fedocallibtests(Modeltests):
             'Test meeting with reminder-2.3')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information3')
@@ -1751,7 +1752,7 @@ class Fedocallibtests(Modeltests):
             'Test meeting with reminder-2.3')
         self.assertEqual(
             meeting.meeting_manager,
-            'username,')
+            ['username'])
         self.assertEqual(
             meeting.meeting_information,
             'Information3')

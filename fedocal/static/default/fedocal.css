@@ -340,3 +340,16 @@ th.month .ui-button-text {
 .ui-autocomplete {
     width: 100px;
 }
+
+.limit_future td {
+    border-top: thin solid;
+    border-color: #31a90c;
+}
+
+.limit_past td {
+    border-top: thin solid;
+    border-color: red;
+}
+.today {
+    background-color: #FFF6D5;
+}

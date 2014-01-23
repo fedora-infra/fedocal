@@ -98,8 +98,9 @@
                 dataType: 'html',
                 success: function(res) {
                     var _elt = $('<div title="Preview">' + res + '</div>');
+                    var _height = $(window).height() * 0.8;
                     _elt.dialog({
-                        height: 350,
+                        height: _height,
                         width: '50%',
                         modal: true
                     });

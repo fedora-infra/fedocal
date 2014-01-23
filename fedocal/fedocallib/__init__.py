@@ -610,6 +610,8 @@ def add_meeting_to_vcal(ical, meeting):
     if meeting.meeting_information:
         entry.add('description').value = meeting.meeting_information
     entry.add('organizer').value = ', '.join(meeting.meeting_manager)
+    if meeting.meeting_location:
+        entry.add('location').value = meeting.meeting_location
 
     start = entry.add('dtstart')
     stop = entry.add('dtend')

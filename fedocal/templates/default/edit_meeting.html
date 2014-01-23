@@ -184,5 +184,13 @@
     });
  });
 </script>
+<script type="text/javascript">
+   $(document).ready(function() {
+     $('#meeting_date').change(function(){
+        var _datestt = $('#meeting_date').val();
+        $('#meeting_date_end').val(_datestt);
+    });
+ });
+</script>
 {% endblock %}
 

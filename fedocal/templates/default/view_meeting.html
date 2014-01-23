@@ -47,7 +47,7 @@
     {% endif %}
 
     <p>
-    This meeting is organized by {{ meeting.meeting_manager }} as part of
+    This meeting is organized by {{ meeting.meeting_manager|join(', ') }} as part of
     the calendar <a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
     {{ meeting.calendar_name }}</a>.
     </p>

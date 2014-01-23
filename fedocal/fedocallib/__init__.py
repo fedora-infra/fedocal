@@ -786,6 +786,10 @@ def add_meeting(
         meeting_date_end.year, meeting_date_end.month, meeting_date_end.day,
         meeting_time_stop.hour, meeting_time_stop.minute)
 
+    if meeting_time_start == meeting_time_stop:
+        raise InvalidMeeting(
+            'The start date of your meeting exactly the same as the stop date.')
+
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
             'The start date of your meeting is later than the stop date.')
@@ -867,6 +871,10 @@ def edit_meeting(
     meeting_time_stop = datetime(
         meeting_date_end.year, meeting_date_end.month, meeting_date_end.day,
         meeting_time_stop.hour, meeting_time_stop.minute)
+
+    if meeting_time_start == meeting_time_stop:
+        raise InvalidMeeting(
+            'The start date of your meeting exactly the same as the stop date.')
 
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(

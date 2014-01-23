@@ -20,6 +20,10 @@
 
     <h4> Meeting: {{ meeting.meeting_name}}</h4>
 
+    {% if meeting.meeting_location %}
+    <p>Location: {{ meeting.meeting_location }}</p>
+    {%endif%}
+
     <p>Displayed in: {{tzone}}</p>
     <ul>
         <li>Start: {{ meeting.meeting_date }} - {{ meeting.meeting_time_start

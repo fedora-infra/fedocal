@@ -123,4 +123,34 @@
     });
   });
 </script>
+<script type="text/javascript">
+   $(document).ready(function() {
+        var cb = $('#full_day')
+        var _timestt = $('#meeting_time_start');
+        var _timestp = $('#meeting_time_stop');
+        if(cb.checked) {
+            _timestt.attr('disabled', true);
+            _timestt.addClass('ui-state-disabled');
+            _timestp.attr('disabled', true);
+            _timestp.addClass('ui-state-disabled');
+        };
+   });
+   $(document).ready(function() {
+     $('#full_day').click(function() {
+        var _timestt = $('#meeting_time_start');
+        var _timestp = $('#meeting_time_stop');
+        if(this.checked == false) {
+            _timestt.removeAttr('disabled');
+            _timestt.removeClass('ui-state-disabled');
+            _timestp.removeAttr('disabled');
+            _timestp.removeClass('ui-state-disabled');
+        } else {
+            _timestt.attr('disabled', true);
+            _timestt.addClass('ui-state-disabled');
+            _timestp.attr('disabled', true);
+            _timestp.addClass('ui-state-disabled');
+        };
+     });
+ });
+</script>
 {% endblock %}

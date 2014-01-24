@@ -10,7 +10,10 @@
 {% block content %}
 <section>
     <header>
-        <h2>{{ meeting.calendar_name }}</h2>
+        <h2>
+            <a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
+            {{ meeting.calendar_name }}</a>
+        </h2>
         <p>{{ meeting.meeting_name}} meeting details below</p>
     </header>
 

@@ -98,8 +98,9 @@
                 dataType: 'html',
                 success: function(res) {
                     var _elt = $('<div title="Preview">' + res + '</div>');
+                    var _height = $(window).height() * 0.8;
                     _elt.dialog({
-                        height: 350,
+                        height: _height,
                         width: '50%',
                         modal: true
                     });
@@ -129,6 +130,67 @@
         delay: 500,
     });
   });
+</script>
+<script type="text/javascript">
+   $(document).ready(function() {
+        var cb = $('#full_day')
+        var _timestt = $('#meeting_time_start');
+        var _timestp = $('#meeting_time_stop');
+        if(cb.checked) {
+            _timestt.attr('disabled', true);
+            _timestt.addClass('ui-state-disabled');
+            _timestp.attr('disabled', true);
+            _timestp.addClass('ui-state-disabled');
+        };
+   });
+   $(document).ready(function() {
+     $('#full_day').click(function() {
+        var _timestt = $('#meeting_time_start');
+        var _timestp = $('#meeting_time_stop');
+        if(this.checked == false) {
+            _timestt.removeAttr('disabled');
+            _timestt.removeClass('ui-state-disabled');
+            _timestp.removeAttr('disabled');
+            _timestp.removeClass('ui-state-disabled');
+        } else {
+            _timestt.attr('disabled', true);
+            _timestt.addClass('ui-state-disabled');
+            _timestp.attr('disabled', true);
+            _timestp.addClass('ui-state-disabled');
+        };
+     });
+ });
+</script>
+<script type="text/javascript">
+    function getHourAndMinute(value) {
+        var hour = value.split(":");
+        var minute = hour[1].split(" ");
+        return { hour: hour[0], minute: minute[0] };
+    }
+
+   $(document).ready(function() {
+     $('#meeting_time_start').timespinner({
+        spin: function(event, ui) {
+            var _timestp = $('#meeting_time_stop');
+            _timestp.val(ui.value + 60 * 60 * 1000).timespinner();
+        },
+        change: function() {
+            var _timestt = getHourAndMinute($('#meeting_time_start').val());
+            var _timestp = $('#meeting_time_stop');
+            _timestp.val(
+                parseInt(_timestt.hour) + 1 + ':' + _timestt.minute
+            ).timespinner();
+        }
+    });
+ });
+</script>
+<script type="text/javascript">
+   $(document).ready(function() {
+     $('#meeting_date').change(function(){
+        var _datestt = $('#meeting_date').val();
+        $('#meeting_date_end').val(_datestt);
+    });
+ });
 </script>
 {% endblock %}
 

@@ -152,7 +152,27 @@
             <td>Location</td>
         </tr>
         {% for meeting in meetings %}
+        {% if loop.first %}
+        {% set month = meeting.meeting_date.month %}
+        {% set past = True %}
+        {% set future = True %}
+        {% endif %}
+
+        {% set class = [] %}
+        {% if meeting.meeting_date >= today %}
+            {% if meeting.meeting_date == today and past %}
+                {% set class = 'today limit_past' %}
+                {% set past = False %}
+            {% elif future %}
+                {% set class = 'limit_future' %}
+                {% set future = False %}
+            {% endif %}
+        <tr class="{{class}}">
+        {% elif month != meeting.meeting_date.month %}
+        <tr class="change_month">
+        {% else %}
         <tr>
+        {% endif %}
             <td>
                 {{ meeting.meeting_date }}
                 {% if meeting.meeting_date != meeting.meeting_date_end %}
@@ -193,8 +213,9 @@
                 dataType: 'html',
                 success: function(res) {
                     var _elt = $('<div title="Meeting details" id="show_meeting">' + res + '</div>');
+                    var _height = $(window).height() * 0.8;
                     _elt.dialog({
-                        height: 350,
+                        height: _height,
                         width: '50%',
                         modal: true
                     });

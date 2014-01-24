@@ -436,7 +436,8 @@ def calendar_list(calendar_name, year, month, day):
         tzone=tzone,
         year=inyear,
         curmonth_cal=curmonth_cal,
-        calendar_admin=is_calendar_admin(calendarobj))
+        calendar_admin=is_calendar_admin(calendarobj),
+        today=datetime.date.today())
 
 
 @APP.route('/ical/')
@@ -640,7 +641,7 @@ def add_meeting(calendar_name):
             if form.wiki_link.data.strip():
                 wiki_link = form.wiki_link.data.strip()
                 if not wiki_link in information:
-                    information += '\nMore information available at:'\
+                    information += '\n\nMore information available at:'\
                         '\n[%s](%s)' % (wiki_link, wiki_link)
             meeting = fedocallib.add_meeting(
                 session=SESSION,

@@ -841,6 +841,7 @@ def view_meeting_page(meeting_id, full):
 
     :arg meeting_id: the identifier of the meeting to visualize.
     """
+    from_date = flask.request.args.get('from_date', None)
     org_meeting = meeting = Meeting.by_id(SESSION, meeting_id)
     tzone = get_timezone()
     if not meeting:
@@ -860,8 +861,8 @@ def view_meeting_page(meeting_id, full):
         org_meeting=org_meeting,
         tzone=tzone,
         title=meeting.meeting_name,
-        editor=editor)
-
+        editor=editor,
+        from_date=from_date)
 
 @APP.route('/meeting/delete/<int:meeting_id>/', methods=('GET', 'POST'))
 @cla_plus_one_required
@@ -899,12 +900,21 @@ def delete_meeting(meeting_id):
 
     calendars = Calendar.get_all(SESSION)
     deleteform = forms.DeleteMeetingForm()
+
+    from_date = flask.request.args.get('from_date', None)
+    if from_date:
+        deleteform.from_date.data=parser.parse(from_date).date()
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
+
         if deleteform.confirm_delete.data:
 
-            if deleteform.confirm_futher_delete.data:
-                fedocallib.delete_recursive_meeting(SESSION, meeting)
+            if meeting.recursion_frequency:
+                fedocallib.delete_recursive_meeting(
+                    session=SESSION,
+                    meeting=meeting,
+                    del_date=deleteform.from_date.data,
+                    all_meetings=deleteform.confirm_futher_delete.data)
             else:
                 meeting.delete(SESSION)
 
@@ -918,7 +928,7 @@ def delete_meeting(meeting_id):
                 flask.flash('Meeting deleted')
             except SQLAlchemyError, err:  # pragma: no cover
                 SESSION.rollback()
-                LOG.debug('Error in edit_meeting - 2')
+                LOG.debug('Error in delete_meeting - 2')
                 LOG.exception(err)
                 flask.flash('Could not delete this meeting.', 'error')
 

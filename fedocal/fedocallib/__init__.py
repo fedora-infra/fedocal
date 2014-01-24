@@ -786,10 +786,6 @@ def add_meeting(
         meeting_date_end.year, meeting_date_end.month, meeting_date_end.day,
         meeting_time_stop.hour, meeting_time_stop.minute)
 
-    if meeting_time_start == meeting_time_stop:
-        raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.')
-
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
             'The start date of your meeting is later than the stop date.')
@@ -800,6 +796,10 @@ def add_meeting(
 
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
+
+    if meeting_time_start == meeting_time_stop:
+        raise InvalidMeeting(
+            'The start date of your meeting exactly the same as the stop date.')
 
     reminder = None
     if remind_when and remind_who:
@@ -872,9 +872,6 @@ def edit_meeting(
         meeting_date_end.year, meeting_date_end.month, meeting_date_end.day,
         meeting_time_stop.hour, meeting_time_stop.minute)
 
-    if meeting_time_start == meeting_time_stop:
-        raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.')
 
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
@@ -886,6 +883,10 @@ def edit_meeting(
 
     if full_day and meeting_time_start == meeting_time_stop:
         meeting_time_stop = meeting_time_start + timedelta(days=1)
+
+    if meeting_time_start == meeting_time_stop:
+        raise InvalidMeeting(
+            'The start date of your meeting exactly the same as the stop date.')
 
     if meeting.calendar_name != calendarobj.calendar_name:
         meeting.calendar_name = calendarobj.calendar_name

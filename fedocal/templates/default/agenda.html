@@ -247,11 +247,16 @@ else %}{{ location }}{% endif %}{% endblock %}
           <tr id="full_day">
               <th></th>
               {% for meetings in full_day_meetings %}
+                {% if loop.first %}
+                {% set day_index = 0 %}
+                {% else %}
+                {% set day_index = day_index + 1 %}
+                {% endif %}
                 <td>
                     {% for meeting in meetings %}
                     <a class="event meeting_{{ meeting.meeting_id }}"
                         href="{{ url_for('view_meeting',
-                            meeting_id=meeting.meeting_id) }}">
+                            meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                         {{ meeting.meeting_name[:22] }}
                         {% if meeting.meeting_name |length > 22 %}...{% endif %}
                     </a>
@@ -313,9 +318,15 @@ else %}{{ location }}{% endif %}{% endblock %}
         $('.event').click(function(){
             var _cls = $(this).attr('class');
             var _meetId = _cls.split('meeting_')[1];
+            var _href = $(this).attr('href');
+            var _comp = _href.split('?')[1];
             var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
+            _url = _url + _meetId + '/0/';
+            if (_comp) {
+                _url = _url + '?' + _comp;
+            }
             $.ajax({
-                url: _url + _meetId + '/0/',
+                url: _url,
                 type: 'GET',
                 dataType: 'html',
                 success: function(res) {

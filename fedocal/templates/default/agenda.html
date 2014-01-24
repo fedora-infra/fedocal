@@ -191,6 +191,12 @@ else %}{{ location }}{% endif %}{% endblock %}
 
       {% if meeting_list %}
           {% for meeting in meeting_list %}
+              {% if loop.first %}
+              {% set day_index = 0 %}
+              {% else %}
+              {% set day_index = day_index + 1 %}
+              {% endif %}
+
               {% set first_meeting = [] %}
               {% set last_meeting = [] %}
 
@@ -212,21 +218,21 @@ else %}{{ location }}{% endif %}{% endblock %}
               {% if not first_meeting and last_meeting%}
               <a class="event first_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
-                      meeting_id=meeting.meeting_id) }}">
+                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                   {{ meeting.meeting_name }}
               </a>
               {% elif first_meeting and last_meeting %}
               <a class="event middle_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
-                      meeting_id=meeting.meeting_id) }}"/>
+                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}"/>
               {% elif first_meeting and not last_meeting %}
               <a class="event last_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
-                      meeting_id=meeting.meeting_id) }}"/>
+                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}"/>
               {% else %}
               <a class="event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
-                      meeting_id=meeting.meeting_id) }}">
+                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                   {{ meeting.meeting_name }}
               </a>
               {% endif %}

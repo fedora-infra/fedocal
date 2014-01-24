@@ -472,7 +472,9 @@ class Fedocallibtests(Modeltests):
         meeting = model.Meeting.by_id(self.session, 8)
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Another test meeting2')
-        self.assertEqual(meeting.recursion_ends, date.today())
+        # End date is one day before the next occurence of the recursion
+        # Meeting 8 starts TODAY and recurs every 14 days
+        self.assertEqual(meeting.recursion_ends, TODAY + timedelta(days=13))
 
     # pylint: disable=C0103
     def test_delete_recursive_meeting_past(self):
@@ -742,6 +744,29 @@ class Fedocallibtests(Modeltests):
             meeting_date_end=date.today() + timedelta(days=1),
             meeting_time_start=time(9, 0),
             meeting_time_stop=time(10, 0),
+            comanager=None,
+            meeting_information=None,
+            meeting_location=None,
+            tzone='Europe/Paris',
+            frequency=None,
+            end_repeats=None,
+            remind_when=None,
+            remind_who=None,
+            full_day=False)
+        self.session.rollback()
+
+        # Fails because the meeting starts and ends at the same time
+        self.assertRaises(
+            InvalidMeeting,
+            fedocallib.add_meeting,
+            session=self.session,
+            calendarobj=calendarobj,
+            fas_user=fasuser,
+            meeting_name=None,
+            meeting_date=date.today() + timedelta(days=1),
+            meeting_date_end=date.today() + timedelta(days=1),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(9, 0),
             comanager=None,
             meeting_information=None,
             meeting_location=None,
@@ -1318,6 +1343,27 @@ class Fedocallibtests(Modeltests):
             full_day=False)
         self.session.rollback()
 
+        # Fails because the meeting starts and ends at the same time
+        self.assertRaises(
+            InvalidMeeting,
+            fedocallib.edit_meeting,
+            self.session,
+            meeting,
+            calendarobj,
+            fasuser,
+            'Fedora-fr-meeting_edited',
+            date.today() + timedelta(days=1),
+            None,
+            time(23, 0),
+            time(23, 0),
+            None,
+            'Information',
+            'EMEA',
+            'Europe/Paris',
+            None, None,
+            None, None,
+            full_day=False)
+
     def test_edit_meeting(self):
         """ Test the edit_meeting function. """
         self.__setup_meeting()
@@ -1368,7 +1414,7 @@ class Fedocallibtests(Modeltests):
             date.today() + timedelta(days=1),
             None,
             time(23, 0),
-            time(23, 0),
+            time(23, 30),
             None,
             'Information',
             'EMEA',

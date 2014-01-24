@@ -210,6 +210,8 @@ class DeleteMeetingForm(wtf.Form):
         'Yes I want to delete this meeting')
     confirm_futher_delete = wtforms.BooleanField(
         'Yes, I want to delete all futher meetings.')
+    from_date = wtforms.DateField(
+        'Date from which to remove the meeting')
 
 
 class DeleteCalendarForm(wtf.Form):

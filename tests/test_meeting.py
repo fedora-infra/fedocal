@@ -306,7 +306,7 @@ class Meetingtests(Modeltests):
         obj2 = obj.copy()
         self.assertNotEqual(obj2, None)
         self.assertEqual(obj.meeting_name, obj2.meeting_name)
-        self.assertEqual(obj.meeting_manager, obj2.meeting_manager)
+        self.assertEqual([], obj2.meeting_manager)
         self.assertEqual(obj.meeting_date, obj2.meeting_date)
         self.assertEqual(obj.meeting_time_start, obj2.meeting_time_start)
         self.assertEqual(obj.meeting_time_stop, obj2.meeting_time_stop)
@@ -326,7 +326,7 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj2, None)
         # Check that before the copy the object are different:
         self.assertNotEqual(obj.meeting_name, obj2.meeting_name)
-        self.assertNotEqual(obj.meeting_manager, obj2.meeting_manager)
+        self.assertNotEqual([], obj2.meeting_manager)
         self.assertNotEqual(obj.meeting_date, obj2.meeting_date)
         self.assertNotEqual(obj.meeting_time_start, obj2.meeting_time_start)
         self.assertNotEqual(obj.meeting_time_stop, obj2.meeting_time_stop)

@@ -531,7 +531,8 @@ def is_user_managing_in_calendar(session, calendar_name, fas_user):
         ) >= 1
 
 
-def delete_recursive_meeting(session, meeting):
+def delete_recursive_meeting(
+        session, meeting, del_date=None, all_meetings=False):
     """ Delete from the database any future meetings associated with this
     recursion. For recursive meeting, deletion = set the end date to
     today.
@@ -540,14 +541,51 @@ def delete_recursive_meeting(session, meeting):
     :arg meeting: the Meeting object from which are removed all further
         meetings.
     """
-    today = date.today()
+    if not del_date:
+        del_date = date.today()
     if not meeting.recursion_frequency \
-            or meeting.recursion_ends < today:
+            or meeting.recursion_ends < del_date:
         return
-    else:
-        meeting.recursion_ends = today
+
+    meeting_date = meeting.meeting_date
+    meeting_date_end = meeting.meeting_date_end
+    cnt = 0
+    while meeting_date < del_date:
+        if meeting.recursion_ends < meeting_date + \
+            timedelta(
+                days=meeting.recursion_frequency * cnt
+            ):  # pragma: no cover
+            break
+        meeting_date = meeting.meeting_date + \
+            timedelta(
+                days=meeting.recursion_frequency * cnt)
+        meeting_date_end = meeting.meeting_date_end + \
+            timedelta(
+                days=meeting.recursion_frequency * cnt)
+        cnt = cnt + 1
+
+    if all_meetings:
+        # End the recursion at the desired date
+        meeting.recursion_ends = meeting_date - timedelta(days=1)
         meeting.save(session)
         session.commit()
+    else:
+        original_rec_end = meeting.recursion_ends
+        # End recursion
+        meeting.recursion_ends = meeting_date - timedelta(days=1)
+        meeting.save(session)
+
+        # Re-create after deletion has occured
+        new_meeting = meeting.copy()
+
+        new_meeting.add_manager(session, meeting.meeting_manager)
+        new_meeting.meeting_date = meeting_date + timedelta(
+            days=meeting.recursion_frequency)
+        new_meeting.meeting_date_end = meeting_date_end + timedelta(
+            days=meeting.recursion_frequency)
+        new_meeting.recursion_ends = original_rec_end
+
+        new_meeting.save(session)
 
 
 # pylint: disable=C0103
@@ -786,10 +824,6 @@ def add_meeting(
         meeting_date_end.year, meeting_date_end.month, meeting_date_end.day,
         meeting_time_stop.hour, meeting_time_stop.minute)
 
-    if meeting_time_start == meeting_time_stop:
-        raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.')
-
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
             'The start date of your meeting is later than the stop date.')
@@ -800,6 +834,10 @@ def add_meeting(
 
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
+
+    if meeting_time_start == meeting_time_stop:
+        raise InvalidMeeting(
+            'The start date of your meeting exactly the same as the stop date.')
 
     reminder = None
     if remind_when and remind_who:
@@ -872,9 +910,6 @@ def edit_meeting(
         meeting_date_end.year, meeting_date_end.month, meeting_date_end.day,
         meeting_time_stop.hour, meeting_time_stop.minute)
 
-    if meeting_time_start == meeting_time_stop:
-        raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.')
 
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
@@ -886,6 +921,10 @@ def edit_meeting(
 
     if full_day and meeting_time_start == meeting_time_stop:
         meeting_time_stop = meeting_time_start + timedelta(days=1)
+
+    if meeting_time_start == meeting_time_stop:
+        raise InvalidMeeting(
+            'The start date of your meeting exactly the same as the stop date.')
 
     if meeting.calendar_name != calendarobj.calendar_name:
         meeting.calendar_name = calendarobj.calendar_name
@@ -906,12 +945,14 @@ def edit_meeting(
     remove_recursion = False
     if meeting.recursion_frequency:
         old_meeting = meeting.copy()
+        old_meeting.add_manager(session, meeting.meeting_manager)
         old_meeting.recursion_ends = meeting_date - timedelta(days=1)
         if old_meeting.recursion_ends > old_meeting.meeting_date:
             old_meeting.save(session)
         if not edit_all_meeting:
             remove_recursion = True
             new_meeting = meeting.copy()
+            new_meeting.add_manager(session, meeting.meeting_manager)
             new_meeting.meeting_date = meeting_date + timedelta(
                 days=meeting.recursion_frequency)
             new_meeting.meeting_date_end = meeting_date_end + timedelta(

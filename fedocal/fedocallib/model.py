@@ -471,7 +471,6 @@ class Meeting(BASE):
                 recursion_ends=self.recursion_ends,
                 full_day=self.full_day
             )
-            meeting.meeting_manager_user = self.meeting_manager_user
         # Update object associated to the meeting
         meeting.reminder = self.reminder
         meeting.calendar = self.calendar

@@ -1192,7 +1192,8 @@ def search(keyword=None):
         meetings=meetings,
         tzone=tzone,
         curmonth_cal=curmonth_cal,
-        keyword=keyword)
+        keyword=keyword,
+        today=datetime.date.today())
 
 
 @APP.route('/locations/')

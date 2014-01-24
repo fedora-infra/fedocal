@@ -1343,6 +1343,7 @@ class Fedocallibtests(Modeltests):
             full_day=False)
         self.session.rollback()
 
+        # Fails because the meeting starts and ends at the same time
         self.assertRaises(
             InvalidMeeting,
             fedocallib.edit_meeting,

@@ -64,7 +64,7 @@
                 title="Edit" alt="Edit"/>
         </a>
         <a href="{{ url_for('delete_meeting',
-            meeting_id=meeting.meeting_id) }}">
+            meeting_id=meeting.meeting_id) }}{% if from_date %}?from_date={{ from_date }}{% endif %}">
             <img src="{{ url_for('static', filename='delete.png') }}"
             title="Delete" alt="Delete"/>
         </a>

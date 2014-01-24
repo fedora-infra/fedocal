@@ -119,7 +119,7 @@
         source: function( request, response ) {
             $.getJSON(
               "{{ url_for('api_locations_search') }}", {
-                keyword: request
+                keyword: request.term
               },
               function( data ) {
                 response( data.locations );

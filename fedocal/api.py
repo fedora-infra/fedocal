@@ -202,8 +202,7 @@ Sample response:
         """ Handle case the query was an JQuery ajax call. """
         return check_callback(response)
 
-    keyword = flask.request.args.get('keyword[term]', None)
-    keyword = flask.request.args.get('keyword', keyword)
+    keyword = flask.request.args.get('keyword', None)
 
     if not keyword:
         output = {"error": "no keyword provided"}

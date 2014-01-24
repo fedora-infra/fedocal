@@ -82,14 +82,25 @@ def send_reminder_meeting(meeting):
         return
     string = """Dear all,
 
-You are kindly invited to the meeting :
-   %s on %s from %s to %s
+You are kindly invited to the meeting:
+   %(name)s on %(date)s from %(time_start)s to %(time_stop)s %(timezone)s
 
 The meeting will be about:
-%s
-""" % (meeting.meeting_name, meeting.meeting_date,
-        meeting.meeting_time_start, meeting.meeting_time_stop,
-        meeting.meeting_information)
+%(description)s
+
+
+Source: https://apps.fedoraproject.org/calendar/meeting/%(id)s/
+
+""" % ({
+        'name': meeting.meeting_name,
+        'date': meeting.meeting_date,
+        'time_start': meeting.meeting_time_start,
+        'time_stop': meeting.meeting_time_stop,
+        'timezone': meeting.meeting_timezone,
+        'description': meeting.meeting_information,
+        'id': meeting.meeting_id,
+    })
+
     if meeting.reminder.reminder_text:
         string = string + """
 Please note:

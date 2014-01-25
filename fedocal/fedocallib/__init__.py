@@ -448,8 +448,12 @@ def get_future_regular_meeting_of_user(
         session, username, from_date)
     meetings = []
     for meeting in meetings_tmp:
-        meetings.append(convert_meeting_timezone(
-            meeting, meeting.meeting_timezone, tzone))
+        mtg_conv = convert_meeting_timezone(
+            meeting, meeting.meeting_timezone, tzone)
+        last_rec = mtg_conv.recursion_ends - timedelta(
+            days=mtg_conv.recursion_frequency)
+        if last_rec >= from_date:
+            meetings.append(mtg_conv)
     return meetings
 
 

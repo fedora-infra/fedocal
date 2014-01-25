@@ -80,10 +80,15 @@ def send_reminder_meeting(meeting):
     """
     if not meeting.reminder_id:
         return
+    location = ''
+    if meeting.meeting_location:
+        location = 'At %s' % meeting.meeting_location
+
     string = """Dear all,
 
 You are kindly invited to the meeting:
    %(name)s on %(date)s from %(time_start)s to %(time_stop)s %(timezone)s
+   %(location)s
 
 The meeting will be about:
 %(description)s
@@ -97,6 +102,7 @@ Source: https://apps.fedoraproject.org/calendar/meeting/%(id)s/
         'time_start': meeting.meeting_time_start,
         'time_stop': meeting.meeting_time_stop,
         'timezone': meeting.meeting_timezone,
+        'location': location,
         'description': meeting.meeting_information,
         'id': meeting.meeting_id,
     })

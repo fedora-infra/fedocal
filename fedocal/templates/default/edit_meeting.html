@@ -163,19 +163,30 @@
     }
 
    $(document).ready(function() {
-     $('#meeting_time_start').timespinner({
+      var previous;
+      $('#meeting_time_start').focus(
+        function () {
+            // Store the current value on focus and on change
+            previous = +Globalize.parseDate(this.value);
+        }).timespinner({
         spin: function(event, ui) {
+            var _timestt = $('#meeting_time_start');
             var _timestp = $('#meeting_time_stop');
-            _timestp.val(ui.value + 60 * 60 * 1000).timespinner();
+            var _cur_stt = +Globalize.parseDate( _timestt.val());
+            var _cur_stp = +Globalize.parseDate( _timestp.val());
+            var _delta = _cur_stp - _cur_stt;
+            previous = ui.value;
+            _timestp.val(ui.value + _delta).timespinner();
         },
         change: function() {
-            var _timestt = getHourAndMinute($('#meeting_time_start').val());
+            var _timestt = $('#meeting_time_start');
             var _timestp = $('#meeting_time_stop');
-            _timestp.val(
-                parseInt(_timestt.hour) + 1 + ':' + _timestt.minute
-            ).timespinner();
+            var _cur_stt = +Globalize.parseDate( _timestt.val());
+            var _cur_stp = +Globalize.parseDate( _timestp.val());
+            var _delta = _cur_stp - previous;
+            _timestp.val( _cur_stt + _delta).timespinner();
         }
-    });
+      });
  });
 </script>
 <script type="text/javascript">

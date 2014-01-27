@@ -670,8 +670,8 @@ class Flasktests(Modeltests):
             # No data
             data = {}
 
-            output = self.app.post('/calendar/delete/test_calendar/', data=data,
-                                  follow_redirects=True)
+            output = self.app.post('/calendar/delete/test_calendar/',
+                                   data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title>Delete calendar - Fedocal</title>' in output.data)
@@ -728,7 +728,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="errors">No calendar named 1 could not be found</li>'
+                '<li class="errors">No calendar named 1 could not be found</li'
                 in output.data)
 
             output = self.app.get('/calendar/clear/test_calendar/',
@@ -761,7 +761,7 @@ class Flasktests(Modeltests):
             data = {}
 
             output = self.app.post('/calendar/clear/test_calendar/', data=data,
-                                  follow_redirects=True)
+                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title>Clear calendar - Fedocal</title>' in output.data)
@@ -771,7 +771,6 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 'name="confirm_delete" type="checkbox" value="y"><label'
                 in output.data)
-
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -831,7 +830,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="errors">No calendar named 1 could not be found</li>'
+                '<li class="errors">No calendar named 1 could not be found</li'
                 in output.data)
 
             output = self.app.get('/calendar/edit/test_calendar/')
@@ -849,7 +848,7 @@ class Flasktests(Modeltests):
             data = {}
 
             output = self.app.post('/calendar/edit/test_calendar/', data=data,
-                                  follow_redirects=True)
+                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title>Edit calendar - Fedocal</title>' in output.data)
@@ -859,7 +858,6 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 'class="submit positive button" value="Edit">'
                 in output.data)
-
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -934,7 +932,8 @@ class Flasktests(Modeltests):
             output = self.app.get('/mine/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '"errors">You must be in one more group than the CLA</li>' in output.data)
+                '"errors">You must be in one more group than the CLA</li>'
+                in output.data)
 
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedocal.APP, user):
@@ -1283,7 +1282,7 @@ class Flasktests(Modeltests):
                 'name="confirm_delete" type="checkbox" value="y"><label'
                 in output.data)
             self.assertTrue(
-                '<input id="confirm_button" type="submit" class="submit positive'
+                '<input id="confirm_button" type="submit" class="submit positi'
                 in output.data)
 
             csrf_token = output.data.split(
@@ -1403,15 +1402,17 @@ class Flasktests(Modeltests):
         self.assertTrue('<p>This is a test calendar</p>'
                         in output.data)
 
-        output = self.app.get('/goto/?calendar=test_calendar&year=2010&month=3&day=1',
-                              follow_redirects=True)
+        output = self.app.get(
+            '/goto/?calendar=test_calendar&year=2010&month=3&day=1',
+            follow_redirects=True)
         self.assertTrue('<title>test_calendar - Fedocal</title>'
                         in output.data)
         self.assertTrue('<p>This is a test calendar</p>'
                         in output.data)
 
-        output = self.app.get('/goto/?calendar=test_calendar&year=2010&month=3&day=a',
-                              follow_redirects=True)
+        output = self.app.get(
+            '/goto/?calendar=test_calendar&year=2010&month=3&day=a',
+            follow_redirects=True)
         self.assertTrue('<title>test_calendar - Fedocal</title>'
                         in output.data)
         self.assertTrue('<li class="errors">Invalid date specified</li>'
@@ -1419,8 +1420,9 @@ class Flasktests(Modeltests):
         self.assertTrue('<p>This is a test calendar</p>'
                         in output.data)
 
-        output = self.app.get('/goto/?calendar=test_calendar&year=2010&month=a',
-                              follow_redirects=True)
+        output = self.app.get(
+            '/goto/?calendar=test_calendar&year=2010&month=a',
+            follow_redirects=True)
         self.assertTrue('<title>test_calendar - Fedocal</title>'
                         in output.data)
         self.assertTrue('<li class="errors">Invalid date specified</li>'
@@ -1471,7 +1473,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="errors">No calendar named 1 could not be found</li>'
+                '<li class="errors">No calendar named 1 could not be found</li'
                 in output.data)
 
             output = self.app.get('/calendar/upload/test_calendar/',

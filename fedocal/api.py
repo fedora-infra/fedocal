@@ -376,7 +376,6 @@ Filter arguments
                 status=400,
                 mimetype='application/json')
 
-
     status = 200
     meetings = []
     try:

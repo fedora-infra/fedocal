@@ -265,7 +265,7 @@ def is_safe_url(target):
     test_url = urlparse.urlparse(
         urlparse.urljoin(flask.request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
-           ref_url.netloc == test_url.netloc
+        ref_url.netloc == test_url.netloc
 
 
 def validate_input_file(input_file):
@@ -454,7 +454,7 @@ def ical_all():
             SESSION, calendarobj, startd, endd, extended=False))
     fedocallib.add_meetings_to_vcal(ical, meetings)
     headers = {}
-    filename = secure_filename('all_calendars-%s.ical' %(
+    filename = secure_filename('all_calendars-%s.ical' % (
         datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
     )
     headers["Content-Disposition"] = "attachment; filename=%s" % filename
@@ -484,7 +484,7 @@ def ical_out(calendar_name):
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     headers = {}
-    filename = secure_filename('%s-%s.ical' %(
+    filename = secure_filename('%s-%s.ical' % (
         calendar_name,
         datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
     )
@@ -750,7 +750,7 @@ def edit_meeting(meeting_id):
                             calendarobj.calendar_status, 'errors')
                 return flask.redirect(flask.url_for('calendar',
                                       calendar_name=
-                                        calendarobj.calendar_name))
+                                      calendarobj.calendar_name))
         tzone = form.meeting_timezone.data or tzone
         action = flask.request.form.get('action', 'Edit')
         try:
@@ -805,9 +805,9 @@ def edit_meeting(meeting_id):
             meetingobj = Meeting.copy(meeting)
             while meetingobj.meeting_date < datetime.date.today():
                 if meetingobj.recursion_ends < meetingobj.meeting_date + \
-                    datetime.timedelta(
-                        days=meetingobj.recursion_frequency * cnt
-                    ):  # pragma: no cover
+                        datetime.timedelta(
+                            days=meetingobj.recursion_frequency * cnt
+                        ):  # pragma: no cover
                     break
                 meetingobj = Meeting.copy(meeting)
                 meetingobj.meeting_date = meetingobj.meeting_date + \
@@ -864,6 +864,7 @@ def view_meeting_page(meeting_id, full):
         editor=editor,
         from_date=from_date)
 
+
 @APP.route('/meeting/delete/<int:meeting_id>/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def delete_meeting(meeting_id):
@@ -903,7 +904,7 @@ def delete_meeting(meeting_id):
 
     from_date = flask.request.args.get('from_date', None)
     if from_date:
-        deleteform.from_date.data=parser.parse(from_date).date()
+        deleteform.from_date.data = parser.parse(from_date).date()
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
 
@@ -1361,5 +1362,3 @@ def upload_calendar(calendar_name):
 
     return flask.render_template(
         'upload_calendar.html', form=form, calendar=calendarobj)
-
-

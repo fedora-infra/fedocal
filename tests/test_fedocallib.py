@@ -473,8 +473,17 @@ class Fedocallibtests(Modeltests):
         self.assertNotEqual(meeting, None)
         self.assertEqual(meeting.meeting_name, 'Another test meeting2')
         # End date is one day before the next occurence of the recursion
-        # Meeting 8 starts TODAY and recurs every 14 days
-        self.assertEqual(meeting.recursion_ends, TODAY + timedelta(days=13))
+        # Meeting 8 starts TODAY and recurs every 14 days.
+        # It today is earlier than TODAY, then the meeting stops before it
+        # starts, otherwise it stops at the next occurence.
+        if TODAY > datetime.utcnow().date():
+            self.assertEqual(
+                meeting.recursion_ends,
+                TODAY - timedelta(days=1))
+        else:
+            self.assertEqual(
+                meeting.recursion_ends,
+                TODAY + timedelta(days=13))
 
     # pylint: disable=C0103
     def test_delete_recursive_meeting_past(self):

@@ -95,3 +95,24 @@ key ``THEME_FOLDER`` in the configuration file.
 .. note:: the template and static file of the theme should be located under
         the default ``template`` and ``static`` folder, where are currently
         located to folder named ``default`` representing the default theme.
+
+
+Upload check
+------------
+
+From the version 0.4.0, one may upload an iCalendar file into a specified
+calendar. However fedocal runs some check on the file uploaded, including its
+file extension and its mimetype.
+
+The configuration file allows to specify a list of allowed file extension, the
+`ALLOWED_EXTENSIONS` key and mimetype, the `ALLOWED_MIMETYPES` key.
+
+Adjust as desired.
+
+
+Exception email
+---------------
+
+From the version 0.4.0, fedocal sends email on un-catched exception causing 500
+errors to the user. The configuration key `EMAIL_ERROR` allows to set to who the
+exception emails will be sent.

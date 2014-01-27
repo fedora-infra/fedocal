@@ -227,6 +227,7 @@ class Calendar(BASE):
             cls.calendar_status == status
         ).all()
 
+
 class User(BASE):
     """ User table.
 
@@ -271,7 +272,8 @@ class User(BASE):
 
 class MeetingsUsers(BASE):
     __tablename__ = 'meetings_users'
-    username = Column(String(50),
+    username = Column(
+        String(50),
         ForeignKey(
             'users.username', onupdate='cascade', ondelete='cascade'),
         primary_key=True)
@@ -958,7 +960,8 @@ class Meeting(BASE):
                         meeting_date <= meeting.recursion_ends:
                     recmeeting = meeting.copy()
                     recmeeting.meeting_id = meeting.meeting_id
-                    recmeeting.meeting_manager_user = meeting.meeting_manager_user
+                    recmeeting.meeting_manager_user = \
+                        meeting.meeting_manager_user
                     recmeeting.calendar = meeting.calendar
                     if start_date \
                             and meeting_date >= start_date:

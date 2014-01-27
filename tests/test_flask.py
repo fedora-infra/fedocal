@@ -1040,7 +1040,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<li class="message">Meeting added</li>' in output.data)
             self.assertTrue(
-                'href="/meeting/15/">' in output.data)
+                'href="/meeting/15/?from_date=' in output.data)
 
             # Calendar disabled
             data = {

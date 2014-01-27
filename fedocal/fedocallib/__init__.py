@@ -290,6 +290,7 @@ def format_full_day_meeting(meeting_list, week_start):
 
     return meetings
 
+
 def format_week_meeting(meeting_list, tzone, week_start):
     """ Return a dictionnary representing the meeting of the week in the
     appropriate format for the meeting provided in the meeting_list.
@@ -556,9 +557,9 @@ def delete_recursive_meeting(
     cnt = 0
     while meeting_date < del_date:
         if meeting.recursion_ends < meeting_date + \
-            timedelta(
-                days=meeting.recursion_frequency * cnt
-            ):  # pragma: no cover
+                timedelta(
+                    days=meeting.recursion_frequency * cnt
+                ):  # pragma: no cover
             break
         meeting_date = meeting.meeting_date + \
             timedelta(
@@ -808,7 +809,7 @@ def add_meeting(
     and then add the desired meeting.
     """
     if not is_user_managing_in_calendar(
-                session, calendarobj.calendar_name, fas_user
+            session, calendarobj.calendar_name, fas_user
             ) and not admin:  # pragma: no cover
         raise UserNotAllowed(
             'You are not allowed to add a meeting to this calendar')
@@ -841,7 +842,8 @@ def add_meeting(
 
     if meeting_time_start == meeting_time_stop:
         raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.')
+            'The start date of your meeting exactly the same as the stop date.'
+        )
 
     reminder = None
     if remind_when and remind_who:
@@ -914,7 +916,6 @@ def edit_meeting(
         meeting_date_end.year, meeting_date_end.month, meeting_date_end.day,
         meeting_time_stop.hour, meeting_time_stop.minute)
 
-
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
             'The start date of your meeting is later than the stop date.')
@@ -928,7 +929,8 @@ def edit_meeting(
 
     if meeting_time_start == meeting_time_stop:
         raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.')
+            'The start date of your meeting exactly the same as the stop date.'
+        )
 
     if meeting.calendar_name != calendarobj.calendar_name:
         meeting.calendar_name = calendarobj.calendar_name
@@ -1066,7 +1068,7 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
             [el.value for el in meeting.contents.get('description', [])]
         ) or None
 
-        tzone='UTC'
+        tzone = 'UTC'
         full_day = False
         if meeting.contents.get('transp', False):
             full_day = True

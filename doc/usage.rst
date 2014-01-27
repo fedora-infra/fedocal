@@ -120,7 +120,7 @@ When editing a calendar you will have the same field as when creating one
 Clear a calendar
 ----------------
 
-From version 0.4.0 fedocal gives the option to clear a calendar of all its
+Since version 0.4.0 fedocal gives the option to clear a calendar of all its
 meetings. Only admins (calendar admin and fedocal admin) can clear a calendar.
 To do so, select the calendar to clear in the left menu by clicling on its name.
 Then go to the ``Admin`` entry of the main menu and select ``Clear calendar``.
@@ -276,7 +276,7 @@ or just this one (default).
 Upload an iCalendar file
 ------------------------
 
-From version 0.4.0 fedocal supports the possibility to upload an iCalendar file
+Since version 0.4.0 fedocal supports the possibility to upload an iCalendar file
 into an existing calendar. Only admins (calendar admin and fedocal admin) can
 upload an iCalendar file. To do so, select the calendar in which to upload the
 iCalendar file in the left menu (or in the front page) by clicling on its name.
@@ -330,7 +330,7 @@ a year and a month or even a year, a month and a day::
  http://<url to fedocal>/list/<calendar name>/<year>/<month>/<day>/
 
 
-From fedocal 0.4.0, a green line provides a visual indication of the meetings
+Since fedocal 0.4.0, a green line provides a visual indication of the meetings
 which are in the past vs the meetings in the future. If there are meetings
 planned on that day, they will appear with a salmonish background between a red
 line delimiting meeting of the day from meetings from the past and the green

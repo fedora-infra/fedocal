@@ -40,3 +40,19 @@ PATH_ALEMBIC_INI='/etc/fedocal/alembic.ini'
 ### It defaults to 'default' which is the name of the default theme shipped
 ### with fedocal.
 # THEME_FOLDER = 'default'
+
+### File extensions and mimetypes allowed for the upload
+### When uploading a iCalendar file, fedocal checks the file extension as well
+### as the mimetype of the file submitted, the file extensions and the mimetypes
+### are listed here. If the file uploaded does not have an extension or a
+### mimetype among those listed here, the upload will be refused.
+# ALLOWED_EXTENSIONS = ['ics', 'ical', 'ifb', 'icalendar']
+# ALLOWED_MIMETYPES = [
+#     'text/calendar',
+#     ]
+
+### The email address to which the flask.log will send the errors
+### (tracebacks).
+### In case of exception flask sends an email with some information to debug the
+### problem. The email is sent to the address listed here.
+# EMAIL_ERROR = 'pingou@pingoured.fr'

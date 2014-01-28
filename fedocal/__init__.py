@@ -32,6 +32,7 @@ __version__ = '0.4.0'
 import datetime
 import logging
 import os
+import urllib
 import urlparse
 from dateutil import parser
 from logging.handlers import SMTPHandler
@@ -1290,7 +1291,7 @@ def update_tz():
     """
     url = flask.url_for('index')
     if flask.request.referrer:  # pragma: no cover
-        urltmp = flask.request.referrer.split('?', 1)[0]
+        urltmp = urllib.unquote(flask.request.referrer.split('?', 1)[0])
         if is_safe_url(urltmp):
             url = urltmp
     else:

@@ -24,7 +24,7 @@ def upgrade():
     op.alter_column(
         'meetings',
         column_name='meeting_region',
-        new_column_name='meeting_location',
+        name='meeting_location',
         type_=sa.Text,
         existing_type=sa.String(100))
 
@@ -53,6 +53,6 @@ def downgrade():
     op.alter_column(
         'meetings',
         column_name='meeting_location',
-        new_column_name='meeting_region',
+        name='meeting_region',
         type_=sa.String(100),
         existing_type=sa.Text)

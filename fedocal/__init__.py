@@ -1193,6 +1193,9 @@ def search(keyword=None):
         flask.flash('No keyword provided for the search', 'errors')
         return flask.redirect(flask.url_for('index'))
 
+    if '*' not in keyword:
+        keyword += '*'
+
     meetings = fedocallib.search_meetings(SESSION, keyword)
 
     tzone = get_timezone()

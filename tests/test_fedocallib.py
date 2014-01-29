@@ -476,7 +476,7 @@ class Fedocallibtests(Modeltests):
         # Meeting 8 starts TODAY and recurs every 14 days.
         # It today is earlier than TODAY, then the meeting stops before it
         # starts, otherwise it stops at the next occurence.
-        if TODAY > datetime.utcnow().date():
+        if TODAY >= datetime.utcnow().date():
             self.assertEqual(
                 meeting.recursion_ends,
                 TODAY - timedelta(days=1))

@@ -82,7 +82,7 @@ else %}{{ location }}{% endif %}{% endblock %}
           <input type="submit" value="Go"/>
         </form>
         <form action="{{ url_for('update_tz') }}" id="update_tz">
-            <select name="tzone", id="tzones">
+            <select name="tzone" id="tzones">
                 {% for tz in tzones %}
                 {% if tz == tzone %}<option value="{{tz}}" selected>{{ tz }}</option>
                 {% else %}<option value="{{tz}}">{{ tz }}</option>{% endif %}
@@ -164,8 +164,6 @@ else %}{{ location }}{% endif %}{% endblock %}
         </ul>
         </div>
         {% endif %}
-
-        </ul>
       </div>
       {% if calendar %}
       <ul class="checkmark-list">

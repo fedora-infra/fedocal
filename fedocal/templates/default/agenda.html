@@ -220,25 +220,24 @@ else %}{{ location }}{% endif %}{% endblock %}
                   href="{{ url_for('view_meeting',
                       meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                   {{ meeting.meeting_name }}
-              </a>
               {% elif first_meeting and last_meeting %}
               <a class="event middle_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
-                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}"/>
+                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
               {% elif first_meeting and not last_meeting %}
               <a class="event last_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
-                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}"/>
+                      meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
               {% else %}
               <a class="event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
                       meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                   {{ meeting.meeting_name }}
-              </a>
               {% endif %}
               {% if not loop.last %}
               -
               {% endif %}
+              </a>
           {% endfor %}
       {% endif %}
       </td>

@@ -1279,6 +1279,7 @@ def location(loc_name, year, month, day):
         meetings=meetings,
         full_day_meetings=full_day_meetings,
         tzone=tzone,
+        tzones=common_timezones,
         next_week=next_week,
         prev_week=prev_week,
         curmonth_cal=curmonth_cal)

@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.4.1
+Version:        0.4.2
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,10 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Thu Jan 30 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.4.2-1
+- Update to 0.4.2
+- Bug fix release fixing bug in the iCal output
+
 * Thu Jan 30 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.4.1-1
 - Update to 0.4.1
 

@@ -570,9 +570,14 @@ def delete_recursive_meeting(
         cnt = cnt + 1
 
     if all_meetings:
-        # End the recursion at the desired date
-        meeting.recursion_ends = meeting_date - timedelta(days=1)
-        meeting.save(session)
+        # If the meeting_date is before the meeting.meeting_date, just delete
+        # the meeting
+        if meeting.meeting_date >= meeting_date:
+            meeting.delete(session)
+        else:
+            # End the recursion at the desired date
+            meeting.recursion_ends = meeting_date - timedelta(days=1)
+            meeting.save(session)
         session.commit()
     else:
         original_rec_end = meeting.recursion_ends

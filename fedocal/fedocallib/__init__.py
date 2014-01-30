@@ -748,6 +748,10 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC',
     if extended:
         meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
                             calendarobj, start_date, end_date))
+    else:
+        meetings_utc.extend(
+            Meeting.get_active_regular_meeting_by_date(
+                session, calendarobj, start_date))
     meetings = list(set(meetings_utc))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings

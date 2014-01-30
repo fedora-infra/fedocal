@@ -113,7 +113,7 @@ Please note:
 %s""" % meeting.reminder.reminder_text
     msg = MIMEText(string)
     msg['Subject'] = '[Fedocal] Reminder meeting : %s' % meeting.meeting_name
-    from_email = meeting.meeting_manager.split(',')[0]
+    from_email = meeting.meeting_manager[0]
     from_email = '%s@fedoraproject.org' % from_email
     msg['From'] = from_email
     msg['To'] = meeting.reminder.reminder_to

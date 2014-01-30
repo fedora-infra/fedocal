@@ -959,11 +959,12 @@ def edit_meeting(
 
     remove_recursion = False
     if meeting.recursion_frequency:
-        old_meeting = meeting.copy()
-        old_meeting.add_manager(session, meeting.meeting_manager)
-        old_meeting.recursion_ends = meeting_date - timedelta(days=1)
-        if old_meeting.recursion_ends > old_meeting.meeting_date:
-            old_meeting.save(session)
+        if meeting_date > meeting.meeting_date:
+            old_meeting = meeting.copy()
+            old_meeting.add_manager(session, meeting.meeting_manager)
+            old_meeting.recursion_ends = meeting_date - timedelta(days=1)
+            if old_meeting.recursion_ends > old_meeting.meeting_date:
+                old_meeting.save(session)
         if not edit_all_meeting:
             remove_recursion = True
             new_meeting = meeting.copy()

@@ -142,7 +142,9 @@
     </aside>
 
 <div id='meeting_list'>
+    {% if calendar %}
     <p> Time are expressed in the {{ tzone }} time zone.</p>
+    {% endif %}
     <table>
         <tr>
             <td>Date</td>

@@ -102,7 +102,7 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 %changelog
 * Thu Jan 30 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.4.4-1
-- Update to 0.4.3
+- Update to 0.4.4
 - Bug fix release fixing bug when editing recursive meeting that have never
   occured so far
 

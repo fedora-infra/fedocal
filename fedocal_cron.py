@@ -136,6 +136,7 @@ def send_reminder():
     meetings = fedocallib.retrieve_meeting_to_remind(
         session, offset=int(fedocal.APP.config['CRON_FREQUENCY']))
     for meeting in meetings:
+        meeting = fedocallib.update_date_rec_meeting(meeting, action='next')
         send_reminder_meeting(meeting)
         fedmsg_publish(meeting)
 

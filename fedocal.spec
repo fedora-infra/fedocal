@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.4.5
+Version:        0.4.6
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,11 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Thu Feb 13 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.4.6-1
+- Update to 0.4.6
+- Bug fix release fixing bug in the propagation of the manager in recurrent
+  meetings
+
 * Sat Feb 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.4.5-1
 - Update to 0.4.5
 - Bug fix release fixing bug in the reminder/fedmsg msg for recursive meetings

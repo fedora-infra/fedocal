@@ -1139,6 +1139,7 @@ def update_date_rec_meeting(meeting, action='last'):
                 timedelta(days=meetingobj.recursion_frequency)
             meetingobj.meeting_date_end = meetingobj.meeting_date_end + \
                 timedelta(days=meetingobj.recursion_frequency)
+        meetingobj.meeting_manager_user = meeting.meeting_manager_user
         meeting = meetingobj
 
         if action == 'last':

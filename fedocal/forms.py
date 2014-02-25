@@ -138,9 +138,13 @@ class AddMeetingForm(wtf.Form):
     frequency = wtforms.SelectField(
         'Repeat every',
         [wtforms.validators.optional()],
-        choices=[('', ''),
-                 ('7', '7 days'),
-                 ('14', '14 days')]
+        choices=[
+            ('', ''),
+            ('7', '7 days'),
+            ('14', '14 days'),
+            ('21', '3 weeks'),
+            ('28', '4 weeks'),
+        ]
     )
     end_repeats = wtforms.DateField(
         'End date',

@@ -289,10 +289,19 @@ def format_full_day_meeting(meeting_list, week_start):
         meetings[int(idx.days)].append(meeting)
 
         start_day = meeting.meeting_date
+        # If the meeting starts before the beginning of the week, consider
+        # the beginning of the week as the start day.
         if start_day < week_start:
             start_day = week_start
 
-        duration = meeting.meeting_date_end - start_day
+        end_day = meeting.meeting_date_end
+        # If the end day is not the last day of the week, show it one day
+        # shorter (otherwise it show on day X while the meeting ends on
+        # day X at 00:00)
+        if end_day < start_day + timedelta(days=6):
+            end_day = end_day - timedelta(days=1)
+
+        duration = end_day - start_day
         if abs(duration.days) > 0:
             cnt = int(idx.days)
             for day in range(1, duration.days + 1):

@@ -288,6 +288,18 @@ def format_full_day_meeting(meeting_list, week_start):
             idx = idx + timedelta(days=abs(idx.days))
         meetings[int(idx.days)].append(meeting)
 
+        start_day = meeting.meeting_date
+        if start_day < week_start:
+            start_day = week_start
+
+        duration = meeting.meeting_date_end - start_day
+        if abs(duration.days) > 0:
+            cnt = int(idx.days)
+            for day in range(1, duration.days + 1):
+                key = cnt + day
+                if key < len(meetings):
+                    meetings[key].append(meeting)
+
     return meetings
 
 

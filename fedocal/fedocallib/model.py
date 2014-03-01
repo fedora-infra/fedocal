@@ -576,7 +576,11 @@ class Meeting(BASE):
                 and_(
                     (Meeting.meeting_date_end >= start_date),
                     (Meeting.meeting_date_end <= stop_date),
-                )
+                ),
+                and_(
+                    (Meeting.meeting_date <= start_date),
+                    (Meeting.meeting_date_end >= stop_date),
+                ),
             )
         ).order_by(
             Meeting.meeting_date,

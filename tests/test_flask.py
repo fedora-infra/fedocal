@@ -1037,7 +1037,6 @@ class Flasktests(Modeltests):
                 '<td>Time must be of type &#34;HH:MM&#34;</td>'
                 in output.data)
 
-
             # End date earlier than the start date
             data = {
                 'meeting_name': 'guess what?',

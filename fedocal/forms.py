@@ -37,7 +37,7 @@ import fedocal.fedocallib as fedocallib
 
 def validate_time(form, field):
     """ Validate if the data set in the given field is a valid time. """
-    if isinstance(field.data, time):  #pragma: no cover
+    if isinstance(field.data, time):  # pragma: no cover
         return
     import re
     if not re.match(r'\d?\d:\d\d?', field.data):

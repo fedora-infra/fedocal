@@ -727,7 +727,8 @@ def add_meetings_to_vcal(ical, meetings):
 
 
 def get_html_monthly_cal(
-        day=None, month=None, year=None, calendar_name=None, loc_name=None):
+        day=None, month=None, year=None, calendar_name=None, loc_name=None,
+        busy_days=[]):
     """ Display a monthly calendar as HTML.
 
     :kwarg day: optionnal day (as int). Defaults to current day
@@ -750,7 +751,9 @@ def get_html_monthly_cal(
 
     htmlcal = FedocalCalendar(day=day, year=year, month=month,
                               calendar_name=calendar_name,
-                              loc_name=loc_name)
+                              loc_name=loc_name,
+                              busy_days=busy_days,
+                              cur_day=cur_date)
     curmonth_cal_nf = htmlcal.formatmonth()
 
     return curmonth_cal_nf

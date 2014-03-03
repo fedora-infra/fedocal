@@ -426,6 +426,13 @@ def calendar_list(calendar_name, year, month, day):
 
     month_name = datetime.date.today().strftime('%B')
 
+    week_start = fedocallib.get_start_week(year, month, day)
+    weekdays = fedocallib.get_week_days(year, month, day)
+    next_week = fedocallib.get_next_week(
+        week_start.year, week_start.month, week_start.day)
+    prev_week = fedocallib.get_previous_week(
+        week_start.year, week_start.month, week_start.day)
+
     curmonth_cal = fedocallib.get_html_monthly_cal(
         year=year, month=month, day=day, calendar_name=calendar_name)
     return flask.render_template(
@@ -435,6 +442,10 @@ def calendar_list(calendar_name, year, month, day):
         meetings=meetings,
         tzone=tzone,
         year=inyear,
+        week_start=week_start,
+        weekdays=weekdays,
+        next_week=next_week,
+        prev_week=prev_week,
         curmonth_cal=curmonth_cal,
         calendar_admin=is_calendar_admin(calendarobj),
         today=datetime.date.today())

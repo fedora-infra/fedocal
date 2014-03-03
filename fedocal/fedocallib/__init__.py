@@ -24,6 +24,7 @@ from datetime import date
 from datetime import time
 from datetime import timedelta
 from dateutil import zoneinfo
+from dateutil.relativedelta import relativedelta
 import dateutil.rrule as rrule
 
 from sqlalchemy import create_engine
@@ -772,11 +773,12 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC',
     :kwarg tzone: the timezone in which the meetings should be displayed
         defaults to UTC.
     """
-    meetings_utc = Meeting.get_by_date(session, calendarobj, start_date,
-                                       end_date, no_recursive=extended)
+    meetings_utc = Meeting.get_by_date(
+        session, calendarobj, start_date, end_date, no_recursive=extended)
     if extended:
-        meetings_utc.extend(Meeting.get_regular_meeting_by_date(session,
-                            calendarobj, start_date, end_date))
+        meetings_utc.extend(
+            Meeting.get_regular_meeting_by_date(
+                session, calendarobj, start_date, end_date))
     else:
         meetings_utc.extend(
             Meeting.get_active_regular_meeting_by_date(
@@ -1173,3 +1175,45 @@ def update_date_rec_meeting(meeting, action='last'):
                 timedelta(days=meeting.recursion_frequency)
 
     return meeting
+
+
+def __get_days(meetings):
+    """ Return a set of all the meeting days for the list of meetings
+    provided.
+    """
+    days = set()
+    for meeting in meetings:
+        duration = meeting.meeting_date_end - meeting.meeting_date
+        if abs(duration.days) > 0:
+            for day in range(0, duration.days):
+                days.add((meeting.meeting_date + timedelta(days=day)).day)
+        else:
+            days.add(meeting.meeting_date.day)
+    return days
+
+
+def get_days_of_month_location(session, loc_name, year, month, tzone=None):
+    """ Return the list of days having a meeting on the specified month.
+    """
+    start_date = datetime(year, month, 1).date()
+    end_date = start_date \
+            + relativedelta(months=+1) \
+            - timedelta(days=1)
+
+    meetings = get_by_date_at_location(
+        session, loc_name, start_date, end_date, tzone)
+    return __get_days(meetings)
+
+
+def get_days_of_month_calendar(session, calendar, year, month, tzone=None):
+    """ Return the list of days having a meeting on the specified month.
+    """
+
+    start_date = datetime(year, month, 1).date()
+    end_date = start_date \
+            + relativedelta(months=+1) \
+            - timedelta(days=1)
+
+    meetings = get_by_date(
+        session, calendar, start_date, end_date, tzone)
+    return __get_days(meetings)

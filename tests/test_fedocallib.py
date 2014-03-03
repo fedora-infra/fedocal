@@ -1857,6 +1857,18 @@ class Fedocallibtests(Modeltests):
             fedocallib.get_locations(self.session),
             ['EMEA', 'NA'])
 
+    def test_clear_calendar(self):
+        """ Test the clear_calendar function of fedocallib. """
+        self.__setup_meeting()
+        self.assertEqual(
+            len(fedocallib.search_meetings(self.session, '*')), 15)
+
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar4')
+        fedocallib.clear_calendar(self.session, calendarobj)
+
+        self.assertEqual(
+            len(fedocallib.search_meetings(self.session, '*')), 12)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

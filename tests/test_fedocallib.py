@@ -1869,6 +1869,28 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(
             len(fedocallib.search_meetings(self.session, '*')), 12)
 
+    def test_get_days_of_month_calendar(self):
+        """ Test the get_days_of_month_calendar of fedocallib. """
+        self.__setup_meeting()
+
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar2')
+
+        day = TODAY + timedelta(days=2)
+        days = fedocallib.get_days_of_month_calendar(
+            self.session, calendarobj, day.year, day.month)
+
+        self.assertEqual(days, set([day.day]))
+
+    def test_get_days_of_month_location(self):
+        """ Test the get_days_of_month_location of fedocallib. """
+        self.__setup_meeting()
+
+        day = TODAY + timedelta(days=1)
+        days = fedocallib.get_days_of_month_location(
+            self.session, 'NA', day.year, day.month)
+
+        self.assertEqual(days, set([day.day]))
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

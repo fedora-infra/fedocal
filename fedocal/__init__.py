@@ -1277,6 +1277,92 @@ def location(loc_name, year, month, day):
         curmonth_cal=curmonth_cal)
 
 
+# pylint: disable=R0914
+@APP.route('/location/list/<loc_name>/',
+           defaults={'year': None, 'month': None, 'day': None})
+@APP.route('/location/list/<loc_name>/<int:year>/',
+           defaults={'month': None, 'day': None})
+@APP.route('/location/list/<loc_name>/<int:year>/<int:month>/',
+           defaults={'day': None})
+@APP.route('/location/list/<loc_name>/<int:year>/<int:month>/<int:day>/')
+def location_list(loc_name, year, month, day):
+    """ Display the list of meetings for a specified location.
+
+    :arg calendar_name: the name of the calendar that one would like to
+        consult.
+    :arg year: the year of the date one would like to consult.
+    :arg month: the month of the date one would like to consult.
+    :arg day: the day of the date one would like to consult.
+    """
+    """ Display in a list form all the meetings of a given calendar.
+    By default it displays all the meetings of the current year but this
+    can be more restricted to a month or even a day.
+
+    :arg loc_name: the name of the location that one would like to
+        consult.
+    :arg year: the year of the date one would like to consult.
+    :arg month: the month of the date one would like to consult.
+    :arg day: the day of the date one would like to consult.
+    """
+    list_locations = fedocallib.get_locations(SESSION)
+    if loc_name not in list_locations:
+        flask.flash(
+            'No location named %s could not be found' % loc_name,
+            'errors')
+        return flask.redirect(flask.url_for('locations'))
+
+    inyear = year
+    if not year:
+        inyear = datetime.date.today().year
+    inmonth = month
+    if not month:
+        inmonth = 1
+    inday = day
+    if not day:
+        inday = 1
+    start_date = datetime.date(inyear, inmonth, inday)
+    if not month and not day:
+        end_date = start_date \
+            + relativedelta(years=+1) \
+            - datetime.timedelta(days=1)
+    elif not day:
+        end_date = start_date \
+            + relativedelta(months=+1) \
+            - datetime.timedelta(days=1)
+    else:
+        end_date = start_date + relativedelta(days=+1)
+
+    tzone = get_timezone()
+    meetings = fedocallib.get_by_date_at_location(
+        SESSION, loc_name, start_date, end_date, tzone)
+
+    month_name = datetime.date.today().strftime('%B')
+
+    week_start = fedocallib.get_start_week(year, month, day)
+    weekdays = fedocallib.get_week_days(year, month, day)
+    next_week = fedocallib.get_next_week(
+        week_start.year, week_start.month, week_start.day)
+    prev_week = fedocallib.get_previous_week(
+        week_start.year, week_start.month, week_start.day)
+
+    curmonth_cal = fedocallib.get_html_monthly_cal(
+        year=year, month=month, day=day, loc_name=loc_name)
+    return flask.render_template(
+        'meeting_list.html',
+        calendar=None,
+        location=loc_name,
+        month=month_name,
+        meetings=meetings,
+        tzone=tzone,
+        year=inyear,
+        week_start=week_start,
+        weekdays=weekdays,
+        next_week=next_week,
+        prev_week=prev_week,
+        curmonth_cal=curmonth_cal,
+        today=datetime.date.today())
+
+
 @APP.route('/updatetz/')
 def update_tz():
     """ Update the timezone using the value set in the drop-down list and

@@ -170,7 +170,7 @@ class FedocalCalendar(HTMLCalendar):
             if self.cur_day \
                     and self.cur_day.day in days \
                     and self.cur_day.month == self.month \
-                    and self.cur_day.year == self.year :
+                    and self.cur_day.year == self.year:
                 item(self.formatweek(week, current=True))
             else:
                 item(self.formatweek(week))

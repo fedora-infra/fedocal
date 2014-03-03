@@ -1147,6 +1147,7 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
             full_day=full_day,
             admin=admin)
 
+
 def update_date_rec_meeting(meeting, action='last'):
     """ From a recursive meeting, returns a meeting which date corresponds
     either to that of the last recursion that occured, or the next recursion
@@ -1158,7 +1159,8 @@ def update_date_rec_meeting(meeting, action='last'):
         meetingobj = Meeting.copy(meeting)
         while meetingobj.meeting_date < date.today():
             if meetingobj.recursion_ends < meetingobj.meeting_date + \
-                    timedelta(days=meetingobj.recursion_frequency
+                    timedelta(
+                        days=meetingobj.recursion_frequency
                     ):  # pragma: no cover
                 break
             meetingobj.meeting_date = meetingobj.meeting_date + \
@@ -1197,8 +1199,8 @@ def get_days_of_month_location(session, loc_name, year, month, tzone=None):
     """
     start_date = datetime(year, month, 1).date()
     end_date = start_date \
-            + relativedelta(months=+1) \
-            - timedelta(days=1)
+        + relativedelta(months=+1) \
+        - timedelta(days=1)
 
     meetings = get_by_date_at_location(
         session, loc_name, start_date, end_date, tzone)
@@ -1211,8 +1213,8 @@ def get_days_of_month_calendar(session, calendar, year, month, tzone=None):
 
     start_date = datetime(year, month, 1).date()
     end_date = start_date \
-            + relativedelta(months=+1) \
-            - timedelta(days=1)
+        + relativedelta(months=+1) \
+        - timedelta(days=1)
 
     meetings = get_by_date(
         session, calendar, start_date, end_date, tzone)

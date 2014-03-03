@@ -91,6 +91,17 @@
           Specify a year to see the yearly report, a month of a year to see
           the monthly report and a complete date to see that specific date.
         </p>
+        <p>
+          {% if calendar %}
+            <a href="{{ url_for('calendar', calendar_name=calendar.calendar_name) }}">
+              Calendar view
+            </a>
+          {% else %}
+            <a href="{{ url_for('location',loc_name=location) }}">
+              Calendar view
+            </a>
+          {% endif %}
+        </p>
         {% endif %}
         <div id="accordion">
         <h4>Calendars</h4>

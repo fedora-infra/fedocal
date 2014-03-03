@@ -109,6 +109,14 @@ class FedocalCalendar(HTMLCalendar):
                     year=int(prev_year),
                     month=int(prev_month),
                     day=1))
+        elif self.loc_name:
+            prev_month_lnk = '<a class="button" href="%s"><</a>' % (
+                flask.url_for(
+                    'location',
+                    loc_name=self.loc_name,
+                    year=int(prev_year),
+                    month=int(prev_month),
+                    day=1))
 
         next_month = self.month
         next_year = self.year + next_month / 12
@@ -120,6 +128,14 @@ class FedocalCalendar(HTMLCalendar):
                 flask.url_for(
                     'calendar',
                     calendar_name=self.calendar_name,
+                    year=int(next_year),
+                    month=int(next_month),
+                    day=1))
+        elif self.loc_name:
+            next_month_lnk = '<a class="button" href="%s">></a>' % (
+                flask.url_for(
+                    'location',
+                    loc_name=self.loc_name,
                     year=int(next_year),
                     month=int(next_month),
                     day=1))

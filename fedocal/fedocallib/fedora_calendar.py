@@ -167,7 +167,8 @@ class FedocalCalendar(HTMLCalendar):
         #item('\n')
         for week in self.monthdays2calendar(self.year, self.month):
             days = [day[0] for day in week]
-            if self.cur_day.day in days \
+            if self.cur_day \
+                    and self.cur_day.day in days \
                     and self.cur_day.month == self.month \
                     and self.cur_day.year == self.year :
                 item(self.formatweek(week, current=True))

@@ -277,6 +277,21 @@ class Meetingtests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
+        # Full day meeting
+        obj = model.Meeting(  # id:15
+            meeting_name='Full-day meeting2',
+            meeting_date=TODAY + timedelta(days=2),
+            meeting_date_end=TODAY + timedelta(days=3),
+            meeting_time_start=time(0, 00),
+            meeting_time_stop=time(23, 59),
+            meeting_information='Full day meeting 2',
+            calendar_name='test_calendar2',
+            full_day=True)
+        obj.add_manager(self.session, ['toshio'])
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
     def test_repr_meeting(self):
         """ Test the Meeting string representation function. """
         self.test_init_meeting()
@@ -287,6 +302,19 @@ class Meetingtests(Modeltests):
             '<Meeting(\'<Calendar(\'test_calendar\''
             ')>\', \'Fedora-fr-test-meeting\', \'' + str(TODAY) +
             '\')>')
+
+    def test_repr_meeting_user(self):
+        """ Test the Meeting string representation function. """
+        self.test_init_meeting()
+        obj = model.Meeting.by_id(self.session, 1)
+        self.assertNotEqual(obj, None)
+        self.assertEqual(
+            str(obj.meeting_manager_user[0]),
+            "<MeetingsUsers('1', 'pingou')>")
+
+        self.assertEqual(
+            str(obj.meeting_manager_user[0].user),
+            "<User('pingou')>")
 
     def test_delete_meeting(self):
         """ Test the Meeting delete function. """

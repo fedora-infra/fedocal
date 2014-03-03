@@ -242,17 +242,6 @@ class User(BASE):
         return "<User('%s')>" % (
             self.username)
 
-    def save(self, session):
-        """ Save the object into the database. """
-        session.add(self)
-
-    def to_json(self):
-        """ Return a jsonify string of the object.
-        """
-        return dict(
-            username=self.username,
-        )
-
     @classmethod
     def get_or_create(cls, session, username):
         """ Return an existing or a new user. """
@@ -765,7 +754,8 @@ class Meeting(BASE):
             Meeting.meeting_time_start,
             Meeting.meeting_name
         )
-        if full_day is not None:
+        # Apparently the API allows option that are not used
+        if full_day is not None:  # pragma: no cover
             meetings = meetings.filter(Meeting.full_day == full_day)
         return meetings.all()
 
@@ -792,7 +782,8 @@ class Meeting(BASE):
             Meeting.meeting_time_start,
             Meeting.meeting_name
         )
-        if full_day is not None:
+        # Apparently the API allows option that are not used
+        if full_day is not None:  # pragma: no cover
             meetings = meetings.filter(Meeting.full_day == full_day)
         return meetings.all()
 

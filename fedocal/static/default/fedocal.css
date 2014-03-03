@@ -248,12 +248,24 @@ table.month td {
     border: 1px solid #e6e6e6;
     color: #808080;
     font-weight: bold;
-    padding: .2em;
+    padding: .1em;
     background-color: #fff;
 }
 
 table.month a{
     color: #808080;
+}
+
+.busy_day {
+    background-color: #3C6EB4;
+    border-radius: 1em 1em 1em 0.3em;
+    color: #FFFFFF !important;
+    padding: .1em;
+    margin: 0px;
+}
+
+.busy_day a{
+    color: #FFFFFF !important;
 }
 
 table.month .today a{

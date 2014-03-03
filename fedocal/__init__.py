@@ -355,8 +355,20 @@ def calendar(calendar_name, year, month, day):
         day_index = fedocallib.get_week_day_index(
             today.year, today.month, today.day)
 
+    inyear = year
+    if not year:
+        inyear = today.year
+    inmonth = month
+    if not month:
+        inmonth = today.month
+
+    busy_days = fedocallib.get_days_of_month_calendar(
+        SESSION, calendarobj, year=inyear, month=inmonth,
+        tzone=tzone)
+
     curmonth_cal = fedocallib.get_html_monthly_cal(
-        year=year, month=month, day=day, calendar_name=calendar_name)
+        year=year, month=month, day=day, calendar_name=calendar_name,
+        busy_days=busy_days)
 
     return flask.render_template(
         'agenda.html',
@@ -392,9 +404,10 @@ def calendar_list(calendar_name, year, month, day):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
+    today = datetime.date.today()
     inyear = year
     if not year:
-        inyear = datetime.date.today().year
+        inyear = today.year
     inmonth = month
     if not month:
         inmonth = 1
@@ -433,8 +446,18 @@ def calendar_list(calendar_name, year, month, day):
     prev_week = fedocallib.get_previous_week(
         week_start.year, week_start.month, week_start.day)
 
+    inmonth = month
+    if not month:
+        inmonth = today.month
+
+    busy_days = fedocallib.get_days_of_month_calendar(
+        SESSION, calendarobj, year=inyear, month=inmonth,
+        tzone=tzone)
+
     curmonth_cal = fedocallib.get_html_monthly_cal(
-        year=year, month=month, day=day, calendar_name=calendar_name)
+        year=year, month=month, day=day, calendar_name=calendar_name,
+        busy_days=busy_days)
+
     return flask.render_template(
         'meeting_list.html',
         calendar=calendarobj,
@@ -1260,8 +1283,21 @@ def location(loc_name, year, month, day):
         day_index = fedocallib.get_week_day_index(
             today.year, today.month, today.day)
 
+    inyear = year
+    if not year:
+        inyear = datetime.date.today().year
+    inmonth = month
+    if not month:
+        inmonth = datetime.date.today().month
+
+    busy_days = fedocallib.get_days_of_month_location(
+        SESSION, loc_name, year=inyear, month=inmonth,
+        tzone=tzone)
+
     curmonth_cal = fedocallib.get_html_monthly_cal(
-        year=year, month=month, day=day, loc_name=loc_name)
+        year=year, month=month, day=day, loc_name=loc_name,
+        busy_days=busy_days)
+
     return flask.render_template(
         'agenda.html',
         location=loc_name,
@@ -1311,9 +1347,10 @@ def location_list(loc_name, year, month, day):
             'errors')
         return flask.redirect(flask.url_for('locations'))
 
+    today = datetime.date.today()
     inyear = year
     if not year:
-        inyear = datetime.date.today().year
+        inyear = today.year
     inmonth = month
     if not month:
         inmonth = 1
@@ -1345,8 +1382,17 @@ def location_list(loc_name, year, month, day):
     prev_week = fedocallib.get_previous_week(
         week_start.year, week_start.month, week_start.day)
 
+    if not month:
+        inmonth = today.month
+
+    busy_days = fedocallib.get_days_of_month_location(
+        SESSION, loc_name, year=inyear, month=inmonth,
+        tzone=tzone)
+
     curmonth_cal = fedocallib.get_html_monthly_cal(
-        year=year, month=month, day=day, loc_name=loc_name)
+        year=year, month=month, day=day, loc_name=loc_name,
+        busy_days=busy_days)
+
     return flask.render_template(
         'meeting_list.html',
         calendar=None,

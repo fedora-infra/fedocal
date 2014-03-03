@@ -26,7 +26,9 @@ class FedocalCalendar(HTMLCalendar):
     html validation and some features 'locally required'
     """
 
-    def __init__(self, year, month, day, calendar_name=None, loc_name=None):
+    def __init__(self, year, month, day,
+                 calendar_name=None, loc_name=None, busy_days=[],
+                 cur_day=None):
         """ Constructor.
         Stores the year and the month asked.
         """
@@ -34,6 +36,8 @@ class FedocalCalendar(HTMLCalendar):
         self.year = year
         self.month = month
         self.day = day
+        self.busy_days = busy_days
+        self.cur_day = cur_day
         self.calendar_name = calendar_name
         self.loc_name = loc_name
 
@@ -62,14 +66,19 @@ class FedocalCalendar(HTMLCalendar):
                         month=self.month, day=day),
                     day)
 
+            if day in self.busy_days:
+                link_day = '<div class="busy_day">%s</div>' % link_day
+
             if day == cur_date.day \
                     and self.month == cur_date.month \
                     and self.year == cur_date.year:
-                return '<td class="%s today">%s</td>' % (
+                output = '<td class="%s today">%s</td>' % (
                     self.cssclasses[weekday], link_day)
             else:
-                return '<td class="%s">%s</td>' % (
+                output = '<td class="%s">%s</td>' % (
                     self.cssclasses[weekday], link_day)
+
+            return output
 
     # pylint: disable=W0221
     def formatweek(self, theweek, current=False):
@@ -158,7 +167,10 @@ class FedocalCalendar(HTMLCalendar):
         #item('\n')
         for week in self.monthdays2calendar(self.year, self.month):
             days = [day[0] for day in week]
-            if self.day in days:
+            if self.cur_day \
+                    and self.cur_day.day in days \
+                    and self.cur_day.month == self.month \
+                    and self.cur_day.year == self.year:
                 item(self.formatweek(week, current=True))
             else:
                 item(self.formatweek(week))

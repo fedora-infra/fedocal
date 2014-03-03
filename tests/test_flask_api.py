@@ -179,7 +179,7 @@ class FlaskApitests(Modeltests):
             )
         )
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('meeting_name'), 5)
+        self.assertEqual(output.data.count('meeting_name'), 6)
 
     def test_api_date_error(self):
         """ Test the api_date function with wrong input. """

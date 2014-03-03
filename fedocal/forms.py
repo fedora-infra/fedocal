@@ -37,7 +37,7 @@ import fedocal.fedocallib as fedocallib
 
 def validate_time(form, field):
     """ Validate if the data set in the given field is a valid time. """
-    if isinstance(field.data, time):
+    if isinstance(field.data, time):  # pragma: no cover
         return
     import re
     if not re.match(r'\d?\d:\d\d?', field.data):
@@ -203,7 +203,7 @@ class AddMeetingForm(wtf.Form):
             self.frequency.data = str(meeting.recursion_frequency)
             self.end_repeats.data = meeting.recursion_ends
             self.full_day.data = meeting.full_day
-            if meeting.reminder_id:
+            if meeting.reminder_id:  # pragma: no cover
                 self.remind_when.data = meeting.reminder.reminder_offset
                 self.remind_who.data = meeting.reminder.reminder_to
 

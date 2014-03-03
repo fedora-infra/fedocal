@@ -251,8 +251,8 @@ class Flasktests(Modeltests):
             'DESCRIPTION:This is a test meeting with recursion'
             in output.data)
         self.assertTrue('ORGANIZER:pingou' in output.data)
-        self.assertEqual(output.data.count('BEGIN:VEVENT'), 14)
-        self.assertEqual(output.data.count('END:VEVENT'), 14)
+        self.assertEqual(output.data.count('BEGIN:VEVENT'), 15)
+        self.assertEqual(output.data.count('END:VEVENT'), 15)
 
     def test_view_meeting(self):
         """ Test the view_meeting function. """
@@ -1039,7 +1039,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<li class="message">Meeting added</li>' in output.data)
             self.assertTrue(
-                'href="/meeting/15/?from_date=' in output.data)
+                'href="/meeting/16/?from_date=' in output.data)
 
             # Calendar disabled
             data = {

@@ -1001,6 +1001,43 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<td>This field is required.</td>' in output.data)
 
+            # Format of the start time wrong
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': '13',
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td>Time must be of type &#34;HH:MM&#34;</td>'
+                in output.data)
+
+            # Start time should have integer
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': '65:12',
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td>Time must be of type &#34;HH:MM&#34;</td>'
+                in output.data)
+
+
             # End date earlier than the start date
             data = {
                 'meeting_name': 'guess what?',

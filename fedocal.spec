@@ -153,6 +153,9 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 * Fri Sep 27 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.0-1
 - Update to release 0.2.0
 
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.1.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Fri Mar 15 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.2.-1
 - Update to 0.1.2 which includes the alembic files
 

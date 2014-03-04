@@ -74,7 +74,7 @@ def fedmsg_publish(meeting):
     )
 
 
-def send_reminder_meeting(meeting):
+def send_reminder_meeting(meeting, meeting_id):
     """ This function sends the actual reminder of a given meeting.
     :arg meeting: a Meeting object from fedocallib.model
     """
@@ -94,7 +94,7 @@ The meeting will be about:
 %(description)s
 
 
-Source: https://apps.fedoraproject.org/calendar/meeting/%(id)s/
+Source: %(host)s/meeting/%(id)s/
 
 """ % ({
         'name': meeting.meeting_name,
@@ -104,7 +104,8 @@ Source: https://apps.fedoraproject.org/calendar/meeting/%(id)s/
         'timezone': meeting.meeting_timezone,
         'location': location,
         'description': meeting.meeting_information,
-        'id': meeting.meeting_id,
+        'id': meeting_id,
+        'host': fedocal.APP.config['APP_URL'],
     })
 
     if meeting.reminder.reminder_text:
@@ -136,8 +137,9 @@ def send_reminder():
     meetings = fedocallib.retrieve_meeting_to_remind(
         session, offset=int(fedocal.APP.config['CRON_FREQUENCY']))
     for meeting in meetings:
+        meeting_id = meeting.meeting_id
         meeting = fedocallib.update_date_rec_meeting(meeting, action='next')
-        send_reminder_meeting(meeting)
+        send_reminder_meeting(meeting, meeting_id)
         fedmsg_publish(meeting)
 
 

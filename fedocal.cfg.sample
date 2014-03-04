@@ -28,6 +28,9 @@ CRON_FREQUENCY=30
 ### alembic.ini file.
 PATH_ALEMBIC_INI='/etc/fedocal/alembic.ini'
 
+### The URL at which the project is available.
+### This is used in the reminder email to give the appropriate link
+APP_URL = 'https://apps.fedoraproject.org/calendar/'
 
 ### Optional Configuration
 

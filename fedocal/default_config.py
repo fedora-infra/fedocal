@@ -58,3 +58,6 @@ ALLOWED_MIMETYPES = [
 
 # The email address to which the flask.log will send the errors (tracebacks)
 EMAIL_ERROR = 'pingou@pingoured.fr'
+
+# The URL at which the project is available.
+APP_URL = 'https://apps.fedoraproject.org/calendar/'

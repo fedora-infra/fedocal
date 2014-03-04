@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.4.7
+Version:        0.5.0
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,12 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Tue Mar 04 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.5.0-1
+- Update to 0.5.0
+- Rework the monthly calendar
+- Add a list view to locations
+- Fix visualization of full day meeting over multiple days
+
 * Wed Feb 26 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.4.7-1
 - Update to 0.4.7
 - Add the 3 and 4 weeks recursion frequency

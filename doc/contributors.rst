@@ -8,7 +8,7 @@ On March 4, 2014 (release 0.5.0), the list looks as follow:
 =================  ===========
 Number of commits  Contributor
 =================  ===========
-  1176              Pierre-Yves Chibon <pingou@pingoured.fr>
+  1181              Pierre-Yves Chibon <pingou@pingoured.fr>
     56              Johan Cwiklinski <johan@x-tnd.be>
     17              Toshio Kuratomi <toshio@fedoraproject.org>
      9              Ralph Bean <rbean@redhat.com>

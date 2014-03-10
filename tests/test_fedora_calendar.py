@@ -89,59 +89,74 @@ class FedocalCalendartests(Modeltests):
     def test_formatmonth(self):
         """ Test the formatmonth function. """
         cal = FedocalCalendar(2012, 1, 10)
-        self.assertEqual(
-            cal.formatmonth(),
-            '<table class="month">\n<tr><th colspan="7" class="month"> '
-            'January 2012 </th></tr>\n<tr><td '
-            'class="noday">&nbsp;</td><td class="noday">&nbsp;'
-            '</td><td class="noday">&nbsp;</td><td class="noday">'
-            '&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">'
-            '&nbsp;</td><td class="sun">1</td></tr>\n<tr><td '
-            'class="mon">2</td><td class="tue">3</td><td class="wed">'
-            '4</td><td class="thu">5</td><td class="fri">6</td><td '
-            'class="sat">7</td><td class="sun">8</td></tr>\n<tr><td '
-            'class="mon">9</td><td '
-            'class="tue">10</td><td class="wed">11</td><td '
-            'class="thu">12</td><td class="fri">13</td><td '
-            'class="sat">14</td><td class="sun">15</td></tr>\n<tr><td'
-            ' class="mon">16</td><td class="tue">17</td><td '
-            'class="wed">18</td><td class="thu">19</td><td '
-            'class="fri">20</td><td class="sat">21</td><td '
-            'class="sun">22</td></tr>\n<tr><td class="mon">23</td>'
-            '<td class="tue">24</td><td class="wed">25</td><td '
-            'class="thu">26</td><td class="fri">27</td><td '
-            'class="sat">28</td><td class="sun">29</td></tr>\n<tr>'
-            '<td class="mon">30</td><td class="tue">31</td><td '
-            'class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
-            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
-            '<td class="noday">&nbsp;</td></tr>\n</table>\n')
 
-        self.assertEqual(
-            cal.formatmonth(False),
-            '<table class="month">\n<tr><th colspan="7" class="month">'
-            ' January </th></tr>\n<tr><td '
-            'class="noday">&nbsp;</td><td class="noday">&nbsp;'
-            '</td><td class="noday">&nbsp;</td><td class="noday">'
-            '&nbsp;</td><td class="noday">&nbsp;</td><td class="noday">'
-            '&nbsp;</td><td class="sun">1</td></tr>\n<tr><td '
-            'class="mon">2</td><td class="tue">3</td><td class="wed">'
-            '4</td><td class="thu">5</td><td class="fri">6</td><td '
-            'class="sat">7</td><td class="sun">8</td></tr>\n<tr><td '
-            'class="mon">9</td><td '
-            'class="tue">10</td><td class="wed">11</td><td '
-            'class="thu">12</td><td class="fri">13</td><td '
-            'class="sat">14</td><td class="sun">15</td></tr>\n<tr><td'
-            ' class="mon">16</td><td class="tue">17</td><td '
-            'class="wed">18</td><td class="thu">19</td><td '
-            'class="fri">20</td><td class="sat">21</td><td '
-            'class="sun">22</td></tr>\n<tr><td class="mon">23</td>'
-            '<td class="tue">24</td><td class="wed">25</td><td '
-            'class="thu">26</td><td class="fri">27</td><td '
-            'class="sat">28</td><td class="sun">29</td></tr>\n<tr>'
-            '<td class="mon">30</td><td class="tue">31</td><td '
-            'class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+        expcal = [
+            '<table class="month">',
+            '<tr><th colspan="7" class="month"> January 2012 </th></tr>',
+            '<tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
             '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
-            '<td class="noday">&nbsp;</td></tr>\n</table>\n')
+            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="sun">1</td></tr>',
+            '<tr><td class="mon">2</td><td class="tue">3</td>'
+            '<td class="wed">4</td><td class="thu">5</td>'
+            '<td class="fri">6</td><td class="sat">7</td>'
+            '<td class="sun">8</td></tr>',
+            '<tr class="current_week"><td class="mon">9</td>'
+            '<td class="tue">10</td><td class="wed">11</td>'
+            '<td class="thu">12</td><td class="fri">13</td>'
+            '<td class="sat">14</td><td class="sun">15</td></tr>',
+            '<tr><td class="mon">16</td><td class="tue">17</td>'
+            '<td class="wed">18</td><td class="thu">19</td>'
+            '<td class="fri">20</td><td class="sat">21</td>'
+            '<td class="sun">22</td></tr>',
+            '<tr><td class="mon">23</td><td class="tue">24</td>'
+            '<td class="wed">25</td><td class="thu">26</td>'
+            '<td class="fri">27</td><td class="sat">28</td>'
+            '<td class="sun">29</td></tr>',
+            '<tr><td class="mon">30</td><td class="tue">31</td>'
+            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="noday">&nbsp;</td></tr>',
+            '</table>', '']
+        callines = cal.formatmonth().split('\n')
+
+        self.assertEqual(len(expcal), len(callines))
+        for cnt in range(0, len(callines)):
+            self.assertEqual(expcal[cnt], callines[cnt])
+
+        expcal = [
+            '<table class="month">',
+            '<tr><th colspan="7" class="month"> January </th></tr>',
+            '<tr><td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="sun">1</td></tr>',
+            '<tr><td class="mon">2</td><td class="tue">3</td>'
+            '<td class="wed">4</td><td class="thu">5</td>'
+            '<td class="fri">6</td><td class="sat">7</td>'
+            '<td class="sun">8</td></tr>',
+            '<tr class="current_week"><td class="mon">9</td>'
+            '<td class="tue">10</td><td class="wed">11</td>'
+            '<td class="thu">12</td><td class="fri">13</td>'
+            '<td class="sat">14</td><td class="sun">15</td></tr>',
+            '<tr><td class="mon">16</td><td class="tue">17</td>'
+            '<td class="wed">18</td><td class="thu">19</td>'
+            '<td class="fri">20</td><td class="sat">21</td>'
+            '<td class="sun">22</td></tr>',
+            '<tr><td class="mon">23</td><td class="tue">24</td>'
+            '<td class="wed">25</td><td class="thu">26</td>'
+            '<td class="fri">27</td><td class="sat">28</td>'
+            '<td class="sun">29</td></tr>',
+            '<tr><td class="mon">30</td><td class="tue">31</td>'
+            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="noday">&nbsp;</td><td class="noday">&nbsp;</td>'
+            '<td class="noday">&nbsp;</td></tr>',
+            '</table>', '']
+        callines = cal.formatmonth(withyear=False).split('\n')
+
+        self.assertEqual(len(expcal), len(callines))
+        for cnt in range(0, len(callines)):
+            self.assertEqual(expcal[cnt], callines[cnt])
 
 
 if __name__ == '__main__':

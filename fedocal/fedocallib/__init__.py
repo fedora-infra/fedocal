@@ -753,8 +753,7 @@ def get_html_monthly_cal(
     htmlcal = FedocalCalendar(day=day, year=year, month=month,
                               calendar_name=calendar_name,
                               loc_name=loc_name,
-                              busy_days=busy_days,
-                              cur_day=cur_date)
+                              busy_days=busy_days)
     curmonth_cal_nf = htmlcal.formatmonth()
 
     return curmonth_cal_nf

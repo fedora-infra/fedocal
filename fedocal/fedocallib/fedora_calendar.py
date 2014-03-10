@@ -27,8 +27,7 @@ class FedocalCalendar(HTMLCalendar):
     """
 
     def __init__(self, year, month, day,
-                 calendar_name=None, loc_name=None, busy_days=[],
-                 cur_day=None):
+                 calendar_name=None, loc_name=None, busy_days=[]):
         """ Constructor.
         Stores the year and the month asked.
         """
@@ -37,7 +36,6 @@ class FedocalCalendar(HTMLCalendar):
         self.month = month
         self.day = day
         self.busy_days = busy_days
-        self.cur_day = cur_day
         self.calendar_name = calendar_name
         self.loc_name = loc_name
 
@@ -167,10 +165,7 @@ class FedocalCalendar(HTMLCalendar):
         #item('\n')
         for week in self.monthdays2calendar(self.year, self.month):
             days = [day[0] for day in week]
-            if self.cur_day \
-                    and self.cur_day.day in days \
-                    and self.cur_day.month == self.month \
-                    and self.cur_day.year == self.year:
+            if self.day in days:
                 item(self.formatweek(week, current=True))
             else:
                 item(self.formatweek(week))

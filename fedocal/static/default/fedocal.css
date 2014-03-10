@@ -254,18 +254,21 @@ table.month td {
 
 table.month a{
     color: #808080;
+    display: block;
+    padding: .1em;
 }
 
 .busy_day {
     background-color: #3C6EB4;
     border-radius: 1em 1em 1em 0.3em;
     color: #FFFFFF !important;
-    padding: .1em;
+    padding: 0px;
     margin: 0px;
 }
 
 .busy_day a{
     color: #FFFFFF !important;
+    padding: .1em;
 }
 
 table.month .today a{

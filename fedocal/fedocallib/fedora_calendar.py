@@ -27,7 +27,7 @@ class FedocalCalendar(HTMLCalendar):
     """
 
     def __init__(self, year, month, day,
-                 calendar_name=None, loc_name=None, busy_days=[]):
+                 calendar_name=None, loc_name=None, busy_days=None):
         """ Constructor.
         Stores the year and the month asked.
         """

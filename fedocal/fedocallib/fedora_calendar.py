@@ -35,7 +35,7 @@ class FedocalCalendar(HTMLCalendar):
         self.year = year
         self.month = month
         self.day = day
-        self.busy_days = busy_days
+        self.busy_days = busy_days or []
         self.calendar_name = calendar_name
         self.loc_name = loc_name
 

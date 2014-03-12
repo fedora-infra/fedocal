@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.5.1
+Version:        0.6.0
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,13 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Wed Mar 12 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6.0-1
+- Update to 0.6.0
+- CSS fix in the monthly calendar
+- Use custom timezone ID in the ical output which should fix importing the iCal
+  feed into google calendar or evolution
+- Revert the meaning of the orange week in the monthly calendar
+
 * Tue Mar 04 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.5.1-1
 - Update to 0.5.1
 - Fix the link in the reminder email sent (does not hardcode the url anymore and

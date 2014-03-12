@@ -523,8 +523,11 @@ def ical_out(calendar_name):
         datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
     )
     headers["Content-Disposition"] = "attachment; filename=%s" % filename
+    output = ical.serialize()
+    output = output.replace('TZID:', 'TZID:fedocal_')
+    output = output.replace('TZID=', 'TZID=fedocal_')
     return flask.Response(
-        ical.serialize(),
+        output,
         mimetype='text/calendar',
         headers=headers)
 

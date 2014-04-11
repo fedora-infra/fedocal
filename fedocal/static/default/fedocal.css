@@ -314,6 +314,10 @@ th.month .ui-button-text {
     border: 1px solid #DDDDDD;
 }
 
+li.menu-focus {
+    border: 1px solid #3C6EB4;
+}
+
 .calendar_list {
     display: table;
     border-spacing: 1em;

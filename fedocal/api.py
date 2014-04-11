@@ -217,6 +217,10 @@ Sample response:
 
     list_locations = fedocallib.search_locations(SESSION, keyword)
 
+    # filter out all locations containing '#'
+    # https://fedorahosted.org/fedocal/ticket/118
+    list_locations = [_loc for _loc in list_locations if _loc.count('#')==0]
+
     output = {"locations": list_locations}
 
     return flask.Response(

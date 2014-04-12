@@ -102,39 +102,41 @@ else %}{{ location }}{% endif %}{% endblock %}
         <div id="accordion">
         <h4>Calendars</h4>
         <ul id="calendars_menu" class="checkmark-list">
-            {% for calendar in calendars %}
-            {% if calendar.calendar_status == 'Enabled' %}
-            <li id="menupos_{{ calendar.calendar_name }}">
+            {% for _calendar in calendars %}
+            {% if _calendar.calendar_status == 'Enabled' %}
+            <li {% if _calendar.calendar_name == calendar.calendar_name%}
+            class="menu-focus"
+            {% endif %}>
                 <a href="{{url_for('calendar',
-                    calendar_name=calendar.calendar_name)}}">
-                    {{ calendar.calendar_name }}
+                    calendar_name=_calendar.calendar_name)}}">
+                    {{ _calendar.calendar_name }}
                 </a>
                 <ul>
                     {% if g.fas_user %}
                     <li>
                         <a href="{{ url_for('add_meeting',
-                            calendar_name=calendar.calendar_name) }}">Add a meeting</a>
+                            calendar_name=_calendar.calendar_name) }}">Add a meeting</a>
                     </li>
                     {% endif %}
                     <li>
                         <a href="{{ url_for('calendar_list',
-                            calendar_name=calendar.calendar_name) }}">
+                            calendar_name=_calendar.calendar_name) }}">
                             List view
                         </a>
                     </li>
                     <li>
                         <a href="{{url_for('ical_out',
-                                           calendar_name=calendar.calendar_name)}}"
+                                           calendar_name=_calendar.calendar_name)}}"
                             title="Add this calendar to your agenda">iCal export</a>
                     </li>
                     <li>
                         <a onclick="CopyToClipboard('{{url_for('ical_out',
-                                           calendar_name=calendar.calendar_name)}}')"
+                                           calendar_name=_calendar.calendar_name)}}')"
                             title="Copy the iCal feed URL">Copy iCal link</a>
                     </li>
-                    {% if calendar.calendar_contact %}
+                    {% if _calendar.calendar_contact %}
                     <li>
-                        <a href="mailto:{{calendar.calendar_contact}}">
+                        <a href="mailto:{{_calendar.calendar_contact}}">
                             Contact admin
                         </a>
                     </li>
@@ -357,6 +359,5 @@ else %}{{ location }}{% endif %}{% endblock %}
             return false;
         });
     });
-$( '#menupos_{{ calendar.calendar_name }}' ).addClass( "menu-focus" );
 </script>
 {% endblock %}

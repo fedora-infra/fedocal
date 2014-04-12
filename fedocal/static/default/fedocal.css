@@ -220,7 +220,7 @@ td .last_event {
 }
 
 #mainmenu li {
-    margin-left: 0px;
+    margin-left: -2px;
 }
 
 #weeks {

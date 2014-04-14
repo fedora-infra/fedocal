@@ -104,7 +104,7 @@ else %}{{ location }}{% endif %}{% endblock %}
         <ul id="calendars_menu" class="checkmark-list">
             {% for _calendar in calendars %}
             {% if _calendar.calendar_status == 'Enabled' %}
-            <li {% if _calendar.calendar_name == calendar.calendar_name%}
+            <li {% if calendar and _calendar.calendar_name == calendar.calendar_name%}
             class="menu-focus"
             {% endif %}>
                 <a href="{{url_for('calendar',

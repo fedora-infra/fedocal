@@ -677,7 +677,7 @@ def add_meeting(calendar_name):
             # description
             if form.wiki_link.data.strip():
                 wiki_link = form.wiki_link.data.strip()
-                if not wiki_link in information:
+                if wiki_link not in information:
                     information += '\n\nMore information available at:'\
                         '\n[%s](%s)' % (wiki_link, wiki_link)
             meeting = fedocallib.add_meeting(
@@ -787,8 +787,7 @@ def edit_meeting(meeting_id):
                             calendarobj.calendar_status, 'errors')
                 return flask.redirect(
                     flask.url_for('calendar',
-                                  calendar_name=calendarobj.calendar_name
-                    )
+                                  calendar_name=calendarobj.calendar_name)
                 )
         tzone = form.meeting_timezone.data or tzone
         action = flask.request.form.get('action', 'Edit')

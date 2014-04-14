@@ -785,9 +785,11 @@ def edit_meeting(meeting_id):
                 flask.flash('This calendar is "%s", you are not allowed to '
                             'add meetings to it anymore.' %
                             calendarobj.calendar_status, 'errors')
-                return flask.redirect(flask.url_for('calendar',
-                                      calendar_name=
-                                      calendarobj.calendar_name))
+                return flask.redirect(
+                    flask.url_for('calendar',
+                                  calendar_name=calendarobj.calendar_name
+                    )
+                )
         tzone = form.meeting_timezone.data or tzone
         action = flask.request.form.get('action', 'Edit')
         try:

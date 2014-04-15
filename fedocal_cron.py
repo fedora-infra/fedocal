@@ -44,6 +44,7 @@ import fedocal.fedocallib as fedocallib
 
 
 def fedmsg_init():
+    """ Instanciate fedmsg """
     try:
         import fedmsg
         import fedmsg.config
@@ -59,6 +60,11 @@ def fedmsg_init():
 
 
 def fedmsg_publish(meeting, meeting_id):
+    """ Publish the meeting.reminder messages on fedmsg.
+    :arg meeting: a Meeting object from fedocallib.model
+    :arg meeting_id: an int representing the meeting identifier in the
+        database
+    """
     try:
         import fedmsg
     except ImportError:
@@ -80,6 +86,8 @@ def fedmsg_publish(meeting, meeting_id):
 def send_reminder_meeting(meeting, meeting_id):
     """ This function sends the actual reminder of a given meeting.
     :arg meeting: a Meeting object from fedocallib.model
+    :arg meeting_id: an int representing the meeting identifier in the
+        database
     """
     if not meeting.reminder_id:
         return

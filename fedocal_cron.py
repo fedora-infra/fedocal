@@ -58,17 +58,20 @@ def fedmsg_init():
     fedmsg.init(**config)
 
 
-def fedmsg_publish(meeting):
+def fedmsg_publish(meeting, meeting_id):
     try:
         import fedmsg
     except ImportError:
         return
 
+    meeting = meeting.to_json()
+    meeting['meeting_id'] = meeting_id
+
     fedmsg.publish(
         modname="fedocal",
         topic="meeting.reminder",
         msg=dict(
-            meeting=meeting.to_json(),
+            meeting=meeting,
             calendar=meeting.calendar.to_json()
         ),
     )
@@ -140,7 +143,7 @@ def send_reminder():
         meeting_id = meeting.meeting_id
         meeting = fedocallib.update_date_rec_meeting(meeting, action='next')
         send_reminder_meeting(meeting, meeting_id)
-        fedmsg_publish(meeting)
+        fedmsg_publish(meeting, meeting_id)
 
 
 if __name__ == '__main__':

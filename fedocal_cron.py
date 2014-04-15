@@ -36,6 +36,7 @@ import pkg_resources
 import ConfigParser
 import smtplib
 import os
+import warnings
 
 from email.mime.text import MIMEText
 

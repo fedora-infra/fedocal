@@ -131,11 +131,12 @@ Please note:
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP(fedocal.APP.config['SMTP_SERVER'])
-    s.sendmail(from_email,
-               meeting.reminder.reminder_to,
-               msg.as_string())
-    s.quit()
+    smtp = smtplib.SMTP(fedocal.APP.config['SMTP_SERVER'])
+    smtp.sendmail(
+        from_email,
+        meeting.reminder.reminder_to,
+        msg.as_string())
+    smtp.quit()
 
 
 def send_reminder():

@@ -33,9 +33,8 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 
-import ConfigParser
 import smtplib
-import os
+import warnings
 
 from email.mime.text import MIMEText
 
@@ -44,6 +43,7 @@ import fedocal.fedocallib as fedocallib
 
 
 def fedmsg_init():
+    """ Instanciate fedmsg """
     try:
         import fedmsg
         import fedmsg.config
@@ -58,17 +58,25 @@ def fedmsg_init():
     fedmsg.init(**config)
 
 
-def fedmsg_publish(meeting):
+def fedmsg_publish(meeting, meeting_id):
+    """ Publish the meeting.reminder messages on fedmsg.
+    :arg meeting: a Meeting object from fedocallib.model
+    :arg meeting_id: an int representing the meeting identifier in the
+        database
+    """
     try:
         import fedmsg
     except ImportError:
         return
 
+    meeting = meeting.to_json()
+    meeting['meeting_id'] = meeting_id
+
     fedmsg.publish(
         modname="fedocal",
         topic="meeting.reminder",
         msg=dict(
-            meeting=meeting.to_json(),
+            meeting=meeting,
             calendar=meeting.calendar.to_json()
         ),
     )
@@ -77,6 +85,8 @@ def fedmsg_publish(meeting):
 def send_reminder_meeting(meeting, meeting_id):
     """ This function sends the actual reminder of a given meeting.
     :arg meeting: a Meeting object from fedocallib.model
+    :arg meeting_id: an int representing the meeting identifier in the
+        database
     """
     if not meeting.reminder_id:
         return
@@ -121,11 +131,12 @@ Please note:
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP(fedocal.APP.config['SMTP_SERVER'])
-    s.sendmail(from_email,
-               meeting.reminder.reminder_to,
-               msg.as_string())
-    s.quit()
+    smtp = smtplib.SMTP(fedocal.APP.config['SMTP_SERVER'])
+    smtp.sendmail(
+        from_email,
+        meeting.reminder.reminder_to,
+        msg.as_string())
+    smtp.quit()
 
 
 def send_reminder():
@@ -140,7 +151,7 @@ def send_reminder():
         meeting_id = meeting.meeting_id
         meeting = fedocallib.update_date_rec_meeting(meeting, action='next')
         send_reminder_meeting(meeting, meeting_id)
-        fedmsg_publish(meeting)
+        fedmsg_publish(meeting, meeting_id)
 
 
 if __name__ == '__main__':

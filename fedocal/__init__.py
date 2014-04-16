@@ -751,15 +751,6 @@ def edit_meeting(meeting_id):
 
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
 
-    if not is_calendar_manager(calendarobj):
-        flask.flash('You are not one of the editors of this calendar, '
-                    'or one of its admins, you are not allowed to edit '
-                    'meetings.', 'errors')
-        return flask.redirect(flask.url_for(
-            'calendar', calendar_name=meeting.calendar_name))
-
-    calendars = Calendar.get_all(SESSION)
-
     if calendarobj.calendar_status != 'Enabled':
         flask.flash('This calendar is "%s", you are not allowed to edit its '
                     'meetings anymore.' % calendarobj.calendar_status,
@@ -774,6 +765,8 @@ def edit_meeting(meeting_id):
                     'errors')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
+
+    calendars = Calendar.get_all(SESSION)
 
     tzone = get_timezone()
     form = forms.AddMeetingForm(calendars=calendars)

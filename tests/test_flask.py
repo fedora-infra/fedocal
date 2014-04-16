@@ -1112,14 +1112,15 @@ class Flasktests(Modeltests):
                 in output.data)
             self.assertTrue('<title>Home - Fedocal</title>' in output.data)
 
-            output = self.app.get('/meeting/edit/1/', follow_redirects=True)
+            output = self.app.get('/meeting/edit/3/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="errors">You are not one of the editors of this '
-                'calendar, or one of its admins, you are not allowed to edit'
-                ' meetings.</li>' in output.data)
+                '<li class="errors">You are not one of the manager of this '
+                'meeting, or an admin, you are not allowed to edit it.</li>'
+                in output.data)
             self.assertTrue(
-                '<title>test_calendar - Fedocal</title>' in output.data)
+                '<title>Meeting test-meeting23h59 - Fedocal</title>'
+                in output.data)
 
         user = FakeUser(['fi-apprentice'], username='kevin')
         with user_set(fedocal.APP, user):

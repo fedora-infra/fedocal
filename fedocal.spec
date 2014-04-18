@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.6.0
+Version:        0.6.1
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,14 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Fri Apr 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6.1-1
+- Update to 0.6.1
+- Use cantarell as default font
+- Highlight the current calendar in the list
+- Forbid `#` in meeting location
+- Fix fedmsg messages to avoid empty meeting_id
+- Fix editing one's meeting
+
 * Wed Mar 12 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6.0-1
 - Update to 0.6.0
 - CSS fix in the monthly calendar

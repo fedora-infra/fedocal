@@ -69,14 +69,14 @@ def fedmsg_publish(meeting, meeting_id):
     except ImportError:
         return
 
-    meeting = meeting.to_json()
-    meeting['meeting_id'] = meeting_id
+    meeting_dict = meeting.to_json()
+    meeting_dict['meeting_id'] = meeting_id
 
     fedmsg.publish(
         modname="fedocal",
         topic="meeting.reminder",
         msg=dict(
-            meeting=meeting,
+            meeting=meeting_dict,
             calendar=meeting.calendar.to_json()
         ),
     )

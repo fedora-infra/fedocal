@@ -560,7 +560,8 @@ def auth_login():
 
     return_point = flask.url_for('index')
     if 'next' in flask.request.args:
-        return_point = flask.request.args['next']
+        if is_safe_url(flask.request.args['next']):
+            return_point = flask.request.args['next']
 
     if authenticated():
         return flask.redirect(return_point)

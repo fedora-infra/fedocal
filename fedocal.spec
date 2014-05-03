@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.6.2
+Version:        0.6.3
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,9 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6.3-1
+- Security update, prevent fedocal to redirect to malicious website
+
 * Wed Apr 23 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6.2-1
 - Update to 0.6.2
 - Fix cron job

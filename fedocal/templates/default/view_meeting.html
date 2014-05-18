@@ -1,28 +1,20 @@
+{% from "_formhelpers.html" import render_field, render_field_invert,
+    render_field_in_row %}
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="jquery.countdown.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+    <link type="text/css" rel="stylesheet"
+        href="{{ url_for('static',
+            filename='jquery.countdown.css')}}" />
     <style type="text/css">
         #defaultCountdown { width: 240px; height: 45px; }
     </style>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
-    </script>
+    {% block header %}{% endblock %}   
 </head>
 <body>
-    <script src="jquery.plugin.js"></script>
-    <script src="jquery.countdown.js"></script>
-    <script>
-        $(function () {
-        var austDay = new Date();
-        austDay = new Date(austDay.getFullYear() + 1, 1 - 1, 26);
-        $('#defaultCountdown').countdown({until: austDay});
-        $('#year').text(austDay.getFullYear());
-        });
-    </script>
-    <p>Counting down to 26 January <span id="year">2015</span>.</p>
-    <div id="defaultCountdown"></div>
-
-
+    
 {% if full %}
 {% extends "master.html" %}
 
@@ -39,20 +31,19 @@
             <a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
             {{ meeting.calendar_name }}</a>
         </h2>
-        <p>{{ meeting.meeting_name}} meeting details below</p>
+        {{ meeting.meeting_name}} meeting details below<br>
     </header>
 
-    <p>
+   <br>
         You are kindly invited to join to the following meeting:
-    </p>
-
-    <h4> Meeting: {{ meeting.meeting_name}}</h4>
+        <h4> Meeting: {{ meeting.meeting_name}}</h4>
+      
 
     {% if meeting.meeting_location %}
-    <p>Location: {{ meeting.meeting_location }}</p>
+    Location: {{ meeting.meeting_location }}
     {%endif%}
 
-    <p>Displayed in: {{tzone}}</p>
+    <br>Displayed in: {{tzone}}
     <ul>
         <li>Start: {{ meeting.meeting_date }} - {{ meeting.meeting_time_start
             }} {{ tzone }} </li>
@@ -60,7 +51,7 @@
             }} {{ tzone }} </li>
     </ul>
 
-    <p>Stored in: {{org_meeting.meeting_timezone}}</p>
+    Stored in: {{org_meeting.meeting_timezone}}
     <ul>
         <li>Start: {{ org_meeting.meeting_date }} - {{ org_meeting.meeting_time_start
             }} {{ org_meeting.meeting_timezone }} </li>
@@ -71,18 +62,22 @@
     {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
     {% if meeting.recursion_frequency and meeting.recursion_ends %}
-    <p>
+    
         This meeting is recurrent, it occurs every
         {{ meeting.recursion_frequency }} days until
         {{ meeting.recursion_ends }}
-    </p>
+    <br>
     {% endif %}
 
-    <p>
+    
     This meeting is organized by {{ meeting.meeting_manager|join(', ') }} as part of
     the calendar <a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
     {{ meeting.calendar_name }}</a>.
-    </p>
+    <br>
+    Time left until meeting on {{ org_meeting.meeting_date }} - {{ org_meeting.meeting_time_start }} {{ org_meeting.meeting_timezone }} 
+    <div id="defaultCountdown"></div>
+    
+    
 
     {% if editor %}
     <p>
@@ -97,8 +92,38 @@
             title="Delete" alt="Delete"/>
         </a>
     </p>
+    
     {% endif %}
 </section>
+{% endblock %}
+
+{% block jscripts %}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery.plugin.js') }}">
+    </script>
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery.countdown.js') }}">
+    </script>
+    <script>
+        $(function () {
+        var strDate = '{{ org_meeting.meeting_date }}';
+        var strTime = '{{ meeting.meeting_time_start }}';
+        var dateParts = strDate.split("-");
+        var timeParts = strTime.split(":");
+        var hours = timeParts[0];
+        var minutes = timeParts[1];        
+        var date = new Date(dateParts[0], (dateParts[1] - 1), dateParts[2]);
+        date.setHours(date.getHours() + hours);
+        date.setMinutes(date.getMinutes() + minutes);
+        var austDay = new Date();
+        austDay = new Date(date.getFullYear(), 1 - 1, 26);
+        $('#defaultCountdown').countdown({until: date});
+        $('#year').text(date.getFullYear());
+        });
+    </script>
 {% endblock %}
 </body>
 </html>

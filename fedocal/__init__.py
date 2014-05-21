@@ -699,6 +699,7 @@ def add_meeting(calendar_name):
                 frequency=form.frequency.data,
                 end_repeats=form.end_repeats.data,
                 remind_when=form.remind_when.data,
+                reminder_from=form.reminder_from.data,
                 remind_who=form.remind_who.data,
                 full_day=form.full_day.data,
                 admin=is_admin())
@@ -805,6 +806,7 @@ def edit_meeting(meeting_id):
                 recursion_frequency=form.frequency.data,
                 recursion_ends=form.end_repeats.data,
                 remind_when=form.remind_when.data,
+                reminder_from=form.reminder_from.data,
                 remind_who=form.remind_who.data,
                 full_day=form.full_day.data,
                 edit_all_meeting=action == 'Edit all',

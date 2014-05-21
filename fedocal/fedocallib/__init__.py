@@ -835,7 +835,7 @@ def add_meeting(
         meeting_information,
         meeting_location, tzone,
         frequency, end_repeats,
-        remind_when, remind_who,
+        remind_when, reminder_from, remind_who,
         full_day,
         admin=False):
     """ When a user wants to add a meeting to the database, we need to
@@ -880,10 +880,11 @@ def add_meeting(
         )
 
     reminder = None
-    if remind_when and remind_who:
+    if remind_when and remind_who and reminder_from:
         reminder = dbaction.add_reminder(
             session=session,
             remind_when=remind_when,
+            reminder_from=reminder_from,
             remind_who=remind_who)
 
     reminder_id = None
@@ -922,7 +923,7 @@ def edit_meeting(
         meeting_information,
         meeting_location, tzone,
         recursion_frequency, recursion_ends,
-        remind_when, remind_who,
+        remind_when, reminder_from, remind_who,
         full_day,
         edit_all_meeting=True,
         admin=False):
@@ -1026,17 +1027,18 @@ def edit_meeting(
         recursion_ends = date(2025, 12, 31)
     meeting.recursion_ends = recursion_ends
 
-    if remind_when and remind_who:
+    if remind_when and remind_who and reminder_from:
         if meeting.reminder_id:
             meeting.reminder.reminder_offset = remind_when
+            meeting.reminder.reminder_from = reminder_from
             meeting.reminder.reminder_to = remind_who
             meeting.reminder.save(session)
         else:
-            reminder = Reminder(remind_when,
-                                remind_who,
-                                None)
-            reminder.save(session)
-            session.flush()
+            reminder = dbaction.add_reminder(
+                session=session,
+                remind_when=remind_when,
+                reminder_from=reminder_from,
+                remind_who=remind_who)
             meeting.reminder = reminder
             session.flush()
     elif meeting.reminder_id:
@@ -1142,6 +1144,7 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
             frequency=None,
             end_repeats=None,
             remind_when=None,
+            reminder_from=None,
             remind_who=None,
             full_day=full_day,
             admin=admin)

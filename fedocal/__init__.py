@@ -49,6 +49,7 @@ from werkzeug import secure_filename
 
 import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
+import fedocal.proxy
 from fedocal.fedocallib.exceptions import FedocalException
 from fedocal.fedocallib.model import (Calendar, Meeting)
 
@@ -70,6 +71,7 @@ APP.static_folder = os.path.join(
     APP.static_folder, APP.config['THEME_FOLDER'])
 
 FAS = FAS(APP)
+APP.wsig_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
 # Set up the logger

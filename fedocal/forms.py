@@ -171,7 +171,7 @@ class AddMeetingForm(wtf.Form):
         'Send reminder to',
         [wtforms.validators.Email(), wtforms.validators.optional()])
     reminder_from = wtforms.TextField(
-        'Send reminder using from email',
+        'Send reminder from',
         [wtforms.validators.Email(), wtforms.validators.optional()])
 
     # Full day

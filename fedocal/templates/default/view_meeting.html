@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>    
-    <link type="text/css" rel="stylesheet"
-        href="{{ url_for('static',
-            filename='jquery.countdown.css')}}" />
-    <style type="text/css">
-        #defaultCountdown { width: 240px; height: 45px; }
-    </style>
-    {% block header %}{% endblock %}   
-</head>
-<body>
-    
+
 {% if full %}
 {% extends "master.html" %}
 

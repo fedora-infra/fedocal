@@ -170,6 +170,9 @@ class AddMeetingForm(wtf.Form):
     remind_who = wtforms.TextField(
         'Send reminder to',
         [wtforms.validators.Email(), wtforms.validators.optional()])
+    reminder_from = wtforms.TextField(
+        'Send reminder from',
+        [wtforms.validators.Email(), wtforms.validators.optional()])
 
     # Full day
     full_day = wtforms.BooleanField('Full day meeting')
@@ -211,6 +214,7 @@ class AddMeetingForm(wtf.Form):
             self.full_day.data = meeting.full_day
             if meeting.reminder_id:  # pragma: no cover
                 self.remind_when.data = meeting.reminder.reminder_offset
+                self.reminder_from.data = meeting.reminder.reminder_from
                 self.remind_who.data = meeting.reminder.reminder_to
 
 

@@ -172,7 +172,8 @@ class Meetingtests(Modeltests):
 
         # Meeting with a reminder
         remobj = model.Reminder(
-            'H-12', 'root@localhost', 'Come to our test meeting')
+            'H-12', 'pingou@fp.o', 'root@localhost',
+            'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()
         obj = model.Meeting(  # id:9
@@ -192,7 +193,8 @@ class Meetingtests(Modeltests):
         # Meeting with a recursion and reminder
         self.session.flush()
         remobj = model.Reminder(
-            'H-12', 'root@localhost', 'Come to our test meeting')
+            'H-12', 'pingou@fp.o', 'root@localhost',
+            'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()
         obj = model.Meeting(  # id:10

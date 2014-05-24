@@ -51,6 +51,7 @@ class Remindertests(Modeltests):
         """ Test the Reminder init function. """
         obj = model.Reminder(
             'H-12',
+            'pingou@fp.o',
             'fi-apprentice@lists.fedoraproject.org,'
             'ambassadors@lists.fedoraproject.org',
             'This is your friendly reminder')
@@ -62,6 +63,7 @@ class Remindertests(Modeltests):
         """ Test the Reminder init function. """
         obj = model.Reminder(
             'H-36',
+            'pingou@fp.o',
             'fi-apprentice@lists.fedoraproject.org,'
             'ambassadors@lists.fedoraproject.org',
             'This is your friendly reminder')

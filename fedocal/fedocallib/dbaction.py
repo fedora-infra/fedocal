@@ -19,12 +19,16 @@ from datetime import date
 import model
 
 
-def add_reminder(session, remind_when, remind_who, reminder_text=None):
+def add_reminder(
+        session, remind_when, reminder_from,
+        remind_who, reminder_text=None):
     """ Logic to add a reminder to the database.
     """
-    reminder = model.Reminder(reminder_offset=remind_when,
-                              reminder_to=remind_who,
-                              reminder_text=reminder_text)
+    reminder = model.Reminder(
+        reminder_offset=remind_when,
+        reminder_from=reminder_from,
+        reminder_to=remind_who,
+        reminder_text=reminder_text)
     reminder.save(session)
     session.flush()
     return reminder

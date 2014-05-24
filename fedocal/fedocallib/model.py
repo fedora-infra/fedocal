@@ -1069,11 +1069,15 @@ class Reminder(BASE):
         'H-12', 'H-24', 'H-48', 'H-168', name='reminder_offset'),
         nullable=False)
     reminder_to = Column(String(500), nullable=False)
+    reminder_from = Column(String(100), nullable=False)
     reminder_text = Column(Text)
 
-    def __init__(self, reminder_offset, reminder_to, reminder_text):
+    def __init__(
+            self, reminder_offset, reminder_from,
+            reminder_to, reminder_text):
         """ Constructor instanciating the defaults values. """
         self.reminder_offset = reminder_offset
+        self.reminder_from = reminder_from
         self.reminder_to = reminder_to
         self.reminder_text = reminder_text
 

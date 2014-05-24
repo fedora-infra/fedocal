@@ -568,7 +568,8 @@ class Fedocallibtests(Modeltests):
         """ Test the retrieve_meeting_to_remind function. """
         self.__setup_calendar()
         remobj = model.Reminder(
-            'H-12', 'root@localhost', 'Come to our test meeting')
+            'H-12', 'pingou@fp.o', 'root@localhost',
+            'Come to our test meeting')
         remobj.save(self.session)
         self.session.flush()
         time_start = datetime.utcnow() + timedelta(hours=12)
@@ -692,6 +693,7 @@ class Fedocallibtests(Modeltests):
             tzone=None,
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -714,6 +716,7 @@ class Fedocallibtests(Modeltests):
             tzone=None,
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -737,6 +740,7 @@ class Fedocallibtests(Modeltests):
             tzone=None,
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -759,6 +763,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -782,6 +787,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -805,6 +811,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -828,6 +835,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -849,6 +857,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=60),
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -875,6 +884,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=60),
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -908,6 +918,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -940,6 +951,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -972,6 +984,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -1002,6 +1015,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -1038,6 +1052,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -1071,6 +1086,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -1107,6 +1123,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=28),
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -1146,6 +1163,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=28),
+            reminder_from='pingou@fp.o',
             remind_when='',
             remind_who='test@example.org',
             full_day=False)
@@ -1185,6 +1203,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=7,
             end_repeats=date.today() + timedelta(days=28),
+            reminder_from='pingou@fp.o',
             remind_when='H-12',
             remind_who='test@example.org',
             full_day=False)
@@ -1227,6 +1246,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=False)
@@ -1260,6 +1280,7 @@ class Fedocallibtests(Modeltests):
             tzone='Europe/Paris',
             frequency=None,
             end_repeats=None,
+            reminder_from=None,
             remind_when=None,
             remind_who=None,
             full_day=True)
@@ -1303,7 +1324,7 @@ class Fedocallibtests(Modeltests):
             'Information',
             'EMEA',
             'Europe/Paris',
-            None, None,
+            None, None, None,
             None, None,
             full_day=False)
         self.session.rollback()
@@ -1326,7 +1347,7 @@ class Fedocallibtests(Modeltests):
             'Information',
             'EMEA',
             'Europe/Paris',
-            None, None,
+            None, None, None,
             None, None,
             full_day=False)
         self.session.rollback()
@@ -1347,7 +1368,7 @@ class Fedocallibtests(Modeltests):
             'Information',
             'EMEA',
             'Europe/Paris',
-            None, None,
+            None, None, None,
             None, None,
             full_day=False)
         self.session.rollback()
@@ -1369,7 +1390,7 @@ class Fedocallibtests(Modeltests):
             'Information',
             'EMEA',
             'Europe/Paris',
-            None, None,
+            None, None, None,
             None, None,
             full_day=False)
 
@@ -1397,7 +1418,7 @@ class Fedocallibtests(Modeltests):
             'EMEA',
             'Europe/Paris',
             None, None,
-            None, None,
+            None, None, None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
@@ -1429,7 +1450,7 @@ class Fedocallibtests(Modeltests):
             'EMEA',
             'Europe/Paris',
             None, None,
-            None, None,
+            None, None, None,
             full_day=True)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
@@ -1462,7 +1483,7 @@ class Fedocallibtests(Modeltests):
             'EMEA',
             'Europe/Paris',
             None, None,
-            None, None,
+            None, None, None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
@@ -1494,7 +1515,7 @@ class Fedocallibtests(Modeltests):
             'EMEA',
             'Europe/Paris',
             None, None,
-            'H-24', 'test@example.org',
+            'H-24', 'pingou@fp.o', 'test@example.org',
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
@@ -1535,7 +1556,7 @@ class Fedocallibtests(Modeltests):
             'EMEA',
             'Europe/Paris',
             7, TODAY + timedelta(days=30),
-            None, None,
+            None, None, None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
@@ -1576,7 +1597,7 @@ class Fedocallibtests(Modeltests):
             None,
             'Europe/Paris',
             None, None,
-            None, None,
+            None, None, None,
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 1)
         self.assertNotEqual(meeting, None)
@@ -1618,7 +1639,7 @@ class Fedocallibtests(Modeltests):
             None,
             'Europe/Paris',
             None, None,
-            'H-24', 'test@example.org',
+            'H-24', 'pingou@fp.o', 'test@example.org',
             full_day=False)
         meeting = model.Meeting.by_id(self.session, 9)
         self.assertNotEqual(meeting, None)
@@ -1657,7 +1678,7 @@ class Fedocallibtests(Modeltests):
             None,
             'Europe/Paris',
             7, TODAY + timedelta(days=30),
-            'H-24', 'test@example.org',
+            'H-24', 'pingou@fp.o', 'test@example.org',
             full_day=False,
             edit_all_meeting=False)
         meeting = model.Meeting.by_id(self.session, 9)
@@ -1698,7 +1719,7 @@ class Fedocallibtests(Modeltests):
             None,
             'Europe/Paris',
             None, None,  # Recursion
-            None, None,  # Reminder
+            None, None, None,  # Reminder
             full_day=True,
             edit_all_meeting=False)
         meeting = model.Meeting.by_id(self.session, 9)
@@ -1752,7 +1773,7 @@ class Fedocallibtests(Modeltests):
             None,
             'Europe/Paris',
             7, None,  # Recursion
-            None, None,  # Reminder
+            None, None, None,  # Reminder
             full_day=False,
             edit_all_meeting=False)
         meeting = model.Meeting.by_id(self.session, 9)
@@ -1797,7 +1818,7 @@ class Fedocallibtests(Modeltests):
             None,
             'Europe/Paris',
             7, None,  # Recursion
-            None, None,  # Reminder
+            None, None, None,  # Reminder
             full_day=False,
             edit_all_meeting=False)
         meeting = model.Meeting.by_id(self.session, 9)

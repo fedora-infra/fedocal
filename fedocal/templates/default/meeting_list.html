@@ -245,6 +245,31 @@
 </section>
 {% endblock %}
 
+{% block sidebar %}
+  <aside id="shortmenu">
+    <ul>
+      <li>
+        <a href="{{ url_for('add_meeting',
+                            calendar_name=calendar.calendar_name) }}">
+          <img src="{{ url_for('static', filename='plus.png') }}" title="Add meeting" />
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('calendar',
+                            calendar_name=calendar.calendar_name) }}">
+          <img src="{{ url_for('static', filename='table.png') }}" title="Calendar view" />
+        </a>
+      </li>
+      <li>
+        <a href="{{url_for('ical_out',
+                           calendar_name=calendar.calendar_name)}}">
+          <img src="{{ url_for('static', filename='ical.png') }}" title="Ical Export" />
+        </a>
+      </li>
+    </ul>
+  </aside>
+{% endblock %}
+
 {% block jscripts %}
 {{ super() }}
 <script type="text/javascript">

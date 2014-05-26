@@ -325,6 +325,7 @@ else %}{{ location }}{% endif %}{% endblock %}
 {% endblock %}
 
 {% block sidebar %}
+{% if calendar %}
   <aside id="shortmenu">
     <ul>
       <li>
@@ -347,6 +348,7 @@ else %}{{ location }}{% endif %}{% endblock %}
       </li>
     </ul>
   </aside>
+{% endif %}
 {% endblock %}
 
 {% block jscripts %}

@@ -246,6 +246,7 @@
 {% endblock %}
 
 {% block sidebar %}
+{% if calendar %}
   <aside id="shortmenu">
     <ul>
       <li>
@@ -268,6 +269,7 @@
       </li>
     </ul>
   </aside>
+{% endif %}
 {% endblock %}
 
 {% block jscripts %}

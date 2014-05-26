@@ -48,12 +48,14 @@ def validate_time(form, field):
     except ValueError:
         raise wtforms.ValidationError('Time must be of type "HH:MM"')
 
-def validate_meeting_location(form,field):
+
+def validate_meeting_location(form, field):
     """ Validate if location doesn't contain #irc-chan format
         More info: https://fedorahosted.org/fedocal/ticket/118
     """
     if field.data.count('#') > 0:
         raise wtforms.ValidationError('Please use channel@server format!')
+
 
 class AddCalendarForm(wtf.Form):
     """ Form used to create a new calendar. """

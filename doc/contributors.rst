@@ -28,3 +28,9 @@ This list is generated using
   git shortlog -s -n -e
 
 The fedocal logo is the results of the work of: Mark Klein (aka areke).
+
+The logos used in the sidebard on the calendar view and meetings list view
+originate from the `iconmoon <http://icomoon.io/>`_ project with modifications
+by the fedocal authors.
+At the time of their inclusion, these logos were licensed under these two
+licenses: CC BY 3.0 or GPL.

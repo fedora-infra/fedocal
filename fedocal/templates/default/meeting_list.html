@@ -213,7 +213,7 @@
                 {% set class = 'limit_future' %}
                 {% set future = False %}
             {% endif %}
-        <tr class="{{class}}">
+        <tr class="{{class}}" id="{{class}}">
         {% elif month != meeting.meeting_date.month %}
         <tr class="change_month">
         {% else %}
@@ -248,6 +248,32 @@
 {% block jscripts %}
 {{ super() }}
 <script type="text/javascript">
+    function isOnScreen(elm) {
+        var vpH = $(window).height(), // Viewport Height
+        st = $(window).scrollTop(), // Scroll Top
+        y = $(elm).offset().top;
+        return (y > st && y < (vpH + st));
+    };
+
+    $(function(){
+        var el = $('#today');
+        if (!el.size()) {
+            // #today is not in the page, trying with #limit_future
+            el = $('#limit_future');
+        }
+
+        if(!el.size()){
+            // No #today or #limit_future, exit
+            return;
+        }
+
+        if(!isOnScreen(el)) {
+            $('html, body').animate({
+                scrollTop: el.offset().top - 50
+            }, 1000);
+        };
+    });
+
     $(function(){
         $('.event').click(function(){
             var _cls = $(this).attr('class');

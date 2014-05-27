@@ -31,11 +31,17 @@
     <ul>
         <li title="{{ meeting_utc.meeting_date }} - {{
             meeting_utc.meeting_time_start }} UTC">
-            Start: {{ meeting.meeting_date }} - {{ meeting.meeting_time_start
+          <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
+            Start:
+          </span>
+          {{ meeting.meeting_date }} - {{ meeting.meeting_time_start
             }} {{ tzone }} </li>
         <li title="{{ meeting_utc.meeting_date_end }} - {{
             meeting_utc.meeting_time_stop }} UTC">
-            End: {{ meeting.meeting_date_end }} - {{ meeting.meeting_time_stop
+          <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
+            End:
+          </span>
+          {{ meeting.meeting_date_end }} - {{ meeting.meeting_time_stop
             }} {{ tzone }} </li>
     </ul>
 
@@ -43,11 +49,17 @@
     <ul>
         <li title="{{ meeting_utc.meeting_date }} - {{
             meeting_utc.meeting_time_start }} UTC">
-            Start: {{ org_meeting.meeting_date }} - {{ org_meeting.meeting_time_start
+          <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
+            Start:
+          </span>
+          {{ org_meeting.meeting_date }} - {{ org_meeting.meeting_time_start
             }} {{ org_meeting.meeting_timezone }} </li>
         <li title="{{ meeting_utc.meeting_date_end }} - {{
             meeting_utc.meeting_time_stop }} UTC">
-            End: {{ org_meeting.meeting_date_end }} - {{ org_meeting.meeting_time_stop
+          <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
+            End:
+          </span>
+          {{ org_meeting.meeting_date_end }} - {{ org_meeting.meeting_time_stop
             }} {{ org_meeting.meeting_timezone }} </li>
     </ul>
 

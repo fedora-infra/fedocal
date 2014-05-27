@@ -383,3 +383,13 @@ li.menu-focus {
 .today {
     background-color: #FFF6D5;
 }
+
+.u_dashed {
+/*
+    border-bottom: 1px dashed #000;
+*/
+    background-image: linear-gradient(to right, #333 40%, rgba(255, 255, 255, 0) 20%);
+    background-position: bottom;
+    background-size: 3px 1px;
+    background-repeat: repeat-x;
+}

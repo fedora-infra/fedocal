@@ -283,7 +283,7 @@ def format_full_day_meeting(meeting_list, week_start):
         if idx.days < 0:
             # Skip meetings finishing exactly at 00:00 on the day the week
             # starts
-            if meeting.meeting_date_end == week_start + timedelta(days=7) \
+            if meeting.meeting_date_end == week_start \
                     and meeting.meeting_time_stop.hour == 0:
                 continue
             idx = idx + timedelta(days=abs(idx.days))

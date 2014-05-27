@@ -517,6 +517,9 @@ class Meeting(BASE):
             query = query.filter(Meeting.full_day == full_day)
         if no_recursive:
             query = query.filter(Meeting.recursion_frequency == None)
+        else:
+            query = query.filter(
+                Meeting.recursion_ends >= Meeting.meeting_date)
 
         return query.all()
 

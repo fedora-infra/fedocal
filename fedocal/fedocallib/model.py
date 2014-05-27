@@ -363,8 +363,9 @@ class Meeting(BASE):
     def __repr__(self):
         """ Representation of the Reminder object when printed.
         """
-        return "<Meeting('%s', '%s', '%s')>" % (
-            self.calendar, self.meeting_name, self.meeting_date)
+        return "<Meeting('%s' - '%s', '%s', '%s')>" % (
+            self.meeting_id, self.calendar, self.meeting_name,
+            self.meeting_date)
 
     def save(self, session):
         """ Save the object into the database. """

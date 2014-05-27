@@ -519,7 +519,11 @@ class Meeting(BASE):
             query = query.filter(Meeting.recursion_frequency == None)
         else:
             query = query.filter(
-                Meeting.recursion_ends >= Meeting.meeting_date)
+                or_(
+                    (Meeting.recursion_ends >= Meeting.meeting_date),
+                    (Meeting.recursion_frequency == None),
+                )
+            )
 
         return query.all()
 

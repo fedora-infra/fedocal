@@ -326,7 +326,58 @@ else %}{{ location }}{% endif %}{% endblock %}
 
 {% block jscripts %}
 {{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='notify.min.js') }}">
+</script>
+
 <script type="text/javascript">
+    function below(elm) {
+        var vpH = $(window).height(), // Viewport Height
+            st = $(window).scrollTop(), // Scroll Top
+            y = $(elm).offset().top;
+        return (y > (vpH + st));
+    };
+
+    function above(elm) {
+        var vpH = $(window).height(), // Viewport Height
+            st = $(window).scrollTop(), // Scroll Top
+            y = $(elm).offset().top;
+        return (y < st);
+    };
+
+    $(function(){
+        var above_bool = false;
+        var below_bool = false;
+        $(".event").each(function() {
+            var el = $(this);
+            if (above_bool && below_bool) {
+                return
+            }
+            if (!above_bool && above(el)) {
+                console.log('Above');
+                console.log(el);
+                above_bool = true;
+            }
+            if (!below_bool && below(el)) {
+                console.log('Below');
+                below_bool = true;
+            }
+        });
+        if (below_bool) {
+          $.notify(
+            "Some meetings \n are hidden below",
+            { position: "right",
+              className: "success" });
+        }
+        if (above_bool) {
+          $.notify(
+            "Some meetings \n are hidden above",
+            { position: "right",
+              className: "success" });
+        }
+    });
+
     $(function(){
         $('.event').click(function(){
             var _cls = $(this).attr('class');

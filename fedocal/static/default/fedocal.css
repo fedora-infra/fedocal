@@ -361,12 +361,12 @@ li.menu-focus {
 }
 
 .limit_future td {
-    border-top: thin solid;
+    border-top: 2px solid;
     border-color: #31a90c;
 }
 
 .limit_past td {
-    border-top: thin solid;
+    border-top: 2px solid;
     border-color: red;
 }
 .today {

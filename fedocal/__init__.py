@@ -876,11 +876,21 @@ def view_meeting_page(meeting_id, full):
     if is_meeting_manager(meeting) or is_calendar_admin(
             meeting.calendar):
         editor = True
+
+    date_limit = None
+    if from_date:
+        date_limit = parser.parse(from_date).date() + datetime.timedelta(
+            days=6)
+
+    next_meeting = fedocallib.update_date_rec_meeting(
+        meeting_utc, action='next', date_limit=date_limit)
+
     return flask.render_template(
         'view_meeting.html',
         full=full,
         meeting=meeting,
         meeting_utc=meeting_utc,
+        next_meeting=next_meeting,
         org_meeting=org_meeting,
         tzone=tzone,
         title=meeting.meeting_name,

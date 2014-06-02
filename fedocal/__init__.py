@@ -868,8 +868,9 @@ def view_meeting_page(meeting_id, full):
 
     meeting = fedocallib.convert_meeting_timezone(
         meeting, meeting.meeting_timezone, tzone)
+
     meeting_utc = fedocallib.convert_meeting_timezone(
-        meeting, meeting.meeting_timezone, 'UTC')
+        org_meeting, org_meeting.meeting_timezone, 'UTC')
 
     editor = False
     if is_meeting_manager(meeting) or is_calendar_admin(

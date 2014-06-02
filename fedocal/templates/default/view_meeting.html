@@ -106,11 +106,11 @@
     <script type="text/javascript">
     $('#countdown').countdown(
         new Date(Date.UTC(
-            {{from_date.split('-')[0]}},
-            {{from_date.split('-')[1]}} - 1,
-            {{from_date.split('-')[2]}},
-            {{meeting.meeting_time_start.hour }},
-            {{meeting.meeting_time_start.minute}}, 0)),
+            {{next_meeting.meeting_date.year}},
+            {{next_meeting.meeting_date.month}} - 1,
+            {{next_meeting.meeting_date.day}},
+            {{next_meeting.meeting_time_start.hour }},
+            {{next_meeting.meeting_time_start.minute}}, 0)),
         function(event) {
             $(this).html(
                 event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));

@@ -63,6 +63,8 @@
             }} {{ org_meeting.meeting_timezone }} </li>
     </ul>
 
+    <div id="countdown"></div>
+
     {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
     {% if meeting.recursion_frequency and meeting.recursion_ends %}
@@ -93,5 +95,27 @@
         </a>
     </p>
     {% endif %}
+
+    {# We need to include this here, otherwise it won't work in the pop-up view #}
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery-1.10.2.js') }}">
+    </script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
+    </script>
+    <script type="text/javascript">
+    $('#countdown').countdown(
+        new Date(Date.UTC(
+            {{from_date.split('-')[0]}},
+            {{from_date.split('-')[1]}} - 1,
+            {{from_date.split('-')[2]}},
+            {{meeting.meeting_time_start.hour }},
+            {{meeting.meeting_time_start.minute}}, 0)),
+        function(event) {
+            $(this).html(
+                event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+        }
+    );
+    </script>
 </section>
 {% endblock %}

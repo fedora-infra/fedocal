@@ -84,7 +84,7 @@
     {% if editor %}
     <p>
         <a href="{{ url_for('edit_meeting',
-            meeting_id=meeting.meeting_id) }}">
+            meeting_id=meeting.meeting_id, from_date=from_date) }}">
             <img src="{{ url_for('static', filename='edit.png') }}"
                 title="Edit" alt="Edit"/>
         </a>

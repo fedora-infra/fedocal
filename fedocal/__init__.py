@@ -834,7 +834,14 @@ def edit_meeting(meeting_id):
         return flask.redirect(flask.url_for('view_meeting',
                               meeting_id=meeting_id))
     elif flask.request.method == 'GET':
-        meeting = fedocallib.update_date_rec_meeting(meeting, action='last')
+        from_date = flask.request.args.get('from_date', None)
+        date_limit = None
+        if from_date:
+            date_limit = parser.parse(from_date).date() + datetime.timedelta(
+                days=6)
+
+        meeting = fedocallib.update_date_rec_meeting(
+            meeting, action='next', date_limit=date_limit)
 
         form = forms.AddMeetingForm(
             meeting=meeting, timezone=tzone, calendars=calendars)

@@ -43,12 +43,12 @@
 	text-align: center;
 }
 .countdown-amount {
-    font-size: 200%;
+    font-size: 100%;
 }
 .countdown-period {
     display: block;
 }
 .countdown-descr {
 	display: block;
-	width: 100%;
+	width: 75%;
 }

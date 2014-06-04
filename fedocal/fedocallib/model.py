@@ -363,8 +363,9 @@ class Meeting(BASE):
     def __repr__(self):
         """ Representation of the Reminder object when printed.
         """
-        return "<Meeting('%s', '%s', '%s')>" % (
-            self.calendar, self.meeting_name, self.meeting_date)
+        return "<Meeting('%s' - '%s', '%s', '%s')>" % (
+            self.meeting_id, self.calendar, self.meeting_name,
+            self.meeting_date)
 
     def save(self, session):
         """ Save the object into the database. """
@@ -516,6 +517,13 @@ class Meeting(BASE):
             query = query.filter(Meeting.full_day == full_day)
         if no_recursive:
             query = query.filter(Meeting.recursion_frequency == None)
+        else:
+            query = query.filter(
+                or_(
+                    (Meeting.recursion_ends >= Meeting.meeting_date),
+                    (Meeting.recursion_frequency == None),
+                )
+            )
 
         return query.all()
 

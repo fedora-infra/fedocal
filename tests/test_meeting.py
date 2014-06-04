@@ -301,9 +301,8 @@ class Meetingtests(Modeltests):
         self.assertNotEqual(obj, None)
         self.assertEqual(
             str(obj),
-            '<Meeting(\'<Calendar(\'test_calendar\''
-            ')>\', \'Fedora-fr-test-meeting\', \'' + str(TODAY) +
-            '\')>')
+            "<Meeting('1' - '<Calendar('test_calendar')>', "
+            "'Fedora-fr-test-meeting', '" + str(TODAY) + "')>")
 
     def test_repr_meeting_user(self):
         """ Test the Meeting string representation function. """

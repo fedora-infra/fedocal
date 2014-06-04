@@ -324,6 +324,33 @@ else %}{{ location }}{% endif %}{% endblock %}
   </section>
 {% endblock %}
 
+{% block sidebar %}
+{% if calendar %}
+  <aside id="shortmenu">
+    <ul>
+      <li>
+        <a href="{{ url_for('add_meeting',
+                            calendar_name=calendar.calendar_name) }}">
+          <img src="{{ url_for('static', filename='plus.png') }}" title="Add meeting" />
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('calendar_list',
+                            calendar_name=calendar.calendar_name) }}">
+          <img src="{{ url_for('static', filename='list.png') }}" title="List view" />
+        </a>
+      </li>
+      <li>
+        <a href="{{url_for('ical_out',
+                           calendar_name=calendar.calendar_name)}}">
+          <img src="{{ url_for('static', filename='ical.png') }}" title="Ical Export" />
+        </a>
+      </li>
+    </ul>
+  </aside>
+{% endif %}
+{% endblock %}
+
 {% block jscripts %}
 {{ super() }}
 <script type="text/javascript"

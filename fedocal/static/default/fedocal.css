@@ -80,6 +80,17 @@ section nav {
     vertical-align: middle;
 }
 
+#shortmenu {
+    position: relative
+}
+
+#shortmenu ul {
+    position: fixed;
+    bottom: 20px;
+    right: 10px;
+    list-style: none;
+}
+
 #content section > header {
     margin-bottom: .5em;
     background: url(calendar.png) 0 50% no-repeat;

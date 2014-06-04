@@ -86,6 +86,8 @@
       </div>
     </div>
 
+    {% block sidebar %}{% endblock %}
+
     {% block jscripts %}
     <script type="text/javascript"
         src="{{ url_for('static',

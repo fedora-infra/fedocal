@@ -648,7 +648,7 @@ def retrieve_meeting_to_remind(session, offset=30):
     meetings = []
 
     for reminder_time in [12, 24, 48, 168]:
-    # Retrieve meeting planned in less than X hours
+        # Retrieve meeting planned in less than X hours
         new_date = _generate_date_rounded_to_the_hour(today,
                                                       reminder_time)
         end_date = new_date + timedelta(minutes=offset)

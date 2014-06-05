@@ -865,8 +865,13 @@ def view_meeting_page(meeting_id, full):
         flask.flash('No meeting could be found for this identifier',
                     'errors')
         return flask.redirect(flask.url_for('index'))
+
     meeting = fedocallib.convert_meeting_timezone(
         meeting, meeting.meeting_timezone, tzone)
+
+    meeting_utc = fedocallib.convert_meeting_timezone(
+        org_meeting, org_meeting.meeting_timezone, 'UTC')
+
     editor = False
     if is_meeting_manager(meeting) or is_calendar_admin(
             meeting.calendar):
@@ -875,6 +880,7 @@ def view_meeting_page(meeting_id, full):
         'view_meeting.html',
         full=full,
         meeting=meeting,
+        meeting_utc=meeting_utc,
         org_meeting=org_meeting,
         tzone=tzone,
         title=meeting.meeting_name,

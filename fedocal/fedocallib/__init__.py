@@ -1147,16 +1147,19 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
             admin=admin)
 
 
-def update_date_rec_meeting(meeting, action='last'):
+def update_date_rec_meeting(meeting, action='last', date_limit=None):
     """ From a recursive meeting, returns a meeting which date corresponds
     either to that of the last recursion that occured, or the next recursion
     that will occur.
     """
+    if not date_limit:
+        date_limit = date.today()
+        
     if meeting.recursion_frequency and meeting.recursion_ends \
             and is_date_in_future(
             meeting.recursion_ends, meeting.meeting_time_start):
         meetingobj = Meeting.copy(meeting)
-        while meetingobj.meeting_date < date.today():
+        while meetingobj.meeting_date < date_limit:
             if meetingobj.recursion_ends < meetingobj.meeting_date + \
                     timedelta(
                         days=meetingobj.recursion_frequency

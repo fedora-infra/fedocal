@@ -59,12 +59,12 @@
     {{ meeting.calendar_name }}</a>.
     </p>
     Time left until meeting on {{ org_meeting.meeting_date }} - {{ org_meeting.meeting_time_start }} {{ org_meeting.meeting_timezone }} 
-    <div id="defaultCountdown"></div>    
+    <div id="countdown"></div>    
 
     {% if editor %}
     <p>
         <a href="{{ url_for('edit_meeting',
-            meeting_id=meeting.meeting_id) }}">
+            meeting_id=meeting.meeting_id, from_date=from_date) }}">
             <img src="{{ url_for('static', filename='edit.png') }}"
                 title="Edit" alt="Edit"/>
         </a>
@@ -75,37 +75,27 @@
         </a>
      </p>  
     {% endif %}
+
+    {# We need to include this here, otherwise it won't work in the pop-up view #}
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery-1.10.2.js') }}">
+    </script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
+    </script>
+    <script type="text/javascript">
+    $('#countdown').countdown(
+        new Date(Date.UTC(
+            {{next_meeting.meeting_date.year}},
+            {{next_meeting.meeting_date.month}} - 1,
+            {{next_meeting.meeting_date.day}},
+            {{next_meeting.meeting_time_start.hour }},
+            {{next_meeting.meeting_time_start.minute}}, 0)),
+        function(event) {
+            $(this).html(
+                event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+        }
+    );
+    </script>
 </section>
 {% endblock %}
-
-{% block jscripts %}
-    <script type="text/javascript"
-        src="{{ url_for('static',
-            filename='jquery-1.10.2.js') }}">
-    </script>
-    <script type="text/javascript"
-        src="{{ url_for('static',
-            filename='jquery.plugin.js') }}">
-    </script>
-    <script type="text/javascript"
-        src="{{ url_for('static',
-            filename='jquery.countdown.js') }}">
-    </script>
-    <script>
-        $(function () {
-        var strDate = '{{ org_meeting.meeting_date }}';
-        var strTime = '{{ meeting.meeting_time_start }}';
-        var dateParts = strDate.split("-");
-        var timeParts = strTime.split(":");
-        var hours = timeParts[0];
-        var minutes = timeParts[1];        
-        var date = new Date(dateParts[0], (dateParts[1] - 1), dateParts[2]);
-        date.setHours(date.getHours() + hours);
-        date.setMinutes(date.getMinutes() + minutes);
-        $('#defaultCountdown').countdown({until: date});
-        $('#year').text(date.getFullYear());
-        });
-    </script>
-{% endblock %}
-</body>
-</html>

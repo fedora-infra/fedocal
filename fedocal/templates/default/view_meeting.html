@@ -127,3 +127,14 @@
     </script>
 </section>
 {% endblock %}
+
+
+{% if full %}
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
+</script>
+{% endblock %}
+
+{% endif %}

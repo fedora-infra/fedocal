@@ -109,18 +109,21 @@
     </script>
 
     <script type="text/javascript">
-    $('#countdown').countdown(
-        new Date(Date.UTC(
+    $(function(){
+        var _date = Date.UTC(
             {{next_meeting.meeting_date.year}},
             {{next_meeting.meeting_date.month}} - 1,
             {{next_meeting.meeting_date.day}},
             {{next_meeting.meeting_time_start.hour }},
-            {{next_meeting.meeting_time_start.minute}}, 0)),
-        function(event) {
-            $(this).html(
-                event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
-        }
-    );
+            {{next_meeting.meeting_time_start.minute}}, 0);
+        $('#countdown').countdown(
+            new Date(_date),
+            function(event) {
+                $(this).html(
+                    event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+            }
+        );
+    });
     </script>
 </section>
 {% endblock %}

@@ -63,7 +63,7 @@
             }} {{ org_meeting.meeting_timezone }} </li>
     </ul>
 
-    <div id="countdown"></div>
+    <div class="countdown"></div>
 
     {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
@@ -116,10 +116,10 @@
             {{next_meeting.meeting_date.day}},
             {{next_meeting.meeting_time_start.hour }},
             {{next_meeting.meeting_time_start.minute}}, 0);
-        $('#countdown').countdown(
+        $('.countdown').countdown(
             new Date(_date),
             function(event) {
-                $(this).html(
+                $('.countdown').html(
                     event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
             }
         );

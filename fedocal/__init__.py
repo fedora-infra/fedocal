@@ -886,8 +886,7 @@ def view_meeting_page(meeting_id, full):
 
     date_limit = None
     if from_date:
-        date_limit = parser.parse(from_date).date() + datetime.timedelta(
-            days=6)
+        date_limit = parser.parse(from_date).date()
 
     next_meeting = fedocallib.update_date_rec_meeting(
         meeting_utc, action='next', date_limit=date_limit)

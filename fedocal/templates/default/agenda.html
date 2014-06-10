@@ -408,7 +408,13 @@ else %}{{ location }}{% endif %}{% endblock %}
             type: 'GET',
             dataType: 'html',
             success: function(res) {
-                window.location.hash = 'm' + _meetId;
+                var _hash = 'm' + _meetId;
+                var _updated = true;
+                if (window.location.hash == '#' + _hash){
+                    _updated = false;
+                } else {
+                    window.location.hash = _hash;
+                }
                 var _elt = $('<div title="Meeting details" id="show_meeting">' + res + '</div>');
                 var _height = $(window).height() * 0.8;
                 _elt.dialog({
@@ -418,7 +424,9 @@ else %}{{ location }}{% endif %}{% endblock %}
                     cache: false,
                     close: function() {
                         $(this).html("");
-                        window.location.hash = null;
+                        if (_updated) {
+                            window.location.hash = null;
+                        }
                     },
                 });
             },

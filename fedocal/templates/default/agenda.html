@@ -416,8 +416,9 @@ else %}{{ location }}{% endif %}{% endblock %}
                     width: '50%',
                     modal: true,
                     cache: false,
-                    close: function (event, ui) {
+                    close: function() {
                         $(this).html("");
+                        window.location.hash = null;
                     },
                 });
             },

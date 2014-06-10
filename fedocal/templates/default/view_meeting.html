@@ -63,7 +63,7 @@
             }} {{ org_meeting.meeting_timezone }} </li>
     </ul>
 
-    <div class="countdown_{{ meeting.meeting_id }}"></div>
+    <div id="countdown"></div>
 
     {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
@@ -99,13 +99,6 @@
     {% if not full %}
     {# We need to include this here, otherwise it won't work in the pop-up view #}
     <script type="text/javascript"
-        src="{{ url_for('static', filename='jquery-1.10.2.js') }}">
-    </script>
-    <script type="text/javascript"
-        src="{{ url_for('static',
-            filename='jquery-ui-1.10.4.custom.min.js') }}">
-    </script>
-    <script type="text/javascript"
         src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
     </script>
 
@@ -117,7 +110,7 @@
             {{next_meeting.meeting_date.day}},
             {{next_meeting.meeting_time_start.hour }},
             {{next_meeting.meeting_time_start.minute}}, 0);
-        $('.countdown_{{ meeting.meeting_id }}').countdown(
+        $('#countdown').countdown(
             new Date(_date),
             function(event) {
                 $(this).html(
@@ -145,10 +138,10 @@ $(function(){
         {{next_meeting.meeting_date.day}},
         {{next_meeting.meeting_time_start.hour }},
         {{next_meeting.meeting_time_start.minute}}, 0);
-    $('.countdown').countdown(
+    $('#countdown').countdown(
         new Date(_date),
         function(event) {
-            $('.countdown').html(
+            $(this).html(
                 event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
         }
     );

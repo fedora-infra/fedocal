@@ -382,12 +382,9 @@ else %}{{ location }}{% endif %}{% endblock %}
                 return
             }
             if (!above_bool && above(el)) {
-                console.log('Above');
-                console.log(el);
                 above_bool = true;
             }
             if (!below_bool && below(el)) {
-                console.log('Below');
                 below_bool = true;
             }
         });

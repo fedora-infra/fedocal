@@ -442,5 +442,20 @@ else %}{{ location }}{% endif %}{% endblock %}
             return false;
         });
     });
+
+    $(window.onload=function(){
+        var _hash = window.location.hash;
+        if (_hash) {
+            var _meetId = _hash.split('m')[1];
+            var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
+            _url = _url + _meetId + '/0/';
+            var _comp = "{{weekdays[0].strftime('%Y-%m-%d')}}";
+            if (_comp) {
+                _url = _url + '?' + _comp;
+            }
+            view_meeting(_url, _meetId);
+            return false;
+        };
+    });
 </script>
 {% endblock %}

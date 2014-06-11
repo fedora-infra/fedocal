@@ -9,19 +9,11 @@
 
 {% block content %}
 <section>
-    <header>
-        <h2>
-            <a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
-            {{ meeting.calendar_name }}</a>
-        </h2>
-        <p>{{ meeting.meeting_name}} meeting details below</p>
-    </header>
+        <h2 class="orange"> Meeting: {{ meeting.meeting_name}}</h2>
+        <p class="blue">(<a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
+            {{ meeting.calendar_name }}</a>)
+        </p>
 
-    <p>
-        You are kindly invited to join to the following meeting:
-    </p>
-
-    <h4> Meeting: {{ meeting.meeting_name}}</h4>
 
     {% if meeting.meeting_location %}
     <p>Location: {{ meeting.meeting_location }}</p>
@@ -29,22 +21,44 @@
 
     <p>Displayed in: {{tzone}}</p>
     <ul>
-        <li title="{{ meeting_utc.meeting_date }} - {{
+        <li title="{{ meeting_utc.meeting_date.strftime('%a, %B %d, %Y') }} - {{
             meeting_utc.meeting_time_start }} UTC">
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
             Start:
           </span>
-          {{ meeting.meeting_date }} - {{ meeting.meeting_time_start
-            }} {{ tzone }} </li>
-        <li title="{{ meeting_utc.meeting_date_end }} - {{
+          {{ meeting.meeting_date.strftime('%a, %B %d, %Y') }} - {{
+            meeting.meeting_time_start.strftime('%H:%M') }} {{ tzone }}
+        </li>
+        <li title="{{ meeting_utc.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
             meeting_utc.meeting_time_stop }} UTC">
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
             End:
           </span>
-          {{ meeting.meeting_date_end }} - {{ meeting.meeting_time_stop
-            }} {{ tzone }} </li>
+          {{ meeting.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
+              meeting.meeting_time_stop }} {{ tzone }} </li>
     </ul>
 
+    <div id="countdown"></div>
+
+    <div id="meeting_description">
+    {% autoescape off%} {{ meeting.meeting_information | markdown  or 'No description' }} {% endautoescape %}
+    </div>
+
+    {% if meeting.recursion_frequency and meeting.recursion_ends %}
+    <p>
+        This meeting is recurrent, it occurs every
+        {{ meeting.recursion_frequency }} days until
+        {{ meeting.recursion_ends }}
+    </p>
+    {% endif %}
+
+    <p>
+    Meeting organized by
+    {% for manager in meeting.meeting_manager %}<a href="mailto:{{manager}}@fedorapeople.org">{{ manager }}</a>{%
+     if not loop.last %},{% endif %}{% endfor %}.
+    </p>
+
+    {% if editor %}
     <p>Stored in: {{org_meeting.meeting_timezone}}</p>
     <ul>
         <li title="{{ meeting_utc.meeting_date }} - {{
@@ -62,26 +76,6 @@
           {{ org_meeting.meeting_date_end }} - {{ org_meeting.meeting_time_stop
             }} {{ org_meeting.meeting_timezone }} </li>
     </ul>
-
-    <div id="countdown"></div>
-
-    {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
-
-    {% if meeting.recursion_frequency and meeting.recursion_ends %}
-    <p>
-        This meeting is recurrent, it occurs every
-        {{ meeting.recursion_frequency }} days until
-        {{ meeting.recursion_ends }}
-    </p>
-    {% endif %}
-
-    <p>
-    This meeting is organized by {{ meeting.meeting_manager|join(', ') }} as part of
-    the calendar <a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
-    {{ meeting.calendar_name }}</a>.
-    </p>
-
-    {% if editor %}
     <p>
         <a href="{{ url_for('edit_meeting',
             meeting_id=meeting.meeting_id, from_date=from_date) }}">

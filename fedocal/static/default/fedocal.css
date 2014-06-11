@@ -22,6 +22,14 @@ h4 {
     color: orange;
 }
 
+.orange {
+    color: #CE5C00;
+}
+
+.blue {
+    color: #0066CC;
+}
+
 .nobutton {
     background:none!important;
     border:none;
@@ -389,4 +397,8 @@ li.menu-focus {
     background-position: bottom;
     background-size: 3px 1px;
     background-repeat: repeat-x;
+}
+
+#meeting_description {
+    width: 60%;
 }

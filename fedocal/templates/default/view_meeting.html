@@ -63,6 +63,8 @@
             }} {{ org_meeting.meeting_timezone }} </li>
     </ul>
 
+    <div id="countdown"></div>
+
     {% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}
 
     {% if meeting.recursion_frequency and meeting.recursion_ends %}
@@ -82,7 +84,7 @@
     {% if editor %}
     <p>
         <a href="{{ url_for('edit_meeting',
-            meeting_id=meeting.meeting_id) }}">
+            meeting_id=meeting.meeting_id, from_date=from_date) }}">
             <img src="{{ url_for('static', filename='edit.png') }}"
                 title="Edit" alt="Edit"/>
         </a>
@@ -93,5 +95,58 @@
         </a>
     </p>
     {% endif %}
+
+    {% if not full %}
+    {# We need to include this here, otherwise it won't work in the pop-up view #}
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
+    </script>
+
+    <script type="text/javascript">
+    $(function(){
+        var _date = Date.UTC(
+            {{next_meeting.meeting_date.year}},
+            {{next_meeting.meeting_date.month}} - 1,
+            {{next_meeting.meeting_date.day}},
+            {{next_meeting.meeting_time_start.hour }},
+            {{next_meeting.meeting_time_start.minute}}, 0);
+        $('#countdown').countdown(
+            new Date(_date),
+            function(event) {
+                $(this).html(
+                    event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+            }
+        );
+    });
+    </script>
+    {% endif %}
 </section>
 {% endblock %}
+
+
+{% if full %}
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
+</script>
+<script type="text/javascript">
+$(function(){
+    var _date = Date.UTC(
+        {{next_meeting.meeting_date.year}},
+        {{next_meeting.meeting_date.month}} - 1,
+        {{next_meeting.meeting_date.day}},
+        {{next_meeting.meeting_time_start.hour }},
+        {{next_meeting.meeting_time_start.minute}}, 0);
+    $('#countdown').countdown(
+        new Date(_date),
+        function(event) {
+            $(this).html(
+                event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+        }
+    );
+});
+</script>
+{% endblock %}
+
+{% endif %}

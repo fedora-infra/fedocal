@@ -426,7 +426,11 @@ else %}{{ location }}{% endif %}{% endblock %}
                     _elt.dialog({
                         height: _height,
                         width: '50%',
-                        modal: true
+                        modal: true,
+                        cache: false,
+                        close: function (event, ui) {
+                            $(this).html("");
+                        },
                     });
                 },
                 error: function() {

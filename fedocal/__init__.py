@@ -311,14 +311,11 @@ def index():
 
 
 # pylint: disable=R0914
-@APP.route('/<calendar_name>/',
-           defaults={'year': None, 'month': None, 'day': None})
-@APP.route('/<calendar_name>/<int:year>/',
-           defaults={'month': None, 'day': None})
-@APP.route('/<calendar_name>/<int:year>/<int:month>/',
-           defaults={'day': None})
+@APP.route('/<calendar_name>/')
+@APP.route('/<calendar_name>/<int:year>/')
+@APP.route('/<calendar_name>/<int:year>/<int:month>/')
 @APP.route('/<calendar_name>/<int:year>/<int:month>/<int:day>/')
-def calendar(calendar_name, year, month, day):
+def calendar(calendar_name, year=None, month=None, day=None, mid=None):
     """ Display the week of a specific date for a specified calendar.
 
     :arg calendar_name: the name of the calendar that one would like to

@@ -135,7 +135,7 @@ $(function(){
         new Date(_date),
         function(event) {
             $(this).html(
-                event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+                event.strftime('<p>Meeting in: %w weeks %d days %H:%M:%S</p>'));
         }
     );
 });

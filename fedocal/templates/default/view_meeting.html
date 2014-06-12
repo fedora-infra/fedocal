@@ -25,16 +25,16 @@
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
             Start:
           </span>
-          {{ meeting.meeting_date.strftime('%a, %B %d, %Y') }} - {{
-            meeting.meeting_time_start.strftime('%H:%M') }} {{ tzone }}
+          {{ next_meeting.meeting_date.strftime('%a, %B %d, %Y') }} - {{
+            next_meeting.meeting_time_start.strftime('%H:%M') }} {{ tzone }}
         </li>
         <li title="{{ meeting_utc.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
             meeting_utc.meeting_time_stop }} UTC">
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
             End:
           </span>
-          {{ meeting.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
-              meeting.meeting_time_stop }} {{ tzone }} </li>
+          {{ next_meeting.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
+              next_meeting.meeting_time_stop }} {{ tzone }} </li>
     </ul>
 
     <div id="countdown"></div>

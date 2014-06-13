@@ -425,7 +425,7 @@ else %}{{ location }}{% endif %}{% endblock %}
                     close: function() {
                         $(this).html("");
                         if (_updated) {
-                            window.location.hash = null;
+                            window.location.hash = '_';
                         }
                     },
                 });
@@ -454,7 +454,7 @@ else %}{{ location }}{% endif %}{% endblock %}
 
     $(window.onload=function(){
         var _hash = window.location.hash;
-        if (_hash) {
+        if (_hash && _hash != '#_') {
             var _meetId = _hash.split('m')[1];
             var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
             _url = _url + _meetId + '/0/';

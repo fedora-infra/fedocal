@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.6.3
+Version:        0.7
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,22 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Sat Jun 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.7-1
+- Update to 0.7
+- Rework the meeting detail view
+- Add date/time in UTC as titles to the dates on the meeting detail view
+- Add shortcuts to interact more easily with the calendars (calendar and
+  list views)
+- Fix bug in recursive meetings
+- Add notifications informing if there are meetings hidden below or above the
+  current view
+- Add permalink allowing one to copy/paste the url and send it to someone else
+- Add countdown on the meeting detail view
+- Auto-scroll to today or the future meetings in the list view
+- Bug fix in displaying the full day meetings
+- Add a dedicated field to set the address used to send fedocal reminder
+- Embed the background image in the sources to fix complaints when using https
+
 * Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6.3-1
 - Security update, prevent fedocal to redirect to malicious website
 

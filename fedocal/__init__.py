@@ -385,14 +385,11 @@ def calendar(calendar_name, year=None, month=None, day=None, mid=None):
         calendar_admin=is_calendar_admin(calendarobj))
 
 
-@APP.route('/list/<calendar_name>/',
-           defaults={'year': None, 'month': None, 'day': None})
-@APP.route('/list/<calendar_name>/<int:year>/',
-           defaults={'month': None, 'day': None})
-@APP.route('/list/<calendar_name>/<int:year>/<int:month>/',
-           defaults={'day': None})
+@APP.route('/list/<calendar_name>/')
+@APP.route('/list/<calendar_name>/<int:year>/')
+@APP.route('/list/<calendar_name>/<int:year>/<int:month>/')
 @APP.route('/list/<calendar_name>/<int:year>/<int:month>/<int:day>/')
-def calendar_list(calendar_name, year, month, day):
+def calendar_list(calendar_name, year=None, month=None, day=None):
     """ Display in a list form all the meetings of a given calendar.
     By default it displays all the meetings of the current year but this
     can be more restricted to a month or even a day.

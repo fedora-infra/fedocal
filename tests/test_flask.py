@@ -264,7 +264,7 @@ class Flasktests(Modeltests):
             '<title>Meeting test-meeting-st-1 - Fedocal</title>'
             in output.data)
         self.assertTrue(
-            '<h4> Meeting: test-meeting-st-1</h4>'
+            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
@@ -280,7 +280,7 @@ class Flasktests(Modeltests):
             '<title>Meeting test-meeting-st-1 - Fedocal</title>'
             in output.data)
         self.assertTrue(
-            '<h4> Meeting: test-meeting-st-1</h4>'
+            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
@@ -292,7 +292,7 @@ class Flasktests(Modeltests):
             '<title>Meeting test-meeting-st-1 - Fedocal</title>'
             not in output.data)
         self.assertTrue(
-            '<h4> Meeting: test-meeting-st-1</h4>'
+            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'

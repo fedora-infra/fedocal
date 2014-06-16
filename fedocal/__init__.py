@@ -400,6 +400,8 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
+    subject = flask.request.args.get('subject', None)
+
     today = datetime.date.today()
     inyear = year
     if not year:
@@ -432,6 +434,13 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
     tzone = get_timezone()
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, start_date, end_date, tzone)
+
+    if subject:
+        n_meetings = []
+        for meeting in meetings:
+            if subject in meeting.meeting_name:
+                n_meetings.append(meeting)
+        meetings = n_meetings
 
     month_name = datetime.date.today().strftime('%B')
 

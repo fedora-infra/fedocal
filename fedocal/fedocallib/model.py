@@ -488,6 +488,9 @@ class Meeting(BASE):
             restrict to only meetings which take up the full day.  False will
             only select meetings which do not take the full day.  None will
             not restrict.  Default to None
+        :kwarg no_recursive: a boolean specifying whether the list of
+            meetings returned should exclude recursive meetings.
+            Default to False, if True recursive meetings will be excluded.
         """
         query = session.query(
             cls

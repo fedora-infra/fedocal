@@ -433,14 +433,8 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
 
     tzone = get_timezone()
     meetings = fedocallib.get_by_date(
-        SESSION, calendarobj, start_date, end_date, tzone)
-
-    if subject:
-        n_meetings = []
-        for meeting in meetings:
-            if subject in meeting.meeting_name:
-                n_meetings.append(meeting)
-        meetings = n_meetings
+        SESSION, calendarobj, start_date, end_date, tzone,
+        name=subject)
 
     month_name = datetime.date.today().strftime('%B')
 

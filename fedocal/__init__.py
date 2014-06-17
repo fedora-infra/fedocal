@@ -402,12 +402,15 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
     """
     subject = flask.request.args.get('subject', None)
     delta = flask.request.args.get('delta', None)
+    end = flask.request.args.get('end', None)
 
     if delta:
         try:
             delta = int(delta)
         except ValueError:
             delta = None
+    if end:
+        end = parser.parse(end).date()
 
     today = datetime.date.today()
     inyear = year
@@ -421,7 +424,9 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
         inday = 1
     start_date = datetime.date(inyear, inmonth, inday)
 
-    if delta:
+    if end:
+        end_date = end
+    elif delta:
         end_date = start_date + relativedelta(days=+delta)
     elif not month and not day:
         end_date = start_date \

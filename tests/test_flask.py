@@ -215,6 +215,30 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/' % (
             today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 9)
+        self.assertEqual(output.data.count('<tr'), 20)
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?subject=Another'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 3)
+        self.assertEqual(output.data.count('<tr'), 14)
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?subject=Another past'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 1)
+        self.assertEqual(output.data.count('<tr'), 12)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)

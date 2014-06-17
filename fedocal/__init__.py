@@ -385,14 +385,11 @@ def calendar(calendar_name, year=None, month=None, day=None, mid=None):
         calendar_admin=is_calendar_admin(calendarobj))
 
 
-@APP.route('/list/<calendar_name>/',
-           defaults={'year': None, 'month': None, 'day': None})
-@APP.route('/list/<calendar_name>/<int:year>/',
-           defaults={'month': None, 'day': None})
-@APP.route('/list/<calendar_name>/<int:year>/<int:month>/',
-           defaults={'day': None})
+@APP.route('/list/<calendar_name>/')
+@APP.route('/list/<calendar_name>/<int:year>/')
+@APP.route('/list/<calendar_name>/<int:year>/<int:month>/')
 @APP.route('/list/<calendar_name>/<int:year>/<int:month>/<int:day>/')
-def calendar_list(calendar_name, year, month, day):
+def calendar_list(calendar_name, year=None, month=None, day=None):
     """ Display in a list form all the meetings of a given calendar.
     By default it displays all the meetings of the current year but this
     can be more restricted to a month or even a day.
@@ -403,6 +400,8 @@ def calendar_list(calendar_name, year, month, day):
     :arg month: the month of the date one would like to consult.
     :arg day: the day of the date one would like to consult.
     """
+    subject = flask.request.args.get('subject', None)
+
     today = datetime.date.today()
     inyear = year
     if not year:
@@ -435,6 +434,13 @@ def calendar_list(calendar_name, year, month, day):
     tzone = get_timezone()
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, start_date, end_date, tzone)
+
+    if subject:
+        n_meetings = []
+        for meeting in meetings:
+            if subject in meeting.meeting_name:
+                n_meetings.append(meeting)
+        meetings = n_meetings
 
     month_name = datetime.date.today().strftime('%B')
 

@@ -401,11 +401,13 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
     :arg day: the day of the date one would like to consult.
     """
     subject = flask.request.args.get('subject', None)
-    delta = flask.request.args.get('delta', 1)
-    try:
-        delta = int(delta)
-    except ValueError:
-        delta = 1
+    delta = flask.request.args.get('delta', None)
+
+    if delta:
+        try:
+            delta = int(delta)
+        except ValueError:
+            delta = None
 
     today = datetime.date.today()
     inyear = year
@@ -418,7 +420,10 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
     if not day:
         inday = 1
     start_date = datetime.date(inyear, inmonth, inday)
-    if not month and not day:
+
+    if delta:
+        end_date = start_date + relativedelta(days=+delta)
+    elif not month and not day:
         end_date = start_date \
             + relativedelta(years=+1) \
             - datetime.timedelta(days=1)
@@ -427,7 +432,7 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
             + relativedelta(months=+1) \
             - datetime.timedelta(days=1)
     else:
-        end_date = start_date + relativedelta(days=+delta)
+        end_date = start_date + relativedelta(days=+1)
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:

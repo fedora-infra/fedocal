@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.7.1
+Version:        0.8
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -101,6 +101,10 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Tue Jun 17 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.8-1
+- Update to 0.8
+- Add the possibility to filter the meetings in the list view
+
 * Mon Jun 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.7.1-1
 - Update to 0.7.1
 - Fix displaying the meeting times properly in the meeting details

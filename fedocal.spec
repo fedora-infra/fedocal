@@ -3,7 +3,7 @@
 
 Name:           fedocal
 Version:        0.8
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A web based calendar application
 
 License:        GPLv3+
@@ -87,6 +87,8 @@ install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi
 # Install the createdb script
 install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.py
 
+%check
+./run_test.sh
 
 %files
 %doc README.rst LICENSE doc/
@@ -101,6 +103,9 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Wed Jun 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.8-2
+- Activate the unit-tests ain the spec
+
 * Tue Jun 17 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.8-1
 - Update to 0.8
 - Add the possibility to filter the meetings in the list view

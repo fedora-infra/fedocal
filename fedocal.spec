@@ -26,6 +26,8 @@ BuildRequires:  python-dateutil <= 1.5
 BuildRequires:  python-setuptools
 BuildRequires:  python-markdown
 BuildRequires:  python-docutils
+BuildRequires:  python-nose
+BuildRequires:  python-coverage
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -88,7 +90,7 @@ install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi
 install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.py
 
 %check
-./run_test.sh
+./run_tests.sh
 
 %files
 %doc README.rst LICENSE doc/

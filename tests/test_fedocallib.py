@@ -566,6 +566,34 @@ class Fedocallibtests(Modeltests):
             meeting.meeting_date,
             TODAY + timedelta(days=56))
 
+    def test_delete_recursive_meeting_future_all(self):
+        """ Test the delete_recursive_meeting function. """
+        self.__setup_meeting()
+        meeting = model.Meeting.by_id(self.session, 8)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(
+            meeting.meeting_name, 'Another test meeting2')
+        self.assertEqual(
+            meeting.recursion_ends, TODAY + timedelta(days=90))
+
+        del_date = TODAY + timedelta(days=42)
+        fedocallib.delete_recursive_meeting(
+            self.session, meeting, del_date=del_date, all_meetings=True)
+
+        meeting = model.Meeting.by_id(self.session, 8)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'Another test meeting2')
+        # End date is one day before the next occurence of the recursion
+        # Meeting 8 starts TODAY and recurs every 14 days.
+        # The meeting now stops before its next occurence.
+        self.assertEqual(
+            meeting.recursion_ends,
+            TODAY + timedelta(days=41))
+
+        # Meeting does not restart 14 days later
+        meeting = model.Meeting.by_id(self.session, 16)
+        self.assertEqual(meeting, None)
+
     # pylint: disable=C0103
     def test_delete_recursive_meeting_past(self):
         """ Test the delete_recursive_meeting for past end_datefunction.

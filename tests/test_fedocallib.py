@@ -310,6 +310,55 @@ class Fedocallibtests(Modeltests):
                 cnt = cnt + 1
         self.assertEqual(cnt, 6)
 
+    # pylint: disable=C0103
+    def test_format_full_day_meeting(self):
+        """ Test the format_full_day_meeting function. """
+        self.__setup_meeting()
+        calendar = model.Calendar.by_id(self.session, 'test_calendar4')
+
+        # Set up some additional meetings
+
+        week_start = fedocallib.get_start_week()
+
+        # Meeting over a week-end
+        obj = model.Meeting(  # id:16
+            meeting_name='Meeting over a weekend',
+            meeting_date=week_start - timedelta(days=1),
+            meeting_date_end=TODAY,
+            meeting_time_start=time(0, 0),
+            meeting_time_stop=time(0, 0),
+            meeting_information='This is a test meeting',
+            calendar_name='test_calendar4',
+            full_day=True)
+        obj.add_manager(self.session, 'pingou')
+        obj.save(self.session)
+        self.session.commit()
+
+        # Meeting ending on the week's start
+        obj = model.Meeting(  # id:17
+            meeting_name='Meeting ending on week start',
+            meeting_date=week_start - timedelta(days=2),
+            meeting_date_end=week_start,
+            meeting_time_start=time(0, 0),
+            meeting_time_stop=time(0, 0),
+            meeting_information='This is a test meeting ending on week start',
+            calendar_name='test_calendar4',
+            full_day=True)
+        obj.add_manager(self.session, 'pingou')
+        obj.save(self.session)
+        self.session.commit()
+
+        calendar = model.Calendar.by_id(self.session, 'test_calendar4')
+        week = fedocallib.get_week(self.session, calendar)
+        full_day_meetings = fedocallib.format_full_day_meeting(
+            week.full_day_meetings, week_start)
+
+        self.assertEqual(full_day_meetings[2:], [[], [], [], [], []])
+        self.assertEqual(
+            full_day_meetings[0][0].meeting_name, 'Meeting over a weekend')
+        self.assertEqual(
+            full_day_meetings[1][0].meeting_name, 'Meeting over a weekend')
+
     def test_is_date_in_future(self):
         """ Test the is_date_in_future function. """
         meeting_date = datetime.utcnow().date()

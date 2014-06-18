@@ -583,12 +583,10 @@ def delete_recursive_meeting(
                     days=meeting.recursion_frequency * cnt
                 ):  # pragma: no cover
             break
-        meeting_date = meeting.meeting_date + \
-            timedelta(
-                days=meeting.recursion_frequency * cnt)
-        meeting_date_end = meeting.meeting_date_end + \
-            timedelta(
-                days=meeting.recursion_frequency * cnt)
+        meeting_date = meeting.meeting_date + timedelta(
+            days=meeting.recursion_frequency * cnt)
+        meeting_date_end = meeting.meeting_date_end + timedelta(
+            days=meeting.recursion_frequency * cnt)
         cnt = cnt + 1
 
     if all_meetings:

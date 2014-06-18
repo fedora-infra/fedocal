@@ -558,6 +558,14 @@ class Fedocallibtests(Modeltests):
             meeting.recursion_ends,
             TODAY + timedelta(days=41))
 
+        # Meeting re-starts 14 days later
+        meeting = model.Meeting.by_id(self.session, 16)
+        self.assertNotEqual(meeting, None)
+        self.assertEqual(meeting.meeting_name, 'Another test meeting2')
+        self.assertEqual(
+            meeting.meeting_date,
+            TODAY + timedelta(days=56))
+
     # pylint: disable=C0103
     def test_delete_recursive_meeting_past(self):
         """ Test the delete_recursive_meeting for past end_datefunction.

@@ -767,6 +767,7 @@ class Meeting(BASE):
         meetings = session.query(cls).filter(
             and_(
                 (Meeting.recursion_ends >= start_date),
+                (Meeting.recursion_ends >= Meeting.meeting_date),
                 (Meeting.calendar == calendar),
                 (Meeting.recursion_frequency != None),
                 (Meeting.recursion_ends != None),

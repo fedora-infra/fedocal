@@ -2016,6 +2016,58 @@ class Fedocallibtests(Modeltests):
 
         self.assertEqual(days, set([day.day]))
 
+    def test_update_date_rec_meeting(self):
+        """ Test the update_date_rec_meeting of fedocallib. """
+        self.__setup_meeting()
+
+        # Retrieve a recurrent meeting
+        meeting = model.Meeting.by_id(self.session, 7)
+
+        self.assertEqual(meeting.meeting_date, TODAY + timedelta(days=10))
+
+        # This the meeting has not occured yet, the next occurence is the
+        # first one
+        new_meeting = fedocallib.update_date_rec_meeting(meeting)
+        self.assertEqual(new_meeting.meeting_date, TODAY + timedelta(days=10))
+
+        # Return the next occurence in 30 days, should return 31
+        new_meeting = fedocallib.update_date_rec_meeting(
+            meeting, action='next', date_limit=TODAY + timedelta(days=30))
+        self.assertEqual(
+            new_meeting.meeting_date, TODAY + timedelta(days=31))
+
+        # Retrieve a recurrent meeting, that already started
+        meeting = model.Meeting.by_id(self.session, 12)
+
+        # Retrieve the last occurence compared to today - last week
+        new_meeting = fedocallib.update_date_rec_meeting(meeting)
+        if TODAY >= date.today():
+            self.assertEqual(
+                new_meeting.meeting_date, TODAY - timedelta(days=7))
+        else:
+            self.assertEqual(new_meeting.meeting_date, TODAY)
+
+        # Retrieve the next occurence compared to today - today
+        new_meeting = fedocallib.update_date_rec_meeting(
+            meeting, action='next')
+        if TODAY >= date.today():
+            self.assertEqual(new_meeting.meeting_date, TODAY)
+        else:
+            self.assertEqual(
+                new_meeting.meeting_date, TODAY + timedelta(days=7))
+
+        # Return the last occurence in 30 days, should return 24
+        new_meeting = fedocallib.update_date_rec_meeting(
+            meeting, date_limit=(TODAY + timedelta(days=30)))
+        self.assertEqual(
+            new_meeting.meeting_date, TODAY + timedelta(days=28))
+
+        # Return the next occurence in 30 days, should return 35
+        new_meeting = fedocallib.update_date_rec_meeting(
+            meeting, date_limit=TODAY + timedelta(days=30), action='next')
+        self.assertEqual(
+            new_meeting.meeting_date, TODAY + timedelta(days=35))
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Fedocallibtests)

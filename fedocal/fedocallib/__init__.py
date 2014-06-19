@@ -1159,10 +1159,12 @@ def update_date_rec_meeting(meeting, action='last', date_limit=None):
     """
     if not date_limit:
         date_limit = date.today()
+    if date_limit < meeting.meeting_date:
+        date_limit = meeting.meeting_date
 
     if meeting.recursion_frequency and meeting.recursion_ends \
             and is_date_in_future(
-            meeting.recursion_ends, meeting.meeting_time_start):
+                meeting.recursion_ends, meeting.meeting_time_start):
         meetingobj = Meeting.copy(meeting)
         while meetingobj.meeting_date < date_limit:
             if meetingobj.recursion_ends < meetingobj.meeting_date + \
@@ -1175,13 +1177,16 @@ def update_date_rec_meeting(meeting, action='last', date_limit=None):
             meetingobj.meeting_date_end = meetingobj.meeting_date_end + \
                 timedelta(days=meetingobj.recursion_frequency)
         meetingobj.meeting_manager_user = meeting.meeting_manager_user
-        meeting = meetingobj
 
         if action == 'last':
-            meeting.meeting_date = meeting.meeting_date - \
-                timedelta(days=meeting.recursion_frequency)
-            meeting.meeting_date_end = meeting.meeting_date_end - \
-                timedelta(days=meeting.recursion_frequency)
+            last_date = meetingobj.meeting_date - \
+                timedelta(days=meetingobj.recursion_frequency)
+            if meeting.meeting_date < last_date:
+                meetingobj.meeting_date = last_date
+                meetingobj.meeting_date_end = meetingobj.meeting_date_end - \
+                    timedelta(days=meetingobj.recursion_frequency)
+
+        meeting = meetingobj
 
     return meeting
 

@@ -413,7 +413,7 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
         try:
             end = parser.parse(end).date()
         except:
-            pass
+            end = None
 
     today = datetime.date.today()
     inyear = year

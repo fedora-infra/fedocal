@@ -215,7 +215,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/' % (
             today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 8)
+        self.assertEqual(output.data.count('<a class="event meeting_'), 12)
         self.assertEqual(output.data.count('<tr'), 20)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
@@ -226,7 +226,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/?subject=Another'
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 2)
+        self.assertEqual(output.data.count('<a class="event meeting_'), 6)
         self.assertEqual(output.data.count('<tr'), 14)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
@@ -237,7 +237,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/?subject=Another past'
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 0)
+        self.assertEqual(output.data.count('<a class="event meeting_'), 4)
         self.assertEqual(output.data.count('<tr'), 12)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)

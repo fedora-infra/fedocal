@@ -480,7 +480,8 @@ class Meeting(BASE):
     @classmethod
     def get_by_date(
             cls, session, calendar, start_date, stop_date,
-            full_day=None, no_recursive=False):
+            full_day=None, no_recursive=False,
+            name=None):
         """ Retrieve the list of meetings between two date.
         We include the start date and exclude the stop date.
 
@@ -488,6 +489,12 @@ class Meeting(BASE):
             restrict to only meetings which take up the full day.  False will
             only select meetings which do not take the full day.  None will
             not restrict.  Default to None
+        :kwarg no_recursive: a boolean specifying whether the list of
+            meetings returned should exclude recursive meetings.
+            Default to False, if True recursive meetings will be excluded.
+        :kwarg name: Defaults to None, if set the meetings returned will be
+            filtered for this string in their name.
+
         """
         query = session.query(
             cls
@@ -523,6 +530,10 @@ class Meeting(BASE):
                     (Meeting.recursion_ends >= Meeting.meeting_date),
                     (Meeting.recursion_frequency == None),
                 )
+            )
+        if name:
+            query = query.filter(
+                Meeting.meeting_name.ilike('%%%s%%' % name)
             )
 
         return query.all()
@@ -741,7 +752,7 @@ class Meeting(BASE):
 
     @classmethod
     def get_active_regular_meeting_by_date(
-            cls, session, calendar, start_date, full_day=None):
+            cls, session, calendar, start_date, full_day=None, name=None):
         """ Retrieve the list of recursive meetings occuring after the
         start_date in the specified calendar.
 
@@ -749,6 +760,9 @@ class Meeting(BASE):
             restrict to only meetings which take up the full day.  False will
             only select meetings which do not take the full day.  None will
             not restrict.  Default to None
+        :kwarg name: Defaults to None, if set the meetings returned will be
+            filtered for this string in their name.
+
         """
         meetings = session.query(cls).filter(
             and_(
@@ -765,6 +779,12 @@ class Meeting(BASE):
         # Apparently the API allows option that are not used
         if full_day is not None:  # pragma: no cover
             meetings = meetings.filter(Meeting.full_day == full_day)
+
+        if name:
+            meetings = meetings.filter(
+                Meeting.meeting_name.ilike('%%%s%%' % name)
+            )
+
         return meetings.all()
 
     @classmethod
@@ -797,7 +817,8 @@ class Meeting(BASE):
 
     @classmethod
     def get_regular_meeting_by_date(
-            cls, session, calendar, start_date, end_date, full_day=None):
+            cls, session, calendar, start_date, end_date, full_day=None,
+            name=None):
         """ Retrieve the list of recursive meetings happening in between
         the two specified dates.
 
@@ -805,10 +826,13 @@ class Meeting(BASE):
             restrict to only meetings which take up the full day.  False will
             only select meetings which do not take the full day.  None will
             not restrict.  Default to None
+        :kwarg name: Defaults to None, if set the meetings returned will be
+            filtered for this string in their name.
+
         """
         meetings = cls.expand_regular_meetings(
             cls.get_active_regular_meeting_by_date(
-                session, calendar, start_date, full_day),
+                session, calendar, start_date, full_day, name=name),
             end_date=end_date, start_date=start_date)
         meetings.sort(key=operator.attrgetter(
             'meeting_date', 'meeting_time_start', 'meeting_name'))

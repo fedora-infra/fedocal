@@ -760,7 +760,7 @@ def get_html_monthly_cal(
 
 
 def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC',
-                extended=True):
+                extended=True, name=None):
     """ Returns all the meetings in a given time period.
     Recursive meetings are expanded as if each was a single meeting.
 
@@ -771,17 +771,21 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC',
     :arg start_date: a Date object representing the ending of the period
     :kwarg tzone: the timezone in which the meetings should be displayed
         defaults to UTC.
+    :kwarg name: Defaults to None, if set the meetings returned will be
+            filtered for this string in their name.
+
     """
     meetings_utc = Meeting.get_by_date(
-        session, calendarobj, start_date, end_date, no_recursive=extended)
+        session, calendarobj, start_date, end_date, no_recursive=extended,
+        name=name)
     if extended:
         meetings_utc.extend(
             Meeting.get_regular_meeting_by_date(
-                session, calendarobj, start_date, end_date))
+                session, calendarobj, start_date, end_date, name=name))
     else:
         meetings_utc.extend(
             Meeting.get_active_regular_meeting_by_date(
-                session, calendarobj, start_date))
+                session, calendarobj, start_date, name=name))
     meetings = list(set(meetings_utc))
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings

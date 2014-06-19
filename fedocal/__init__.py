@@ -407,10 +407,13 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
     if delta:
         try:
             delta = int(delta)
-        except ValueError:
+        except:
             delta = None
     if end:
-        end = parser.parse(end).date()
+        try:
+            end = parser.parse(end).date()
+        except:
+            pass
 
     today = datetime.date.today()
     inyear = year

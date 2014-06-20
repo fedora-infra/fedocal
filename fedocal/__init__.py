@@ -964,7 +964,10 @@ def delete_meeting(meeting_id):
 
     from_date = flask.request.args.get('from_date', None)
     if from_date:
-        deleteform.from_date.data = parser.parse(from_date).date()
+        try:
+            deleteform.from_date.data = parser.parse(from_date).date()
+        except:
+            pass
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
 

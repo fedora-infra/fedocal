@@ -1142,6 +1142,8 @@ class Flasktests(Modeltests):
                 '<li class="message">Meeting added</li>' in output.data)
             self.assertTrue(
                 'href="/meeting/16/?from_date=' in output.data)
+            self.assertFalse(
+                'href="/meeting/17/?from_date=' in output.data)
 
             # Works - with a wiki_link
             data = {
@@ -1162,6 +1164,8 @@ class Flasktests(Modeltests):
                 '<li class="message">Meeting added</li>' in output.data)
             self.assertTrue(
                 'href="/meeting/17/?from_date=' in output.data)
+            self.assertFalse(
+                'href="/meeting/18/?from_date=' in output.data)
 
             # Calendar disabled
             data = {

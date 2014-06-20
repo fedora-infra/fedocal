@@ -1143,6 +1143,26 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 'href="/meeting/16/?from_date=' in output.data)
 
+            # Works - with a wiki_link
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'wiki_link': 'http://fedoraproject.org/wiki',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Meeting added</li>' in output.data)
+            self.assertTrue(
+                'href="/meeting/17/?from_date=' in output.data)
+
             # Calendar disabled
             data = {
                 'meeting_name': 'guess what?',

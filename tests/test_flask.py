@@ -1499,6 +1499,22 @@ class Flasktests(Modeltests):
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
+            # Invalid from_date
+            output = self.app.get(
+                '/meeting/delete/1/?from_date=foobar', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Delete meeting - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h4> Meeting: Fedora-fr-test-meeting</h4>'
+                in output.data)
+            self.assertTrue(
+                "positively sure that's what you want to do?"
+                in output.data)
+            self.assertTrue(
+                'name="confirm_delete" type="checkbox" value="y"><label'
+                in output.data)
+
             # Do not delete
             data = {
                 #'confirm_delete': False,

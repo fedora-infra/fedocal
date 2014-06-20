@@ -1384,7 +1384,24 @@ class Flasktests(Modeltests):
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedocal.APP, user):
             # Recursive meeting
-            output = self.app.get('/meeting/edit/12/', follow_redirects=True)
+            output = self.app.get(
+                '/meeting/edit/12/?from_date=foor', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Edit meeting - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h2>Edit meeting Another past test meeting</h2>'
+                in output.data)
+            self.assertTrue(
+                'meeting_name">Meeting name <span class="error">*</span></l'
+                in output.data)
+            self.assertTrue(
+                'for="meeting_date">Date <span class="error">*</span></label'
+                in output.data)
+
+            output = self.app.get(
+                '/meeting/edit/12/?from_date=%s' % TODAY.strftime('%Y-%m-%d'),
+                follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title>Edit meeting - Fedocal</title>' in output.data)

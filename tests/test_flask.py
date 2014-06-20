@@ -1540,6 +1540,41 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<li class="message">Meeting deleted</li>' in output.data)
 
+        # Add a meeting to the test_calendar_disabled calendar
+        obj = model.Meeting(  # id:16
+            meeting_name='Full-day meeting2',
+            meeting_date=TODAY + timedelta(days=2),
+            meeting_date_end=TODAY + timedelta(days=3),
+            meeting_time_start=time(0, 00),
+            meeting_time_stop=time(23, 59),
+            meeting_information='Full day meeting 2',
+            calendar_name='test_calendar_disabled',
+            full_day=True)
+        obj.add_manager(self.session, ['toshio'])
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        user = FakeUser(['fi-apprentice'], username='pingou')
+        with user_set(fedocal.APP, user):
+            # Delete all
+            data = {
+                'confirm_delete': True,
+                'confirm_futher_delete': True,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/meeting/delete/16/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>test_calendar_disabled - Fedocal</title>'
+                in output.data)
+            self.assertTrue(
+                '<li class="errors">This calendar is &#34;Disabled&#34;, '
+                'you are not allowed to delete its meetings anymore.</li>'
+                in output.data)
+
     def test_update_tz(self):
         """ Test the update_tz function. """
         self.__setup_db()

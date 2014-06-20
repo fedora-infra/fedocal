@@ -263,6 +263,23 @@ class Flasktests(Modeltests):
 
         end_date = today + timedelta(days=10)
 
+        output = self.app.get('/list/test_calendar/%s/%s/?end=%s-11'
+            % (today.year, today.month, end_date.strftime('%Y-%m')
+            ), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('<a class="event meeting_'), 2)
+        self.assertEqual(output.data.count('<tr'), 10)
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?end=foobar'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('<a class="event meeting_'), 12)
+        self.assertEqual(output.data.count('<tr'), 20)
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+
     def test_ical_out(self):
         """ Test the ical_out function. """
         self.__setup_db()

@@ -245,6 +245,24 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
 
+        output = self.app.get('/list/test_calendar/%s/%s/?delta=10'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('<a class="event meeting_'), 2)
+        self.assertEqual(output.data.count('<tr'), 10)
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?delta=abc'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data.count('<a class="event meeting_'), 12)
+        self.assertEqual(output.data.count('<tr'), 20)
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+
+        end_date = today + timedelta(days=10)
+
     def test_ical_out(self):
         """ Test the ical_out function. """
         self.__setup_db()

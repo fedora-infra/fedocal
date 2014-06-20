@@ -357,6 +357,33 @@ class Flasktests(Modeltests):
             'This is a test meeting at the same time'
             in output.data)
 
+        # Invalid from_date
+        output = self.app.get('/meeting/5/0/?from_date=foobar')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            not in output.data)
+        self.assertTrue(
+            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            in output.data)
+        self.assertTrue(
+            'This is a test meeting at the same time'
+            in output.data)
+
+        # Valid from_date
+        output = self.app.get(
+            '/meeting/5/0/?from_date=%s' % TODAY.strftime('%Y-%m-%d'))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            not in output.data)
+        self.assertTrue(
+            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            in output.data)
+        self.assertTrue(
+            'This is a test meeting at the same time'
+            in output.data)
+
         output = self.app.get('/meeting/50/0/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(

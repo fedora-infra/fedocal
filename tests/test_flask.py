@@ -959,6 +959,13 @@ class Flasktests(Modeltests):
                 '"errors">You must be in one more group than the CLA</li>'
                 in output.data)
 
+        user = FakeUser()
+        user.cla_done=False
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/mine/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedocal.APP, user):
             output = self.app.get('/mine/', follow_redirects=True)

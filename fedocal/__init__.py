@@ -852,8 +852,11 @@ def edit_meeting(meeting_id):
         from_date = flask.request.args.get('from_date', None)
         date_limit = None
         if from_date:
-            date_limit = parser.parse(from_date).date() + datetime.timedelta(
-                days=6)
+            try:
+                date_limit = parser.parse(
+                    from_date).date() + datetime.timedelta(days=6)
+            except:
+                pass
 
         meeting = fedocallib.update_date_rec_meeting(
             meeting, action='next', date_limit=date_limit)

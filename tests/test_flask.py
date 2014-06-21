@@ -1792,6 +1792,21 @@ class Flasktests(Modeltests):
                                 ' not an allowed format</li>'
                                 in output.data)
 
+    @flask10_only
+    def test_markdown_preview(self):
+        """ Test the markdown_preview function. """
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/markdown/')
+            self.assertEqual(output.status_code, 302)
+
+            data = {
+                'content': '``test``'
+            }
+            output = self.app.post('/markdown/', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(output.data, ' <p><code>test</code></p> ')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Flasktests)

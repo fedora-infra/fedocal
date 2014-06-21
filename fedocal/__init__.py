@@ -1013,8 +1013,6 @@ def delete_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to delete.
     """
-    if not authenticated():  # pragam: no cover
-        return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
                     'to delete the calendar.', 'errors')

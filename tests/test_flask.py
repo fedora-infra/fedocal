@@ -1611,6 +1611,7 @@ class Flasktests(Modeltests):
         """ Test the search function. """
         self.__setup_db()
 
+        # With '*'
         output = self.app.get('/search/?keyword=*meeting3*',
                               follow_redirects=True)
         self.assertTrue('<title>Search - Fedocal</title>' in output.data)
@@ -1618,6 +1619,16 @@ class Flasktests(Modeltests):
                         in output.data)
         self.assertTrue('href="/meeting/4/">'in output.data)
         self.assertTrue('d> <p>Test meeting with past end_recursion.</p> </'
+                        in output.data)
+
+        # Without any '*'
+        output = self.app.get('/search/?keyword=meeting3',
+                              follow_redirects=True)
+        self.assertTrue('<title>Search - Fedocal</title>' in output.data)
+        self.assertTrue('<p>Result of your search for "meeting3*"</p>'
+                        in output.data)
+        self.assertFalse('href="/meeting/4/">'in output.data)
+        self.assertFalse('d> <p>Test meeting with past end_recursion.</p> </'
                         in output.data)
 
         output = self.app.get('/search/',

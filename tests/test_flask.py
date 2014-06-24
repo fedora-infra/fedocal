@@ -1180,6 +1180,26 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Add meeting - Fedocal</title>' in output.data)
 
+            # Invalid location
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'meeting_location': '#fedora-meeting',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td>Please use channel@server format!</td>' in output.data)
+            self.assertTrue(
+                '<title>Add meeting - Fedocal</title>' in output.data)
+
             # Works
             data = {
                 'meeting_name': 'guess what?',

@@ -327,6 +327,43 @@ class Flasktests(Modeltests):
         output = self.app.get('/ical/foorbar/')
         self.assertEqual(output.status_code, 404)
 
+    def test_location_list(self):
+        """ Test the calendar_list function. """
+        self.__setup_db()
+
+        output = self.app.get('/location/list/EMEA/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> EMEA  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/location/list/foorbar/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="errors">No location named foorbar could not be found</'
+            in output.data)
+
+        today = date.today()
+        output = self.app.get('/location/list/EMEA/%s/%s/%s/' % (
+            today.year, today.month, today.day))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> EMEA  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/location/list/EMEA/%s/%s/' % (
+            today.year, today.month))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> EMEA  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
     def test_ical_all(self):
         """ Test the ical_all function. """
         self.__setup_db()

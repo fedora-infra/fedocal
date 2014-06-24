@@ -338,6 +338,7 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+        self.assertEqual(output.data.count('<a class="event'), 2)
 
         output = self.app.get('/location/list/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
@@ -354,6 +355,7 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+        self.assertEqual(output.data.count('<a class="event'), 0)
 
         output = self.app.get('/location/list/EMEA/%s/%s/' % (
             today.year, today.month))
@@ -363,6 +365,7 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+        self.assertEqual(output.data.count('<a class="event'), 1)
 
     def test_ical_all(self):
         """ Test the ical_all function. """

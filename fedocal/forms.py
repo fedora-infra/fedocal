@@ -53,7 +53,7 @@ def validate_meeting_location(form, field):
     """ Validate if location doesn't contain #irc-chan format
         More info: https://fedorahosted.org/fedocal/ticket/118
     """
-    if field.data.count('#') > 0:
+    if '#' in field.data.strip():
         raise wtforms.ValidationError('Please use channel@server format!')
 
 

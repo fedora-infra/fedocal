@@ -215,8 +215,12 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/' % (
             today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 8)
-        self.assertEqual(output.data.count('<tr'), 20)
+        # 6 on Tue Jun 24 - 12 before
+        self.assertTrue(
+            output.data.count('<a class="event meeting_') in [6, 12])
+        # 14 on Tue Jun 24 - 20 before
+        self.assertTrue(
+            output.data.count('<tr') in [14, 20])
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
@@ -226,8 +230,12 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/?subject=Another'
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 2)
-        self.assertEqual(output.data.count('<tr'), 14)
+        # 4 on Tue Jun 24 - 6 before
+        self.assertTrue(
+            output.data.count('<a class="event meeting_') in [4, 6])
+        # 12 on Tue Jun 24 - 14 before
+        self.assertTrue(
+            output.data.count('<tr') in [12, 14])
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
@@ -237,13 +245,69 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/?subject=Another past'
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data.count('<tr class="[]" id="[]">'), 0)
-        self.assertEqual(output.data.count('<tr'), 12)
+        self.assertEqual(output.status_code, 200)
+        # 3 on Tue Jun 24 - 4 before
+        self.assertTrue(
+            output.data.count('<a class="event meeting_') in [3, 4])
+        # 11 on Tue Jun 24 - 12 before
+        self.assertTrue(
+            output.data.count('<tr') in [11, 12])
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?delta=10'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        # 1 on Tue Jun 24 - 2 before
+        self.assertTrue(
+            output.data.count('<a class="event meeting_') in [1, 2])
+        # 9 on Tue Jun 24 - 10 before
+        self.assertTrue(
+            output.data.count('<tr') in [9, 10])
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?delta=abc'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        # 6 on Tue Jun 24 - 12 before
+        self.assertTrue(
+            output.data.count('<a class="event meeting_') in [6, 12])
+        # 14 on Tue Jun 24 - 20 before
+        self.assertTrue(
+            output.data.count('<tr') in [14, 20])
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+
+        end_date = today + timedelta(days=10)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?end=%s-11'
+            % (today.year, today.month, end_date.strftime('%Y-%m')
+            ), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        # 14 on Tue Jun 24 - 2 before
+        self.assertTrue(
+            output.data.count('<a class="event meeting_') in [14, 2])
+        # 22 on Tue Jun 24 - 10 before
+        self.assertTrue(
+            output.data.count('<tr') in [9, 22])
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
+
+        output = self.app.get('/list/test_calendar/%s/%s/?end=foobar'
+            % (today.year, today.month), follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        # 6 on Tue Jun 24 - 12 before
+        self.assertTrue(
+            output.data.count('<a class="event meeting_') in [6, 12])
+        # 14 on Tue Jun 24 - 20 before
+        self.assertTrue(
+            output.data.count('<tr') in [14, 20])
+        self.assertTrue(
+            '<title>test_calendar - Fedocal</title>' in output.data)
 
     def test_ical_out(self):
         """ Test the ical_out function. """
@@ -262,6 +326,46 @@ class Flasktests(Modeltests):
 
         output = self.app.get('/ical/foorbar/')
         self.assertEqual(output.status_code, 404)
+
+    def test_location_list(self):
+        """ Test the calendar_list function. """
+        self.__setup_db()
+
+        output = self.app.get('/location/list/EMEA/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> EMEA  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+        self.assertEqual(output.data.count('<a class="event'), 2)
+
+        output = self.app.get('/location/list/foorbar/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            'class="errors">No location named foorbar could not be found</'
+            in output.data)
+
+        today = date.today()
+        output = self.app.get('/location/list/EMEA/%s/%s/%s/' % (
+            today.year, today.month, today.day))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> EMEA  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+        self.assertEqual(output.data.count('<a class="event'), 0)
+
+        output = self.app.get('/location/list/EMEA/%s/%s/' % (
+            today.year, today.month))
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title> EMEA  - Fedocal</title>' in output.data)
+        self.assertTrue(' <a href="/test_calendar/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar2/">' in output.data)
+        self.assertTrue(' <a href="/test_calendar4/">' in output.data)
+        self.assertEqual(output.data.count('<a class="event'), 1)
 
     def test_ical_all(self):
         """ Test the ical_all function. """
@@ -311,6 +415,33 @@ class Flasktests(Modeltests):
             in output.data)
 
         output = self.app.get('/meeting/5/0/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            not in output.data)
+        self.assertTrue(
+            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            in output.data)
+        self.assertTrue(
+            'This is a test meeting at the same time'
+            in output.data)
+
+        # Invalid from_date
+        output = self.app.get('/meeting/5/0/?from_date=foobar')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            not in output.data)
+        self.assertTrue(
+            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            in output.data)
+        self.assertTrue(
+            'This is a test meeting at the same time'
+            in output.data)
+
+        # Valid from_date
+        output = self.app.get(
+            '/meeting/5/0/?from_date=%s' % TODAY.strftime('%Y-%m-%d'))
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<title>Meeting test-meeting-st-1 - Fedocal</title>'
@@ -959,6 +1090,13 @@ class Flasktests(Modeltests):
                 '"errors">You must be in one more group than the CLA</li>'
                 in output.data)
 
+        user = FakeUser()
+        user.cla_done=False
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/mine/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<title>Home - Fedocal</title>' in output.data)
+
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedocal.APP, user):
             output = self.app.get('/mine/', follow_redirects=True)
@@ -1082,6 +1220,26 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Add meeting - Fedocal</title>' in output.data)
 
+            # Invalid location
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'meeting_location': '#fedora-meeting',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td>Please use channel@server format!</td>' in output.data)
+            self.assertTrue(
+                '<title>Add meeting - Fedocal</title>' in output.data)
+
             # Works
             data = {
                 'meeting_name': 'guess what?',
@@ -1100,6 +1258,30 @@ class Flasktests(Modeltests):
                 '<li class="message">Meeting added</li>' in output.data)
             self.assertTrue(
                 'href="/meeting/16/?from_date=' in output.data)
+            self.assertFalse(
+                'href="/meeting/17/?from_date=' in output.data)
+
+            # Works - with a wiki_link
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'wiki_link': 'http://fedoraproject.org/wiki',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Meeting added</li>' in output.data)
+            self.assertTrue(
+                'href="/meeting/17/?from_date=' in output.data)
+            self.assertFalse(
+                'href="/meeting/18/?from_date=' in output.data)
 
             # Calendar disabled
             data = {
@@ -1275,10 +1457,67 @@ class Flasktests(Modeltests):
                 'you are not allowed to add meetings to it anymore.</li>'
                 in output.data)
 
+        # Add a meeting to the test_calendar_disabled calendar
+        obj = model.Meeting(  # id:16
+            meeting_name='Full-day meeting2',
+            meeting_date=TODAY + timedelta(days=2),
+            meeting_date_end=TODAY + timedelta(days=3),
+            meeting_time_start=time(0, 00),
+            meeting_time_stop=time(23, 59),
+            meeting_information='Full day meeting 2',
+            calendar_name='test_calendar_disabled',
+            full_day=True)
+        obj.add_manager(self.session, ['toshio'])
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        user = FakeUser(['fi-apprentice'], username='pingou')
+        with user_set(fedocal.APP, user):
+             # Calendar disabled
+            data = {
+                'calendar_name': 'test_calendar_disabled',
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/meeting/edit/16/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>test_calendar_disabled - Fedocal</title>'
+                in output.data)
+            self.assertTrue(
+                '<li class="errors">This calendar is &#34;Disabled&#34;, '
+                'you are not allowed to edit its meetings anymore.</li>'
+                in output.data)
+
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedocal.APP, user):
             # Recursive meeting
-            output = self.app.get('/meeting/edit/12/', follow_redirects=True)
+            output = self.app.get(
+                '/meeting/edit/12/?from_date=foor', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Edit meeting - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h2>Edit meeting Another past test meeting</h2>'
+                in output.data)
+            self.assertTrue(
+                'meeting_name">Meeting name <span class="error">*</span></l'
+                in output.data)
+            self.assertTrue(
+                'for="meeting_date">Date <span class="error">*</span></label'
+                in output.data)
+
+            output = self.app.get(
+                '/meeting/edit/12/?from_date=%s' % TODAY.strftime('%Y-%m-%d'),
+                follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title>Edit meeting - Fedocal</title>' in output.data)
@@ -1349,6 +1588,22 @@ class Flasktests(Modeltests):
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
+            # Invalid from_date
+            output = self.app.get(
+                '/meeting/delete/1/?from_date=foobar', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>Delete meeting - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<h4> Meeting: Fedora-fr-test-meeting</h4>'
+                in output.data)
+            self.assertTrue(
+                "positively sure that's what you want to do?"
+                in output.data)
+            self.assertTrue(
+                'name="confirm_delete" type="checkbox" value="y"><label'
+                in output.data)
+
             # Do not delete
             data = {
                 #'confirm_delete': False,
@@ -1390,6 +1645,41 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<li class="message">Meeting deleted</li>' in output.data)
 
+        # Add a meeting to the test_calendar_disabled calendar
+        obj = model.Meeting(  # id:16
+            meeting_name='Full-day meeting2',
+            meeting_date=TODAY + timedelta(days=2),
+            meeting_date_end=TODAY + timedelta(days=3),
+            meeting_time_start=time(0, 00),
+            meeting_time_stop=time(23, 59),
+            meeting_information='Full day meeting 2',
+            calendar_name='test_calendar_disabled',
+            full_day=True)
+        obj.add_manager(self.session, ['toshio'])
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        user = FakeUser(['fi-apprentice'], username='pingou')
+        with user_set(fedocal.APP, user):
+            # Delete all
+            data = {
+                'confirm_delete': True,
+                'confirm_futher_delete': True,
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/meeting/delete/16/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title>test_calendar_disabled - Fedocal</title>'
+                in output.data)
+            self.assertTrue(
+                '<li class="errors">This calendar is &#34;Disabled&#34;, '
+                'you are not allowed to delete its meetings anymore.</li>'
+                in output.data)
+
     def test_update_tz(self):
         """ Test the update_tz function. """
         self.__setup_db()
@@ -1410,6 +1700,7 @@ class Flasktests(Modeltests):
         """ Test the search function. """
         self.__setup_db()
 
+        # With '*'
         output = self.app.get('/search/?keyword=*meeting3*',
                               follow_redirects=True)
         self.assertTrue('<title>Search - Fedocal</title>' in output.data)
@@ -1417,6 +1708,16 @@ class Flasktests(Modeltests):
                         in output.data)
         self.assertTrue('href="/meeting/4/">'in output.data)
         self.assertTrue('d> <p>Test meeting with past end_recursion.</p> </'
+                        in output.data)
+
+        # Without any '*'
+        output = self.app.get('/search/?keyword=meeting3',
+                              follow_redirects=True)
+        self.assertTrue('<title>Search - Fedocal</title>' in output.data)
+        self.assertTrue('<p>Result of your search for "meeting3*"</p>'
+                        in output.data)
+        self.assertFalse('href="/meeting/4/">'in output.data)
+        self.assertFalse('d> <p>Test meeting with past end_recursion.</p> </'
                         in output.data)
 
         output = self.app.get('/search/',
@@ -1590,6 +1891,21 @@ class Flasktests(Modeltests):
                                 'has the file extension &#34;&#34; which is'
                                 ' not an allowed format</li>'
                                 in output.data)
+
+    @flask10_only
+    def test_markdown_preview(self):
+        """ Test the markdown_preview function. """
+        user = FakeUser(['gitr2spec'], username='kevin')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/markdown/')
+            self.assertEqual(output.status_code, 302)
+
+            data = {
+                'content': '``test``'
+            }
+            output = self.app.post('/markdown/', data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(output.data, ' <p><code>test</code></p> ')
 
 
 if __name__ == '__main__':

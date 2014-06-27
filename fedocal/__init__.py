@@ -852,8 +852,11 @@ def edit_meeting(meeting_id):
         from_date = flask.request.args.get('from_date', None)
         date_limit = None
         if from_date:
-            date_limit = parser.parse(from_date).date() + datetime.timedelta(
-                days=6)
+            try:
+                date_limit = parser.parse(
+                    from_date).date() + datetime.timedelta(days=6)
+            except:
+                pass
 
         meeting = fedocallib.update_date_rec_meeting(
             meeting, action='next', date_limit=date_limit)
@@ -901,7 +904,10 @@ def view_meeting_page(meeting_id, full):
 
     date_limit = None
     if from_date:
-        date_limit = parser.parse(from_date).date()
+        try:
+            date_limit = parser.parse(from_date).date()
+        except:
+            pass
 
     next_meeting = fedocallib.update_date_rec_meeting(
         meeting_utc, action='next', date_limit=date_limit)
@@ -958,7 +964,10 @@ def delete_meeting(meeting_id):
 
     from_date = flask.request.args.get('from_date', None)
     if from_date:
-        deleteform.from_date.data = parser.parse(from_date).date()
+        try:
+            deleteform.from_date.data = parser.parse(from_date).date()
+        except:
+            pass
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
 
@@ -1004,8 +1013,6 @@ def delete_calendar(calendar_name):
 
     :arg calendar_name: the identifier of the calendar to delete.
     """
-    if not authenticated():  # pragam: no cover
-        return flask.redirect(flask.url_for('index'))
     if not is_admin():
         flask.flash('You are not a fedocal admin, you are not allowed '
                     'to delete the calendar.', 'errors')

@@ -51,14 +51,16 @@ from fedocal.fedocallib import model, get_start_week
 
 DB_PATH = 'sqlite:///:memory:'
 FAITOUT_URL = 'http://209.132.184.152/faitout/'
-try:
-    import requests
-    req = requests.get('%s/new' % FAITOUT_URL)
-    if req.status_code == 200:
-        DB_PATH = req.text
-        print 'Using faitout at: %s' % DB_PATH
-except:
-    pass
+
+if os.environ.get('BUILD_ID'):
+    try:
+        import requests
+        req = requests.get('%s/new' % FAITOUT_URL)
+        if req.status_code == 200:
+            DB_PATH = req.text
+            print 'Using faitout at: %s' % DB_PATH
+    except:
+        pass
 
 
 TODAY = get_start_week(date.today().year, date.today().month,

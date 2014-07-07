@@ -71,7 +71,7 @@ APP.static_folder = os.path.join(
     APP.static_folder, APP.config['THEME_FOLDER'])
 
 FAS = FAS(APP)
-APP.wsig_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
+APP.wsgi_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
 # Set up the logger

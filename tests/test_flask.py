@@ -215,12 +215,12 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/' % (
             today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        # 6 on Tue Jun 24 - 12 before
+        # 6 on Tue Jun 24 - 12 before, 14 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<a class="event meeting_') in [6, 12])
-        # 14 on Tue Jun 24 - 20 before
+            output.data.count('<a class="event meeting_') in [6, 12, 14])
+        # 14 on Tue Jun 24 - 20 before, 21 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<tr') in [14, 20])
+            output.data.count('<tr') in [14, 20, 21])
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
@@ -230,12 +230,12 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/?subject=Another'
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        # 4 on Tue Jun 24 - 6 before
+        # 4 on Tue Jun 24 - 6 before, 8 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<a class="event meeting_') in [4, 6])
-        # 12 on Tue Jun 24 - 14 before
+            output.data.count('<a class="event meeting_') in [4, 6, 8])
+        # 12 on Tue Jun 24 - 14 before, 15 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<tr') in [12, 14])
+            output.data.count('<tr') in [12, 14, 15])
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
@@ -246,10 +246,10 @@ class Flasktests(Modeltests):
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.status_code, 200)
-        # 3 on Tue Jun 24 - 4 before
+        # 3 on Tue Jun 24 - 4 before, 5 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<a class="event meeting_') in [3, 4])
-        # 11 on Tue Jun 24 - 12 before
+            output.data.count('<a class="event meeting_') in [3, 4, 5])
+        # 11 on Tue Jun 24 - 12 before, 15 on Tue Jul 15
         self.assertTrue(
             output.data.count('<tr') in [11, 12])
         self.assertTrue(
@@ -273,12 +273,12 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/?delta=abc'
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        # 6 on Tue Jun 24 - 12 before
+        # 6 on Tue Jun 24 - 12 before, 14 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<a class="event meeting_') in [6, 12])
-        # 14 on Tue Jun 24 - 20 before
+            output.data.count('<a class="event meeting_') in [6, 12, 14])
+        # 14 on Tue Jun 24 - 20 before, 21 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<tr') in [14, 20])
+            output.data.count('<tr') in [14, 20, 21])
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
 
@@ -300,12 +300,12 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/test_calendar/%s/%s/?end=foobar'
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        # 6 on Tue Jun 24 - 12 before
+        # 6 on Tue Jun 24 - 12 before, 14 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<a class="event meeting_') in [6, 12])
-        # 14 on Tue Jun 24 - 20 before
+            output.data.count('<a class="event meeting_') in [6, 12, 14])
+        # 14 on Tue Jun 24 - 20 before, 21 on Tue Jul 15
         self.assertTrue(
-            output.data.count('<tr') in [14, 20])
+            output.data.count('<tr') in [14, 20, 21])
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
 

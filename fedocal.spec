@@ -2,8 +2,8 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.8
-Release:        2%{?dist}
+Version:        0.9
+Release:        1%{?dist}
 Summary:        A web based calendar application
 
 License:        GPLv3+
@@ -105,6 +105,14 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Wed Jul 17 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.9-1
+- Update to 0.9
+- Port the filtering on the list view to be DB side rather than by iterating
+  through the meetings retrieved
+- Improve unit-tests coverage
+- Restrict the groups asked upon login to only those required
+- Fix iCal output
+
 * Wed Jun 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.8-2
 - Activate the unit-tests ain the spec
 

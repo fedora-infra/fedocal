@@ -345,7 +345,7 @@ li.menu-focus {
 .calendar_link {
     border: 1px solid #CCCCCC;
     border-radius: 5px 5px 5px 5px;
-    color: black;
+    /*color: black;*/
     display: table-cell;
     /*margin: 1em auto;*/
     overflow: hidden;

@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.9
+Version:        0.9.1
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -105,6 +105,12 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Tue Jul 22 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.9.1-1
+- Update to 0.9.1
+- Adjust the unit-test suite
+- Fix requiring the calendar admin and editor groups upon login to handle
+  authorization correctly
+
 * Wed Jul 17 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.9-1
 - Update to 0.9
 - Port the filtering on the list view to be DB side rather than by iterating

@@ -583,7 +583,16 @@ def auth_login():
     if authenticated():
         return flask.redirect(return_point)
 
-    groups = APP.config['ADMIN_GROUP']
+    groups = set()
+    for calendar in fedocallib.get_calendars(SESSION):
+        groups.update(calendar.admin_groups)
+        groups.update(calendar.editor_groups)
+
+    if isinstance(APP.config['ADMIN_GROUP'], basestring):
+        groups.update([APP.config['ADMIN_GROUP']])
+    else:
+        groups.update(APP.config['ADMIN_GROUP'])
+
     return FAS.login(return_url=return_point, groups=groups)
 
 

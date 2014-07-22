@@ -214,11 +214,10 @@ class Calendar(BASE):
         """ Return the list of editors for a given calendar.
         """
         calendar = Calendar.by_id(session, identifier)
-        if not calendar or not calendar.calendar_editor_group:
+        if not calendar:
             groups = []
         else:
-            groups = [item.strip()
-                      for item in calendar.calendar_editor_group.split(',')]
+            groups = calendar.editor_groups
         return groups
 
     @classmethod
@@ -226,11 +225,10 @@ class Calendar(BASE):
         """ Return the list of admin group for a given calendar.
         """
         calendar = Calendar.by_id(session, identifier)
-        if not calendar or not calendar.calendar_admin_group:
+        if not calendar:
             groups = []
         else:
-            groups = [item.strip()
-                      for item in calendar.calendar_admin_group.split(',')]
+            groups = calendar.admin_groups
         return groups
 
     @classmethod

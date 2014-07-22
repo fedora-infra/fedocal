@@ -181,6 +181,26 @@ class Calendar(BASE):
         """ Remove the object into the database. """
         session.delete(self)
 
+    @property
+    def admin_groups(self):
+        ''' Return the list of admin groups of this calendar. '''
+        if not self.calendar_admin_group:
+            groups = []
+        else:
+            groups = [item.strip()
+                      for item in self.calendar_admin_group.split(',')]
+        return groups
+
+    @property
+    def editor_groups(self):
+        ''' Return the list of editor groups of this calendar. '''
+        if not self.calendar_editor_group:
+            groups = []
+        else:
+            groups = [item.strip()
+                      for item in self.calendar_editor_group.split(',')]
+        return groups
+
     @classmethod
     def by_id(cls, session, identifier):
         """ Retrieve a Calendar object from the database based on its

@@ -1151,7 +1151,7 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
             if name in major_timezones:
                 tzone = major_timezones[name]
             elif key in timezone_lookup:
-                tzone = timezone_lookup[key]
+                tzone = timezone_lookup[key][0]
             else:
                 tzone = meeting_date.tzname()
             meeting_time_start = meeting_date.time()

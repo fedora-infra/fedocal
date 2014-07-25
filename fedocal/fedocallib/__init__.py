@@ -1110,6 +1110,24 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
     """ Add the meetings from the iCalendar stream provided into the calendar
     specified.
     """
+    # Build a dict with all the common timezones storing for each their
+    # localize name and their offset (ie: CEST 2:00:00)
+    timezone_lookup = dict()
+    for tz in pytz.common_timezones:
+        name = pytz.timezone(tz).localize(datetime.now()).tzname()
+        offset = pytz.timezone(tz).localize(datetime.now()).utcoffset()
+        key = (name, offset)
+        if key in timezone_lookup:
+            timezone_lookup[key].append(tz)
+        else:
+            timezone_lookup[key] = [tz]
+
+    major_timezones = {
+        'CET': 'Europe/Paris',
+        'CEST': 'Europe/Paris',
+        'EDT': 'US/Eastern',
+    }
+
     meetings = vobject.readOne(stream)
     for meeting in meetings.components():
         if meeting.name == 'VTIMEZONE':
@@ -1128,7 +1146,14 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
         meeting_date = meeting.dtstart.value
         meeting_time_start = time(0, 0)
         if isinstance(meeting_date, datetime):
-            tzone = str(meeting_date.tzname())
+            name = meeting_date.tzname()
+            key = (meeting_date.tzname(), meeting_date.utcoffset())
+            if name in major_timezones:
+                tzone = major_timezones[name]
+            elif key in timezone_lookup:
+                tzone = timezone_lookup[key]
+            else:
+                tzone = meeting_date.tzname()
             meeting_time_start = meeting_date.time()
             meeting_date = meeting_date.date()
 

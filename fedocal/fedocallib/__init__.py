@@ -784,7 +784,14 @@ def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC',
         meetings_utc.extend(
             Meeting.get_active_regular_meeting_by_date(
                 session, calendarobj, start_date, name=name))
+
     meetings = list(set(meetings_utc))
+    if tzone:
+        meetings = [
+            convert_meeting_timezone(
+                meeting, meeting.meeting_timezone, tzone)
+            for meeting in meetings
+        ]
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 
@@ -825,6 +832,12 @@ def get_by_date_at_location(
     meetings_utc.extend(Meeting.get_regular_meeting_by_date_at_location(
         session, location, start_date, end_date))
     meetings = list(set(meetings_utc))
+    if tzone:
+        meetings = [
+            convert_meeting_timezone(
+                meeting, meeting.meeting_timezone, tzone)
+            for meeting in meetings
+        ]
     meetings.sort(key=operator.attrgetter('meeting_date'))
     return meetings
 

@@ -1146,14 +1146,27 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
         meeting_date = meeting.dtstart.value
         meeting_time_start = time(0, 0)
         if isinstance(meeting_date, datetime):
-            name = meeting_date.tzname()
-            key = (meeting_date.tzname(), meeting_date.utcoffset())
-            if name in major_timezones:
-                tzone = major_timezones[name]
-            elif key in timezone_lookup:
-                tzone = timezone_lookup[key][0]
+            tzinfo = meeting_date.tzinfo
+            if hasattr(tzinfo, 'zone'):
+                tzone = tzinfo.zone
+            elif meeting_date.tzname() == 'UTC':
+                tzone = 'UTC'
             else:
-                tzone = meeting_date.tzname()
+                tzone = str(tzinfo).split("'")[1]
+                if '/' in tzone:
+                    tzone = '/'.join(tzone.rsplit('/', 2)[1:])
+
+            try:
+                pytz.timezone(tzone)
+            except pytz.UnknownTimeZoneError:
+                name = meeting_date.tzname()
+                key = (meeting_date.tzname(), meeting_date.utcoffset())
+                if name in major_timezones:
+                    tzone = major_timezones[name]
+                elif key in timezone_lookup:
+                    tzone = timezone_lookup[key][0]
+                else:
+                    tzone = meeting_date.tzname()
             meeting_time_start = meeting_date.time()
             meeting_date = meeting_date.date()
 

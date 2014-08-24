@@ -94,7 +94,7 @@ def send_reminder_meeting(meeting, meeting_id):
     if meeting.meeting_location:
         location = 'At %s' % meeting.meeting_location
 
-    string = """Dear all,
+    string = ur"""Dear all,
 
 You are kindly invited to the meeting:
    %(name)s on %(date)s from %(time_start)s to %(time_stop)s %(timezone)s
@@ -107,22 +107,22 @@ The meeting will be about:
 Source: %(host)s/meeting/%(id)s/
 
 """ % ({
-        'name': meeting.meeting_name,
+        'name': ur'%s' % meeting.meeting_name,
         'date': meeting.meeting_date,
         'time_start': meeting.meeting_time_start,
         'time_stop': meeting.meeting_time_stop,
         'timezone': meeting.meeting_timezone,
-        'location': location,
-        'description': meeting.meeting_information,
+        'location': ur'%s' % location,
+        'description': ur'%s' % meeting.meeting_information,
         'id': meeting_id,
         'host': fedocal.APP.config['APP_URL'],
     })
 
     if meeting.reminder.reminder_text:
-        string = string + """
+        string = string + ur"""
 Please note:
 %s""" % meeting.reminder.reminder_text
-    msg = MIMEText(string)
+    msg = MIMEText(string.encode('utf-8'))
     msg['Subject'] = '[Fedocal] Reminder meeting : %s' % meeting.meeting_name
     from_email = meeting.meeting_manager[0]
     from_email = '%s@fedoraproject.org' % from_email

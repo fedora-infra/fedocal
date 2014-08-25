@@ -1871,7 +1871,7 @@ class Flasktests(Modeltests):
                 self.assertTrue('<title>Upload calendar - Fedocal</title>'
                                 in output.data)
                 self.assertTrue('<li class="error">The submitted candidate '
-                                'has the file extension &#34;&#34; which is'
+                                'has the file extension &#34;txt&#34; which is'
                                 ' not an allowed format</li>'
                                 in output.data)
 

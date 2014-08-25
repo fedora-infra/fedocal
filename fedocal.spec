@@ -111,7 +111,7 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 - Fix requiring the calendar admin and editor groups upon login to handle
   authorization correctly
 
-* Wed Jul 17 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.9-1
+* Wed Jul 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.9-1
 - Update to 0.9
 - Port the filtering on the list view to be DB side rather than by iterating
   through the meetings retrieved

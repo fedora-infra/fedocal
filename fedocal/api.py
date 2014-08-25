@@ -341,7 +341,7 @@ Filter arguments
     else:
         try:
             startd = parser.parse(startd).date()
-        except ValueError:
+        except (ValueError, TypeError):
             output = {"meetings": [],
                       "error": "Invalid start date format: %s" % startd}
             return flask.Response(
@@ -355,7 +355,7 @@ Filter arguments
     else:
         try:
             endd = parser.parse(endd).date()
-        except ValueError:
+        except (ValueError, TypeError):
             output = {"meetings": [],
                       "error": "Invalid end date format: %s" % endd}
             return flask.Response(

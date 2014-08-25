@@ -531,7 +531,7 @@ def ical_out(calendar_name):
         return flask.abort(404)
 
     meetings = fedocallib.get_by_date(
-        SESSION, calendarobj, startd, endd, extended=False)
+        SESSION, calendarobj, startd, endd, extended=False, tzone=False)
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     headers = {}

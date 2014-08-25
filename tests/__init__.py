@@ -69,7 +69,7 @@ TODAY = get_start_week(date.today().year, date.today().month,
 ICS_FILE = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'ical.ics')
 ICS_FILE_NOTOK = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), 'ical_wrong')
+    os.path.abspath(__file__)), 'ical_wrong.txt')
 
 
 def flask10_only(function):

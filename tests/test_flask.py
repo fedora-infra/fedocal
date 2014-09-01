@@ -254,7 +254,7 @@ class Flasktests(Modeltests):
         self.assertEqual(output.status_code, 200)
         # 1 on Tue Jun 24 - 2 before
         self.assertTrue(
-            output.data.count('<a class="event meeting_') in [0, 1, 2, 4, 7])
+            output.data.count('<a class="event meeting_') in range(7))
         self.assertTrue(output.data.count('<tr') >= 6)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)

@@ -25,6 +25,10 @@
 
 import os
 
+from datetime import timedelta
+
+# Set the time after which the session expires
+PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 # url to the database server:
 DB_URL = 'sqlite:////var/tmp/fedocal_dev.sqlite'

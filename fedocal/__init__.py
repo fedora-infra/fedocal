@@ -175,6 +175,13 @@ def shutdown_session(exception=None):
     SESSION.remove()
 
 
+# pylint: disable=W0613
+@APP.before_request
+def set_session():
+    """ Set the flask session as permanent. """
+    flask.session.permanent = True
+
+
 ## Local function
 def is_admin():
     """ Return whether the user is admin for this application or not. """

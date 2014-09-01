@@ -66,7 +66,7 @@ class FedocalCalendartests(Modeltests):
             output,
             '<tr><td class="tue">1</td><td class="wed">2</td></tr>')
         self.assertEqual(
-            cal.formatweek([(0, 1), (1, 2)]),
+            cal.formatweek([(0, 1), (1, 2)]).replace(' today', ''),
             '<tr><td class="noday">&nbsp;</td><td class="wed">1</td></tr>')
         output = cal.formatweek(
             [(1, 1), (2, 2)], True).replace(' today', '')

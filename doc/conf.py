@@ -15,9 +15,16 @@
 import sys
 import os
 
-#sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+fedocalfile = os.path.join(
+    os.path.dirname(__file__), '..', 'fedocal', '__init__.py')
 
-#from fedocal import __version__
+# Thanks to SQLAlchemy:
+# https://github.com/zzzeek/sqlalchemy/blob/master/setup.py#L104
+with open(fedocalfile) as stream:
+    VERSION = re.compile(
+        r".*__version__ = '(.*?)'", re.S
+        ).match(stream.read()).group(1)
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -56,7 +63,7 @@ copyright = u'2012-2014, Pierre-Yves Chibon <pingou@pingoured.fr>'
 #
 # The short X.Y version.
 #version = __version__
-version = '0.9.3'
+version = VERSION
 # The full version, including alpha/beta/rc tags.
 #release = '1'
 

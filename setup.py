@@ -22,11 +22,7 @@ def get_requirements(requirements_file='requirements.txt'):
     :return type: list
     """
 
-    try:
-        lines = open(requirements_file).readlines()
-    except (IOError, OSError) as err:
-        print "Error: %s" % err.message
-        return []
+    lines = open(requirements_file).readlines()
 
     return [
         line.strip().split('#')[0]

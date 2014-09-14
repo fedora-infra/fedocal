@@ -12,6 +12,29 @@ from setuptools import setup
 from fedocal import __version__
 
 
+def get_requirements(requirements_file='requirements.txt'):
+    """Get the contents of a file listing the requirements.
+
+    :arg requirements_file: path to a requirements file
+    :type requirements_file: string
+    :returns: the list of requirements, or an empty list if
+              `requirements_file` could not be opened or read
+    :return type: list
+    """
+
+    try:
+        lines = open(requirements_file).readlines()
+    except (IOError, OSError) as err:
+        print "Error: %s" % err.message
+        return []
+
+    return [
+        line.strip().split('#')[0]
+        for line in lines 
+        if not line.startswith('#')
+    ]
+
+
 setup(
     name='fedocal',
     description='fedocal is a web based calendar application for Fedora.',
@@ -26,8 +49,5 @@ setup(
     packages=['fedocal'],
     include_package_data=True,
     scripts=['fedocal_cron.py'],
-    install_requires=[
-        'Flask', 'SQLAlchemy>=0.6', 'wtforms', 'flask-wtf',
-        'vobject', 'kitchen', 'python-fedora', 'pytz',
-        'python-dateutil<=1.5', 'alembic', 'Markdown'],
+    install_requires=get_requirements(),
     )

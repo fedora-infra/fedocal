@@ -68,7 +68,7 @@ def validate_multi_email(form, field):
         entry = entry.strip()
         if not entry:
             continue
-        match = pattern.match(field.data or '')  
+        match = pattern.match(field.data or '')
         if not match:
             message = field.gettext('Invalid input.')
             raise ValidationError(message)

@@ -70,6 +70,7 @@ class Crontests(Modeltests):
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
         self._clean()
+        self.old_path = tests.DB_PATH
 
         tests.DB_PATH = DB_PATH
 
@@ -104,6 +105,8 @@ class Crontests(Modeltests):
         super(Crontests, self).tearDown()
 
         self._clean()
+
+        tests.DB_PATH = self.old_path
 
     def test_no_reminder(self):
         """ Test the cron job for run with no reminders.

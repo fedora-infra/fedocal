@@ -24,6 +24,7 @@
 """
 
 import flask
+import re
 from flask.ext import wtf
 from datetime import time
 from datetime import datetime
@@ -55,6 +56,22 @@ def validate_meeting_location(form, field):
     """
     if '#' in field.data.strip():
         raise wtforms.ValidationError('Please use channel@server format!')
+
+
+def validate_multi_email(form, field):
+    """ Raises an exception if the content of the field does not contain one or
+        more email.
+    """
+    pattern = re.compile(r'^.+@([^.@][^@]+)$', re.IGNORECASE)
+    data = field.data.replace(' ', ',')
+    for entry in data.split(','):
+        entry = entry.strip()
+        if not entry:
+            continue
+        match = pattern.match(field.data or '')
+        if not match:
+            message = field.gettext('Invalid input.')
+            raise ValidationError(message)
 
 
 class AddCalendarForm(wtf.Form):
@@ -171,7 +188,7 @@ class AddMeetingForm(wtf.Form):
     )
     remind_who = wtforms.TextField(
         'Send reminder to',
-        [wtforms.validators.Email(), wtforms.validators.optional()])
+        [validate_multi_email, wtforms.validators.optional()])
     reminder_from = wtforms.TextField(
         'Send reminder from',
         [wtforms.validators.Email(), wtforms.validators.optional()])

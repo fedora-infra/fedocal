@@ -896,11 +896,17 @@ def add_meeting(
 
     reminder = None
     if remind_when and remind_who and reminder_from:
+        remind_who = ','.join([
+            ppl.strip()
+            for ppl in remind_who.split(',')
+            if ppl.strip()
+        ])
         reminder = dbaction.add_reminder(
             session=session,
             remind_when=remind_when,
             reminder_from=reminder_from,
-            remind_who=remind_who)
+            remind_who=remind_who
+        )
 
     reminder_id = None
     if reminder:
@@ -1043,6 +1049,11 @@ def edit_meeting(
     meeting.recursion_ends = recursion_ends
 
     if remind_when and remind_who and reminder_from:
+        remind_who = ','.join([
+            ppl.strip()
+            for ppl in remind_who.split(',')
+            if ppl.strip()
+        ])
         if meeting.reminder_id:
             meeting.reminder.reminder_offset = remind_when
             meeting.reminder.reminder_from = reminder_from

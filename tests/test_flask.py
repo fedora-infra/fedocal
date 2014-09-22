@@ -1288,6 +1288,107 @@ class Flasktests(Modeltests):
                 'you are not allowed to add meetings anymore.</li>'
                 in output.data)
 
+            # Fails - with an invalid email as recipient of the reminder
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'reminder_from': 'pingou@fp.o',
+                'reminder_who': 'pingou@fp.org',
+                'remind_when': 'H-12',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>New meeting</h2>' in output.data)
+            self.assertTrue(
+                '<td>Invalid email address.</td>' in output.data)
+
+            # Fails - one of the two email specified as recipient of the
+            # reminder is invalid
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'reminder_from': 'pingou@fp.o',
+                'reminder_who': 'pingou@fp.org, pingou@fp.o',
+                'remind_when': 'H-12',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>New meeting</h2>' in output.data)
+            self.assertTrue(
+                '<td>Invalid email address.</td>' in output.data)
+
+            # Works - with one email as recipient of the reminder
+            data = {
+                'meeting_name': 'Reminder',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'reminder_from': 'pingou@fp.org',
+                'reminder_who': 'pingou@fp.org',
+                'remind_when': 'H-12',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Meeting added</li>' in output.data)
+            self.assertTrue(
+                'href="/meeting/17/?from_date=' in output.data)
+            self.assertTrue(
+                'href="/meeting/18/?from_date=' in output.data)
+            self.assertTrue(
+                'Reminder' in output.data)
+            self.assertFalse(
+                'href="/meeting/19/?from_date=' in output.data)
+
+            # Works - with two emails as recipient of the reminder
+            data = {
+                'meeting_name': 'Reminder2',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(15, 0),
+                'meeting_time_stop': time(16, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'reminder_from': 'pingou@fp.org',
+                'reminder_who': 'pingou@fp.org,pingou@p.fr',
+                'remind_when': 'H-12',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Meeting added</li>' in output.data)
+            self.assertTrue(
+                'href="/meeting/18/?from_date=' in output.data)
+            self.assertTrue(
+                'href="/meeting/19/?from_date=' in output.data)
+            self.assertTrue(
+                'Reminder2' in output.data)
+            self.assertFalse(
+                'href="/meeting/20/?from_date=' in output.data)
+
     @flask10_only
     def test_edit_meeting(self):
         """ Test the edit_meeting function. """

@@ -1288,7 +1288,7 @@ class Flasktests(Modeltests):
                 'you are not allowed to add meetings anymore.</li>'
                 in output.data)
 
-            # Works - with an invalid email as recipient of the reminder
+            # Fails - with an invalid email as recipient of the reminder
             data = {
                 'meeting_name': 'guess what?',
                 'meeting_date': TODAY,

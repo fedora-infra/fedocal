@@ -127,14 +127,14 @@ Please note:
     from_email = meeting.meeting_manager[0]
     from_email = '%s@fedoraproject.org' % from_email
     msg['From'] = meeting.reminder.reminder_from or from_email
-    msg['To'] = meeting.reminder.reminder_to
+    msg['To'] = meeting.reminder.reminder_to.replace(',', ', ')
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
     smtp = smtplib.SMTP(fedocal.APP.config['SMTP_SERVER'])
     smtp.sendmail(
         from_email,
-        meeting.reminder.reminder_to,
+        meeting.reminder.reminder_to.split(','),
         msg.as_string())
     smtp.quit()
     return msg

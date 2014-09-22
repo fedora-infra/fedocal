@@ -1310,6 +1310,29 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<td>Invalid email address.</td>' in output.data)
 
+            # Fails - one of the two email specified as recipient of the
+            # reminder is invalid
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'frequency': '',
+                'reminder_from': 'pingou@fp.o',
+                'reminder_who': 'pingou@fp.org, pingou@fp.o',
+                'remind_when': 'H-12',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/test_calendar/add/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h2>New meeting</h2>' in output.data)
+            self.assertTrue(
+                '<td>Invalid email address.</td>' in output.data)
+
             # Works - with one email as recipient of the reminder
             data = {
                 'meeting_name': 'Reminder',

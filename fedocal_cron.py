@@ -137,6 +137,7 @@ Please note:
         meeting.reminder.reminder_to,
         msg.as_string())
     smtp.quit()
+    return msg
 
 
 def send_reminder():
@@ -147,11 +148,15 @@ def send_reminder():
     session = fedocallib.create_session(db_url)
     meetings = fedocallib.retrieve_meeting_to_remind(
         session, offset=int(fedocal.APP.config['CRON_FREQUENCY']))
+
+    msgs = []
     for meeting in meetings:
         meeting_id = meeting.meeting_id
         meeting = fedocallib.update_date_rec_meeting(meeting, action='next')
-        send_reminder_meeting(meeting, meeting_id)
+        msgs.append(send_reminder_meeting(meeting, meeting_id))
         fedmsg_publish(meeting, meeting_id)
+
+    return msgs
 
 
 if __name__ == '__main__':

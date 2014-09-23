@@ -56,6 +56,15 @@ from test_meeting import Meetingtests, TODAY
 DB_PATH = 'sqlite:////tmp/fedocal_test.sqlite'
 
 
+class FakeSMTP(object):
+
+    def sendmail(self, *arg, **kwarg):
+        pass
+
+    def quit(self, *arg, **kwarg):
+        pass
+
+
 # pylint: disable=C0103
 class Crontests(Modeltests):
     """ Cron tests. """
@@ -140,9 +149,11 @@ class Crontests(Modeltests):
         self.assertEqual(len(msgs), 0)
 
     @patch('fedocal_cron.smtplib.SMTP.sendmail')
-    def test_one_reminder(self, mail_mock):
+    @patch('fedocal_cron.smtplib.SMTP')
+    def test_one_reminder(self, smtp_mock, mail_mock):
         """ Test the cron job for a meeting with a single reminder to send.
         """
+        smtp_mock.return_value = FakeSMTP()
         mail_mock.return_value = None
 
         # Meeting with a reminder
@@ -176,9 +187,11 @@ class Crontests(Modeltests):
         self.assertEqual(msgs[0]['From'], 'pingou@fp.o')
 
     @patch('fedocal_cron.smtplib.SMTP.sendmail')
-    def test_two_reminder(self, mail_mock):
+    @patch('fedocal_cron.smtplib.SMTP')
+    def test_two_reminder(self, smtp_mock, mail_mock):
         """ Test the cron job for a meeting with a single reminder to send.
         """
+        smtp_mock.return_value = FakeSMTP()
         mail_mock.return_value = None
 
         # Meeting with a reminder

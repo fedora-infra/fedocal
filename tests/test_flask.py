@@ -254,7 +254,8 @@ class Flasktests(Modeltests):
         self.assertEqual(output.status_code, 200)
         # 1 on Tue Jun 24 - 2 before
         self.assertTrue(
-            output.data.count('<a class="event meeting_') in range(7))
+            output.data.count(
+                '<a class="event event_blue meeting_') in range(9))
         self.assertTrue(output.data.count('<tr') >= 6)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
@@ -263,7 +264,8 @@ class Flasktests(Modeltests):
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         # 6 on Tue Jun 24 - 12 before, 14 on Tue Jul 15
-        self.assertTrue(output.data.count('<a class="event meeting_') >= 6)
+        self.assertTrue(output.data.count(
+            '<a class="event event_blue meeting_') >= 6)
         self.assertTrue(output.data.count('<tr') >= 10)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
@@ -275,7 +277,8 @@ class Flasktests(Modeltests):
             ), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         # 14 on Tue Jun 24 - 2 before, 1 on August 15th
-        self.assertTrue(output.data.count('<a class="event meeting_') > 0)
+        self.assertTrue(output.data.count(
+            '<a class="event event_blue meeting_') > 0)
         # 22 on Tue Jun 24 - 10 before, 8 on August 15th
         self.assertTrue(output.data.count('<tr') >= 7)
         self.assertTrue(
@@ -321,7 +324,8 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
-        self.assertEqual(output.data.count('<a class="event'), 2)
+        self.assertEqual(output.data.count('<a class="event event_blue'), 2)
+        self.assertEqual(output.data.count('<a class="event'), 4)
 
         output = self.app.get('/location/list/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
@@ -338,7 +342,9 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
-        self.assertTrue(output.data.count('<a class="event') in [0, 1])
+        self.assertTrue(
+            output.data.count('<a class="event event_blue') in [0, 1])
+        self.assertTrue(output.data.count('<a class="event') in range(3))
 
         output = self.app.get('/location/list/EMEA/%s/%s/' % (
             today.year, today.month))
@@ -348,7 +354,9 @@ class Flasktests(Modeltests):
         self.assertTrue(' <a href="/test_calendar/">' in output.data)
         self.assertTrue(' <a href="/test_calendar2/">' in output.data)
         self.assertTrue(' <a href="/test_calendar4/">' in output.data)
-        self.assertTrue(output.data.count('<a class="event') in [1, 2])
+        self.assertTrue(
+            output.data.count('<a class="event event_blue') in [1, 2])
+        self.assertTrue(output.data.count('<a class="event') in [2, 4])
 
     def test_ical_all(self):
         """ Test the ical_all function. """
@@ -1791,7 +1799,7 @@ class Flasktests(Modeltests):
         self.assertTrue('<p>Result of your search for "*meeting3*"</p>'
                         in output.data)
         self.assertTrue('href="/meeting/4/">'in output.data)
-        self.assertTrue('d> <p>Test meeting with past end_recursion.</p> </'
+        self.assertTrue('<p>Test meeting with past end_recursion....</p>'
                         in output.data)
 
         # Without any '*'

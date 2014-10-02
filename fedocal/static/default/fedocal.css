@@ -130,7 +130,7 @@ section nav {
     width: 100%;
 }
 
-.event {
+.event_blue {
     display: block;
     padding:.1em .2em;
     background-color:rgba(175, 221, 233, .8);
@@ -139,7 +139,7 @@ section nav {
     border:1px solid #37abc8;
 }
 
-td > .event {
+td > .event_blue {
     height: 100%;
 }
 
@@ -382,12 +382,21 @@ li.menu-focus {
 .limit_future td {
     border-top: 2px solid;
     border-color: #31a90c;
+    padding-top: 1em;
+    padding-bottom: 1em;
 }
 
 .limit_past td {
     border-top: 2px solid;
     border-color: red;
 }
+
+.meeting_normal td {
+    border-top: 1px solid #CCCCCC;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
 .today {
     background-color: #FFF6D5;
 }

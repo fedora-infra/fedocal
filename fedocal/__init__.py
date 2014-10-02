@@ -31,6 +31,7 @@ __version__ = '0.9.3'
 
 import datetime
 import logging
+import textwrap
 import os
 import urllib
 import urlparse
@@ -166,6 +167,20 @@ def markdown_filter(text):
     """
     if text:
         return markdown.markdown(text)
+
+    return ''
+
+
+@APP.template_filter('markdown_wrap')
+def markdown_wrap_filter(text):
+    """ Template filter converting a string into html content using the
+    markdown library but only keeping the first 3 lines of the text.
+    """
+    if text:
+        return markdown.markdown(
+            '\n'.join(textwrap.wrap(text)[:2])+"...")
+
+    return ''
 
 
 # pylint: disable=W0613

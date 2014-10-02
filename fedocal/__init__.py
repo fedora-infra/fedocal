@@ -50,6 +50,7 @@ from werkzeug import secure_filename
 
 import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
+import fedocal.mail_logging
 import fedocal.proxy
 from fedocal.fedocallib.exceptions import FedocalException
 from fedocal.fedocallib.model import (Calendar, Meeting)
@@ -75,27 +76,11 @@ FAS = FAS(APP)
 APP.wsgi_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
-# Set up the logger
-## Send emails for big exception
-mail_handler = SMTPHandler(
-    APP.config.get('SMTP_SERVER', '127.0.0.1'),
-    'nobody@fedoraproject.org',
-    APP.config.get('MAIL_ADMIN', APP.config['EMAIL_ERROR']),
-    'Fedocal error')
-mail_handler.setFormatter(logging.Formatter('''
-    Message type:       %(levelname)s
-    Location:           %(pathname)s:%(lineno)d
-    Module:             %(module)s
-    Function:           %(funcName)s
-    Time:               %(asctime)s
-
-    Message:
-
-    %(message)s
-'''))
-mail_handler.setLevel(logging.ERROR)
 if not APP.debug:
-    APP.logger.addHandler(mail_handler)
+    APP.logger.addHandler(fedocal.mail_logging.get_mail_handler(
+        smtp_server=APP.config.get('SMTP_SERVER', '127.0.0.1'),
+        mail_admin=APP.config.get('MAIL_ADMIN', APP.config['EMAIL_ERROR'])
+    ))
 
 ## Send classic logs into syslog
 handler = logging.StreamHandler()

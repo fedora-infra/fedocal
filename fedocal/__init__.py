@@ -167,6 +167,7 @@ def markdown_filter(text):
     if text:
         return markdown.markdown(text)
 
+    return ''
 
 # pylint: disable=W0613
 @APP.teardown_request

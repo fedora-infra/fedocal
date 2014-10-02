@@ -204,7 +204,7 @@
         {% set future = True %}
         {% endif %}
 
-        {% set class = [] %}
+        {% set class = 'meeting_normal'  %}
         {% if meeting.meeting_date >= today %}
             {% if meeting.meeting_date == today and past %}
                 {% set class = 'today limit_past' %}
@@ -215,9 +215,9 @@
             {% endif %}
         <tr class="{{class}}" id="{{class}}">
         {% elif month != meeting.meeting_date.month %}
-        <tr class="change_month">
+        <tr class="change_month meeting_normal">
         {% else %}
-        <tr>
+        <tr class="meeting_normal">
         {% endif %}
             <td>
                 {{ meeting.meeting_date }}
@@ -236,7 +236,12 @@
                             {{ meeting.meeting_name }}
                 </a>
             </td>
-            <td>{% autoescape off%} {{ meeting.meeting_information | markdown}} {% endautoescape %}</td>
+            <td>{% autoescape off%}
+                {{ meeting.meeting_information | markdown}}
+                <a class="meeting_{{ meeting.meeting_id }}"
+                   href="{{ url_for('view_meeting',
+                         meeting_id=meeting.meeting_id) }}"> show more</a>
+                {% endautoescape %}</td>
             <td> {{ meeting.meeting_location }} </td>
         </tr>
         {% endfor %}

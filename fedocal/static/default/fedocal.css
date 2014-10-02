@@ -382,12 +382,21 @@ li.menu-focus {
 .limit_future td {
     border-top: 2px solid;
     border-color: #31a90c;
+    padding-top: 1em;
+    padding-bottom: 1em;
 }
 
 .limit_past td {
     border-top: 2px solid;
     border-color: red;
 }
+
+.meeting_normal td {
+    border-top: 1px solid #CCCCCC;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
 .today {
     background-color: #FFF6D5;
 }

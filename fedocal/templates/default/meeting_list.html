@@ -242,7 +242,8 @@
                    href="{{ url_for('view_meeting',
                          meeting_id=meeting.meeting_id) }}"> show more</a>
                 {% endautoescape %}</td>
-            <td> {{ meeting.meeting_location }} </td>
+            <td> {% if meeting.meeting_location
+                    %} {{ meeting.meeting_location }} {% endif %}</td>
         </tr>
         {% endfor %}
     </table>

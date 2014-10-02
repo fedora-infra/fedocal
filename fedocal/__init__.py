@@ -178,7 +178,7 @@ def markdown_wrap_filter(text):
     """
     if text:
         return markdown.markdown(
-            '\n'.join(textwrap.wrap(text)[:3])+"...")
+            '\n'.join(textwrap.wrap(text)[:2])+"...")
 
     return ''
 

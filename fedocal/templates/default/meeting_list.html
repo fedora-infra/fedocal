@@ -310,7 +310,7 @@
     $(function(){
         $('.event').click(function(){
             var _cls = $(this).attr('class');
-            var _meetId = _cls.replace('event meeting_', '');
+            var _meetId = _cls.split('meeting_')[1]
             var _url = "{{ url_for('view_meeting', meeting_id=0) }}".replace('/0/','/');
             $.ajax({
                 url: _url + _meetId + '/0/',
@@ -322,7 +322,7 @@
                     _elt.dialog({
                         height: _height,
                         width: '50%',
-                        modal: true
+                        modal: true,
                     });
                 },
                 error: function() {

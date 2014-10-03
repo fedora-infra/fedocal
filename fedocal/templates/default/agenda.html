@@ -224,20 +224,20 @@ else %}{{ location }}{% endif %}{% endblock %}
               {% endif %}
 
               {% if not first_meeting and last_meeting%}
-              <a class="event first_event meeting_{{ meeting.meeting_id }}"
+              <a class="event_blue first_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
                       meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                   {{ meeting.meeting_name }}
               {% elif first_meeting and last_meeting %}
-              <a class="event middle_event meeting_{{ meeting.meeting_id }}"
+              <a class="event_blue middle_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
                       meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
               {% elif first_meeting and not last_meeting %}
-              <a class="event last_event meeting_{{ meeting.meeting_id }}"
+              <a class="event_blue last_event meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
                       meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
               {% else %}
-              <a class="event meeting_{{ meeting.meeting_id }}"
+              <a class="event_blue meeting_{{ meeting.meeting_id }}"
                   href="{{ url_for('view_meeting',
                       meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                   {{ meeting.meeting_name }}
@@ -267,7 +267,7 @@ else %}{{ location }}{% endif %}{% endblock %}
                 {% endif %}
                 <td>
                     {% for meeting in meetings %}
-                    <a class="event meeting_{{ meeting.meeting_id }}"
+                    <a class="event_blue meeting_{{ meeting.meeting_id }}"
                         href="{{ url_for('view_meeting',
                             meeting_id=meeting.meeting_id) }}?from_date={{weekdays[day_index].strftime('%Y-%m-%d')}}">
                         {{ meeting.meeting_name[:22] }}
@@ -376,7 +376,7 @@ else %}{{ location }}{% endif %}{% endblock %}
     $(function(){
         var above_bool = false;
         var below_bool = false;
-        $(".event").each(function() {
+        $(".event_blue").each(function() {
             var el = $(this);
             if (above_bool && below_bool) {
                 return
@@ -437,7 +437,7 @@ else %}{{ location }}{% endif %}{% endblock %}
     }
 
     $(function(){
-        $('.event').click(function(){
+        $('.event_blue').click(function(){
             var _cls = $(this).attr('class');
             var _meetId = _cls.split('meeting_')[1];
             var _href = $(this).attr('href');

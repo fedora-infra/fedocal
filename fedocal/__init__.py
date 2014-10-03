@@ -173,7 +173,10 @@ def format_time_spinner(time):
     """ Template filter returning for a given time only the hours and
     minutes.
     """
-    return time.strftime('%H:%M')
+    if isinstance(time, basestring):
+        return ':'.join(time.split(':')[:2])
+    else:
+        return time.strftime('%H:%M')
 
 
 # pylint: disable=W0613

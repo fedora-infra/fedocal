@@ -28,6 +28,7 @@ BuildRequires:  python-markdown
 BuildRequires:  python-docutils
 BuildRequires:  python-nose
 BuildRequires:  python-coverage
+BuildRequires:  python-mock
 BuildRequires:  python-psutil
 
 # EPEL6

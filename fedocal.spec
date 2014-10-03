@@ -28,6 +28,7 @@ BuildRequires:  python-markdown
 BuildRequires:  python-docutils
 BuildRequires:  python-nose
 BuildRequires:  python-coverage
+BuildRequires:  python-psutil
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -51,6 +52,7 @@ Requires:  python-dateutil <= 1.5
 Requires:  python-setuptools
 Requires:  python-markdown
 Requires:  python-docutils
+Requires:  python-psutil
 Requires:  mod_wsgi
 
 %description

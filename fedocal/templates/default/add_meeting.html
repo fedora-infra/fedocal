@@ -76,8 +76,17 @@
         $('#end_repeats').datepicker({
             dateFormat: "yy-mm-dd",
         });
+        {% if request.method == 'GET' %}
         $('#meeting_time_start').val('8:00').timespinner();
         $('#meeting_time_stop').val('9:00').timespinner();
+        {% else %}
+        $('#meeting_time_start').val('{{
+            form.meeting_time_start.data | format_time_spinner
+            }}').timespinner();
+        $('#meeting_time_stop').val('{{
+            form.meeting_time_stop.data | format_time_spinner
+            }}').timespinner();
+        {% endif %}
     });
 </script>
 <script type="text/javascript">

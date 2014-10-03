@@ -168,6 +168,14 @@ def markdown_wrap_filter(text):
     return ''
 
 
+@APP.template_filter('format_time_spinner')
+def format_time_spinner(time):
+    """ Template filter returning for a given time only the hours and
+    minutes.
+    """
+    return time.strftime('%H:%M')
+
+
 # pylint: disable=W0613
 @APP.teardown_request
 def shutdown_session(exception=None):

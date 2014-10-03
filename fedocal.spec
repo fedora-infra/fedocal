@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.9.3
+Version:        0.10
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -108,6 +108,19 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Fri Oct 3 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.10-1
+- Update to 0.10
+- Implement the session time-out (defaults to 1h)
+- Let the doc retrieve the fedocal version directly from the fedocal module
+- Store the list of requirements only in the requirements.txt (in addition
+  to the spec file)
+- Support sending reminder emails to multiple addresses at once
+- New layout for the list view
+- New email handler for the logs (providing for example on which host the
+  exception occured) - Thanks Ralph Bean for that code
+- Avoid reseting the time start/stop when adding or editing a meeting and
+  something goes wrong
+
 * Tue Aug 26 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.9.3-1
 - Update to 0.9.3
 - Fix the iCal output to avoid converting the timezone of the meetings twice

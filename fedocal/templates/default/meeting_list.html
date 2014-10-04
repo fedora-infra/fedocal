@@ -100,8 +100,8 @@
                     </li>
                     <li>
                         <a onclick="CopyToClipboard('{{url_for('ical_out',
-                                           calendar_name=calendar.calendar_name)}}')"
-                            title="Copy the iCal feed URL">Copy iCal link</a>
+                                           calendar_name=calendar.calendar_name)}}');return false;"
+                            title="Copy the iCal feed URL" href="#">Copy iCal link</a>
                     </li>
                     {% if calendar.calendar_contact %}
                     <li>

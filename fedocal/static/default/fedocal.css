@@ -288,6 +288,13 @@ td .last_event {
 {
     color: white;
 }
+
+.menu-focus > a,
+.ui-widget-content .menu-focus > a
+{
+    color: #e59728;
+}
+
 table.month {
     margin: 0 auto;
     border-collapse: collapse;

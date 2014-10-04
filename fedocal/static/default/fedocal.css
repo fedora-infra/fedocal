@@ -279,7 +279,7 @@ td .last_event {
 .ui-state-active .ui-menu-item > a:link,
 .ui-state-active .ui-menu-item > a:visited
 {
-    color: #444;
+    color: #0066cc;
 }
 
 .ui-state-focus.ui-menu-item > a,

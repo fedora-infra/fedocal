@@ -284,7 +284,7 @@ td .last_event {
 
 .ui-state-focus.ui-menu-item > a,
 .ui-state-focus.ui-menu-item > a:link,
-.ui-state-focus .ui-menu-item > a:visited
+.ui-state-focus.ui-menu-item > a:visited
 {
     color: white;
 }

@@ -262,6 +262,7 @@ td .last_event {
 #accordion .ui-widget-content a
 {
     display: block;
+    font-weight: normal;
 }
 
 .ui-state-focus .ui-menu-item > a,

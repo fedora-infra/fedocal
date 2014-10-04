@@ -251,6 +251,19 @@ td .last_event {
     overflow: visible;
 }
 
+#accordion .ui-state-active,
+#accordion .ui-widget-content #accordion .ui-state-active,
+#accordion .ui-widget-header .ui-state-active,
+#accordion .ui-state-hover,
+#accordion .ui-widget-content .ui-state-hover,
+#accordion .ui-widget-header .ui-state-hover,
+#accordion .ui-state-focus,
+#accordion .ui-widget-content .ui-state-focus,
+#accordion .ui-widget-header .ui-state-focus
+{
+    font-weight: normal;
+}
+
 .ui-menu-item ul {
     margin-left: 2px;
 }
@@ -266,7 +279,7 @@ td .last_event {
 .ui-state-active .ui-menu-item > a:link,
 .ui-state-active .ui-menu-item > a:visited
 {
-    color: #0066cc;
+    color: #444;
 }
 
 .ui-state-focus.ui-menu-item > a,

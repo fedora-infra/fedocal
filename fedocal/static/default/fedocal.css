@@ -289,12 +289,6 @@ td .last_event {
     color: white;
 }
 
-.menu-focus > a,
-.ui-widget-content .menu-focus > a
-{
-    color: #e59728;
-}
-
 table.month {
     margin: 0 auto;
     border-collapse: collapse;
@@ -370,6 +364,15 @@ th.month .ui-button-text {
 
 .ui-menu a.ui-state-focus {
     border: 1px solid #DDDDDD;
+}
+
+li.menu-focus
+{
+    border: 1px solid #3C6EB4;
+}
+
+.ui-menu .ui-state-focus.menu-focus {
+    margin: 0;
 }
 
 .calendar_list {

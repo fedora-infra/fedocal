@@ -245,6 +245,21 @@ td .last_event {
     float:right;
 }
 
+.ui-button:hover {
+    color: white;
+}
+
+#home_btn > span {
+    text-indent: 50px;
+    width: 20px;
+    overflow: hidden;
+    background: url(home.png) 50% 6px no-repeat;
+}
+
+#home_btn:hover span {
+    background-position: 50% -15px;
+}
+
 /** Menu */
 #mainmenu #accordion > .ui-accordion-content {
     padding: 0;

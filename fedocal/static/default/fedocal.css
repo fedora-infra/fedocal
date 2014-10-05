@@ -140,6 +140,7 @@ section nav {
 }
 
 td > .event_blue {
+    min-height: 2em;
     height: 100%;
 }
 

@@ -179,7 +179,9 @@ td .last_event {
     padding: 0;
 }
 
-#agenda td > .row_height {
+#agenda td > .row_height,
+#agenda th > .row_height
+{
     min-height: 2em;
 }
 

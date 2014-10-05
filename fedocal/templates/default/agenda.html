@@ -258,7 +258,9 @@ else %}{{ location }}{% endif %}{% endblock %}
               {% endfor %}
           </tr>
           <tr id="full_day">
-              <th></th>
+              <th>
+                  <div class="row_height"></div>
+              </th>
               {% for meetings in full_day_meetings %}
                 {% if loop.first %}
                 {% set day_index = 0 %}

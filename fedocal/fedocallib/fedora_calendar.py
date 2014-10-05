@@ -109,7 +109,7 @@ class FedocalCalendar(HTMLCalendar):
 
         prev_month_lnk = ''
         if self.calendar_name:
-            prev_month_lnk = '<a class="button" href="%s"><</a>' % (
+            prev_month_lnk = '<a class="button" href="%s">&lt;</a>' % (
                 flask.url_for(
                     'calendar',
                     calendar_name=self.calendar_name,
@@ -117,7 +117,7 @@ class FedocalCalendar(HTMLCalendar):
                     month=int(prev_month),
                     day=1))
         elif self.loc_name:
-            prev_month_lnk = '<a class="button" href="%s"><</a>' % (
+            prev_month_lnk = '<a class="button" href="%s">&lt;</a>' % (
                 flask.url_for(
                     'location',
                     loc_name=self.loc_name,
@@ -131,7 +131,7 @@ class FedocalCalendar(HTMLCalendar):
 
         next_month_lnk = ''
         if self.calendar_name:
-            next_month_lnk = '<a class="button" href="%s">></a>' % (
+            next_month_lnk = '<a class="button" href="%s">&gt;</a>' % (
                 flask.url_for(
                     'calendar',
                     calendar_name=self.calendar_name,
@@ -139,7 +139,7 @@ class FedocalCalendar(HTMLCalendar):
                     month=int(next_month),
                     day=1))
         elif self.loc_name:
-            next_month_lnk = '<a class="button" href="%s">></a>' % (
+            next_month_lnk = '<a class="button" href="%s">&gt;</a>' % (
                 flask.url_for(
                     'location',
                     loc_name=self.loc_name,

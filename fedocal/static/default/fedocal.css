@@ -241,15 +241,19 @@ td .last_event {
     left: 0;
 }
 
-#mainmenu li {
-    margin-left: -2px;
-}
-
 #weeks {
     float:right;
 }
 
 /** Menu */
+#mainmenu #accordion > .ui-accordion-content {
+    padding: 0;
+}
+
+#calendars_menu {
+    overflow: visible;
+}
+
 .ui-menu-item ul {
     margin-left: 2px;
 }
@@ -258,6 +262,29 @@ td .last_event {
     white-space: nowrap;
 }
 
+#accordion .ui-widget-content a
+{
+    display: block;
+    font-weight: normal;
+}
+
+.ui-state-focus .ui-menu-item > a,
+.ui-state-focus .ui-menu-item > a:link,
+.ui-state-focus .ui-menu-item > a:visited,
+.ui-state-active .ui-menu-item > a,
+.ui-state-active .ui-menu-item > a:link,
+.ui-state-active .ui-menu-item > a:visited
+{
+    color: #0066cc;
+    display: block;
+}
+
+.ui-state-focus.ui-menu-item > a,
+.ui-state-focus.ui-menu-item > a:link,
+.ui-state-focus.ui-menu-item > a:visited
+{
+    color: white;
+}
 
 table.month {
     margin: 0 auto;
@@ -336,8 +363,13 @@ th.month .ui-button-text {
     border: 1px solid #DDDDDD;
 }
 
-li.menu-focus {
+li.menu-focus
+{
     border: 1px solid #3C6EB4;
+}
+
+.ui-menu .ui-state-focus.menu-focus {
+    margin: 0;
 }
 
 .calendar_list {

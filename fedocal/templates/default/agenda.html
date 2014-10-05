@@ -279,7 +279,6 @@ else %}{{ location }}{% endif %}{% endblock %}
                 </td>
               {% endfor %}
           </tr>
-          <tr></tr>
           <tr>
               <th class="time" rowspan="2">00h00</th>
               <td colspan="7" class="empty">
@@ -335,19 +334,19 @@ else %}{{ location }}{% endif %}{% endblock %}
       <li>
         <a href="{{ url_for('add_meeting',
                             calendar_name=calendar.calendar_name) }}">
-          <img src="{{ url_for('static', filename='plus.png') }}" title="Add meeting" />
+          <img src="{{ url_for('static', filename='plus.png') }}" title="Add meeting" alt="Add meeting" />
         </a>
       </li>
       <li>
         <a href="{{ url_for('calendar_list',
                             calendar_name=calendar.calendar_name) }}">
-          <img src="{{ url_for('static', filename='list.png') }}" title="List view" />
+          <img src="{{ url_for('static', filename='list.png') }}" title="List view" alt="List view" />
         </a>
       </li>
       <li>
         <a href="{{url_for('ical_out',
                            calendar_name=calendar.calendar_name)}}">
-          <img src="{{ url_for('static', filename='ical.png') }}" title="Ical Export" />
+          <img src="{{ url_for('static', filename='ical.png') }}" title="Ical Export" alt="Ical export" />
         </a>
       </li>
     </ul>

@@ -100,8 +100,8 @@
                     </li>
                     <li>
                         <a onclick="CopyToClipboard('{{url_for('ical_out',
-                                           calendar_name=calendar.calendar_name)}}')"
-                            title="Copy the iCal feed URL">Copy iCal link</a>
+                                           calendar_name=calendar.calendar_name)}}');return false;"
+                            title="Copy the iCal feed URL" href="#">Copy iCal link</a>
                     </li>
                     {% if calendar.calendar_contact %}
                     <li>
@@ -225,19 +225,19 @@
       <li>
         <a href="{{ url_for('add_meeting',
                             calendar_name=calendar.calendar_name) }}">
-          <img src="{{ url_for('static', filename='plus.png') }}" title="Add meeting" />
+          <img src="{{ url_for('static', filename='plus.png') }}" title="Add meeting" alt="Add meeting" />
         </a>
       </li>
       <li>
         <a href="{{ url_for('calendar',
                             calendar_name=calendar.calendar_name) }}">
-          <img src="{{ url_for('static', filename='table.png') }}" title="Calendar view" />
+          <img src="{{ url_for('static', filename='table.png') }}" title="Calendar view" alt="Calendar view" />
         </a>
       </li>
       <li>
         <a href="{{url_for('ical_out',
                            calendar_name=calendar.calendar_name)}}">
-          <img src="{{ url_for('static', filename='ical.png') }}" title="Ical Export" />
+          <img src="{{ url_for('static', filename='ical.png') }}" title="Ical Export" alt="Ical Export" />
         </a>
       </li>
     </ul>

@@ -247,6 +247,8 @@ else %}{{ location }}{% endif %}{% endblock %}
               {% endif %}
               </a>
           {% endfor %}
+      {% else %}
+          <div class="row_height"></div>
       {% endif %}
       </td>
     {%- endmacro %}
@@ -280,7 +282,9 @@ else %}{{ location }}{% endif %}{% endblock %}
           <tr></tr>
           <tr>
               <th class="time" rowspan="2">00h00</th>
-              <td colspan="7" class="empty"></td>
+              <td colspan="7" class="empty">
+                  <div class="row_height"></div>
+              </td>
           </tr>
           {% set keys = meetings.keys()|sort %}
 

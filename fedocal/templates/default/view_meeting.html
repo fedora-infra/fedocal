@@ -109,7 +109,9 @@
                 $(this).html(
                     event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
             }
-        );
+        ).on('finish.countdown', function(event){
+            $(this).html('Meeting is over!');
+        });
     });
     </script>
     {% endif %}

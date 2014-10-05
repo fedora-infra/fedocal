@@ -109,7 +109,31 @@
                 $(this).html(
                     event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
             }
-        );
+        ).on('finish.countdown', function(event){
+            var _end_date = Date.UTC(
+                {{next_meeting.meeting_date_end.year}},
+                {{next_meeting.meeting_date_end.month}} - 1,
+                {{next_meeting.meeting_date_end.day}},
+                {{next_meeting.meeting_time_stop.hour }},
+                {{next_meeting.meeting_time_stop.minute}},
+                0
+            );
+            var _current_date = new Date();
+            _current_date = Date.UTC(
+                _current_date.getUTCFullYear(),
+                _current_date.getUTCMonth(),
+                _current_date.getUTCDate(),
+                _current_date.getUTCHours(),
+                _current_date.getUTCMinutes(),
+                0
+            );
+
+            if ( _end_date > _current_date ) {
+                $(this).html('Meeting in progress.');
+            } else {
+                $(this).html('Meeting is over!');
+            }
+        });
     });
     </script>
     {% endif %}

@@ -43,9 +43,8 @@ else %}{{ location }}{% endif %}{% endblock %}
               &gt;
           </a>
           <a href="{{url_for('calendar',
-              calendar_name=calendar.calendar_name)}}" class="button">
-              <img src="{{url_for('static', filename='home.png')}}"
-                alt="today" title="Today" />
+              calendar_name=calendar.calendar_name)}}" class="button" id="home_btn">
+              Today
           </a>
           {% else %}
           <a href="{{url_for('location',
@@ -62,9 +61,8 @@ else %}{{ location }}{% endif %}{% endblock %}
               &gt;
           </a>
           <a href="{{url_for('location', loc_name=location,)}}"
-            class="button" title="Today">
-              <img src="{{url_for('static', filename='home.png')}}"
-                alt="today" />
+            class="button" title="Today" id="home_btn">
+              Today
           </a>
           {% endif %}
       </nav>
@@ -260,7 +258,9 @@ else %}{{ location }}{% endif %}{% endblock %}
               {% endfor %}
           </tr>
           <tr id="full_day">
-              <th></th>
+              <th>
+                  <div class="row_height"></div>
+              </th>
               {% for meetings in full_day_meetings %}
                 {% if loop.first %}
                 {% set day_index = 0 %}

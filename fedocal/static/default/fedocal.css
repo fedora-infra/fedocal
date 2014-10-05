@@ -140,6 +140,7 @@ section nav {
 }
 
 td > .event_blue {
+    min-height: 2em;
     height: 100%;
 }
 
@@ -178,7 +179,9 @@ td .last_event {
     padding: 0;
 }
 
-#agenda td > .row_height {
+#agenda td > .row_height,
+#agenda th > .row_height
+{
     min-height: 2em;
 }
 
@@ -243,6 +246,21 @@ td .last_event {
 
 #weeks {
     float:right;
+}
+
+.ui-button:hover {
+    color: white;
+}
+
+#home_btn > span {
+    text-indent: 50px;
+    width: 20px;
+    overflow: hidden;
+    background: url(home.png) 50% 6px no-repeat;
+}
+
+#home_btn:hover span {
+    background-position: 50% -25px;
 }
 
 /** Menu */

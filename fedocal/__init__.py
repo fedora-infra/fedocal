@@ -47,6 +47,8 @@ from functools import wraps
 from pytz import common_timezones
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug import secure_filename
+from flask.ext.babel import Babel
+from flask.ext.babel import gettext
 
 import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
@@ -62,6 +64,8 @@ APP = flask.Flask(__name__)
 
 # set up FAS
 APP.config.from_object('fedocal.default_config')
+
+babel = Babel(APP)
 
 if 'FEDOCAL_CONFIG' in os.environ:
     APP.config.from_envvar('FEDOCAL_CONFIG')
@@ -313,6 +317,14 @@ def validate_input_file(input_file):
             'The submitted candidate has the MIME type "%s" which is '
             'not an allowed MIME type' % mimetype)
 
+
+@babel.localeselector
+def get_locale():
+    """try to guess the language from the user accept
+    header the browser transmits"""
+    return flask.request.accept_languages.best_match(
+        APP.config['LANGUAGES'].keys()
+    )
 
 ## Flask application
 @APP.route('/')

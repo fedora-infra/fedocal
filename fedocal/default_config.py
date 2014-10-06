@@ -65,3 +65,8 @@ EMAIL_ERROR = 'pingou@pingoured.fr'
 
 # The URL at which the project is available.
 APP_URL = 'https://apps.fedoraproject.org/calendar/'
+
+LANGUAGES = {
+    'en': 'English',
+    'fr': 'Français'
+}

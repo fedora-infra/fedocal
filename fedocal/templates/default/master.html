@@ -26,8 +26,8 @@
           <img src="{{ url_for('static', filename='fedocal-logo.png') }}"
             alt="Fedocal" id="kojiLogo"/>
           <form action="{{url_for('search')}}" id="headerSearch">
-            <input type="text" name="keyword" title="Search for meetings, you may use '*'"/>
-            <input type="submit" value="Search"/>
+              <input type="text" name="keyword" title="{{ _("Search for meetings, you may use '*'") }}"/>
+              <input type="submit" value="{{ _('Search') }}"/>
           </form>
         </div><!-- end header -->
 
@@ -35,25 +35,25 @@
         <div id="mainNav">
           <h4 class="hide">Main Site Links:</h4>
           <ul>
-            <li id="homeTab"><a href="{{url_for('index')}}">Home</a></li>
-            <li id="locationsTab"><a href="{{url_for('locations')}}">Locations</a></li>
-            <li id="apiTab"><a href="{{url_for('api')}}">API</a></li>
+              <li id="homeTab"><a href="{{url_for('index')}}">{{ _('Home') }}</a></li>
+              <li id="locationsTab"><a href="{{url_for('locations')}}">{{ _('Locations') }}</a></li>
+              <li id="apiTab"><a href="{{url_for('api')}}">{{ _('API') }}</a></li>
             {% if g.fas_user %}
-            <li id="mymeetingTab"><a href="{{url_for('my_meetings')}}">My meetings</a></li>
+            <li id="mymeetingTab"><a href="{{url_for('my_meetings')}}">{{ _('My meetings') }}</a></li>
             {% endif %}
             {% if admin %}
-            <li id="adminTab"><a href="{{url_for('admin')}}">Admin</a></li>
+            <li id="adminTab"><a href="{{url_for('admin')}}">{{ _('Admin') }}</a></li>
             {% endif %}
           </ul>
         </div><!-- end mainNav -->
 
         <span id="loginInfo">
           {% if g.fas_user %}
-            <span class="text">logged in as </span>
+          <span class="text">{{ _('logged in as') }} </span>
             <a href="{{url_for('my_meetings',)}}">{{ g.fas_user.username }}</a> |
-            <a href="{{ url_for('auth_logout') }}?next={{request.url}}">log out</a>
+            <a href="{{ url_for('auth_logout') }}?next={{request.url}}">{{ _('log out') }}</a>
           {% else %}
-        <a href="{{ url_for('auth_login') }}?next={{request.url}}">login</a>
+          <a href="{{ url_for('auth_login') }}?next={{request.url}}">{{ _('login') }}</a>
           {% endif %}
         </span>
 
@@ -78,9 +78,9 @@
           <a href="https://fedorahosted.org/fedocal/">fedocal</a>
           -- {{version}}
           -- <a href="http://fedocal.rtfd.org"
-                target="_blank">Documentation</a>
-          -- <a href="http://fedocal.readthedocs.org/en/latest/contributors.html">Authors</a>
-          -- <a href="{{ url_for('api') }}">API</a>
+              target="_blank">{{ _('Documentation') }}</a>
+          -- <a href="http://fedocal.readthedocs.org/en/latest/contributors.html">{{ _('Authors') }}</a>
+          -- <a href="{{ url_for('api') }}">{{ _('API') }}</a>
         </p>
 
       </div>
@@ -99,7 +99,7 @@
     </script>
     <script type="text/javascript">
         function CopyToClipboard (text) {
-            window.prompt('Press CTRL+C, then ENTER',
+            window.prompt('{{ _('Press CTRL+C, then ENTER') }}',
                          '{{ request.host_url }}' + text);
             return false;
         }

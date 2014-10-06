@@ -44,10 +44,7 @@
     </div>
 
     {% if meeting.recursion_frequency and meeting.recursion_ends %}
-    <p>
-        This meeting is recurrent, it occurs every
-        {{ meeting.recursion_frequency }} days until
-        {{ meeting.recursion_ends }}
+    <p>{{ _('This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s', frequency=meeting.recursion_frequency, ends=meeting.recursion_ends) }}
     </p>
     {% endif %}
 

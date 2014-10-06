@@ -1,25 +1,23 @@
 {% extends "master.html" %}
 {% from "_formhelpers.html" import render_field %}
 
-{% block title %}My meeting{% endblock %}
+{% block title %}{{ _('My meetings') }}{% endblock %}
 
 {%block tag %}mymeeting{% endblock %}
 
 {% block content %}
 <section>
     <header>
-        <h2>Manage your meetings</h2>
-        <p>
-            Below is the list of your past and future meetings.
-        </p>
+        <h2>{{ _('Manage your meetings') }}</h2>
+        <p>{{ _('Below is the list of your past and future meetings.') }}</p>
     </header>
 
 
     <p>Meetings times are displayed in the {{tzone}} time-zone.</p>
 
-    <h4>Future meeting</h4>
+    <h4>{{ _('Future meetings') }}</h4>
     {% if single_meetings %}
-    <p> This is the list of all non-recurrent meeting you created </p>
+    <p>{{ _('This is the list of all non-recurrent meeting you created') }}</p>
     <div class='my_meetings'>
         <table>
             {% for meeting in single_meetings %}
@@ -50,7 +48,7 @@
     {% endif %}
 
     {% if regular_meetings %}
-    <p> This is the list of all regular meeting you created </p>
+    <p>{{ _('This is the list of all regular meeting you created') }}</p>
     <div class='my_meetings'>
         <table>
             {% for meeting in regular_meetings %}
@@ -80,7 +78,7 @@
     </div>
     {% endif %}
 
-    <h4>Past meetings</h4>
+    <h4>{{ _('Past meetings') }}</h4>
     <div class='my_meetings'>
         <table>
             {% for meeting in pas_meetings %}

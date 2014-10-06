@@ -1,12 +1,12 @@
 {% extends "master.html" %}
 
-{% block title %}Delete calendar{% endblock %}
+{% block title %}{{ _('Delete calendar') }}{% endblock %}
 
 {%block tag %}admin{% endblock %}
 
 {% block content %}
 
-<h4> Calendar: {{ calendarobj.calendar_name}}</h4>
+<h4>{{ _('Calendar:') }} {{ calendarobj.calendar_name}}</h4>
 
 <ul>
     <li>Contact: {{ calendarobj.calendar_contact }} </li>
@@ -15,17 +15,14 @@
     <li>{{ calendarobj.meetings | length }} meetings associated </li>
 </ul>
 
-
-<p>
-    Are you positively sure that's what you want to do?
-</p>
+<p>{{ _('Are you positively sure that's what you want to do?') }}</p>
 
 <form action="" method="post">
 {{ render_field_invert(form.confirm_delete) }}
 <p class="buttons indent">
     <input id="confirm_button" type="submit" class="submit positive button"
-           value="Delete">
-    <input type="button" value="Cancel" class="button" onclick="history.back();">
+        value="{{ _('Delete') }}">
+    <input type="button" value="{{ _('Cancel') }}" class="button" onclick="history.back();">
 </p>
 {{ form.csrf_token }}
 </form>

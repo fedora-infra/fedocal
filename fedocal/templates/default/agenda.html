@@ -74,10 +74,10 @@ else %}{{ location }}{% endif %}{% endblock %}
           {% else %}
           <input type="hidden" name="location" value="{{location}}"/>
           {% endif %}
-          <input type="text" name="day" placeholder="28" title="Day in decimal"/>
-          <input type="text" name="month" placeholder="02" title="Month in decimal"/>
-          <input type="text" name="year" placeholder="2014" title="Year in decimal"/>
-          <input type="submit" value="Go"/>
+          <input type="text" name="day" placeholder="28" title="{{ _('Day in decimal') }}"/>
+          <input type="text" name="month" placeholder="02" title="{{ _('Month in decimal') }}"/>
+          <input type="text" name="year" placeholder="2014" title="{{ _('Year in decimal') }}"/>
+          <input type="submit" value="{{ _('Go') }}"/>
         </form>
         <form action="{{ url_for('update_tz') }}" id="update_tz">
             <select name="tzone" id="tzones">
@@ -98,7 +98,7 @@ else %}{{ location }}{% endif %}{% endblock %}
         {% endif %}
 
         <div id="accordion">
-        <h4>Calendars</h4>
+        <h4>{{ _('Calendars') }}</h4>
         <ul id="calendars_menu" class="checkmark-list">
             {% for _calendar in calendars %}
             {% if _calendar.calendar_status == 'Enabled' %}
@@ -113,29 +113,29 @@ else %}{{ location }}{% endif %}{% endblock %}
                     {% if g.fas_user %}
                     <li>
                         <a href="{{ url_for('add_meeting',
-                            calendar_name=_calendar.calendar_name) }}">Add a meeting</a>
+                            calendar_name=_calendar.calendar_name) }}">{{ _('Add a meeting') }}</a>
                     </li>
                     {% endif %}
                     <li>
                         <a href="{{ url_for('calendar_list',
                             calendar_name=_calendar.calendar_name) }}">
-                            List view
+                            {{ _('List view') }}
                         </a>
                     </li>
                     <li>
                         <a href="{{url_for('ical_out',
                                            calendar_name=_calendar.calendar_name)}}"
-                            title="Add this calendar to your agenda">iCal export</a>
+                            title="{{ _('Add this calendar to your agenda') }}">{{ _('iCal export') }}</a>
                     </li>
                     <li>
                         <a onclick="CopyToClipboard('{{url_for('ical_out',
                                            calendar_name=_calendar.calendar_name)}}')"
-                            title="Copy the iCal feed URL">Copy iCal link</a>
+                            title="{{ _('Copy the iCal feed URL') }}">{{ _('Copy iCal link') }}</a>
                     </li>
                     {% if _calendar.calendar_contact %}
                     <li>
                         <a href="mailto:{{_calendar.calendar_contact}}">
-                            Contact admin
+                            {{ _('Contact admin') }}
                         </a>
                     </li>
                     {% endif %}
@@ -146,27 +146,27 @@ else %}{{ location }}{% endif %}{% endblock %}
         </ul>
 
         {% if calendar and (admin or calendar_admin)  %}
-        <h4> Admin </h4>
+        <h4>{{ _('Admin') }}</h4>
         <div>
         <ul class="checkmark-list">
             {% if admin %}
             <li>
                 <a href="{{ url_for('edit_calendar',
-                    calendar_name=calendar.calendar_name) }}"> Edit calendar </a>
+                    calendar_name=calendar.calendar_name) }}">{{ _('Edit calendar') }}</a>
             </li>
             <li>
                 <a href="{{ url_for('delete_calendar',
-                    calendar_name=calendar.calendar_name) }}"> Delete calendar </a>
+                    calendar_name=calendar.calendar_name) }}">{{ _('Delete calendar') }}</a>
             </li>
             {% endif %}
             {% if calendar_admin %}
             <li>
                 <a href="{{ url_for('clear_calendar',
-                    calendar_name=calendar.calendar_name) }}"> Clear calendar </a>
+                    calendar_name=calendar.calendar_name) }}">{{ _('Clear calendar') }}</a>
             </li>
             <li>
                 <a href="{{ url_for('upload_calendar',
-                    calendar_name=calendar.calendar_name) }}"> Upload iCalendar </a>
+                    calendar_name=calendar.calendar_name) }}">{{ _('Upload iCalendar') }}</a>
             </li>
             {% endif %}
         </ul>
@@ -176,12 +176,12 @@ else %}{{ location }}{% endif %}{% endblock %}
       {% if calendar %}
       <ul class="checkmark-list">
         {% if calendar.calendar_admin_group %}
-        <li>Administrators: {{ calendar.calendar_admin_group }}</li>
+        <li>{{ _('Administrators:') }} {{ calendar.calendar_admin_group }}</li>
         {% endif %}
         {% if calendar.calendar_editor_group %}
-        <li>Editors: {{ calendar.calendar_editor_group }}</li>
+        <li>{{ _('Editors:') }} {{ calendar.calendar_editor_group }}</li>
         {% else %}
-        <li>Editors: CLA+1</li>
+        <li>{{ _('Editors: CLA+1') }}</li>
         {% endif %}
       </ul>
       {% endif %}
@@ -334,19 +334,19 @@ else %}{{ location }}{% endif %}{% endblock %}
       <li>
         <a href="{{ url_for('add_meeting',
                             calendar_name=calendar.calendar_name) }}">
-          <img src="{{ url_for('static', filename='plus.png') }}" title="Add meeting" alt="Add meeting" />
+            <img src="{{ url_for('static', filename='plus.png') }}" title="{{ _('Add meeting') }}" alt="{{ _('Add meeting') }}" />
         </a>
       </li>
       <li>
         <a href="{{ url_for('calendar_list',
                             calendar_name=calendar.calendar_name) }}">
-          <img src="{{ url_for('static', filename='list.png') }}" title="List view" alt="List view" />
+            <img src="{{ url_for('static', filename='list.png') }}" title="{{ _('List view') }}" alt="{{ _('List view') }}" />
         </a>
       </li>
       <li>
         <a href="{{url_for('ical_out',
                            calendar_name=calendar.calendar_name)}}">
-          <img src="{{ url_for('static', filename='ical.png') }}" title="Ical Export" alt="Ical export" />
+            <img src="{{ url_for('static', filename='ical.png') }}" title="{{ _('Ical Export') }}" alt="{{ _('Ical export') }}" />
         </a>
       </li>
     </ul>

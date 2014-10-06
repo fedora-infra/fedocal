@@ -1,6 +1,6 @@
 {% extends "master.html" %}
 
-{% block title %}Delete meeting{% endblock %}
+{% block title %}{{ _('Delete meeting') }}{% endblock %}
 
 {%block tag %}mymeeting{% endblock %}
 
@@ -9,10 +9,10 @@
 <h4> Meeting: {{ meeting.meeting_name}}</h4>
 
 <ul>
-    <li>Date: {{ next_meeting.meeting_date }}</li>
-    <li>Starting time: {{ next_meeting.meeting_time_start }} {{
+    <li>{{ _('Date:') }} {{ next_meeting.meeting_date }}</li>
+    <li>{{ _('Starting time:') }} {{ next_meeting.meeting_time_start }} {{
         next_meeting.meeting_timezone }}</li>
-    <li>Ending time: {{ next_meeting.meeting_time_stop }} {{
+    <li>{{ _('Ending time:') }} {{ next_meeting.meeting_time_stop }} {{
         next_meeting.meeting_timezone }}</li>
 </ul>
 
@@ -27,14 +27,13 @@
 </ul>
 
 <p>
-You are removing this meeting from the calendar
+{{ _('You are removing this meeting from the calendar') }}
 <a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
 {{ meeting.calendar_name }}</a>.
 </p>
 
-<p>
-    Are you positively sure that's what you want to do?
-</p>
+<p>{{ _('Are you positively sure that's what you want to do?') }}</p>
+
 <form action="" method="post">
 {{ render_field_invert(form.confirm_delete) }}
 {% if meeting.recursion_frequency %}
@@ -50,8 +49,8 @@ meetings as well)
 {% endif %}
 <p class="buttons indent">
     <input id="confirm_button" type="submit" class="submit positive button"
-           value="Delete">
-    <input type="button" value="Cancel" class="button"
+        value="{{ _('Delete') }}">
+    <input type="button" value="{{ _('Cancel') }}" class="button"
            onclick="history.back();">
 </p>
 {{ form.csrf_token }}

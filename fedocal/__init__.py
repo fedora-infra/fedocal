@@ -996,6 +996,10 @@ def delete_meeting(meeting_id):
             deleteform.from_date.data = parser.parse(from_date).date()
         except:
             pass
+
+    next_meeting = fedocallib.update_date_rec_meeting(
+        meeting, action='next', date_limit=deleteform.from_date.data)
+
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
 
@@ -1030,6 +1034,7 @@ def delete_meeting(meeting_id):
         'delete_meeting.html',
         form=deleteform,
         meeting=meeting,
+        next_meeting=next_meeting,
         calendars=calendars,
         title=meeting.meeting_name)
 

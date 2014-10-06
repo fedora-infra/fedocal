@@ -1798,7 +1798,7 @@ class Flasktests(Modeltests):
         self.assertTrue('<title>Search - Fedocal</title>' in output.data)
         self.assertTrue('<p>Result of your search for "*meeting3*"</p>'
                         in output.data)
-        self.assertTrue('href="/meeting/4/">'in output.data)
+        self.assertTrue('href="/meeting/4/?from_date='in output.data)
         self.assertTrue('<p>Test meeting with past end_recursion....</p>'
                         in output.data)
 
@@ -1808,7 +1808,8 @@ class Flasktests(Modeltests):
         self.assertTrue('<title>Search - Fedocal</title>' in output.data)
         self.assertTrue('<p>Result of your search for "meeting3*"</p>'
                         in output.data)
-        self.assertFalse('href="/meeting/4/">'in output.data)
+        self.assertFalse('href="/meeting/4/?from_date='in output.data)
+        self.assertFalse('href="/meeting/4/'in output.data)
         self.assertFalse('d> <p>Test meeting with past end_recursion.</p> </'
                         in output.data)
 

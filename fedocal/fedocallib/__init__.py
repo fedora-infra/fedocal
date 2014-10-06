@@ -1224,9 +1224,7 @@ def update_date_rec_meeting(meeting, action='last', date_limit=None):
     if date_limit < meeting.meeting_date:
         date_limit = meeting.meeting_date
 
-    if meeting.recursion_frequency and meeting.recursion_ends \
-            and is_date_in_future(
-                meeting.recursion_ends, meeting.meeting_time_start):
+    if meeting.recursion_frequency and meeting.recursion_ends:
         meetingobj = Meeting.copy(meeting)
         while meetingobj.meeting_date < date_limit:
             if meetingobj.recursion_ends < meetingobj.meeting_date + \

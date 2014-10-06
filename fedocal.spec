@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.11
+Version:        0.11.1
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -108,6 +108,10 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Mon Oct 6 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.11.1-1
+- Update to 0.11.1
+- Fix bug when deleting meeting in the middle of a recursion
+
 * Mon Oct 6 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.11-1
 - Update to 0.11
 - Fix CSS in the agenda view

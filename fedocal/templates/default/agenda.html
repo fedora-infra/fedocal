@@ -393,13 +393,13 @@ else %}{{ location }}{% endif %}{% endblock %}
         });
         if (below_bool) {
           $.notify(
-            "{{ _('Some meetings \n are hidden below')|e }}",
+            "{{ _('Some meetings \\n are hidden below')|e }}",
             { position: "right",
               className: "success" });
         }
         if (above_bool) {
           $.notify(
-            "{{ _('Some meetings \n are hidden above')|e }}",
+            "{{ _('Some meetings \\n are hidden above')|e }}",
             { position: "right",
               className: "success" });
         }

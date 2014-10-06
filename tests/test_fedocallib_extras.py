@@ -135,6 +135,32 @@ class FedocallibExtratests(Modeltests):
             ]
         )
 
+        # Delete meeting after the end of the recursion
+        meeting = model.Meeting.by_id(self.session, 1)
+        fedocallib.delete_recursive_meeting(
+            self.session,
+            meeting=meeting,
+            del_date=datetime(2015, 10, 20).date(),
+            all_meetings=False)
+
+        # After deletion
+        meetings = fedocallib.get_by_date(
+            self.session, calendarobj,
+            datetime(2014, 9, 1).date(),
+            datetime(2015, 10, 27).date()
+        )
+        self.assertEqual(len(meetings), 8)
+        self.assertEqual(len(ids), 1)
+        self.assertEqual(list(ids)[0], 1)
+        dates = [str(mtg.meeting_date) for mtg in meetings]
+        self.assertEqual(
+            dates,
+            [
+                '2014-09-01', '2014-09-08', '2014-09-15', '2014-09-22',
+                '2014-09-29', '2014-10-06', '2014-10-13',
+                '2014-10-27',
+            ]
+        )
 
 
 if __name__ == '__main__':

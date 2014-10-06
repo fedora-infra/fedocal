@@ -99,7 +99,7 @@
     </script>
     <script type="text/javascript">
         function CopyToClipboard (text) {
-            window.prompt('{{ _('Press CTRL+C, then ENTER') }}',
+            window.prompt('{{ _('Press CTRL+C, then ENTER')|e }}',
                          '{{ request.host_url }}' + text);
             return false;
         }

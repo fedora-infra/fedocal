@@ -107,7 +107,7 @@
             new Date(_date),
             function(event) {
                 $(this).html(
-                    event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+                event.strftime('{{ _('Meeting in: %%w weeks %%d days %%H:%%M:%%S')|e }}'));
             }
         ).on('finish.countdown', function(event){
             var _end_date = Date.UTC(
@@ -129,9 +129,9 @@
             );
 
             if ( _end_date > _current_date ) {
-                $(this).html('Meeting in progress.');
+                $(this).html('{{ _('Meeting in progress.')|e }}');
             } else {
-                $(this).html('Meeting is over!');
+                $(this).html('{{ _('Meeting is over!')|e }}');
             }
         });
     });
@@ -159,7 +159,7 @@ $(function(){
         new Date(_date),
         function(event) {
             $(this).html(
-                event.strftime('<p>Meeting in: %w weeks %d days %H:%M:%S</p>'));
+                event.strftime('<p>{{ _('Meeting in: %%w weeks %%d days %%H:%%M:%%S')|e }}</p>'));
         }
     );
 });

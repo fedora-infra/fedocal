@@ -393,13 +393,13 @@ else %}{{ location }}{% endif %}{% endblock %}
         });
         if (below_bool) {
           $.notify(
-            "Some meetings \n are hidden below",
+            "{{ _('Some meetings \n are hidden below')|e }}",
             { position: "right",
               className: "success" });
         }
         if (above_bool) {
           $.notify(
-            "Some meetings \n are hidden above",
+            "{{ _('Some meetings \n are hidden above')|e }}",
             { position: "right",
               className: "success" });
         }
@@ -418,7 +418,7 @@ else %}{{ location }}{% endif %}{% endblock %}
                 } else {
                     window.location.hash = _hash;
                 }
-                var _elt = $('<div title="Meeting details" id="show_meeting">' + res + '</div>');
+                var _elt = $('<div title="{{ _('Meeting details')|e }}" id="show_meeting">' + res + '</div>');
                 var _height = $(window).height() * 0.8;
                 _elt.dialog({
                     height: _height,
@@ -434,7 +434,7 @@ else %}{{ location }}{% endif %}{% endblock %}
                 });
             },
             error: function() {
-                alert('Unable to retrieve selected meeting!');
+                alert('{{ _('Unable to retrieve selected meeting!')|e }}');
             }
         });
     }

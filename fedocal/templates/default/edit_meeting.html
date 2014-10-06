@@ -108,7 +108,7 @@
                 data: {content: _txt},
                 dataType: 'html',
                 success: function(res) {
-                    var _elt = $('<div title="Preview">' + res + '</div>');
+                    var _elt = $('<div title="{{ _('Preview')|e }}">' + res + '</div>');
                     var _height = $(window).height() * 0.8;
                     _elt.dialog({
                         height: _height,
@@ -117,7 +117,7 @@
                     });
                 },
                 error: function() {
-                    alert('Unable to generate preview!');
+                    alert('{{ _('Unable to generate preview!')|e }}');
                 }
             });
             return false;

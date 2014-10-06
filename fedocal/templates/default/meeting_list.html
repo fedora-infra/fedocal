@@ -33,10 +33,8 @@
     </nav>
 {% else %}
 <header>
-    <h2>
-        Search
-    </h2>
-    <p>Result of your search for "{{ keyword }}"</p>
+    <h2>{{ _('Search') }}</h2>
+    <p>{{ _('Result of your search for "%(keyword)s"', keyword=keyword) }}"</p>
 </header>
 {% endif %}
     <aside id="mainmenu">
@@ -166,7 +164,7 @@
 
 <div id='meeting_list'>
     {% if calendar %}
-    <p> Time are expressed in the {{ tzone }} time zone.</p>
+    <p>{{ _('Time are expressed in the %(timezone)s time zone.', tmiezone=tzone) }}</p>
     {% endif %}
     <table>
         <tr>

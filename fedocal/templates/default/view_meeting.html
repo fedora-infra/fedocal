@@ -1,7 +1,7 @@
 {% if full %}
 {% extends "master.html" %}
 
-{% block title %}Meeting {{ meeting.meeting_name}}{% endblock %}
+{% block title %}{{ _('Meeting "%(name)s"', name=meeting.meeting_name) }}{% endblock %}
 
 {%block tag %}home{% endblock %}
 
@@ -9,7 +9,7 @@
 
 {% block content %}
 <section>
-        <h2 class="orange"> Meeting: {{ meeting.meeting_name}}</h2>
+        <h2 class="orange">{{ _('Meeting "%(name)s"', name=meeting.meeting_name) }}</h2>
         <p class="blue">(<a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
             {{ meeting.calendar_name }}</a>)
         </p>
@@ -51,11 +51,11 @@
     </p>
     {% endif %}
 
-    <p>
-    Meeting organized by
-    {% for manager in meeting.meeting_manager %}<a href="mailto:{{manager}}@fedorapeople.org">{{ manager }}</a>{%
-     if not loop.last %},{% endif %}{% endfor %}.
-    </p>
+    {% macro get_managers(managers) %}
+        {% for manager in managers %}<a href="mailto:{{manager}}@fedorapeople.org">{{ manager }}</a>
+        {%- if not loop.last %},{% endif %}{% endfor %}.
+    {% endmacro %}
+    <p>{{ _('Meeting organized by %(managers)s', managers=get_managers(meeting.meeting_manager)) }}</p>
 
     {% if editor %}
     <p>{{ _('Stored as:') }}</p>

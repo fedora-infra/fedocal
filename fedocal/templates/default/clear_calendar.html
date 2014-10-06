@@ -6,13 +6,13 @@
 
 {% block content %}
 
-<h4> Calendar: {{ calendarobj.calendar_name}}</h4>
+<h4>{{ _('Calendar:') }} {{ calendarobj.calendar_name}}</h4>
 
 <ul>
-    <li>Contact: {{ calendarobj.calendar_contact }} </li>
-    <li>Description: {{ calendarobj.calendar_description }} </li>
-    <li>Manager group: {{ calendarobj.calendar_editor_group }} </li>
-    <li>{{ calendarobj.meetings | length }} meetings associated </li>
+    <li>{{ _('Contact:') }} {{ calendarobj.calendar_contact }} </li>
+    <li>{{ _('Description:') }} {{ calendarobj.calendar_description }} </li>
+    <li>{{ _('Manager group:') }} {{ calendarobj.calendar_editor_group }} </li>
+    <li>{{ _('%(count)s meetings associated', calendarobj.meetings|length ) }}</li>
 </ul>
 
 

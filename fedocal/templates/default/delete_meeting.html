@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<h4> Meeting: {{ meeting.meeting_name}}</h4>
+<h4>{{ _('Meeting:') }} {{ meeting.meeting_name}}</h4>
 
 <ul>
     <li>{{ _('Date:') }} {{ next_meeting.meeting_date }}</li>
@@ -37,9 +37,9 @@
 <form action="" method="post">
 {{ render_field_invert(form.confirm_delete) }}
 {% if meeting.recursion_frequency %}
-<p>This meeting is a regular meeting, are you sure you want to delete all
+<p>{{ _('This meeting is a regular meeting, are you sure you want to delete all
 of them or just this one ? (Check only if you want to delete all future
-meetings as well)
+meetings as well)') }}
 </p>
 <p>
     This meeting is recurring every {{ meeting.recursion_frequency }} until

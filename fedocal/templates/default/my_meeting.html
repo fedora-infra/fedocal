@@ -12,8 +12,7 @@
         <p>{{ _('Below is the list of your past and future meetings.') }}</p>
     </header>
 
-
-    <p>Meetings times are displayed in the {{tzone}} time-zone.</p>
+    <p>{{ _('Meetings times are expressed in the %(timezone)s time zone.', timezone=tzone) }}</p>
 
     <h4>{{ _('Future meetings') }}</h4>
     {% if single_meetings %}

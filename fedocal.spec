@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.10
+Version:        0.11
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -108,6 +108,19 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Mon Oct 6 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.11-1
+- Update to 0.11
+- Fix CSS in the agenda view
+- Update to jquery-ui 1.11.1
+- Fix the CSS for the jquery-ui update to 1.11.1 - Thanks Johan Cwiklinski
+- Drop the weekly navigation key on the list view
+- Fix meeting overlap for full day meetings - Thanks Johan Cwiklinski
+- Fix timespinners that the new jquery-ui seems to have broken
+- Fix the home button (top right in calendar view) - Thanks Johan Cwiklinski
+- Fix the message displayed in the meeting view when countdown reaches 0
+  - Thanks Johan Cwiklinski
+- Fix deleting meetings from the list view
+
 * Fri Oct 3 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.10-1
 - Update to 0.10
 - Implement the session time-out (defaults to 1h)

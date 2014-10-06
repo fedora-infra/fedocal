@@ -580,8 +580,8 @@ def delete_recursive_meeting(
     while meeting_date < del_date:
         if meeting.recursion_ends < meeting_date + \
                 timedelta(
-                    days=meeting.recursion_frequency * cnt
-                ):  # pragma: no cover
+                    days=meeting.recursion_frequency
+                ):
             break
         meeting_date = meeting.meeting_date + timedelta(
             days=meeting.recursion_frequency * cnt)

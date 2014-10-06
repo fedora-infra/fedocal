@@ -40,6 +40,8 @@ from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 
 from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 
+from flask.ext.babel import gettext
+
 
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
          '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
@@ -880,18 +882,27 @@ def add_meeting(
 
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
-            'The start date of your meeting is later than the stop date.')
+            gettext(
+                'The start date of your meeting is later than the stop date.'
+            )
+        )
 
     if meeting_time_start > meeting_time_stop:
         raise InvalidMeeting(
-            'The start time of your meeting is later than the stop time.')
+            gettext(
+                'The start time of your meeting is later than the stop time.'
+            )
+        )
 
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
 
     if meeting_time_start == meeting_time_stop:
         raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.'
+            gettext(
+                'The start date of your meeting exactly '
+                'the same as the stop date.'
+            )
         )
 
     reminder = None
@@ -955,7 +966,7 @@ def edit_meeting(
     if not is_user_managing_in_calendar(
             session, calendarobj.calendar_name, fas_user) and not admin:
         raise UserNotAllowed(
-            'You are not allowed to add a meeting to this calendar')
+            gettext('You are not allowed to add a meeting to this calendar'))
 
     if not meeting_date_end:
         meeting_date_end = meeting_date
@@ -974,18 +985,27 @@ def edit_meeting(
 
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
-            'The start date of your meeting is later than the stop date.')
+            gettext(
+                'The start date of your meeting is later than the stop date.'
+            )
+        )
 
     if meeting_time_start > meeting_time_stop:
         raise InvalidMeeting(
-            'The start time of your meeting is later than the stop time.')
+            gettext(
+                'The start time of your meeting is later than the stop time.'
+            )
+        )
 
     if full_day and meeting_time_start == meeting_time_stop:
         meeting_time_stop = meeting_time_start + timedelta(days=1)
 
     if meeting_time_start == meeting_time_stop:
         raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.'
+            gettext(
+                'The start date of your meeting exactly the same as '
+                'the stop date.'
+            )
         )
 
     if meeting.calendar_name != calendarobj.calendar_name:

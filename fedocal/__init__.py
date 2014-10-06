@@ -114,13 +114,18 @@ work.
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         elif not flask.g.fas_user.cla_done:
-            flask.flash('You must sign the CLA (Contributor License '
-                        'Agreement to use fedocal', 'errors')
+            flask.flash(
+                gettext('You must sign the CLA (Contributor License'
+                    ' Agreement) to use fedocal'),
+                'errors'
+            )
             return flask.redirect(flask.url_for('.index'))
         else:
             if len(flask.g.fas_user.groups) == 0:
-                flask.flash('You must be in one more group than the CLA',
-                            'errors')
+                flask.flash(
+                    gettext('You must be in one more group than the CLA'),
+                    'errors'
+                )
                 return flask.redirect(flask.url_for('index'))
         return function(*args, **kwargs)
     return decorated_function
@@ -307,15 +312,23 @@ def validate_input_file(input_file):
         secure_filename(input_file.filename))[1][1:].lower()
     if extension not in APP.config.get('ALLOWED_EXTENSIONS', []):
         raise FedocalException(
-            'The submitted candidate has the file extension "%s" which is '
-            'not an allowed format' % extension)
+            gettext(
+                'The submitted candidate has the file extension '
+                '"%(extension)s" which is not an allowed format',
+                extension=extension
+            )
+        )
 
     mimetype = input_file.mimetype.lower()
     if mimetype not in APP.config.get(
             'ALLOWED_MIMETYPES', []):  # pragma: no cover
         raise FedocalException(
-            'The submitted candidate has the MIME type "%s" which is '
-            'not an allowed MIME type' % mimetype)
+            gettext(
+                'The submitted candidate has the MIME type "%(mime)s" which is '
+                'not an allowed MIME type',
+                mime=mimetype
+            )
+        )
 
 
 @babel.localeselector
@@ -357,7 +370,10 @@ def calendar(calendar_name, year=None, month=None, day=None, mid=None):
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
         flask.flash(
-            'No calendar named %s could not be found' % calendar_name,
+            gettext(
+                'No calendar named %(name)s could not be found',
+                name=calendar_name
+            ),
             'errors')
         return flask.redirect(flask.url_for('index'))
 

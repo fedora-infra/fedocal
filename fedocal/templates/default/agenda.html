@@ -254,7 +254,7 @@ else %}{{ location }}{% endif %}{% endblock %}
           <tr>
               <th>{{ _('%(timezone)s time', timezone=tzone) }}</th>
               {% for day in weekdays %}
-              <th> {{ day.strftime('%A %d') }}</th>
+              <th>{{ day|HeaderDate }}</th>
               {% endfor %}
           </tr>
           <tr id="full_day">

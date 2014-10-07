@@ -863,7 +863,10 @@ def add_meeting(
             session, calendarobj.calendar_name, fas_user
             ) and not admin:  # pragma: no cover
         raise UserNotAllowed(
-            'You are not allowed to add a meeting to this calendar')
+            gettext(
+                'You are not allowed to add a meeting to this calendar'
+            )
+        )
 
     if meeting_date_end is None:
         meeting_date_end = meeting_date

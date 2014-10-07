@@ -50,7 +50,6 @@ from werkzeug import secure_filename
 from flask.ext.babel import Babel
 from flask.ext.babel import gettext
 from flask.ext.babel import format_datetime
-import locale
 
 import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
@@ -193,10 +192,10 @@ def format_time_spinner(time):
 @APP.template_filter('HeaderDate')
 def format_header_date(value):
     """Formats date for table header"""
-    #I would like that to be:
-    #return format_datetime(value, '%A %d')
-    locale.setlocale(locale.LC_ALL, 'fr_FR')
-    return value.strftime('%A %d')
+    return format_datetime(
+        datetime.datetime(value.year, value.month, value.day),
+        'EEEE d'
+    )
 
 
 # pylint: disable=W0613

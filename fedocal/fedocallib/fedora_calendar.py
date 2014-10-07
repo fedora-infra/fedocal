@@ -16,12 +16,13 @@ license.
 """
 
 from datetime import date
-from calendar import HTMLCalendar
+from calendar import LocaleHTMLCalendar
+from calendar import TimeEncoding
 from calendar import month_name
 import flask
 
 
-class FedocalCalendar(HTMLCalendar):
+class FedocalCalendar(LocaleHTMLCalendar):
     """ Improve Python's HTMLCalendar object adding
     html validation and some features 'locally required'
     """
@@ -31,7 +32,8 @@ class FedocalCalendar(HTMLCalendar):
         """ Constructor.
         Stores the year and the month asked.
         """
-        super(FedocalCalendar, self).__init__()
+        #FIXME: locale setting must *not* be hardcoded!!
+        LocaleHTMLCalendar.__init__(self, locale='fr_FR')
         self.year = year
         self.month = month
         self.day = day
@@ -96,10 +98,16 @@ class FedocalCalendar(HTMLCalendar):
         """
         Return a month name as a table row.
         """
-        if withyear:
-            string = '%s %s' % (month_name[themonth], theyear)
-        else:
-            string = '%s' % month_name[themonth]
+
+        with TimeEncoding(self.locale) as encoding:
+            smonth = month_name[themonth]
+            if encoding is not None:
+                smonth = smonth.decode(encoding)
+
+            if withyear:
+                string = '%s %s' % (smonth, theyear)
+            else:
+                string = '%s' % smonth
 
         prev_month = self.month - 1
         prev_year = self.year

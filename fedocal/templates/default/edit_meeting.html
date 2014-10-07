@@ -23,11 +23,14 @@
             {{ render_field_in_row(form.full_day) }}
             {{ render_field_in_row(form.meeting_timezone) }}
             {{ render_field_in_row(form.comanager) }}
+            {% macro get_after_markdown() %}
+                {{_('Supports the') }} <a href="http://daringfireball.net/projects/markdown/syntax"
+                    target="_blank">{{ _('Markdown syntax') }}</a>
+                <input type="button" class="event preview" value="{{ _('Preview')  }}">
+            {% endmacro %}
             {{ render_field_in_row(
                 form.information,
-                    after="Supports the <a href='http://daringfireball.net/projects/markdown/syntax'
-                    target='_blank'>Markdown syntax</a>
-                    <input type='button' class='event preview' value='Preview'>",
+                    after=get_after_markdown(),
                     escape_after=True) }}
             {{ render_field_in_row(form.meeting_location) }}
         </table>
@@ -37,7 +40,7 @@
         <table>
             {{ render_field_in_row(form.frequency) }}
             {{ render_field_in_row(form.end_repeats,
-                after='Leave empty if there is no end date for the repeat.') }}
+                after=_('Leave empty if there is no end date for the repeat.')) }}
         </table>
 
         <h4>{{ _('Reminder') }}</h4>

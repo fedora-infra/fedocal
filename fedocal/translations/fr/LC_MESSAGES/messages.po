@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-07 22:35+0200\n"
-"PO-Revision-Date: 2014-10-07 22:35+0100\n"
+"POT-Creation-Date: 2014-10-07 22:51+0200\n"
+"PO-Revision-Date: 2014-10-07 22:51+0100\n"
 "Last-Translator: Johan Cwiklinski <johan@x-tnd.be>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -240,6 +240,7 @@ msgid "Add this calendar to your agenda"
 msgstr "Ajouter ce calendrier à votre agenda"
 
 #: fedocal/templates/default/agenda.html:128
+#: fedocal/templates/default/agenda.html:349
 #: fedocal/templates/default/meeting_list.html:97
 msgid "iCal export"
 msgstr "Export iCal"
@@ -301,11 +302,7 @@ msgstr "Heure %(timezone)s"
 
 #: fedocal/templates/default/agenda.html:349
 #: fedocal/templates/default/meeting_list.html:238
-msgid "Ical Export"
-msgstr "Export iCal"
-
-#: fedocal/templates/default/agenda.html:349
-msgid "Ical export"
+msgid "iCal Export"
 msgstr "Export iCal"
 
 #: fedocal/templates/default/agenda.html:396
@@ -661,3 +658,9 @@ msgstr "Le meeting est terminé&nbsp;!"
 
 #~ msgid "ics file"
 #~ msgstr "fichier ics"
+
+#~ msgid "Ical Export"
+#~ msgstr "Export iCal"
+
+#~ msgid "Ical export"
+#~ msgstr "Export iCal"

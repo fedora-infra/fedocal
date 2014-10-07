@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-07 22:35+0200\n"
+"POT-Creation-Date: 2014-10-07 22:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -243,6 +243,7 @@ msgid "Add this calendar to your agenda"
 msgstr ""
 
 #: fedocal/templates/default/agenda.html:128
+#: fedocal/templates/default/agenda.html:349
 #: fedocal/templates/default/meeting_list.html:97
 msgid "iCal export"
 msgstr ""
@@ -304,11 +305,7 @@ msgstr ""
 
 #: fedocal/templates/default/agenda.html:349
 #: fedocal/templates/default/meeting_list.html:238
-msgid "Ical Export"
-msgstr ""
-
-#: fedocal/templates/default/agenda.html:349
-msgid "Ical export"
+msgid "iCal Export"
 msgstr ""
 
 #: fedocal/templates/default/agenda.html:396

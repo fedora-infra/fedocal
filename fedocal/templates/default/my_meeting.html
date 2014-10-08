@@ -32,12 +32,12 @@
                     <a class="button" href="{{ url_for('edit_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='edit.png') }}"
-                            title="Edit" alt="Edit"/>
+                        title="{{ _('Edit') }}" alt="{{ _('Edit') }}"/>
                     </a>
                     <a class="button" href="{{ url_for('delete_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='delete.png') }}"
-                        title="Delete" alt="Delete"/>
+                        title="{{ _('Delete') }}" alt="{{ _('Delete') }}"/>
                     </a>
                 </td>
             </tr>
@@ -54,8 +54,7 @@
             <tr>
                 <td class="date">{{ meeting.meeting_date }}</td>
                 <td class="time">
-                    {{ meeting.meeting_time_start }} to
-                    {{ meeting.meeting_time_stop }}
+                    {{ _('%(start)s to %(end)s', start=meeting.meeting_time_start, end=meeting.meeting_time_stop) }}
                 </td>
                 <td class="calendar"> {{ meeting.calendar_name }} </td>
                 <td> {{ meeting.meeting_name }} </td>
@@ -63,12 +62,12 @@
                     <a class="button" href="{{ url_for('edit_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='edit.png') }}"
-                            title="Edit" alt="Edit"/>
+                        title="{{ _('Edit') }}" alt="{{ _('Edit') }}"/>
                     </a>
                     <a class="button" href="{{ url_for('delete_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='delete.png') }}"
-                        title="Delete" alt="Delete"/>
+                        title="{{ _('Delete') }}" alt="{{ _('Delete') }}"/>
                     </a>
                 </td>
             </tr>
@@ -84,8 +83,7 @@
             <tr>
                 <td class="date">{{ meeting.meeting_date }}</td>
                 <td class="time">
-                    {{ meeting.meeting_time_start }} to
-                    {{ meeting.meeting_time_stop }}
+                    {{ _('%(start)s to %(end)s', start=meeting.meeting_time_start, end=meeting.meeting_time_stop) }}
                 </td>
                 <td class="calendar"> {{ meeting.calendar_name }} </td>
                 <td> {{ meeting.meeting_name }} </td>

@@ -219,7 +219,7 @@
                 <a class="event meeting_{{ meeting.meeting_id }}"
                    href="{{ url_for('view_meeting',
                          meeting_id=meeting.meeting_id)
-                        }}?from_date={{meeting.meeting_date.strftime('%Y-%m-%d')}}"> show more</a>
+                        }}?from_date={{meeting.meeting_date.strftime('%Y-%m-%d')}}"> {{ _('show more') }}</a>
                 {% endautoescape %}</td>
             <td> {% if meeting.meeting_location
                     %} {{ meeting.meeting_location }} {% endif %}</td>
@@ -311,7 +311,7 @@
                     });
                 },
                 error: function() {
-                    alert('{{ _('Unable to retrieve selected meeting!') }}');
+                    alert('{{ _('Unable to retrieve selected meeting!')|e }}');
                 }
             });
 

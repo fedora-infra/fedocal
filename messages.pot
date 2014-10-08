@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-07 22:51+0200\n"
+"POT-Creation-Date: 2014-10-08 07:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -83,6 +83,8 @@ msgstr ""
 
 #: fedocal/templates/default/add_calendar.html:26
 #: fedocal/templates/default/add_meeting.html:54
+#: fedocal/templates/default/delete_calendar.html:25
+#: fedocal/templates/default/delete_meeting.html:36
 #: fedocal/templates/default/edit_calendar.html:25
 #: fedocal/templates/default/edit_meeting.html:62
 #: fedocal/templates/default/upload_calendar.html:28
@@ -179,6 +181,8 @@ msgid "Edit"
 msgstr ""
 
 #: fedocal/templates/default/admin.html:26
+#: fedocal/templates/default/delete_calendar.html:24
+#: fedocal/templates/default/delete_meeting.html:35
 #: fedocal/templates/default/view_meeting.html:84
 msgid "Delete"
 msgstr ""
@@ -221,6 +225,13 @@ msgstr ""
 msgid "Year in decimal"
 msgstr ""
 
+#: fedocal/templates/default/agenda.html:95
+#: fedocal/templates/default/agenda.html:122
+#: fedocal/templates/default/agenda.html:343
+#: fedocal/templates/default/meeting_list.html:91
+msgid "List view"
+msgstr ""
+
 #: fedocal/templates/default/agenda.html:101
 #: fedocal/templates/default/meeting_list.html:72
 msgid "Calendars"
@@ -229,12 +240,6 @@ msgstr ""
 #: fedocal/templates/default/agenda.html:116
 #: fedocal/templates/default/meeting_list.html:85
 msgid "Add a meeting"
-msgstr ""
-
-#: fedocal/templates/default/agenda.html:122
-#: fedocal/templates/default/agenda.html:343
-#: fedocal/templates/default/meeting_list.html:91
-msgid "List view"
 msgstr ""
 
 #: fedocal/templates/default/agenda.html:128
@@ -265,12 +270,12 @@ msgstr ""
 
 #: fedocal/templates/default/agenda.html:155
 #: fedocal/templates/default/edit_calendar.html:4
-#: fedocal/templates/default/edit_calendar.html:10
 #: fedocal/templates/default/meeting_list.html:123
 msgid "Edit calendar"
 msgstr ""
 
 #: fedocal/templates/default/agenda.html:159
+#: fedocal/templates/default/delete_calendar.html:3
 #: fedocal/templates/default/meeting_list.html:127
 msgid "Delete calendar"
 msgstr ""
@@ -332,6 +337,68 @@ msgstr ""
 msgid "API"
 msgstr ""
 
+#: fedocal/templates/default/delete_calendar.html:9
+msgid "Calendar:"
+msgstr ""
+
+#: fedocal/templates/default/delete_calendar.html:12
+msgid "Contact:"
+msgstr ""
+
+#: fedocal/templates/default/delete_calendar.html:13
+msgid "Description:"
+msgstr ""
+
+#: fedocal/templates/default/delete_calendar.html:14
+msgid "Manager group:"
+msgstr ""
+
+#: fedocal/templates/default/delete_calendar.html:15
+#, python-format
+msgid "%(count)s meetings associated"
+msgstr ""
+
+#: fedocal/templates/default/delete_calendar.html:18
+#: fedocal/templates/default/delete_meeting.html:23
+msgid "Are you positively sure that's what you want to do?"
+msgstr ""
+
+#: fedocal/templates/default/delete_meeting.html:3
+msgid "Delete meeting"
+msgstr ""
+
+#: fedocal/templates/default/delete_meeting.html:9
+msgid "Meeting:"
+msgstr ""
+
+#: fedocal/templates/default/delete_meeting.html:12
+msgid "Date:"
+msgstr ""
+
+#: fedocal/templates/default/delete_meeting.html:13
+msgid "Starting time:"
+msgstr ""
+
+#: fedocal/templates/default/delete_meeting.html:14
+msgid "Ending time:"
+msgstr ""
+
+#: fedocal/templates/default/delete_meeting.html:18
+msgid "You are removing this meeting from the calendar"
+msgstr ""
+
+#: fedocal/templates/default/delete_meeting.html:28
+msgid ""
+"This meeting is a regular meeting, are you sure you want to delete all\n"
+"of them or just this one ? (Check only if you want to delete all future\n"
+"meetings as well)"
+msgstr ""
+
+#: fedocal/templates/default/edit_calendar.html:10
+#, python-format
+msgid "Edit calendar \"%(name)s\""
+msgstr ""
+
 #: fedocal/templates/default/edit_calendar.html:11
 msgid "Edit the calendar details in the form below."
 msgstr ""
@@ -342,7 +409,7 @@ msgstr ""
 
 #: fedocal/templates/default/edit_meeting.html:11
 #, python-format
-msgid "Edit meeting %(name)s"
+msgid "Edit meeting \"%(name)s\""
 msgstr ""
 
 #: fedocal/templates/default/edit_meeting.html:60

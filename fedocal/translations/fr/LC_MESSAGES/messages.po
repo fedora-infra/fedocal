@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-07 22:51+0200\n"
-"PO-Revision-Date: 2014-10-07 22:51+0100\n"
+"POT-Creation-Date: 2014-10-08 07:50+0200\n"
+"PO-Revision-Date: 2014-10-08 07:51+0100\n"
 "Last-Translator: Johan Cwiklinski <johan@x-tnd.be>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -80,6 +80,8 @@ msgstr "Créer"
 
 #: fedocal/templates/default/add_calendar.html:26
 #: fedocal/templates/default/add_meeting.html:54
+#: fedocal/templates/default/delete_calendar.html:25
+#: fedocal/templates/default/delete_meeting.html:36
 #: fedocal/templates/default/edit_calendar.html:25
 #: fedocal/templates/default/edit_meeting.html:62
 #: fedocal/templates/default/upload_calendar.html:28
@@ -131,7 +133,7 @@ msgstr ""
 #: fedocal/templates/default/add_meeting.html:40
 #: fedocal/templates/default/edit_meeting.html:43
 msgid "Leave empty if there is no end date for the repeat."
-msgstr ""
+msgstr "Laisser vide s'il n'y a pas de date de fin pour la récurrence."
 
 #: fedocal/templates/default/add_meeting.html:43
 #: fedocal/templates/default/edit_meeting.html:46
@@ -176,6 +178,8 @@ msgid "Edit"
 msgstr "Modifier"
 
 #: fedocal/templates/default/admin.html:26
+#: fedocal/templates/default/delete_calendar.html:24
+#: fedocal/templates/default/delete_meeting.html:35
 #: fedocal/templates/default/view_meeting.html:84
 msgid "Delete"
 msgstr "Supprimer"
@@ -184,7 +188,7 @@ msgstr "Supprimer"
 #: fedocal/templates/default/agenda.html:80
 #: fedocal/templates/default/meeting_list.html:53
 msgid "Go"
-msgstr ""
+msgstr "Go"
 
 #: fedocal/templates/default/agenda.html:35
 #: fedocal/templates/default/agenda.html:53
@@ -218,6 +222,13 @@ msgstr "Mois en chiffres"
 msgid "Year in decimal"
 msgstr "Année en chiffres"
 
+#: fedocal/templates/default/agenda.html:95
+#: fedocal/templates/default/agenda.html:122
+#: fedocal/templates/default/agenda.html:343
+#: fedocal/templates/default/meeting_list.html:91
+msgid "List view"
+msgstr "Vue liste"
+
 #: fedocal/templates/default/agenda.html:101
 #: fedocal/templates/default/meeting_list.html:72
 msgid "Calendars"
@@ -227,12 +238,6 @@ msgstr "Calendriers"
 #: fedocal/templates/default/meeting_list.html:85
 msgid "Add a meeting"
 msgstr "Ajouter un meeting"
-
-#: fedocal/templates/default/agenda.html:122
-#: fedocal/templates/default/agenda.html:343
-#: fedocal/templates/default/meeting_list.html:91
-msgid "List view"
-msgstr "Vue liste"
 
 #: fedocal/templates/default/agenda.html:128
 #: fedocal/templates/default/meeting_list.html:97
@@ -262,12 +267,12 @@ msgstr "Contacter l'administrateur"
 
 #: fedocal/templates/default/agenda.html:155
 #: fedocal/templates/default/edit_calendar.html:4
-#: fedocal/templates/default/edit_calendar.html:10
 #: fedocal/templates/default/meeting_list.html:123
 msgid "Edit calendar"
-msgstr "Modifie rle calendrier"
+msgstr "Modifier le calendrier"
 
 #: fedocal/templates/default/agenda.html:159
+#: fedocal/templates/default/delete_calendar.html:3
 #: fedocal/templates/default/meeting_list.html:127
 msgid "Delete calendar"
 msgstr "Supprimer le calendrier"
@@ -333,6 +338,68 @@ msgstr "Impossible de récupérer le meeting sélectionn&nbsp;!"
 msgid "API"
 msgstr "API"
 
+#: fedocal/templates/default/delete_calendar.html:9
+msgid "Calendar:"
+msgstr "Calendrier&nbsp;:"
+
+#: fedocal/templates/default/delete_calendar.html:12
+msgid "Contact:"
+msgstr "Contact&nbsp;:"
+
+#: fedocal/templates/default/delete_calendar.html:13
+msgid "Description:"
+msgstr "Description&nbsp;:"
+
+#: fedocal/templates/default/delete_calendar.html:14
+msgid "Manager group:"
+msgstr "Groupe manager&nbsp;:"
+
+#: fedocal/templates/default/delete_calendar.html:15
+#, python-format
+msgid "%(count)s meetings associated"
+msgstr "%(count)s meetings associés"
+
+#: fedocal/templates/default/delete_calendar.html:18
+#: fedocal/templates/default/delete_meeting.html:23
+msgid "Are you positively sure that's what you want to do?"
+msgstr "Êtes-vous certain que c'est ce que vous souhaitez faire&nbsp;?"
+
+#: fedocal/templates/default/delete_meeting.html:3
+msgid "Delete meeting"
+msgstr "Supprimer le meeting"
+
+#: fedocal/templates/default/delete_meeting.html:9
+msgid "Meeting:"
+msgstr "Meeting&nbsp;:"
+
+#: fedocal/templates/default/delete_meeting.html:12
+msgid "Date:"
+msgstr "Date&nbsp;:"
+
+#: fedocal/templates/default/delete_meeting.html:13
+msgid "Starting time:"
+msgstr "Heure de début&nbsp;:"
+
+#: fedocal/templates/default/delete_meeting.html:14
+msgid "Ending time:"
+msgstr "Heure de fin&nbsp;:"
+
+#: fedocal/templates/default/delete_meeting.html:18
+msgid "You are removing this meeting from the calendar"
+msgstr "Vous êtes en train de supprimer ce meeting du calendrier"
+
+#: fedocal/templates/default/delete_meeting.html:28
+msgid ""
+"This meeting is a regular meeting, are you sure you want to delete all\n"
+"of them or just this one ? (Check only if you want to delete all future\n"
+"meetings as well)"
+msgstr ""
+
+#: fedocal/templates/default/edit_calendar.html:10
+#, python-format
+msgid "Edit calendar \"%(name)s\""
+msgstr "Modifier le calendrier « %(name)s »"
+
 #: fedocal/templates/default/edit_calendar.html:11
 msgid "Edit the calendar details in the form below."
 msgstr "Modifiez les détails du calendrier dans le formulaire ci-dessous."
@@ -343,8 +410,8 @@ msgstr "Modifier le meeting"
 
 #: fedocal/templates/default/edit_meeting.html:11
 #, python-format
-msgid "Edit meeting %(name)s"
-msgstr "Modifier le meeting %(name)s"
+msgid "Edit meeting \"%(name)s\""
+msgstr "Modifier le meeting « %(name)s »"
 
 #: fedocal/templates/default/edit_meeting.html:60
 msgid "Edit all"

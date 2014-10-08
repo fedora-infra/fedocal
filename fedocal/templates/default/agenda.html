@@ -92,7 +92,7 @@ else %}{{ location }}{% endif %}{% endblock %}
         {% if not calendar %}
         <p>
           <a href="{{ url_for('location_list',loc_name=location) }}">
-            List view
+              {{ _('List view') }}
           </a>
         </p>
         {% endif %}

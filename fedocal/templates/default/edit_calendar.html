@@ -7,7 +7,7 @@
 {% block content %}
 <section>
     <header>
-        <h2>{{ _('Edit calendar') }}</h2>
+        <h2>{{ _('Edit calendar "%(name)s"', name=form.calendar_name.data) }}</h2>
         <p>{{ _('Edit the calendar details in the form below.') }}</p>
     </header>
 

@@ -12,10 +12,10 @@
     <li>{{ _('Contact:') }} {{ calendarobj.calendar_contact }} </li>
     <li>{{ _('Description:') }} {{ calendarobj.calendar_description }} </li>
     <li>{{ _('Manager group:') }} {{ calendarobj.calendar_editor_group }} </li>
-    <li>{{ _('%(count)s meetings associated', count=calendarobj.meetings|length ) }}</li>
+    <li>{{ _('%(count)s meetings associated', count=calendarobj.meetings|length) }}</li>
 </ul>
 
-<p>{{ _('Are you positively sure that's what you want to do?') }}</p>
+<p>{{ _("Are you positively sure that's what you want to do?") }}</p>
 
 <form action="" method="post">
 {{ render_field_invert(form.confirm_delete) }}

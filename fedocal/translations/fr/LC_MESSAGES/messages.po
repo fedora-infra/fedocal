@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-08 07:50+0200\n"
-"PO-Revision-Date: 2014-10-08 07:51+0100\n"
+"POT-Creation-Date: 2014-10-08 08:37+0200\n"
+"PO-Revision-Date: 2014-10-08 08:42+0100\n"
 "Last-Translator: Johan Cwiklinski <johan@x-tnd.be>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -20,7 +20,9 @@ msgstr ""
 
 #: fedocal/__init__.py:119
 msgid "You must sign the CLA (Contributor License Agreement) to use fedocal"
-msgstr "Vous devez signer le CLA (Contributor License Agreement) pour utiliser fedocal"
+msgstr ""
+"Vous devez signer le CLA (Contributor License Agreement) pour utiliser "
+"fedocal"
 
 #: fedocal/__init__.py:127
 msgid "You must be in one more group than the CLA"
@@ -28,18 +30,165 @@ msgstr "Vous devez être dans un autre groupe que CLA"
 
 #: fedocal/__init__.py:325
 #, python-format
-msgid "The submitted candidate has the file extension \"%(extension)s\" which is not an allowed format"
+msgid ""
+"The submitted candidate has the file extension \"%(extension)s\" which is "
+"not an allowed format"
 msgstr ""
 
 #: fedocal/__init__.py:336
 #, python-format
-msgid "The submitted candidate has the MIME type \"%(mime)s\" which is not an allowed MIME type"
+msgid ""
+"The submitted candidate has the MIME type \"%(mime)s\" which is not an "
+"allowed MIME type"
 msgstr ""
 
 #: fedocal/__init__.py:383
 #, python-format
 msgid "No calendar named %(name)s could not be found"
 msgstr "Aucun calendrier nommé %(name)s n'a pu être trouvé"
+
+#: fedocal/forms.py:48 fedocal/forms.py:55
+msgid "Time must be of type \"HH:MM\""
+msgstr ""
+
+#: fedocal/forms.py:65
+msgid "Please use channel@server format!"
+msgstr "Veuillez utiliser le format canal@serveur&nbsp;!"
+
+#: fedocal/forms.py:88 fedocal/forms.py:130
+msgid "Calendar"
+msgstr "Calendrier"
+
+#: fedocal/forms.py:91
+msgid "Contact email"
+msgstr "Courriel de contact"
+
+#: fedocal/forms.py:93 fedocal/templates/default/meeting_list.html:162
+msgid "Description"
+msgstr "Description"
+
+#: fedocal/forms.py:94
+msgid "Editor groups"
+msgstr "Groupes éditeur"
+
+#: fedocal/forms.py:95
+msgid "Admin groups"
+msgstr "Groupes administrateur"
+
+#: fedocal/forms.py:97
+msgid "Status"
+msgstr "Statut"
+
+#: fedocal/forms.py:135
+#, python-format
+msgid "Meeting name"
+msgstr "Nom du meeting"
+
+#: fedocal/forms.py:139 fedocal/templates/default/meeting_list.html:159
+msgid "Date"
+msgstr "Date"
+
+#: fedocal/forms.py:143 fedocal/forms.py:183
+msgid "End date"
+msgstr "Date de fin"
+
+#: fedocal/forms.py:147
+msgid "Start time"
+msgstr "Heure de début"
+
+#: fedocal/forms.py:151
+msgid "Stop time"
+msgstr "Heure de fin"
+
+#: fedocal/forms.py:155
+#, python-format
+msgid "Time zone"
+msgstr "Fuseau horaire"
+
+#: fedocal/forms.py:159
+msgid "More information URL"
+msgstr "URL plus di'nformations"
+
+#: fedocal/forms.py:161
+msgid "Co-manager"
+msgstr "Co-manager"
+
+#: fedocal/forms.py:163
+msgid "Information"
+msgstr "Information"
+
+#: fedocal/forms.py:166 fedocal/templates/default/meeting_list.html:163
+msgid "Location"
+msgstr "Emplacement"
+
+#: fedocal/forms.py:172
+msgid "Repeat every"
+msgstr "Répéter chaque"
+
+#: fedocal/forms.py:176 fedocal/forms.py:177
+#, python-format
+msgid "%(days)s days"
+msgstr "%(days)s jours"
+
+#: fedocal/forms.py:178 fedocal/forms.py:179
+#, python-format
+msgid "%(weeks)s weeks"
+msgstr "%(weeks)s semaines"
+
+#: fedocal/forms.py:188
+msgid "Send reminder"
+msgstr "Envoyer le rappel"
+
+#: fedocal/forms.py:191
+#, python-format
+msgid "%(hours)s hours before"
+msgstr "%(hours)s heures avant"
+
+#: fedocal/forms.py:192
+#, python-format
+msgid "%(days)s day before"
+msgstr "%(days)s jour avant"
+
+#: fedocal/forms.py:193 fedocal/forms.py:194
+#, python-format
+msgid "%(days)s days before"
+msgstr "%(days)s jours avant"
+
+#: fedocal/forms.py:198
+msgid "Send reminder to"
+msgstr "Envoyer le rappel à"
+
+#: fedocal/forms.py:201
+msgid "Send reminder from"
+msgstr "Envoyer le rappel depuis"
+
+#: fedocal/forms.py:205
+msgid "Full day meeting"
+msgstr "Meeting en journée complète"
+
+#: fedocal/forms.py:251
+msgid "Yes I want to delete this meeting"
+msgstr "Oui je veux supprimer ce meeting"
+
+#: fedocal/forms.py:254
+msgid "Yes, I want to delete all futher meetings."
+msgstr "Oui je veux supprimer tous les meetings à venir."
+
+#: fedocal/forms.py:257
+msgid "Date from which to remove the meeting"
+msgstr ""
+
+#: fedocal/forms.py:264
+msgid "Yes I want to delete this calendar"
+msgstr "Oui je veux supprimer ce calendrier"
+
+#: fedocal/forms.py:271
+msgid "Yes I want to clear this calendar"
+msgstr ""
+
+#: fedocal/forms.py:278
+msgid "ics file"
+msgstr "fichier ics"
 
 #: fedocal/fedocallib/__init__.py:866 fedocal/fedocallib/__init__.py:972
 msgid "You are not allowed to add a meeting to this calendar"
@@ -55,7 +204,8 @@ msgstr "L'heure de début de votre meeting est ultérieure à sa date de fin."
 
 #: fedocal/fedocallib/__init__.py:905 fedocal/fedocallib/__init__.py:1008
 msgid "The start date of your meeting exactly the same as the stop date."
-msgstr "La date de début de votre meeting est exéctement la même que sa date de fin."
+msgstr ""
+"La date de début de votre meeting est exéctement la même que sa date de fin."
 
 #: fedocal/fedocallib/week.py:43
 msgid "Either calendar or location should be specified"
@@ -72,7 +222,9 @@ msgstr "Nouveau calendrier"
 
 #: fedocal/templates/default/add_calendar.html:12
 msgid "Please enter your calendar details in the form below."
-msgstr "Veuillez entrer les détails de votre calendrier dans le formulaire ci-dessous."
+msgstr ""
+"Veuillez entrer les détails de votre calendrier dans le formulaire ci-"
+"dessous."
 
 #: fedocal/templates/default/add_calendar.html:25
 msgid "Create"
@@ -101,7 +253,8 @@ msgstr "Nouveau meeting"
 #: fedocal/templates/default/add_meeting.html:11
 #: fedocal/templates/default/edit_meeting.html:12
 msgid "Please enter your meeting details in the above form."
-msgstr "Veuillez entrer les détails de votre meeting dans le formulaire ci-dessous."
+msgstr ""
+"Veuillez entrer les détails de votre meeting dans le formulaire ci-dessous."
 
 #: fedocal/templates/default/add_meeting.html:24
 #: fedocal/templates/default/edit_meeting.html:27
@@ -142,7 +295,8 @@ msgstr "Rappel"
 
 #: fedocal/templates/default/add_meeting.html:44
 #: fedocal/templates/default/edit_meeting.html:47
-msgid "You may want fedocal to send an email to a mailing list of your choices."
+msgid ""
+"You may want fedocal to send an email to a mailing list of your choices."
 msgstr ""
 
 #: fedocal/templates/default/add_meeting.html:45
@@ -311,15 +465,11 @@ msgid "iCal Export"
 msgstr "Export iCal"
 
 #: fedocal/templates/default/agenda.html:396
-msgid ""
-"Some meetings \\n"
-" are hidden below"
+msgid "Some meetings \\n are hidden below"
 msgstr ""
 
 #: fedocal/templates/default/agenda.html:402
-msgid ""
-"Some meetings \\n"
-" are hidden above"
+msgid "Some meetings \\n are hidden above"
 msgstr ""
 
 #: fedocal/templates/default/agenda.html:421
@@ -509,10 +659,6 @@ msgstr "Vue calendrier"
 msgid "Time are expressed in the %(timezone)s time zone."
 msgstr "Les heures sont exprimées dans le fuseau horaire %(timezone)s."
 
-#: fedocal/templates/default/meeting_list.html:159
-msgid "Date"
-msgstr "Date"
-
 #: fedocal/templates/default/meeting_list.html:160
 msgid "Time"
 msgstr ""
@@ -520,14 +666,6 @@ msgstr ""
 #: fedocal/templates/default/meeting_list.html:161
 msgid "Meeting"
 msgstr "Meeting"
-
-#: fedocal/templates/default/meeting_list.html:162
-msgid "Description"
-msgstr "Description"
-
-#: fedocal/templates/default/meeting_list.html:163
-msgid "Location"
-msgstr "Emplacement"
 
 #: fedocal/templates/default/my_meeting.html:11
 msgid "Manage your meetings"
@@ -540,7 +678,8 @@ msgstr "Ci-dessous, la liste de vos meetings passés et à venir."
 #: fedocal/templates/default/my_meeting.html:15
 #, python-format
 msgid "Meetings times are expressed in the %(timezone)s time zone."
-msgstr "Les heures des meetings sont exprimées dans le fuseau horaire %(timezone)s."
+msgstr ""
+"Les heures des meetings sont exprimées dans le fuseau horaire %(timezone)s."
 
 #: fedocal/templates/default/my_meeting.html:17
 msgid "Future meetings"
@@ -601,7 +740,8 @@ msgstr "Pas de description"
 
 #: fedocal/templates/default/view_meeting.html:47
 #, python-format
-msgid "This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s"
+msgid ""
+"This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s"
 msgstr ""
 
 #: fedocal/templates/default/view_meeting.html:55
@@ -626,108 +766,3 @@ msgstr "Meeting en cours."
 #: fedocal/templates/default/view_meeting.html:131
 msgid "Meeting is over!"
 msgstr "Le meeting est terminé&nbsp;!"
-
-#~ msgid ""
-#~ msgstr ""
-
-#~ msgid "Invalid input."
-#~ msgstr "Entrée invalide"
-
-#~ msgid "Time must be of type \"HH:MM\""
-#~ msgstr ""
-
-#~ msgid "Please use channel@server format!"
-#~ msgstr "Merci d'utiliser le format canal@serveur&nbsp;!"
-
-#~ msgid "Calendar"
-#~ msgstr "Calendrier"
-
-#~ msgid "Contact email"
-#~ msgstr "Courriel de contact"
-
-#~ msgid "Editor groups"
-#~ msgstr "Groupe éditeurs"
-
-#~ msgid "Admin groups"
-#~ msgstr "Groupes administrateurs"
-
-#~ msgid "Status"
-#~ msgstr "Statut"
-
-#~ msgid "Meeting name"
-#~ msgstr "Nom du meeting"
-
-#~ msgid "End date"
-#~ msgstr "Date de fin"
-
-#~ msgid "Start time"
-#~ msgstr "Heure de début"
-
-#~ msgid "Stop time"
-#~ msgstr "Heure de fin"
-
-#~ msgid "Time zone"
-#~ msgstr "Fuseau horaire"
-
-#~ msgid "More information URL"
-#~ msgstr "URL plus d'informations"
-
-#~ msgid "Co-manager"
-#~ msgstr "Co-manager"
-
-#~ msgid "Information"
-#~ msgstr "Information"
-
-#~ msgid "Repeat every"
-#~ msgstr "Répéter chaque"
-
-#~ msgid "%(days)s days"
-#~ msgstr "%(days)s jours"
-
-#~ msgid "%(weeks)s weeks"
-#~ msgstr "%(weeks)s semaines"
-
-#~ msgid "Send reminder"
-#~ msgstr "Envoyer le rappel"
-
-#~ msgid "%(hours)s hours before"
-#~ msgstr "%(hours)s heures avant"
-
-#~ msgid "%(days)s day before"
-#~ msgstr "%(days)s jour avant"
-
-#~ msgid "%(days)s days before"
-#~ msgstr "%(days)s jours avant"
-
-#~ msgid "Send reminder to"
-#~ msgstr "Envoyer le rappel à"
-
-#~ msgid "Send reminder from"
-#~ msgstr "Envoyer le rappel depuis"
-
-#~ msgid "Full day meeting"
-#~ msgstr "Meetng en journée complète"
-
-#~ msgid "Yes I want to delete this meeting"
-#~ msgstr "Oui je veux supprimer ce meeting"
-
-#~ msgid "Yes, I want to delete all futher meetings."
-#~ msgstr "Oui je veux supprimer tous les meetings à venir."
-
-#~ msgid "Date from which to remove the meeting"
-#~ msgstr ""
-
-#~ msgid "Yes I want to delete this calendar"
-#~ msgstr "Oui je veux supprimer ce calendrier"
-
-#~ msgid "Yes I want to clear this calendar"
-#~ msgstr ""
-
-#~ msgid "ics file"
-#~ msgstr "fichier ics"
-
-#~ msgid "Ical Export"
-#~ msgstr "Export iCal"
-
-#~ msgid "Ical export"
-#~ msgstr "Export iCal"

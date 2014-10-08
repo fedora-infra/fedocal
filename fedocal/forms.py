@@ -28,7 +28,7 @@ import re
 from flask.ext import wtf
 from datetime import time
 from datetime import datetime
-from flask.ext.babel import lazy_gettext
+from flask.ext.babel import lazy_gettext as _
 import i18nforms
 
 from pytz import common_timezones
@@ -45,14 +45,14 @@ def validate_time(form, field):
     import re
     if not re.match(r'\d?\d:\d\d?', field.data):
         raise wtforms.ValidationError(
-            lazy_gettext('Time must be of type "HH:MM"')
+            _('Time must be of type "HH:MM"')
         )
     time_data = field.data.split(':')
     try:
         field.data = time(int(time_data[0]), int(time_data[1]))
     except ValueError:
         raise wtforms.ValidationError(
-            lazy_gettext('Time must be of type "HH:MM"')
+            _('Time must be of type "HH:MM"')
         )
 
 
@@ -62,7 +62,7 @@ def validate_meeting_location(form, field):
     """
     if '#' in field.data.strip():
         raise wtforms.ValidationError(
-            lazy_gettext('Please use channel@server format!')
+            _('Please use channel@server format!')
         )
 
 
@@ -78,23 +78,23 @@ def validate_multi_email(form, field):
             continue
         match = pattern.match(field.data or '')
         if not match:
-            message = field.gettext(lazy_gettext('Invalid input.'))
+            message = field.gettext(_('Invalid input.'))
             raise ValidationError(message)
 
 
 class AddCalendarForm(wtf.Form):
     """ Form used to create a new calendar. """
     calendar_name = wtforms.TextField(
-        lazy_gettext('Calendar'),
+        _('Calendar'),
         [wtforms.validators.Required()])
     calendar_contact = wtforms.TextField(
-        lazy_gettext('Contact email'),
+        _('Contact email'),
         [wtforms.validators.Required()])
-    calendar_description = wtforms.TextField(lazy_gettext('Description'))
-    calendar_editor_groups = wtforms.TextField(lazy_gettext('Editor groups'))
-    calendar_admin_groups = wtforms.TextField(lazy_gettext('Admin groups'))
+    calendar_description = wtforms.TextField(_('Description'))
+    calendar_editor_groups = wtforms.TextField(_('Editor groups'))
+    calendar_admin_groups = wtforms.TextField(_('Admin groups'))
     calendar_status = wtforms.SelectField(
-        lazy_gettext('Status'),
+        _('Status'),
         [wtforms.validators.Required()],
         choices=[]
     )
@@ -127,82 +127,82 @@ class AddCalendarForm(wtf.Form):
 class AddMeetingForm(i18nforms.Form):
     """ Form used to create a new meeting. """
     calendar_name = wtforms.SelectField(
-        lazy_gettext('Calendar'),
+        _('Calendar'),
         [wtforms.validators.Required()],
         choices=[])
 
     meeting_name = wtforms.TextField(
-        lazy_gettext('Meeting name'),
+        _('Meeting name'),
         [wtforms.validators.Required()])
 
     meeting_date = wtforms.DateField(
-        lazy_gettext('Date'),
+        _('Date'),
         [wtforms.validators.Required()])
 
     meeting_date_end = wtforms.DateField(
-        lazy_gettext('End date'),
+        _('End date'),
         [wtforms.validators.optional()])
 
     meeting_time_start = wtforms.TextField(
-        lazy_gettext('Start time'),
+        _('Start time'),
         [wtforms.validators.Required(), validate_time])
 
     meeting_time_stop = wtforms.TextField(
-        lazy_gettext('Stop time'),
+        _('Stop time'),
         [wtforms.validators.Required(), validate_time])
 
     meeting_timezone = wtforms.SelectField(
-        lazy_gettext('Time zone'),
+        _('Time zone'),
         [wtforms.validators.Required()],
         choices=[(tzone, tzone) for tzone in common_timezones])
 
-    wiki_link = wtforms.TextField(lazy_gettext('More information URL'))
+    wiki_link = wtforms.TextField(_('More information URL'))
 
-    comanager = wtforms.TextField(lazy_gettext('Co-manager'))
+    comanager = wtforms.TextField(_('Co-manager'))
 
-    information = wtforms.TextAreaField(lazy_gettext('Information'))
+    information = wtforms.TextAreaField(_('Information'))
 
     meeting_location = wtforms.TextField(
-        lazy_gettext('Location'),
+        _('Location'),
         [wtforms.validators.optional(), validate_meeting_location]
     )
 
     # Recursion
     frequency = wtforms.SelectField(
-        lazy_gettext('Repeat every'),
+        _('Repeat every'),
         [wtforms.validators.optional()],
         choices=[
             ('', ''),
-            ('7', lazy_gettext('%(days)s days', days='7')),
-            ('14', lazy_gettext('%(days)s days', days='14')),
-            ('21', lazy_gettext('%(weeks)s weeks', weeks='3')),
-            ('28', lazy_gettext('%(weeks)s weeks', weeks='4')),
+            ('7', _('%(days)s days', days='7')),
+            ('14', _('%(days)s days', days='14')),
+            ('21', _('%(weeks)s weeks', weeks='3')),
+            ('28', _('%(weeks)s weeks', weeks='4')),
         ]
     )
     end_repeats = wtforms.DateField(
-        lazy_gettext('End date'),
+        _('End date'),
         [wtforms.validators.optional()])
 
     # Reminder
     remind_when = wtforms.SelectField(
-        lazy_gettext('Send reminder'),
+        _('Send reminder'),
         [wtforms.validators.optional()],
         choices=[('', ''),
-                 ('H-12', lazy_gettext('%(hours)s hours before', hours='12')),
-                 ('H-24', lazy_gettext('%(days)s day before', days='1')),
-                 ('H-48', lazy_gettext('%(days)s days before', days='2')),
-                 ('H-168', lazy_gettext('%(days)s days before', days='7')),
+                 ('H-12', _('%(hours)s hours before', hours='12')),
+                 ('H-24', _('%(days)s day before', days='1')),
+                 ('H-48', _('%(days)s days before', days='2')),
+                 ('H-168', _('%(days)s days before', days='7')),
                  ]
     )
     remind_who = wtforms.TextField(
-        lazy_gettext('Send reminder to'),
+        _('Send reminder to'),
         [validate_multi_email, wtforms.validators.optional()])
     reminder_from = wtforms.TextField(
-        lazy_gettext('Send reminder from'),
+        _('Send reminder from'),
         [wtforms.validators.Email(), wtforms.validators.optional()])
 
     # Full day
-    full_day = wtforms.BooleanField(lazy_gettext('Full day meeting'))
+    full_day = wtforms.BooleanField(_('Full day meeting'))
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -248,32 +248,32 @@ class AddMeetingForm(i18nforms.Form):
 class DeleteMeetingForm(i18nforms.Form):
     """ Form used to delete a meeting. """
     confirm_delete = wtforms.BooleanField(
-        lazy_gettext('Yes I want to delete this meeting')
+        _('Yes I want to delete this meeting')
     )
     confirm_futher_delete = wtforms.BooleanField(
-        lazy_gettext('Yes, I want to delete all futher meetings.')
+        _('Yes, I want to delete all futher meetings.')
     )
     from_date = wtforms.DateField(
-        lazy_gettext('Date from which to remove the meeting')
+        _('Date from which to remove the meeting')
     )
 
 
 class DeleteCalendarForm(i18nforms.Form):
     """ Form used to delete a calendar. """
     confirm_delete = wtforms.BooleanField(
-        lazy_gettext('Yes I want to delete this calendar')
+        _('Yes I want to delete this calendar')
     )
 
 
 class ClearCalendarForm(i18nforms.Form):
     """ Form used to delete a calendar. """
     confirm_delete = wtforms.BooleanField(
-        lazy_gettext('Yes I want to clear this calendar')
+        _('Yes I want to clear this calendar')
     )
 
 
 class UploadIcsForm(i18nforms.Form):
     ''' Form to upload an ics file into a calendar. '''
     ics_file = wtforms.FileField(
-        lazy_gettext('ics file'),
+        _('ics file'),
         [wtforms.validators.Required()])

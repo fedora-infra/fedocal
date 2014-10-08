@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-08 08:37+0200\n"
+"POT-Creation-Date: 2014-10-08 10:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -228,7 +228,7 @@ msgstr ""
 #: fedocal/templates/default/delete_meeting.html:36
 #: fedocal/templates/default/edit_calendar.html:25
 #: fedocal/templates/default/edit_meeting.html:62
-#: fedocal/templates/default/upload_calendar.html:28
+#: fedocal/templates/default/upload_calendar.html:27
 msgid "Cancel"
 msgstr ""
 
@@ -258,7 +258,7 @@ msgid "Markdown syntax"
 msgstr ""
 
 #: fedocal/templates/default/add_meeting.html:26
-#: fedocal/templates/default/add_meeting.html:106
+#: fedocal/templates/default/add_meeting.html:107
 #: fedocal/templates/default/edit_meeting.html:29
 #: fedocal/templates/default/edit_meeting.html:114
 msgid "Preview"
@@ -298,7 +298,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: fedocal/templates/default/add_meeting.html:115
+#: fedocal/templates/default/add_meeting.html:116
 #: fedocal/templates/default/edit_meeting.html:123
 msgid "Unable to generate preview!"
 msgstr ""
@@ -317,6 +317,8 @@ msgstr ""
 #: fedocal/templates/default/admin.html:25
 #: fedocal/templates/default/edit_calendar.html:24
 #: fedocal/templates/default/edit_meeting.html:58
+#: fedocal/templates/default/my_meeting.html:35
+#: fedocal/templates/default/my_meeting.html:65
 #: fedocal/templates/default/view_meeting.html:79
 msgid "Edit"
 msgstr ""
@@ -324,6 +326,8 @@ msgstr ""
 #: fedocal/templates/default/admin.html:26
 #: fedocal/templates/default/delete_calendar.html:24
 #: fedocal/templates/default/delete_meeting.html:35
+#: fedocal/templates/default/my_meeting.html:40
+#: fedocal/templates/default/my_meeting.html:70
 #: fedocal/templates/default/view_meeting.html:84
 msgid "Delete"
 msgstr ""
@@ -658,6 +662,10 @@ msgstr ""
 msgid "Meeting"
 msgstr ""
 
+#: fedocal/templates/default/meeting_list.html:208
+msgid "show more"
+msgstr ""
+
 #: fedocal/templates/default/my_meeting.html:11
 msgid "Manage your meetings"
 msgstr ""
@@ -683,7 +691,13 @@ msgstr ""
 msgid "This is the list of all regular meeting you created"
 msgstr ""
 
-#: fedocal/templates/default/my_meeting.html:80
+#: fedocal/templates/default/my_meeting.html:57
+#: fedocal/templates/default/my_meeting.html:86
+#, python-format
+msgid "%(start)s to %(end)s"
+msgstr ""
+
+#: fedocal/templates/default/my_meeting.html:79
 msgid "Past meetings"
 msgstr ""
 
@@ -692,15 +706,20 @@ msgstr ""
 msgid "Upload calendar"
 msgstr ""
 
-#: fedocal/templates/default/upload_calendar.html:19
+#: fedocal/templates/default/upload_calendar.html:13
+#, python-format
+msgid "Upload a calendar file using the %(ical_link)s format"
+msgstr ""
+
+#: fedocal/templates/default/upload_calendar.html:18
 msgid "Note: recurrent events are not yet taken into account by the upload."
 msgstr ""
 
-#: fedocal/templates/default/upload_calendar.html:20
+#: fedocal/templates/default/upload_calendar.html:19
 msgid "Note2: Todo are considered as full day meeting and displayed as such."
 msgstr ""
 
-#: fedocal/templates/default/upload_calendar.html:27
+#: fedocal/templates/default/upload_calendar.html:26
 msgid "Upload"
 msgstr ""
 
@@ -751,10 +770,12 @@ msgid "Meeting in: %%w weeks %%d days %%H:%%M:%%S"
 msgstr ""
 
 #: fedocal/templates/default/view_meeting.html:129
+#: fedocal/templates/default/view_meeting.html:181
 msgid "Meeting in progress."
 msgstr ""
 
 #: fedocal/templates/default/view_meeting.html:131
+#: fedocal/templates/default/view_meeting.html:183
 msgid "Meeting is over!"
 msgstr ""
 

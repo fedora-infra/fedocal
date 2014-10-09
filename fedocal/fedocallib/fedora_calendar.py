@@ -19,6 +19,7 @@ from datetime import date
 from calendar import LocaleHTMLCalendar
 from calendar import TimeEncoding
 from calendar import month_name
+import fedocal
 import flask
 
 
@@ -32,8 +33,13 @@ class FedocalCalendar(LocaleHTMLCalendar):
         """ Constructor.
         Stores the year and the month asked.
         """
-        #FIXME: locale setting must *not* be hardcoded!!
-        LocaleHTMLCalendar.__init__(self, locale='fr_FR')
+        babel_locale = fedocal.get_locale()
+        if babel_locale == 'fr':
+            cal_locale = 'fr_FR'
+        else:
+            cal_locale = 'en_US'
+
+        LocaleHTMLCalendar.__init__(self, locale=cal_locale)
         self.year = year
         self.month = month
         self.day = day

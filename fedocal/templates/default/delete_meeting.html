@@ -16,13 +16,13 @@
         next_meeting.meeting_timezone }}</li>
 </ul>
 
-<p>Stored as:</p>
+<p>{{ _('Stored as:') }}</p>
 <ul>
     <li>
-    Start: {{ meeting.meeting_date }} - {{ meeting.meeting_time_start
+    {{ _('Start:') }} {{ meeting.meeting_date }} - {{ meeting.meeting_time_start
         }} {{ meeting.meeting_timezone }} </li>
     <li>
-    End: {{ meeting.meeting_date_end }} - {{ meeting.meeting_time_stop
+    {{ _('End:') }} {{ meeting.meeting_date_end }} - {{ meeting.meeting_time_stop
         }} {{ meeting.meeting_timezone }} </li>
 </ul>
 
@@ -42,8 +42,7 @@ of them or just this one ? (Check only if you want to delete all future
 meetings as well)') }}
 </p>
 <p>
-    This meeting is recurring every {{ meeting.recursion_frequency }} until
-    {{ meeting.recursion_ends }}
+    {{ _('This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s', frequency=meeting.recursion_frequency, ends=meeting.recursion_ends) }}
 </p>
 {{ render_field_invert(form.confirm_futher_delete) }}
 {% endif %}

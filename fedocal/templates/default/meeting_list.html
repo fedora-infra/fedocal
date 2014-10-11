@@ -131,11 +131,11 @@
             {% if calendar_admin %}
             <li>
                 <a href="{{ url_for('clear_calendar',
-                    calendar_name=calendar.calendar_name) }}"> Clear calendar </a>
+                    calendar_name=calendar.calendar_name) }}">{{ _('Clear calendar') }}</a>
             </li>
             <li>
                 <a href="{{ url_for('upload_calendar',
-                    calendar_name=calendar.calendar_name) }}"> Upload iCalendar </a>
+                    calendar_name=calendar.calendar_name) }}">{{ _('Upload iCalendar') }}</a>
             </li>
             {% endif %}
         </ul>

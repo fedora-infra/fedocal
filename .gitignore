@@ -4,6 +4,7 @@
 *.swp
 *.mo 
 *.cfg
+!babel.cfg
 dist
 *.egg-info
 build

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fedocal\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-08 10:02+0200\n"
-"PO-Revision-Date: 2014-10-08 10:52+0100\n"
+"POT-Creation-Date: 2014-10-11 16:48+0200\n"
+"PO-Revision-Date: 2014-10-11 16:58+0100\n"
 "Last-Translator: Johan Cwiklinski <johan@x-tnd.be>\n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -52,6 +52,219 @@ msgstr ""
 msgid "No calendar named %(name)s could not be found"
 msgstr "Aucun calendrier nommé %(name)s n'a pu être trouvé"
 
+#: fedocal/__init__.py:504 fedocal/__init__.py:733 fedocal/__init__.py:1105
+#: fedocal/__init__.py:1145 fedocal/__init__.py:1196 fedocal/__init__.py:1574
+#, python-format
+msgid "No calendar named %(name)s could be found"
+msgstr "Aucun calendrier nommé %(name)s n'a pu être trouvé"
+
+#: fedocal/__init__.py:662
+msgid "You have been logged out"
+msgstr "Vous avez été déconecté"
+
+#: fedocal/__init__.py:676
+msgid "You are not a fedocal admin, you are not allowed to add calendars."
+msgstr ""
+"Vous n'êtes pas administrateur fedocal, vous n'êtes pas autorisé à ajouter "
+"des calendriers."
+
+#: fedocal/__init__.py:701
+msgid "Could not add this calendar to the database"
+msgstr "Impossible d'ajouter ce calendrier à la base de données"
+
+#: fedocal/__init__.py:706
+msgid "Calendar added"
+msgstr "Calendrier ajouté"
+
+#: fedocal/__init__.py:742
+#, python-format
+msgid ""
+"This calendar is \"%(status)s\", you are not allowed to add meetings anymore."
+msgstr ""
+"Le calendrier est « %(status)s », il ne vous est plus possible d'y ajouter "
+"des meetings."
+
+#: fedocal/__init__.py:749
+msgid ""
+"You are not one of the editors of this calendar, or one of its admins, you "
+"are not allowed to add new meetings."
+msgstr ""
+"Vous ne faites pas partie des éditeurs de ce calendrier, ni de ses "
+"administrateurs, vous n'êtes pas autorisé à ajouter de nouveaux meetings."
+
+#: fedocal/__init__.py:800
+msgid "Could not add this meeting to this calendar"
+msgstr "Impossible d'ajouter un meeting à ce calendrier"
+
+#: fedocal/__init__.py:806
+msgid "Meeting added"
+msgstr "Meeting ajouté"
+
+#: fedocal/__init__.py:838
+#, python-format
+msgid "The meeting #%(id)s could not be found"
+msgstr "Le meeting #%(id)s n'a pas été trouvé"
+
+#: fedocal/__init__.py:846
+#, python-format
+msgid ""
+"This calendar is \"%(status)s\", you are not allowed to edit its meetings "
+"anymore."
+msgstr ""
+"Le calendrier est « %(status)s », il ne vous est plus possible d'en modifier "
+"les meetings."
+
+#: fedocal/__init__.py:855
+msgid ""
+"You are not one of the manager of this meeting, or an admin, you are not "
+"allowed to edit it."
+msgstr ""
+"Vous ne faites pas partie des éditeurs de ce meeting, ni de ses "
+"administrateurs, vous n'êtes pas autorisé à le modifier."
+
+#: fedocal/__init__.py:871
+#, python-format
+msgid ""
+"This calendar is \"%(status)s\", you are not allowed to add meetings to it "
+"anymore."
+msgstr ""
+"Le calendrier est « %(status)s », il ne vous est plus possible d'y ajouter "
+"des meetings."
+
+#: fedocal/__init__.py:912
+msgid "Could not update this meeting."
+msgstr "Impossible de mettre à jour ce meeting."
+
+#: fedocal/__init__.py:917
+msgid "Meeting updated"
+msgstr "Meeting mis à jour"
+
+#: fedocal/__init__.py:964
+msgid "No meeting could be found for this identifier"
+msgstr "Aucun meeting trouvé pour cet identifiant"
+
+#: fedocal/__init__.py:1015
+msgid "No meeting with this identifier could be found."
+msgstr "Aucun meeting trouvé pour cet identifiant"
+
+#: fedocal/__init__.py:1021
+#, python-format
+msgid ""
+"This calendar is \"%(status)s\", you are not allowed to delete its meetings "
+"anymore."
+msgstr ""
+"Le calendrier est « %(status)s », il ne vous est plus possible d'en "
+"supprimer des meetings."
+
+#: fedocal/__init__.py:1032
+msgid ""
+"You are not one of the manager of this meeting, or an admin, you are not "
+"allowed to delete it."
+msgstr ""
+"Vous ne faites pas partie des éditeurs de ce meeting, ni de ses "
+"administrateurs, vous n'êtes pas autorisé à le supprimer."
+
+#: fedocal/__init__.py:1072
+msgid "Meeting deleted"
+msgstr "Meeting supprimé"
+
+#: fedocal/__init__.py:1077
+msgid "Could not delete this meeting."
+msgstr "Impossible de supprimer ce meeting"
+
+#: fedocal/__init__.py:1098
+msgid ""
+"You are not a fedocal admin, you are not allowed to delete the calendar."
+msgstr ""
+"Vous n'êtes pas administrateur fedocal, vous n'êtes pas autorisé à supprimer "
+"le calendrier."
+
+#: fedocal/__init__.py:1118
+msgid "Calendar deleted"
+msgstr "Calendrier supprimé"
+
+#: fedocal/__init__.py:1127
+msgid "Could not delete this calendar."
+msgstr "Impossible de supprimer ce calendrier."
+
+#: fedocal/__init__.py:1151
+msgid ""
+"You are not an admin of this calendar, you are not allowed to clear the "
+"calendar."
+msgstr ""
+"Vous n'êtes pas administrateur de ce calendrier, vous ne pouvez pas le "
+"nettoyer."
+
+#: fedocal/__init__.py:1162
+msgid "Calendar cleared"
+msgstr "Calendrier nettoyé"
+
+#: fedocal/__init__.py:1167
+msgid "Could not clear this calendar."
+msgstr "Impossible de nettoyer ce calendrier."
+
+#: fedocal/__init__.py:1189
+msgid "You are not a fedocal admin, you are not allowed to edit the calendar."
+msgstr ""
+"Vous n'êtes pas administrateur fedocal, vous n'êtes pas autorisé à modifier "
+"le calendrier."
+
+#: fedocal/__init__.py:1220
+msgid "Could not update this calendar."
+msgstr "Impossible de mettre à jour ce calendrier."
+
+#: fedocal/__init__.py:1224
+msgid "Calendar updated"
+msgstr "Calendrier mis à jour"
+
+#: fedocal/__init__.py:1256
+msgid ""
+"You are not a fedocal admin, you are not allowed to access the admin part."
+msgstr ""
+"Vous n'êtes pas administrateur fedocal, vous n'êtes pas autorisé à accéder à "
+"la partie administration."
+
+#: fedocal/__init__.py:1286
+msgid "No calendar specified"
+msgstr "Aucun calendrier spécifié"
+
+#: fedocal/__init__.py:1303
+msgid "Invalid date specified"
+msgstr "Date spécifiée invalide"
+
+#: fedocal/__init__.py:1308
+msgid "Dates before 1900 are not allowed"
+msgstr "Les dates avant 1900 ne sont pas autorisées"
+
+#: fedocal/__init__.py:1339
+msgid "No keyword provided for the search"
+msgstr "Aucun mot clé fourni pour la recherche"
+
+#: fedocal/__init__.py:1390 fedocal/__init__.py:1477
+#, python-format
+msgid "No location named %(name)s could be found"
+msgstr "Aucun emplacement %(name)s n'a pu être trouvé"
+
+#: fedocal/__init__.py:1554
+msgid "Invalid referred url"
+msgstr "URL de référence invalide"
+
+#: fedocal/__init__.py:1581
+msgid ""
+"You are not an admin for this calendar, you are not allowed to upload a "
+"iCalendar file to it."
+msgstr ""
+"Vous n'êtes pas administrateur de ce calendrier, vous ne'êtes pas autorisé à "
+"y envoyer un fichier iCalendar."
+
+#: fedocal/__init__.py:1604
+msgid "Calendar uploaded"
+msgstr "Calendrier envoyé"
+
+#: fedocal/__init__.py:1613
+msgid "Could not upload this iCalendar file."
+msgstr "Impossible d'envoyer ce fichier iCalendar."
+
 #: fedocal/forms.py:48 fedocal/forms.py:55
 msgid "Time must be of type \"HH:MM\""
 msgstr "L'heure doit être de la forme « HH:MM »"
@@ -68,7 +281,7 @@ msgstr "Calendrier"
 msgid "Contact email"
 msgstr "Courriel de contact"
 
-#: fedocal/forms.py:93 fedocal/templates/default/meeting_list.html:162
+#: fedocal/forms.py:93 fedocal/templates/default/meeting_list.html:174
 msgid "Description"
 msgstr "Description"
 
@@ -88,7 +301,7 @@ msgstr "Statut"
 msgid "Meeting name"
 msgstr "Nom du meeting"
 
-#: fedocal/forms.py:139 fedocal/templates/default/meeting_list.html:159
+#: fedocal/forms.py:139 fedocal/templates/default/meeting_list.html:171
 msgid "Date"
 msgstr "Date"
 
@@ -120,7 +333,7 @@ msgstr "Co-manager"
 msgid "Information"
 msgstr "Information"
 
-#: fedocal/forms.py:166 fedocal/templates/default/meeting_list.html:163
+#: fedocal/forms.py:166 fedocal/templates/default/meeting_list.html:175
 msgid "Location"
 msgstr "Emplacement"
 
@@ -236,7 +449,7 @@ msgstr "Créer"
 #: fedocal/templates/default/add_calendar.html:26
 #: fedocal/templates/default/add_meeting.html:54
 #: fedocal/templates/default/delete_calendar.html:25
-#: fedocal/templates/default/delete_meeting.html:36
+#: fedocal/templates/default/delete_meeting.html:52
 #: fedocal/templates/default/edit_calendar.html:25
 #: fedocal/templates/default/edit_meeting.html:62
 #: fedocal/templates/default/upload_calendar.html:27
@@ -245,7 +458,7 @@ msgstr "Annuler"
 
 #: fedocal/templates/default/add_meeting.html:4
 #: fedocal/templates/default/agenda.html:337
-#: fedocal/templates/default/meeting_list.html:226
+#: fedocal/templates/default/meeting_list.html:240
 msgid "Add meeting"
 msgstr "Ajouter un meeting"
 
@@ -270,7 +483,7 @@ msgid "Markdown syntax"
 msgstr "syntaxe Markdown"
 
 #: fedocal/templates/default/add_meeting.html:26
-#: fedocal/templates/default/add_meeting.html:107
+#: fedocal/templates/default/add_meeting.html:106
 #: fedocal/templates/default/edit_meeting.html:29
 #: fedocal/templates/default/edit_meeting.html:114
 msgid "Preview"
@@ -314,7 +527,7 @@ msgstr "Notez que fedocal enverra le rappel en votre nom."
 msgid "Add"
 msgstr "Ajouter"
 
-#: fedocal/templates/default/add_meeting.html:116
+#: fedocal/templates/default/add_meeting.html:115
 #: fedocal/templates/default/edit_meeting.html:123
 msgid "Unable to generate preview!"
 msgstr "Impossible de générer un aperçu&nbsp;!"
@@ -341,7 +554,7 @@ msgstr "Modifier"
 
 #: fedocal/templates/default/admin.html:26
 #: fedocal/templates/default/delete_calendar.html:24
-#: fedocal/templates/default/delete_meeting.html:35
+#: fedocal/templates/default/delete_meeting.html:51
 #: fedocal/templates/default/my_meeting.html:40
 #: fedocal/templates/default/my_meeting.html:70
 #: fedocal/templates/default/view_meeting.html:84
@@ -431,36 +644,38 @@ msgstr "Contacter l'administrateur"
 
 #: fedocal/templates/default/agenda.html:155
 #: fedocal/templates/default/edit_calendar.html:4
-#: fedocal/templates/default/meeting_list.html:123
+#: fedocal/templates/default/meeting_list.html:124
 msgid "Edit calendar"
 msgstr "Modifier le calendrier"
 
 #: fedocal/templates/default/agenda.html:159
 #: fedocal/templates/default/delete_calendar.html:3
-#: fedocal/templates/default/meeting_list.html:127
+#: fedocal/templates/default/meeting_list.html:128
 msgid "Delete calendar"
 msgstr "Supprimer le calendrier"
 
 #: fedocal/templates/default/agenda.html:165
+#: fedocal/templates/default/meeting_list.html:134
 msgid "Clear calendar"
 msgstr "Nettoyer le calendrier"
 
 #: fedocal/templates/default/agenda.html:169
+#: fedocal/templates/default/meeting_list.html:138
 msgid "Upload iCalendar"
 msgstr "Envoyer l'iCalendar"
 
 #: fedocal/templates/default/agenda.html:179
-#: fedocal/templates/default/meeting_list.html:139
+#: fedocal/templates/default/meeting_list.html:151
 msgid "Administrators:"
 msgstr "Administrateurs&nbsp;:"
 
 #: fedocal/templates/default/agenda.html:182
-#: fedocal/templates/default/meeting_list.html:142
+#: fedocal/templates/default/meeting_list.html:154
 msgid "Editors:"
 msgstr "Éditeurs&nbsp;:"
 
 #: fedocal/templates/default/agenda.html:184
-#: fedocal/templates/default/meeting_list.html:144
+#: fedocal/templates/default/meeting_list.html:156
 msgid "Editors: CLA+1"
 msgstr "Éditeurs&nbsp;: CLA+1"
 
@@ -470,7 +685,7 @@ msgid "%(timezone)s time"
 msgstr "Heure %(timezone)s"
 
 #: fedocal/templates/default/agenda.html:349
-#: fedocal/templates/default/meeting_list.html:238
+#: fedocal/templates/default/meeting_list.html:252
 msgid "iCal Export"
 msgstr "Export iCal"
 
@@ -483,12 +698,12 @@ msgid "Some meetings \\n are hidden above"
 msgstr "Certains meetings \\n sont masqués au dessus"
 
 #: fedocal/templates/default/agenda.html:421
-#: fedocal/templates/default/meeting_list.html:285
+#: fedocal/templates/default/meeting_list.html:305
 msgid "Meeting details"
 msgstr "Détails du meeting"
 
 #: fedocal/templates/default/agenda.html:437
-#: fedocal/templates/default/meeting_list.html:294
+#: fedocal/templates/default/meeting_list.html:314
 msgid "Unable to retrieve selected meeting!"
 msgstr "Impossible de récupérer le meeting sélectionn&nbsp;!"
 
@@ -520,7 +735,7 @@ msgid "%(count)s meetings associated"
 msgstr "%(count)s meetings associés"
 
 #: fedocal/templates/default/delete_calendar.html:18
-#: fedocal/templates/default/delete_meeting.html:23
+#: fedocal/templates/default/delete_meeting.html:35
 msgid "Are you positively sure that's what you want to do?"
 msgstr "Êtes-vous certain que c'est ce que vous souhaitez faire&nbsp;?"
 
@@ -540,15 +755,32 @@ msgstr "Date&nbsp;:"
 msgid "Starting time:"
 msgstr "Heure de début&nbsp;:"
 
-#: fedocal/templates/default/delete_meeting.html:14
+#: fedocal/templates/default/delete_meeting.html:15
 msgid "Ending time:"
 msgstr "Heure de fin&nbsp;:"
 
-#: fedocal/templates/default/delete_meeting.html:18
+#: fedocal/templates/default/delete_meeting.html:19
+#: fedocal/templates/default/view_meeting.html:58
+msgid "Stored as:"
+msgstr "Enregistré comme&nbsp;:"
+
+#: fedocal/templates/default/delete_meeting.html:22
+#: fedocal/templates/default/view_meeting.html:26
+#: fedocal/templates/default/view_meeting.html:63
+msgid "Start:"
+msgstr "Début&nbsp;:"
+
+#: fedocal/templates/default/delete_meeting.html:25
+#: fedocal/templates/default/view_meeting.html:34
+#: fedocal/templates/default/view_meeting.html:70
+msgid "End:"
+msgstr "Fin&nbsp;:"
+
+#: fedocal/templates/default/delete_meeting.html:30
 msgid "You are removing this meeting from the calendar"
 msgstr "Vous êtes en train de supprimer ce meeting du calendrier"
 
-#: fedocal/templates/default/delete_meeting.html:28
+#: fedocal/templates/default/delete_meeting.html:40
 msgid ""
 "This meeting is a regular meeting, are you sure you want to delete all\n"
 "of them or just this one ? (Check only if you want to delete all future\n"
@@ -557,6 +789,15 @@ msgstr ""
 "Ce meeting est un meeting récurrent, êtes-vous certain de vouloir supprimer\n"
 " toutes les occurrences ou juste celle-ci&nbsp;? (Ne cochez que si vous "
 "voulez supprimer toute les occurrences futures également)"
+
+#: fedocal/templates/default/delete_meeting.html:45
+#: fedocal/templates/default/view_meeting.html:47
+#, python-format
+msgid ""
+"This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s"
+msgstr ""
+"Ce meeting est récurrent, il survient chaque %(frequency)s jours jusqu'à "
+"%(ends)s"
 
 #: fedocal/templates/default/edit_calendar.html:10
 #, python-format
@@ -666,24 +907,24 @@ msgstr ""
 
 #: fedocal/templates/default/meeting_list.html:62
 #: fedocal/templates/default/meeting_list.html:66
-#: fedocal/templates/default/meeting_list.html:232
+#: fedocal/templates/default/meeting_list.html:246
 msgid "Calendar view"
 msgstr "Vue calendrier"
 
-#: fedocal/templates/default/meeting_list.html:155
+#: fedocal/templates/default/meeting_list.html:167
 #, python-format
 msgid "Time are expressed in the %(timezone)s time zone."
 msgstr "Les heures sont exprimées dans le fuseau horaire %(timezone)s."
 
-#: fedocal/templates/default/meeting_list.html:160
+#: fedocal/templates/default/meeting_list.html:172
 msgid "Time"
 msgstr "Heure"
 
-#: fedocal/templates/default/meeting_list.html:161
+#: fedocal/templates/default/meeting_list.html:173
 msgid "Meeting"
 msgstr "Meeting"
 
-#: fedocal/templates/default/meeting_list.html:208
+#: fedocal/templates/default/meeting_list.html:222
 msgid "show more"
 msgstr "afficher plus"
 
@@ -760,36 +1001,14 @@ msgstr "Meeting « %(name)s »"
 msgid "Location:"
 msgstr "Emplacement&nbsp;:"
 
-#: fedocal/templates/default/view_meeting.html:26
-#: fedocal/templates/default/view_meeting.html:63
-msgid "Start:"
-msgstr "Début&nbsp;:"
-
-#: fedocal/templates/default/view_meeting.html:34
-#: fedocal/templates/default/view_meeting.html:70
-msgid "End:"
-msgstr "Fin&nbsp;:"
-
 #: fedocal/templates/default/view_meeting.html:43
 msgid "No description"
 msgstr "Pas de description"
-
-#: fedocal/templates/default/view_meeting.html:47
-#, python-format
-msgid ""
-"This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s"
-msgstr ""
-"Ce meeting est récurrent, il survient chaque %(frequency)s jours jusqu'à "
-"%(ends)s"
 
 #: fedocal/templates/default/view_meeting.html:55
 #, python-format
 msgid "Meeting organized by %(managers)s"
 msgstr "Meeting oragnisé par %(managers)s"
-
-#: fedocal/templates/default/view_meeting.html:58
-msgid "Stored as:"
-msgstr "Enregistré comme&nbsp;:"
 
 #: fedocal/templates/default/view_meeting.html:107
 #: fedocal/templates/default/view_meeting.html:159

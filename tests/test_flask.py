@@ -724,11 +724,11 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Add calendar - Fedocal</title>' in output.data)
             self.assertTrue(
-                'for="calendar_name">Calendar <span class="error">*</span>'
-                in output.data)
+                'for="calendar_name">Calendar</label>' in output.data)
             self.assertTrue(
-                'contact">Contact email <span class="error">*</span>'
-                in output.data)
+                'contact">Contact email' in output.data)
+            self.assertEqual(
+                output.data.count('<span class="required">*</span>'), 3)
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -1129,11 +1129,11 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Add meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                'meeting_name">Meeting name <span class="error">*</span></l'
-                in output.data)
+                'meeting_name">Meeting name</label>' in output.data)
             self.assertTrue(
-                'for="meeting_date">Date <span class="error">*</span></label'
-                in output.data)
+                'for="meeting_date">Date</label>' in output.data)
+            self.assertEqual(
+                output.data.count('<span class="required">*</span>'), 5)
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -1439,11 +1439,11 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                'meeting_name">Meeting name <span class="error">*</span></l'
-                in output.data)
+                'meeting_name">Meeting name</label>' in output.data)
             self.assertTrue(
-                'for="meeting_date">Date <span class="error">*</span></label'
-                in output.data)
+                'for="meeting_date">Date</label>' in output.data)
+            self.assertEqual(
+                output.data.count('<span class="required">*</span>'), 6)
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
@@ -1601,11 +1601,13 @@ class Flasktests(Modeltests):
                 '<h2>Edit meeting Another past test meeting</h2>'
                 in output.data)
             self.assertTrue(
-                'meeting_name">Meeting name <span class="error">*</span></l'
+                'meeting_name">Meeting name</label>'
                 in output.data)
             self.assertTrue(
-                'for="meeting_date">Date <span class="error">*</span></label'
+                'for="meeting_date">Date</label>'
                 in output.data)
+            self.assertEqual(
+                output.data.count('<span class="required">*</span>'), 6)
 
             output = self.app.get(
                 '/meeting/edit/12/?from_date=%s' % TODAY.strftime('%Y-%m-%d'),
@@ -1617,11 +1619,11 @@ class Flasktests(Modeltests):
                 '<h2>Edit meeting Another past test meeting</h2>'
                 in output.data)
             self.assertTrue(
-                'meeting_name">Meeting name <span class="error">*</span></l'
-                in output.data)
+                'meeting_name">Meeting name</label' in output.data)
             self.assertTrue(
-                'for="meeting_date">Date <span class="error">*</span></label'
-                in output.data)
+                'for="meeting_date">Date</label>' in output.data)
+            self.assertEqual(
+                output.data.count('<span class="required">*</span>'), 6)
 
     @flask10_only
     def test_delete_meeting(self):

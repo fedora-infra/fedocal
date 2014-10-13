@@ -77,16 +77,16 @@ def validate_multi_email(form, field):
 class AddCalendarForm(wtf.Form):
     """ Form used to create a new calendar. """
     calendar_name = wtforms.TextField(
-        'Calendar <span class="error">*</span>',
+        'Calendar',
         [wtforms.validators.Required()])
     calendar_contact = wtforms.TextField(
-        'Contact email <span class="error">*</span>',
+        'Contact email',
         [wtforms.validators.Required()])
     calendar_description = wtforms.TextField('Description')
     calendar_editor_groups = wtforms.TextField('Editor groups')
     calendar_admin_groups = wtforms.TextField('Admin groups')
     calendar_status = wtforms.SelectField(
-        'Status <span class="error">*</span>',
+        'Status',
         [wtforms.validators.Required()],
         choices=[]
     )
@@ -119,16 +119,16 @@ class AddCalendarForm(wtf.Form):
 class AddMeetingForm(wtf.Form):
     """ Form used to create a new meeting. """
     calendar_name = wtforms.SelectField(
-        'Calendar <span class="error">*</span>',
+        'Calendar',
         [wtforms.validators.Required()],
         choices=[])
 
     meeting_name = wtforms.TextField(
-        'Meeting name <span class="error">*</span>',
+        'Meeting name',
         [wtforms.validators.Required()])
 
     meeting_date = wtforms.DateField(
-        'Date <span class="error">*</span>',
+        'Date',
         [wtforms.validators.Required()])
 
     meeting_date_end = wtforms.DateField(
@@ -136,15 +136,15 @@ class AddMeetingForm(wtf.Form):
         [wtforms.validators.optional()])
 
     meeting_time_start = wtforms.TextField(
-        'Start time <span class="error">*</span>',
+        'Start time',
         [wtforms.validators.Required(), validate_time])
 
     meeting_time_stop = wtforms.TextField(
-        'Stop time <span class="error">*</span>',
+        'Stop time',
         [wtforms.validators.Required(), validate_time])
 
     meeting_timezone = wtforms.SelectField(
-        'Time zone <span class="error">*</span>',
+        'Time zone',
         [wtforms.validators.Required()],
         choices=[(tzone, tzone) for tzone in common_timezones])
 
@@ -262,5 +262,5 @@ class ClearCalendarForm(wtf.Form):
 class UploadIcsForm(wtf.Form):
     ''' Form to upload an ics file into a calendar. '''
     ics_file = wtforms.FileField(
-        'ics file <span class="error">*</span>',
+        'ics file',
         [wtforms.validators.Required()])

@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 """
- (c) 2012-2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
+ (c) 2014 - Copyright Johan Cwiklinski <johan@x-tnd.be>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website

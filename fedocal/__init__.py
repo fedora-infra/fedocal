@@ -47,9 +47,9 @@ from functools import wraps
 from pytz import common_timezones
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug import secure_filename
-from flask.ext.babel import Babel
-from flask.ext.babel import gettext
-from flask.ext.babel import format_datetime
+from fedocal.fedocal_babel import get_babel
+from fedocal.fedocal_babel import gettext
+from fedocal.fedocal_babel import format_datetime
 
 import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
@@ -66,7 +66,7 @@ APP = flask.Flask(__name__)
 # set up FAS
 APP.config.from_object('fedocal.default_config')
 
-babel = Babel(APP)
+babel = get_babel(APP)
 
 if 'FEDOCAL_CONFIG' in os.environ:
     APP.config.from_envvar('FEDOCAL_CONFIG')

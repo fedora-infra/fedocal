@@ -19,7 +19,7 @@ import operator
 from fedocal.fedocallib.model import Meeting
 from fedocal.fedocallib.exceptions import FedocalException
 
-from flask.ext.babel import gettext
+from fedocal.fedocal_babel import gettext
 
 # pylint: disable=R0903
 class Week(object):

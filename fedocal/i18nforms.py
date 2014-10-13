@@ -25,7 +25,7 @@
 
 from flask.ext import wtf
 from flask import _request_ctx_stack
-from flask.ext.babel import get_locale
+from fedocal.fedocal_babel import get_locale
 from babel import support
 import os
 

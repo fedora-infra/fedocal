@@ -40,7 +40,7 @@ from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 
 from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 
-from flask.ext.babel import gettext
+from fedocal.fedocal_babel import gettext
 
 
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',

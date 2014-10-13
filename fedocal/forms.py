@@ -28,7 +28,7 @@ import re
 from flask.ext import wtf
 from datetime import time
 from datetime import datetime
-from flask.ext.babel import lazy_gettext as _
+from fedocal.fedocal_babel import lazy_gettext as _
 import i18nforms
 
 from pytz import common_timezones

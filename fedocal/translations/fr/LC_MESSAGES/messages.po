@@ -1,8 +1,8 @@
-# French translations for PROJECT.
-# Copyright (C) 2014 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# French translations for fedocal.
+# Copyright (C) 2014 Johan Cwiklisnki <johan@x-tnd.be>
+# This file is distributed under the same license as the fedocal project.
 #
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# Johan Cwiklinski <johan@x-tn.be>, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: Fedocal\n"

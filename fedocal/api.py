@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2012-2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
@@ -52,7 +52,7 @@ def check_callback(response):
     return response
 
 
-### API
+# API
 @APP.route('/api/')
 def api():
     """
@@ -385,23 +385,23 @@ Filter arguments
     try:
         if calendar_name:
             if location:
-                #print "calendar and region"
+                # print "calendar and region"
                 meetings = fedocallib.get_meetings_by_date_and_location(
                     SESSION, calendar_name, startd, endd, location)
             else:
-                #print "calendar and no region"
+                # print "calendar and no region"
                 meetings = fedocallib.get_by_date(
                     SESSION, calendarobj, startd, endd)
         else:
             meetings = []
             if location:
-                #print "no calendar and region"
+                # print "no calendar and region"
                 meetings.extend(
                     fedocallib.get_by_date_at_location(
                         SESSION, location, startd, endd)
                 )
             else:
-                #print "no calendar and no region"
+                # print "no calendar and no region"
                 for calendar in fedocallib.get_calendars(SESSION):
                     meetings.extend(fedocallib.get_by_date(
                         SESSION, calendar, startd, endd))

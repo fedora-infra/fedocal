@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2012-2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
@@ -23,7 +23,7 @@
  MA 02110-1301, USA.
 """
 
-## These two lines are needed to run on EL6
+# These two lines are needed to run on EL6
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
@@ -87,7 +87,7 @@ if not APP.debug:
         mail_admin=APP.config.get('MAIL_ADMIN', APP.config['EMAIL_ERROR'])
     ))
 
-## Send classic logs into syslog
+# Send classic logs into syslog
 handler = logging.StreamHandler()
 handler.setLevel(APP.config.get('log_level', 'INFO'))
 APP.logger.addHandler(handler)
@@ -117,7 +117,7 @@ work.
         elif not flask.g.fas_user.cla_done:
             flask.flash(
                 gettext('You must sign the CLA (Contributor License'
-                    ' Agreement) to use fedocal'),
+                        ' Agreement) to use fedocal'),
                 'errors'
             )
             return flask.redirect(flask.url_for('.index'))
@@ -225,7 +225,7 @@ def set_session():
     flask.session.permanent = True
 
 
-## Local function
+# Local function
 def is_admin():
     """ Return whether the user is admin for this application or not. """
     if not authenticated() \
@@ -347,14 +347,14 @@ def validate_input_file(input_file):
             'ALLOWED_MIMETYPES', []):  # pragma: no cover
         raise FedocalException(
             gettext(
-                'The submitted candidate has the MIME type "%(mime)s" which is '
-                'not an allowed MIME type',
+                'The submitted candidate has the MIME type "%(mime)s" '
+                'which is not an allowed MIME type',
                 mime=mimetype
             )
         )
 
 
-## Flask application
+# Flask application
 @APP.route('/')
 def index():
     """ Displays the index page presenting all the calendars available.
@@ -507,7 +507,7 @@ def calendar_list(calendar_name, year=None, month=None, day=None):
     if not calendarobj:
         flask.flash(
             gettext('No calendar named %(name)s could be found',
-                name=calendar_name),
+                    name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
@@ -736,24 +736,25 @@ def add_meeting(calendar_name):
     if not calendarobj:
         flask.flash(
             gettext('No calendar named %(name)s could be found',
-                name=calendar_name),
+                    name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
     calendars = Calendar.get_all(SESSION)
 
     if calendarobj.calendar_status != 'Enabled':
-        flask.flash(
-            gettext('This calendar is "%(status)s", you are not allowed to '
+        flask.flash(gettext(
+            'This calendar is "%(status)s", you are not allowed to '
             'add meetings anymore.', status=calendarobj.calendar_status),
             'errors')
         return flask.redirect(flask.url_for('calendar',
                               calendar_name=calendar_name))
 
     if not is_calendar_manager(calendarobj):
-        flask.flash(gettext('You are not one of the editors of this calendar, '
-                    'or one of its admins, you are not allowed to add '
-                    'new meetings.'), 'errors')
+        flask.flash(gettext(
+            'You are not one of the editors of this calendar, '
+            'or one of its admins, you are not allowed to add '
+            'new meetings.'), 'errors')
         return flask.redirect(flask.url_for('calendar',
                                             calendar_name=calendar_name))
 
@@ -847,19 +848,20 @@ def edit_meeting(meeting_id):
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
 
     if calendarobj.calendar_status != 'Enabled':
-        flask.flash(
-            gettext('This calendar is "%(status)s", you are not allowed to '
-                'edit its meetings anymore.',
-                status=calendarobj.calendar_status),
+        flask.flash(gettext(
+            'This calendar is "%(status)s", you are not allowed to '
+            'edit its meetings anymore.',
+            status=calendarobj.calendar_status),
             'errors')
         return flask.redirect(flask.url_for('calendar',
                               calendar_name=calendarobj.calendar_name))
 
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(calendarobj)):
-        flask.flash(gettext('You are not one of the manager of this meeting, '
-                    'or an admin, you are not allowed to edit it.'),
-                    'errors')
+        flask.flash(gettext(
+            'You are not one of the manager of this meeting, '
+            'or an admin, you are not allowed to edit it.'),
+            'errors')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
 
@@ -872,10 +874,10 @@ def edit_meeting(meeting_id):
         if meeting.calendar_name != form.calendar_name.data:
             calendarobj = Calendar.by_id(SESSION, form.calendar_name.data)
             if calendarobj.calendar_status != 'Enabled':
-                flask.flash(
-                    gettext('This calendar is "%(status)s", you are not allowed'
-                        ' to add meetings to it anymore.',
-                        status=calendarobj.calendar_status), 'errors')
+                flask.flash(gettext(
+                    'This calendar is "%(status)s", you are not allowed'
+                    ' to add meetings to it anymore.',
+                    status=calendarobj.calendar_status), 'errors')
                 return flask.redirect(
                     flask.url_for('calendar',
                                   calendar_name=calendarobj.calendar_name)
@@ -966,8 +968,9 @@ def view_meeting_page(meeting_id, full):
     org_meeting = meeting = Meeting.by_id(SESSION, meeting_id)
     tzone = get_timezone()
     if not meeting:
-        flask.flash(gettext('No meeting could be found for this identifier'),
-                    'errors')
+        flask.flash(gettext(
+            'No meeting could be found for this identifier'),
+            'errors')
         return flask.redirect(flask.url_for('index'))
 
     meeting = fedocallib.convert_meeting_timezone(
@@ -1016,16 +1019,16 @@ def delete_meeting(meeting_id):
     meeting = Meeting.by_id(SESSION, meeting_id)
 
     if not meeting:
-        flask.flash(
-            gettext('No meeting with this identifier could be found.'),
+        flask.flash(gettext(
+            'No meeting with this identifier could be found.'),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
     if meeting.calendar.calendar_status != 'Enabled':
-        flask.flash(
-            gettext('This calendar is "%(status)s", you are not allowed to delete '
-                'its meetings anymore.',
-                status=meeting.calendar.calendar_status),
+        flask.flash(gettext(
+            'This calendar is "%(status)s", you are not allowed to delete '
+            'its meetings anymore.',
+            status=meeting.calendar.calendar_status),
             'errors')
         return flask.redirect(
             flask.url_for('calendar',
@@ -1034,9 +1037,10 @@ def delete_meeting(meeting_id):
 
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(meeting.calendar)):
-        flask.flash(gettext('You are not one of the manager of this meeting, '
-                    'or an admin, you are not allowed to delete it.'),
-                    'errors')
+        flask.flash(gettext(
+            'You are not one of the manager of this meeting, '
+            'or an admin, you are not allowed to delete it.'),
+            'errors')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
 
@@ -1100,15 +1104,16 @@ def delete_calendar(calendar_name):
     :arg calendar_name: the identifier of the calendar to delete.
     """
     if not is_admin():
-        flask.flash(gettext('You are not a fedocal admin, you are not allowed '
-                    'to delete the calendar.'), 'errors')
+        flask.flash(gettext(
+            'You are not a fedocal admin, you are not allowed '
+            'to delete the calendar.'), 'errors')
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(
-            gettext('No calendar named %(name)s could be found',
-                name=calendar_name),
+        flask.flash(gettext(
+            'No calendar named %(name)s could be found',
+            name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
     deleteform = forms.DeleteCalendarForm()
@@ -1129,7 +1134,8 @@ def delete_calendar(calendar_name):
                 SESSION.rollback()
                 LOG.debug('Error in delete_calendar')
                 LOG.exception(err)
-                flask.flash(gettext('Could not delete this calendar.'), 'errors')
+                flask.flash(gettext(
+                    'Could not delete this calendar.'), 'errors')
         return flask.redirect(flask.url_for('index'))
     return flask.render_template(
         'delete_calendar.html', form=deleteform, calendarobj=calendarobj)
@@ -1146,15 +1152,15 @@ def clear_calendar(calendar_name):
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(
-            gettext('No calendar named %(name)s could be found', name=calendar_name),
+        flask.flash(gettext(
+            'No calendar named %(name)s could be found', name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
     if not is_calendar_admin(calendarobj):
-        flask.flash(
-            gettext('You are not an admin of this calendar, you are not '
-                'allowed to clear the calendar.'), 'errors')
+        flask.flash(gettext(
+            'You are not an admin of this calendar, you are not '
+            'allowed to clear the calendar.'), 'errors')
         return flask.redirect(flask.url_for('index'))
 
     clearform = forms.ClearCalendarForm()
@@ -1169,7 +1175,8 @@ def clear_calendar(calendar_name):
                 SESSION.rollback()
                 LOG.debug('Error in clear_calendar')
                 LOG.exception(err)
-                flask.flash(gettext('Could not clear this calendar.'), 'errors')
+                flask.flash(gettext(
+                    'Could not clear this calendar.'), 'errors')
         fedmsg.publish(topic="calendar.clear", msg=dict(
             agent=flask.g.fas_user.username,
             calendar=calendarobj.to_json(),
@@ -1191,15 +1198,16 @@ def edit_calendar(calendar_name):
     if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
-        flask.flash(gettext('You are not a fedocal admin, you are not allowed '
-                    'to edit the calendar.'), 'errors')
+        flask.flash(gettext(
+            'You are not a fedocal admin, you are not allowed '
+            'to edit the calendar.'), 'errors')
         return flask.redirect(flask.url_for('index'))
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(
-            gettext('No calendar named %(name)s could be found',
-                name=calendar_name),
+        flask.flash(gettext(
+            'No calendar named %(name)s could be found',
+            name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
@@ -1257,9 +1265,9 @@ def admin():
     if not authenticated():
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
-        flask.flash(
-            gettext('You are not a fedocal admin, you are not allowed '
-                'to access the admin part.'), 'errors')
+        flask.flash(gettext(
+            'You are not a fedocal admin, you are not allowed '
+            'to access the admin part.'), 'errors')
         return flask.redirect(flask.url_for('index'))
 
     calendar_name = flask.request.args.get('calendar', None)
@@ -1391,8 +1399,8 @@ def location(loc_name, year, month, day):
     """
     list_locations = fedocallib.get_locations(SESSION)
     if loc_name not in list_locations:
-        flask.flash(
-            gettext('No location named %(name)s could be found', name=loc_name),
+        flask.flash(gettext(
+            'No location named %(name)s could be found', name=loc_name),
             'errors')
         return flask.redirect(flask.url_for('locations'))
 
@@ -1478,8 +1486,8 @@ def location_list(loc_name, year, month, day):
     """
     list_locations = fedocallib.get_locations(SESSION)
     if loc_name not in list_locations:
-        flask.flash(
-            gettext('No location named %(name)s could be found', name=loc_name),
+        flask.flash(gettext(
+            'No location named %(name)s could be found', name=loc_name),
             'errors')
         return flask.redirect(flask.url_for('locations'))
 
@@ -1575,16 +1583,15 @@ def upload_calendar(calendar_name):
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(
-            gettext('No calendar named %(name)s could be found',
-                name=calendar_name),
-            'errors')
+        flask.flash(gettext(
+            'No calendar named %(name)s could be found',
+            name=calendar_name), 'errors')
         return flask.redirect(flask.url_for('index'))
 
     if not is_calendar_admin(calendarobj):
-        flask.flash(
-            gettext('You are not an admin for this calendar, you are not '
-                'allowed to upload a iCalendar file to it.'), 'errors')
+        flask.flash(gettext(
+            'You are not an admin for this calendar, you are not '
+            'allowed to upload a iCalendar file to it.'), 'errors')
         return flask.redirect(flask.url_for('index'))
 
     form = forms.UploadIcsForm()
@@ -1615,8 +1622,9 @@ def upload_calendar(calendar_name):
             SESSION.rollback()
             LOG.debug('Error in upload_calendar')
             LOG.exception(err)
-            flask.flash(gettext('Could not upload this iCalendar file.'),
-                    'errors')
+            flask.flash(
+                gettext('Could not upload this iCalendar file.'),
+                'errors')
             return flask.render_template(
                 'upload_calendar.html', form=form, calendar=calendarobj)
 

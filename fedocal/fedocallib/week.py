@@ -21,6 +21,7 @@ from fedocal.fedocallib.exceptions import FedocalException
 
 from fedocal.fedocal_babel import gettext
 
+
 # pylint: disable=R0903
 class Week(object):
     """ This class represents a week for in a specific calendar with

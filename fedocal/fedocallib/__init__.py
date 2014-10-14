@@ -329,7 +329,7 @@ def format_week_meeting(meeting_list, tzone, week_start):
     week_start = pytz.timezone(tzone).localize(
         datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     fmt = '%Hh%M'
-    #week_start = convert_time(week_start, 'UTC', tzone)
+    # week_start = convert_time(week_start, 'UTC', tzone)
     for meeting in meeting_list:
         meeting = convert_meeting_timezone(
             meeting, meeting.meeting_timezone, tzone)
@@ -1014,8 +1014,8 @@ def edit_meeting(
     if meeting.calendar_name != calendarobj.calendar_name:
         meeting.calendar_name = calendarobj.calendar_name
 
-    ## The information are correct
-    ## What we do now:
+    # The information are correct
+    # What we do now:
     # a) the meeting is not recursive -> edit the information as provided
     # b) the meeting is recursive and we update all the meetings
     #     -> recursion_end = today

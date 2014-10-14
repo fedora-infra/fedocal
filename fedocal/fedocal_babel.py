@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2014 - Copyright Johan Cwiklinski <johan@x-tnd.be>
@@ -25,6 +25,7 @@
 
 import os
 from babel import support
+
 
 class FedocalBabel(object):
     """Wrapper for Babel class, if flask-babel is missing"""

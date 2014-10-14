@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2014 - Copyright Johan Cwiklinski <johan@x-tnd.be>
@@ -53,7 +53,7 @@ def _get_translations():
 
 
 class Translations(object):
-    """Translations object (see 
+    """Translations object (see
     http://wtforms.readthedocs.org/en/1.0.5/i18n.html#writing-your-own-translations-provider
     """
     def gettext(self, string):

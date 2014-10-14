@@ -182,8 +182,8 @@ class FedocalCalendar(LocaleHTMLCalendar):
         item('\n')
         item(self.formatmonthname(self.year, self.month, withyear=withyear))
         item('\n')
-        #item(self.formatweekheader())
-        #item('\n')
+        # item(self.formatweekheader())
+        # item('\n')
         for week in self.monthdays2calendar(self.year, self.month):
             days = [day[0] for day in week]
             if self.day in days:

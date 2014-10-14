@@ -65,7 +65,7 @@ def gettext(string, **variables):
     """Wrapper for gettext functions, if flask-babel is missing"""
     try:
         from flask.ext.babel import gettext
-        return gettext(string, variables)
+        return gettext(string, **variables)
     except ImportError:
         return string % variables
 

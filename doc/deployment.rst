@@ -28,6 +28,14 @@ or::
 
 Set up the WSGI as described below.
 
+If you want to get your instance translated, do not forget to compile translations::
+
+   pybabel compile -d fedocal/translations
+
+Fedocal translations uses gettext with the Flask-Babel extension. If this
+extension is not available on your systme, it will silently fall back to
+the main (english) language.
+
 
 From system-wide packages
 -------------------------

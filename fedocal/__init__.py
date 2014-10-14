@@ -345,9 +345,14 @@ def validate_input_file(input_file):
 def get_locale():
     """try to guess the language from the user accept
     header the browser transmits"""
-    return flask.request.accept_languages.best_match(
-        APP.config['LANGUAGES'].keys()
-    )
+    try:
+        import flask.ext.babel
+        return flask.request.accept_languages.best_match(
+            APP.config['LANGUAGES'].keys()
+        )
+    except ImportError:
+        return 'en'
+
 
 ## Flask application
 @APP.route('/')

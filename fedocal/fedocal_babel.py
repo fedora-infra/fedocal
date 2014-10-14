@@ -56,7 +56,7 @@ def get_babel(app):
     try:
         from flask.ext.babel import Babel
         return Babel(app)
-    except:
+    except ImportError:
         return FedocalBabel(app)
 
 
@@ -65,7 +65,7 @@ def gettext(string, **variables):
     try:
         from flask.ext.babel import gettext
         return gettext(string, variables)
-    except:
+    except ImportError:
         return string % variables
 
 
@@ -74,7 +74,7 @@ def lazy_gettext(string, **variables):
     try:
         from flask.ext.babel import lazy_gettext
         return lazy_gettext(string, variables)
-    except:
+    except ImportError:
         return string % variables
 
 
@@ -83,7 +83,7 @@ def format_datetime(datetime=None, format=None, rebase=True):
     try:
         from flask.ext.babel import format_datetime
         return format_datetime(datetime, format, rebase)
-    except:
+    except ImportError:
         return datetime
 
 
@@ -91,5 +91,5 @@ def get_locale():
     try:
         from flask.ext.babel import get_locale
         return get_locale()
-    except:
+    except ImportError:
         return 'en'

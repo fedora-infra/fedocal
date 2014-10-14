@@ -80,7 +80,7 @@ def lazy_gettext(string, **variables):
 
 
 def format_datetime(datetime=None, format=None, rebase=True):
-    """Wrapper for lazy_gettext function, if flask-babel is missing"""
+    """Wrapper for format_datetime function, if flask-babel is missing"""
     try:
         from flask.ext.babel import format_datetime
         return format_datetime(datetime, format, rebase)

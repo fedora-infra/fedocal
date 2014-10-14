@@ -381,7 +381,7 @@ def calendar(calendar_name, year=None, month=None, day=None, mid=None):
     if not calendarobj:
         flask.flash(
             gettext(
-                'No calendar named %(name)s could not be found',
+                'No calendar named %(name)s could be found',
                 name=calendar_name
             ),
             'errors')

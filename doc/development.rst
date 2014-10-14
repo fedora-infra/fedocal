@@ -204,6 +204,39 @@ for upgrade and downgrade (for example: ``op.add_column``, ``op.drop_column``,
 ``op.create_table``, ``op.drop_table``).
 
 
+Translations
+------------
+
+Strings are translated using gettext and the Flask-Babel extension. All UI
+strings have to be translatable.
+
+In order to get Fedocal happy even if Flask-Babel is missing, we provide some
+wrappers via `fedocal_babel` that must be used instead of requiring directly
+Flask-Babel methods.
+
+In core Python code, you'll have to import the wrapper, and use the `gettext` function::
+
+   from fedocal.fedocal_babel import gettext
+   [...]
+   str = gettext("Translate this!")
+
+   from fedocal.fedocal_babel import gettext
+   [...]
+   str = gettext("%(count)s translations found!", count=256)
+
+In Jinja templates, just use the `_()` function::
+
+   <p>{{ _('Fedocal is awesome!') }}</a>
+   <p>{{ _('%(users)s in the world use it.', users=2000000) }}</p>
+
+Once you've added new strings, you'lla have to extract them::
+
+   pybabel extract -F babel.cfg -o messages.pot fedocal
+
+And finally, update the `po` file::
+
+   pybabel update -i messages.pot -d fedocal/translations
+
 
 Troubleshooting
 ---------------

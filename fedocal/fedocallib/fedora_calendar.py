@@ -34,8 +34,13 @@ class FedocalCalendar(LocaleHTMLCalendar):
         """ Constructor.
         Stores the year and the month asked.
         """
-        babel_locale = fedocal.get_locale()
-        cal_locale = locale.normalize(babel_locale)
+        cal_locale = 'en_EN'
+        try:
+            babel_locale = fedocal.get_locale()
+            if babel_locale:
+                cal_locale = locale.normalize(babel_locale)
+        except:
+            pass
         LocaleHTMLCalendar.__init__(self, locale=cal_locale)
 
         self.year = year
@@ -103,7 +108,11 @@ class FedocalCalendar(LocaleHTMLCalendar):
         Return a month name as a table row.
         """
 
-        with TimeEncoding(self.locale) as encoding:
+        locale = self.locale
+        if self.locale in ['en', 'en_EN']:
+            locale = 'C'
+
+        with TimeEncoding(locale) as encoding:
             smonth = month_name[themonth]
             if encoding is not None:
                 smonth = smonth.decode(encoding)

@@ -74,7 +74,7 @@ def lazy_gettext(string, **variables):
     """Wrapper for lazy_gettext function, if flask-babel is missing"""
     try:
         from flask.ext.babel import lazy_gettext
-        return lazy_gettext(string, variables)
+        return lazy_gettext(string, **variables)
     except ImportError:
         return string % variables
 

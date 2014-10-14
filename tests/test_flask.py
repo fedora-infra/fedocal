@@ -118,7 +118,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No calendar named foorbar could not be found</'
+            'class="errors">No calendar named foorbar could be found</'
             in output.data)
 
         output = self.app.get('/test_calendar2/?tzone=Europe/Paris',
@@ -186,7 +186,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No calendar named foorbar could not be found</'
+            'class="errors">No calendar named foorbar could be found</'
             in output.data)
 
         today = date.today()
@@ -330,7 +330,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/location/list/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No location named foorbar could not be found</'
+            'class="errors">No location named foorbar could be found</'
             in output.data)
 
         today = date.today()
@@ -632,7 +632,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/location/foobar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No location named foobar could not be found</'
+            'class="errors">No location named foobar could be found</'
             in output.data)
 
     @flask10_only
@@ -1599,7 +1599,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h2>Edit meeting Another past test meeting</h2>'
+                '<h2>Edit meeting "Another past test meeting"</h2>'
                 in output.data)
             self.assertTrue(
                 'meeting_name">Meeting name</label>'
@@ -1617,7 +1617,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h2>Edit meeting Another past test meeting</h2>'
+                '<h2>Edit meeting "Another past test meeting"</h2>'
                 in output.data)
             self.assertTrue(
                 'meeting_name">Meeting name</label' in output.data)

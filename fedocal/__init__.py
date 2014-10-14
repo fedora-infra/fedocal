@@ -132,6 +132,19 @@ work.
     return decorated_function
 
 
+@babel.localeselector
+def get_locale():
+    """try to guess the language from the user accept
+    header the browser transmits"""
+    try:
+        import flask.ext.babel
+        return flask.request.accept_languages.best_match(
+            APP.config['LANGUAGES'].keys()
+        )
+    except ImportError:
+        return 'en'
+
+
 @APP.context_processor
 def inject_variables():
     """ With this decorator we can set some variables to all templates.
@@ -339,19 +352,6 @@ def validate_input_file(input_file):
                 mime=mimetype
             )
         )
-
-
-@babel.localeselector
-def get_locale():
-    """try to guess the language from the user accept
-    header the browser transmits"""
-    try:
-        import flask.ext.babel
-        return flask.request.accept_languages.best_match(
-            APP.config['LANGUAGES'].keys()
-        )
-    except ImportError:
-        return 'en'
 
 
 ## Flask application

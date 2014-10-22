@@ -25,7 +25,7 @@
 
 from flask.ext import wtf
 from flask import _request_ctx_stack
-from fedocal.fedocal_babel import get_locale
+from fedocal.fedocal_babel import get_locale, gettext, ngettext
 from babel import support
 import os
 
@@ -56,28 +56,16 @@ class Translations(object):
     """Translations object (see
     http://wtforms.readthedocs.org/en/1.0.5/i18n.html#writing-your-own-translations-provider
     """
-    def gettext(self, string):
-        """Gettext for forms"""
-        trans = _get_translations()
-        if trans is None:
-            return string
-        return trans.ugettext(string)
-
-    def ngettext(self, singular, plural, num):
-        """Ngettext for forms"""
-        trans = _get_translations()
-        if trans is None:
-            if num == 1:
-                return singular
-            return plural
-        return trans.ungettext(singular, plural, num)
-
-
-TRANSLATIONS = Translations()
+    def __init__(self):
+        """ Constructor instanciates the gettext and ngettext methods used
+        by the forms to translate.
+        """
+        self.gettext = gettext
+        self.ngettext = ngettext
 
 
 class Form(wtf.Form):
     """I18n form"""
     def _get_translations(self):
         """I18n form translation"""
-        return TRANSLATIONS
+        return Translations()

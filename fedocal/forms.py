@@ -25,7 +25,6 @@
 
 import flask
 import re
-from flask.ext import wtf
 from datetime import time
 from datetime import datetime
 from fedocal.fedocal_babel import lazy_gettext as _
@@ -82,7 +81,7 @@ def validate_multi_email(form, field):
             raise ValidationError(message)
 
 
-class AddCalendarForm(wtf.Form):
+class AddCalendarForm(i18nforms.Form):
     """ Form used to create a new calendar. """
     calendar_name = wtforms.TextField(
         _('Calendar'),

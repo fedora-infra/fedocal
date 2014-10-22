@@ -35,6 +35,13 @@ except ImportError:
         """Wrapper for gettext functions, if flask-babel is missing"""
         return string % variables
 
+    def ngettext(singular, plural, n, **variables):
+        """Wrapper for ngettext functions, if flask-babel is missing"""
+        if n == 1:
+            return singular % n
+        else:
+            return plural % n
+
     def lazy_gettext(string, **variables):
         """Wrapper for lazy_gettext function, if flask-babel is missing"""
         return string % variables
@@ -53,26 +60,10 @@ except ImportError:
         def __init__(self, app):
             app.jinja_env.add_extension('jinja2.ext.i18n')
             app.jinja_env.install_gettext_callables(
-                get_translations().ugettext(),
-                get_translations().ungettext(),
+                gettext,
+                ngettext,
                 newstyle=True
             )
 
         def localeselector(self, f):
             return f
-
-
-TRANSLATIONS = None
-
-
-def get_translations():
-    """Returns the correct gettext translations that should be used for
-    this request.  This will never fail and return a dummy translation
-    object if used outside of the request or if a translation cannot be
-    found.
-    """
-    global TRANSLATIONS
-    if not TRANSLATIONS:
-        dirname = os.path.join('translations')
-        TRANSLATIONS = support.Translations.load(dirname, [get_locale()])
-    return TRANSLATIONS

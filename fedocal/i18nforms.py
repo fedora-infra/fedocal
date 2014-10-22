@@ -2,6 +2,7 @@
 
 """
  (c) 2014 - Copyright Johan Cwiklinski <johan@x-tnd.be>
+ (c) 2014 - Copyright Patrick Uiterwijk <puiterwijk@redhat.com>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website

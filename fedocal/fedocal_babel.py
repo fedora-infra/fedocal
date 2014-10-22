@@ -33,6 +33,7 @@ try:
 except ImportError:
     BABEL = False
 
+TRANSLATIONS = None
 
 class FedocalBabel(object):
     """Wrapper for Babel class, if flask-babel is missing"""
@@ -55,9 +56,11 @@ def get_translations():
     object if used outside of the request or if a translation cannot be
     found.
     """
-    dirname = os.path.join('translations')
-    translations = support.Translations.load(dirname, [get_locale()])
-    return translations
+    global TRANSLATIONS
+    if not TRANSLATIONS:
+        dirname = os.path.join('translations')
+        TRANSLATIONS = support.Translations.load(dirname, [get_locale()])
+    return TRANSLATIONS
 
 
 def get_babel(app):

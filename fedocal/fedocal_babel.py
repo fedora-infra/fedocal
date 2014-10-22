@@ -26,12 +26,10 @@
 import os
 from babel import support
 
-BABEL = True
 try:
     from flask.ext.babel import (
         Babel, lazy_gettext, gettext, format_datetime, get_locale)
 except ImportError:
-    BABEL = False
 
     def gettext(string, **variables):
     """Wrapper for gettext functions, if flask-babel is missing"""
@@ -49,22 +47,21 @@ except ImportError:
     """Wrapper for get_locale, if flask-babel is missing"""
         return 'en'
 
-
-TRANSLATIONS = None
-
-class FedocalBabel(object):
+    class Babel(object):
     """Wrapper for Babel class, if flask-babel is missing"""
 
-    def __init__(self, app):
-        app.jinja_env.add_extension('jinja2.ext.i18n')
-        app.jinja_env.install_gettext_callables(
-            lambda x: get_translations().ugettext(x),
-            lambda s, p, n: get_translations().ungettext(s, p, n),
-            newstyle=True
-        )
+        def __init__(self, app):
+            app.jinja_env.add_extension('jinja2.ext.i18n')
+            app.jinja_env.install_gettext_callables(
+                lambda x: get_translations().ugettext(x),
+                lambda s, p, n: get_translations().ungettext(s, p, n),
+                newstyle=True
+            )
 
-    def localeselector(self, f):
-        return f
+        def localeselector(self, f):
+            return f
+
+TRANSLATIONS = None
 
 
 def get_translations():

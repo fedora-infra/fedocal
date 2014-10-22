@@ -28,7 +28,7 @@ from babel import support
 
 try:
     from flask.ext.babel import (
-        Babel, lazy_gettext, gettext, format_datetime, get_locale)
+        Babel, lazy_gettext, gettext, ngettext, format_datetime, get_locale)
 except ImportError:
 
     def gettext(string, **variables):

@@ -53,8 +53,8 @@ except ImportError:
         def __init__(self, app):
             app.jinja_env.add_extension('jinja2.ext.i18n')
             app.jinja_env.install_gettext_callables(
-                lambda x: get_translations().ugettext(x),
-                lambda s, p, n: get_translations().ungettext(s, p, n),
+                get_translations().ugettext(),
+                get_translations().ungettext(),
                 newstyle=True
             )
 

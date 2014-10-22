@@ -44,9 +44,9 @@ except ImportError:
         """Wrapper for ngettext functions, if flask-babel is missing"""
         variables['num'] = n
         if n == 1:
-            return self.gettext(singular, **variables)
+            return gettext(singular, **variables)
         else:
-            return self.gettext(plural, **variables)
+            return gettext(plural, **variables)
 
     def lazy_gettext(string, **variables):
         """Wrapper for lazy_gettext function, if flask-babel is missing"""

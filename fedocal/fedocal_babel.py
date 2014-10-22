@@ -35,7 +35,10 @@ except ImportError:
 
     def gettext(string, **variables):
         """Wrapper for gettext functions, if flask-babel is missing"""
-        return string
+        try:
+            return string % variables
+        except KeyError:
+            return string
 
     def ngettext(singular, plural, n, **variables):
         """Wrapper for ngettext functions, if flask-babel is missing"""
@@ -46,7 +49,10 @@ except ImportError:
 
     def lazy_gettext(string, **variables):
         """Wrapper for lazy_gettext function, if flask-babel is missing"""
-        return string
+        try:
+            return string % variables
+        except KeyError:
+            return string
 
     def format_datetime(datetime=None, format=None, rebase=True):
         """Wrapper for format_datetime function, if flask-babel is missing"""

@@ -105,8 +105,7 @@
             function(event) {
                 $(this).html(
                   event.strftime(
-                    '{{ _("Meeting in:") }} ' + ' %w ' + '{{ _("weeks") }}'
-                    + ' %d ' + '{{ _("days") }}' +  ' %H:%M:%S'
+                    '{{ _("Meeting in: %%%%w weeks %%%%d days %%%%H:%%%%M:%%%%S") }}'
                   )
                 );
             }
@@ -161,8 +160,7 @@ $(function(){
         function(event) {
             $(this).html(
               event.strftime(
-                '{{ _("Meeting in:") }} ' + ' %w ' + '{{ _("weeks") }}'
-                + ' %d ' + '{{ _("days") }}' +  ' %H:%M:%S'
+                '{{ _("Meeting in: %%%%w weeks %%%%d days %%%%H:%%%%M:%%%%S") }}'
               )
             );
         }

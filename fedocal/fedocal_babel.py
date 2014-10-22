@@ -33,6 +33,23 @@ try:
 except ImportError:
     BABEL = False
 
+    def gettext(string, **variables):
+    """Wrapper for gettext functions, if flask-babel is missing"""
+        return string % variables
+
+    def lazy_gettext(string, **variables):
+    """Wrapper for lazy_gettext function, if flask-babel is missing"""
+        return string % variables
+
+    def format_datetime(datetime=None, format=None, rebase=True):
+    """Wrapper for format_datetime function, if flask-babel is missing"""
+        return datetime
+
+    def get_locale():
+    """Wrapper for get_locale, if flask-babel is missing"""
+        return 'en'
+
+
 TRANSLATIONS = None
 
 class FedocalBabel(object):
@@ -69,35 +86,3 @@ def get_babel(app):
         return Babel(app)
     else:
         return FedocalBabel(app)
-
-
-def gettext(string, **variables):
-    """Wrapper for gettext functions, if flask-babel is missing"""
-    if BABEL:
-        return gettext(string, **variables)
-    else:
-        return string % variables
-
-
-def lazy_gettext(string, **variables):
-    """Wrapper for lazy_gettext function, if flask-babel is missing"""
-    if BABEL:
-        return lazy_gettext(string, **variables)
-    else:
-        return string % variables
-
-
-def format_datetime(datetime=None, format=None, rebase=True):
-    """Wrapper for format_datetime function, if flask-babel is missing"""
-    if BABEL:
-        return format_datetime(datetime, format, rebase)
-    else:
-        return datetime
-
-
-def get_locale():
-    """Wrapper for get_locale, if flask-babel is missing"""
-    if BABEL:
-        return get_locale()
-    else:
-        return 'en'

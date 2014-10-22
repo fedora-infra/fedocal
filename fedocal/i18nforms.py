@@ -30,28 +30,6 @@ from babel import support
 import os
 
 
-def translations_path():
-    """Retrieve trnaslations path"""
-    module_path = os.path.abspath(__file__)
-    dirname = os.path.join(os.path.dirname(module_path), 'translations')
-    return dirname
-
-
-def _get_translations():
-    """Get translations"""
-    try:
-        ctx = _request_ctx_stack.top
-        translations = getattr(ctx, 'wtforms_translations', None)
-        if translations is None:
-            translations = support.Translations.load(
-                translations_path(), [get_locale()], domain='messages'
-            )
-        ctx.wtforms_translations = translations
-        return translations
-    except:
-        return None
-
-
 class Translations(object):
     """Translations object (see
     http://wtforms.readthedocs.org/en/1.0.5/i18n.html#writing-your-own-translations-provider

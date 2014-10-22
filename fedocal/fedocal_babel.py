@@ -42,10 +42,11 @@ except ImportError:
 
     def ngettext(singular, plural, n, **variables):
         """Wrapper for ngettext functions, if flask-babel is missing"""
+        variables['num'] = n
         if n == 1:
-            return singular % n
+            return self.gettext(singular, **variables)
         else:
-            return plural % n
+            return self.gettext(plural, **variables)
 
     def lazy_gettext(string, **variables):
         """Wrapper for lazy_gettext function, if flask-babel is missing"""

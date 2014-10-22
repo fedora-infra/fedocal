@@ -32,23 +32,23 @@ try:
 except ImportError:
 
     def gettext(string, **variables):
-    """Wrapper for gettext functions, if flask-babel is missing"""
+        """Wrapper for gettext functions, if flask-babel is missing"""
         return string % variables
 
     def lazy_gettext(string, **variables):
-    """Wrapper for lazy_gettext function, if flask-babel is missing"""
+        """Wrapper for lazy_gettext function, if flask-babel is missing"""
         return string % variables
 
     def format_datetime(datetime=None, format=None, rebase=True):
-    """Wrapper for format_datetime function, if flask-babel is missing"""
+        """Wrapper for format_datetime function, if flask-babel is missing"""
         return datetime
 
     def get_locale():
-    """Wrapper for get_locale, if flask-babel is missing"""
+        """Wrapper for get_locale, if flask-babel is missing"""
         return 'en'
 
     class Babel(object):
-    """Wrapper for Babel class, if flask-babel is missing"""
+        """Wrapper for Babel class, if flask-babel is missing"""
 
         def __init__(self, app):
             app.jinja_env.add_extension('jinja2.ext.i18n')
@@ -60,6 +60,7 @@ except ImportError:
 
         def localeselector(self, f):
             return f
+
 
 TRANSLATIONS = None
 

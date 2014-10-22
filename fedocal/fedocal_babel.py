@@ -75,11 +75,3 @@ def get_translations():
         dirname = os.path.join('translations')
         TRANSLATIONS = support.Translations.load(dirname, [get_locale()])
     return TRANSLATIONS
-
-
-def get_babel(app):
-    """Wrapper to get babel instance, if flask-babel is missing"""
-    if BABEL:
-        return Babel(app)
-    else:
-        return FedocalBabel(app)

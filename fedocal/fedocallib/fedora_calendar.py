@@ -41,7 +41,7 @@ class FedocalCalendar(LocaleHTMLCalendar):
                 cal_locale = locale.normalize(babel_locale)
         except:
             pass
-        LocaleHTMLCalendar.__init__(self, locale=cal_locale)
+        super(FedocalCalendar, self).__init__(locale=cal_locale)
 
         self.year = year
         self.month = month

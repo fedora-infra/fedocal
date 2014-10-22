@@ -75,7 +75,7 @@ class ContextInjector(logging.Filter):
             record.pid = current_process.pid
             record.proc_name = current_process.name
             record.command_line = " ".join(current_process.cmdline)
-            record.callstack = self.format_callstack()
+        record.callstack = self.format_callstack()
         return True
 
     @staticmethod

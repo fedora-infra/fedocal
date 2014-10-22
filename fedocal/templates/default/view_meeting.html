@@ -104,7 +104,11 @@
             new Date(_date),
             function(event) {
                 $(this).html(
-                event.strftime('{{ _('Meeting in: %%w weeks %%d days %%H:%%M:%%S')|e }}'));
+                  event.strftime(
+                    '{{ _("Meeting in:") }} ' + ' %w ' + '{{ _("weeks") }}'
+                    + ' %d ' + '{{ _("days") }}' +  ' %H:%M:%S'
+                  )
+                );
             }
         ).on('finish.countdown', function(event){
             var _end_date = Date.UTC(
@@ -156,7 +160,11 @@ $(function(){
         new Date(_date),
         function(event) {
             $(this).html(
-                event.strftime('<p>{{ _('Meeting in: %%w weeks %%d days %%H:%%M:%%S')|e }}</p>'));
+              event.strftime(
+                '{{ _("Meeting in:") }} ' + ' %w ' + '{{ _("weeks") }}'
+                + ' %d ' + '{{ _("days") }}' +  ' %H:%M:%S'
+              )
+            );
         }
     ).on('finish.countdown', function(event){
             var _end_date = Date.UTC(

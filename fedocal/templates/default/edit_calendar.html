@@ -1,14 +1,14 @@
 {% extends "master.html" %}
 {% from "_formhelpers.html" import render_field_in_row %}
 
-{% block title %}Edit calendar{% endblock %}
+{% block title %}{{ _('Edit calendar') }}{% endblock %}
 {%block tag %}admin{% endblock %}
 
 {% block content %}
 <section>
     <header>
-        <h2>Edit calendar</h2>
-        <p>Edit the calendar details in the form below.</p>
+        <h2>{{ _('Edit calendar "%(name)s"', name=calendar.calendar_name) }}</h2>
+        <p>{{ _('Edit the calendar details in the form below.') }}</p>
     </header>
 
     <form action="" method="post">
@@ -21,8 +21,8 @@
         {{ render_field_in_row(form.calendar_status) }}
         </table>
         <p class="buttons indent">
-            <input type="submit" class="submit positive button" value="Edit">
-            <input type="button" value="Cancel" class="button" onclick="history.back();">
+            <input type="submit" class="submit positive button" value="{{ _('Edit') }}">
+            <input type="button" value="{{ _('Cancel') }}" class="button" onclick="history.back();">
             {{ form.csrf_token }}
         </p>
     </form>

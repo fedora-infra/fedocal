@@ -19,6 +19,8 @@ import operator
 from fedocal.fedocallib.model import Meeting
 from fedocal.fedocallib.exceptions import FedocalException
 
+from fedocal.fedocal_babel import gettext
+
 
 # pylint: disable=R0903
 class Week(object):
@@ -39,7 +41,7 @@ class Week(object):
         """
         if not calendar and not location:
             raise FedocalException(
-                'Either calendar or location should be specified')
+                gettext('Either calendar or location should be specified'))
 
         self.session = session
         self.calendar = calendar

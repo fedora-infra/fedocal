@@ -1,6 +1,6 @@
 {% extends "master.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}{{ _('Home') }}{% endblock %}
 {%block tag %}locations{% endblock %}
 
 {% macro render_locations(calendars) -%}
@@ -14,12 +14,12 @@
         {% endfor %}
     </div>
     {% else %}
-    <p>No locations found</p>
+    <p>{{ _('No locations found') }}</p>
     {% endfor %}
 {%- endmacro %}
 
 {% block content %}
-<h2>Locations</h2>
+<h2>{{ _('Locations') }}</h2>
 <section class="calendar_list">
     {{ render_locations(locations) }}
 </section>

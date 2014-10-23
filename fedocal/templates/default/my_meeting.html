@@ -1,25 +1,22 @@
 {% extends "master.html" %}
 {% from "_formhelpers.html" import render_field %}
 
-{% block title %}My meeting{% endblock %}
+{% block title %}{{ _('My meetings') }}{% endblock %}
 
 {%block tag %}mymeeting{% endblock %}
 
 {% block content %}
 <section>
     <header>
-        <h2>Manage your meetings</h2>
-        <p>
-            Below is the list of your past and future meetings.
-        </p>
+        <h2>{{ _('Manage your meetings') }}</h2>
+        <p>{{ _('Below is the list of your past and future meetings.') }}</p>
     </header>
 
+    <p>{{ _('Meetings times are expressed in the %(timezone)s time zone.', timezone=tzone) }}</p>
 
-    <p>Meetings times are displayed in the {{tzone}} time-zone.</p>
-
-    <h4>Future meeting</h4>
+    <h4>{{ _('Future meetings') }}</h4>
     {% if single_meetings %}
-    <p> This is the list of all non-recurrent meeting you created </p>
+    <p>{{ _('This is the list of all non-recurrent meeting you created') }}</p>
     <div class='my_meetings'>
         <table>
             {% for meeting in single_meetings %}
@@ -35,12 +32,12 @@
                     <a class="button" href="{{ url_for('edit_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='edit.png') }}"
-                            title="Edit" alt="Edit"/>
+                        title="{{ _('Edit') }}" alt="{{ _('Edit') }}"/>
                     </a>
                     <a class="button" href="{{ url_for('delete_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='delete.png') }}"
-                        title="Delete" alt="Delete"/>
+                        title="{{ _('Delete') }}" alt="{{ _('Delete') }}"/>
                     </a>
                 </td>
             </tr>
@@ -50,15 +47,14 @@
     {% endif %}
 
     {% if regular_meetings %}
-    <p> This is the list of all regular meeting you created </p>
+    <p>{{ _('This is the list of all regular meeting you created') }}</p>
     <div class='my_meetings'>
         <table>
             {% for meeting in regular_meetings %}
             <tr>
                 <td class="date">{{ meeting.meeting_date }}</td>
                 <td class="time">
-                    {{ meeting.meeting_time_start }} to
-                    {{ meeting.meeting_time_stop }}
+                    {{ _('%(start)s to %(end)s', start=meeting.meeting_time_start, end=meeting.meeting_time_stop) }}
                 </td>
                 <td class="calendar"> {{ meeting.calendar_name }} </td>
                 <td> {{ meeting.meeting_name }} </td>
@@ -66,12 +62,12 @@
                     <a class="button" href="{{ url_for('edit_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='edit.png') }}"
-                            title="Edit" alt="Edit"/>
+                        title="{{ _('Edit') }}" alt="{{ _('Edit') }}"/>
                     </a>
                     <a class="button" href="{{ url_for('delete_meeting',
                         meeting_id=meeting.meeting_id) }}">
                         <img src="{{ url_for('static', filename='delete.png') }}"
-                        title="Delete" alt="Delete"/>
+                        title="{{ _('Delete') }}" alt="{{ _('Delete') }}"/>
                     </a>
                 </td>
             </tr>
@@ -80,15 +76,14 @@
     </div>
     {% endif %}
 
-    <h4>Past meetings</h4>
+    <h4>{{ _('Past meetings') }}</h4>
     <div class='my_meetings'>
         <table>
             {% for meeting in pas_meetings %}
             <tr>
                 <td class="date">{{ meeting.meeting_date }}</td>
                 <td class="time">
-                    {{ meeting.meeting_time_start }} to
-                    {{ meeting.meeting_time_stop }}
+                    {{ _('%(start)s to %(end)s', start=meeting.meeting_time_start, end=meeting.meeting_time_stop) }}
                 </td>
                 <td class="calendar"> {{ meeting.calendar_name }} </td>
                 <td> {{ meeting.meeting_name }} </td>

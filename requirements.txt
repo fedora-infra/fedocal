@@ -3,6 +3,7 @@
 alembic
 flask-wtf
 flask
+flask-babel
 kitchen
 mock
 python-dateutil #<= 1.5

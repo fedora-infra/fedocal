@@ -118,7 +118,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No calendar named foorbar could not be found</'
+            'class="errors">No calendar named foorbar could be found</'
             in output.data)
 
         output = self.app.get('/test_calendar2/?tzone=Europe/Paris',
@@ -186,7 +186,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/list/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No calendar named foorbar could not be found</'
+            'class="errors">No calendar named foorbar could be found</'
             in output.data)
 
         today = date.today()
@@ -330,7 +330,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/location/list/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No location named foorbar could not be found</'
+            'class="errors">No location named foorbar could be found</'
             in output.data)
 
         today = date.today()
@@ -380,10 +380,10 @@ class Flasktests(Modeltests):
         output = self.app.get('/meeting/5/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            '<title>Meeting "test-meeting-st-1" - Fedocal</title>'
             in output.data)
         self.assertTrue(
-            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            '<h2 class="orange">Meeting "test-meeting-st-1"</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
@@ -396,10 +396,10 @@ class Flasktests(Modeltests):
         output = self.app.get('/meeting/5/1/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            '<title>Meeting "test-meeting-st-1" - Fedocal</title>'
             in output.data)
         self.assertTrue(
-            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            '<h2 class="orange">Meeting "test-meeting-st-1"</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
@@ -408,10 +408,10 @@ class Flasktests(Modeltests):
         output = self.app.get('/meeting/5/0/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            '<title>Meeting "test-meeting-st-1" - Fedocal</title>'
             not in output.data)
         self.assertTrue(
-            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            '<h2 class="orange">Meeting "test-meeting-st-1"</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
@@ -421,10 +421,10 @@ class Flasktests(Modeltests):
         output = self.app.get('/meeting/5/0/?from_date=foobar')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            '<title>Meeting "test-meeting-st-1" - Fedocal</title>'
             not in output.data)
         self.assertTrue(
-            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            '<h2 class="orange">Meeting "test-meeting-st-1"</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
@@ -435,10 +435,10 @@ class Flasktests(Modeltests):
             '/meeting/5/0/?from_date=%s' % TODAY.strftime('%Y-%m-%d'))
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<title>Meeting test-meeting-st-1 - Fedocal</title>'
+            '<title>Meeting "test-meeting-st-1" - Fedocal</title>'
             not in output.data)
         self.assertTrue(
-            '<h2 class="orange"> Meeting: test-meeting-st-1</h2>'
+            '<h2 class="orange">Meeting "test-meeting-st-1"</h2>'
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
@@ -632,7 +632,7 @@ class Flasktests(Modeltests):
         output = self.app.get('/location/foobar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            'class="errors">No location named foobar could not be found</'
+            'class="errors">No location named foobar could be found</'
             in output.data)
 
     @flask10_only
@@ -671,7 +671,7 @@ class Flasktests(Modeltests):
                 '<title>Home - Fedocal</title>' in output.data)
             self.assertTrue(
                 '<li class="errors">No calendar named test_calendar could '
-                'not be found</li>' in output.data)
+                'be found</li>' in output.data)
 
             self.__setup_db()
 
@@ -682,7 +682,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit calendar - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h2>Edit calendar</h2>' in output.data)
+                '<h2>Edit calendar "test_calendar"</h2>' in output.data)
             self.assertTrue(
                 'type="text" value="test_calendar"></td>' in output.data)
 
@@ -693,7 +693,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Delete calendar - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h4> Calendar: test_calendar</h4>' in output.data)
+                '<h4>Calendar: test_calendar</h4>' in output.data)
             self.assertTrue(
                 'value="Delete">' in output.data)
 
@@ -798,7 +798,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '"errors">No calendar named 50 could not be found</'
+                '"errors">No calendar named 50 could be found</'
                 in output.data)
             self.assertTrue('<title>Home - Fedocal</title>' in output.data)
 
@@ -874,7 +874,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="errors">No calendar named 1 could not be found</li'
+                '<li class="errors">No calendar named 1 could be found</li'
                 in output.data)
 
             output = self.app.get('/calendar/clear/test_calendar/',
@@ -976,7 +976,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="errors">No calendar named 1 could not be found</li'
+                '<li class="errors">No calendar named 1 could be found</li'
                 in output.data)
 
             output = self.app.get('/calendar/edit/test_calendar/')
@@ -984,7 +984,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit calendar - Fedocal</title>' in output.data)
             self.assertTrue(
-                "<h2>Edit calendar</h2>"
+                '<h2>Edit calendar "test_calendar"</h2>'
                 in output.data)
             self.assertTrue(
                 'class="submit positive button" value="Edit">'
@@ -999,7 +999,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit calendar - Fedocal</title>' in output.data)
             self.assertTrue(
-                "<h2>Edit calendar</h2>"
+                '<h2>Edit calendar "test_calendar"</h2>'
                 in output.data)
             self.assertTrue(
                 'class="submit positive button" value="Edit">'
@@ -1019,7 +1019,7 @@ class Flasktests(Modeltests):
             self.assertEqual(
                 output.data.count('<td>This field is required.</td>'), 2)
             self.assertTrue(
-                "<h2>Edit calendar</h2>"
+                '<h2>Edit calendar "test_calendar"</h2>'
                 in output.data)
             self.assertTrue(
                 'class="submit positive button" value="Edit">'
@@ -1093,7 +1093,7 @@ class Flasktests(Modeltests):
             output = self.app.get('/mine/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<title>My meeting - Fedocal</title>' in output.data)
+                '<title>My meetings - Fedocal</title>' in output.data)
             self.assertTrue(
                 '<td> Full-day meeting </td>' in output.data)
             self.assertTrue(
@@ -1109,8 +1109,9 @@ class Flasktests(Modeltests):
         with user_set(fedocal.APP, user):
             output = self.app.get('/calendar_test/add/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
+            print output.data
             self.assertTrue(
-                '"errors">No calendar named calendar_test could not be found</'
+                '"errors">No calendar named calendar_test could be found</'
                 in output.data)
 
             output = self.app.get('/test_calendar/add/', follow_redirects=True)
@@ -1417,7 +1418,7 @@ class Flasktests(Modeltests):
                 'meeting, or an admin, you are not allowed to edit it.</li>'
                 in output.data)
             self.assertTrue(
-                '<title>Meeting test-meeting23h59 - Fedocal</title>'
+                '<title>Meeting "test-meeting23h59" - Fedocal</title>'
                 in output.data)
 
         user = FakeUser(['fi-apprentice'], username='kevin')
@@ -1429,7 +1430,7 @@ class Flasktests(Modeltests):
                 'meeting, or an admin, you are not allowed to edit it.</li>'
                 in output.data)
             self.assertTrue(
-                '<title>Meeting Fedora-fr-test-meeting - Fedocal</title>'
+                '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
                 in output.data)
 
         user = FakeUser(['fi-apprentice'], username='pingou')
@@ -1524,7 +1525,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<li class="message">Meeting updated</li>' in output.data)
             self.assertTrue(
-                '<title>Meeting guess what? - Fedocal</title>' in output.data)
+                '<title>Meeting "guess what?" - Fedocal</title>' in output.data)
 
             # Calendar disabled
             data = {
@@ -1598,7 +1599,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h2>Edit meeting Another past test meeting</h2>'
+                '<h2>Edit meeting "Another past test meeting"</h2>'
                 in output.data)
             self.assertTrue(
                 'meeting_name">Meeting name</label>'
@@ -1616,7 +1617,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Edit meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h2>Edit meeting Another past test meeting</h2>'
+                '<h2>Edit meeting "Another past test meeting"</h2>'
                 in output.data)
             self.assertTrue(
                 'meeting_name">Meeting name</label' in output.data)
@@ -1645,7 +1646,7 @@ class Flasktests(Modeltests):
                 'meeting, or an admin, you are not allowed to delete it.</l'
                 in output.data)
             self.assertTrue(
-                '<title>Meeting Fedora-fr-test-meeting - Fedocal</title>'
+                '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
                 in output.data)
 
         user = FakeUser(['fi-apprentice'], username='kevin')
@@ -1657,7 +1658,7 @@ class Flasktests(Modeltests):
                 'meeting, or an admin, you are not allowed to delete it.</l'
                 in output.data)
             self.assertTrue(
-                '<title>Meeting Fedora-fr-test-meeting - Fedocal</title>'
+                '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
                 in output.data)
 
         user = FakeUser(['fi-apprentice'], username='pingou')
@@ -1667,7 +1668,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Delete meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h4> Meeting: Fedora-fr-test-meeting</h4>'
+                '<h4>Meeting: Fedora-fr-test-meeting</h4>'
                 in output.data)
             self.assertTrue(
                 "positively sure that's what you want to do?"
@@ -1689,7 +1690,7 @@ class Flasktests(Modeltests):
             self.assertTrue(
                 '<title>Delete meeting - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<h4> Meeting: Fedora-fr-test-meeting</h4>'
+                '<h4>Meeting: Fedora-fr-test-meeting</h4>'
                 in output.data)
             self.assertTrue(
                 "positively sure that's what you want to do?"
@@ -1930,7 +1931,7 @@ class Flasktests(Modeltests):
                                   follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="errors">No calendar named 1 could not be found</li'
+                '<li class="errors">No calendar named 1 could be found</li'
                 in output.data)
 
             output = self.app.get('/calendar/upload/test_calendar/',

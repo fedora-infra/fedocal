@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2012-2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
@@ -65,3 +65,8 @@ EMAIL_ERROR = 'pingou@pingoured.fr'
 
 # The URL at which the project is available.
 APP_URL = 'https://apps.fedoraproject.org/calendar/'
+
+LANGUAGES = {
+    'en': 'English',
+    'fr': 'Français'
+}

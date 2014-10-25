@@ -65,24 +65,27 @@ Clone the source::
  git clone https://github.com/fedora-infra/fedocal.git
 
 
-Copy the configuration file::
+Copy the configuration files::
 
  cp fedocal.cfg.sample fedocal.cfg
+ cp alembic.ini.sample alembic.ini
 
 Adjust the configuration file (secret key, database URL, admin group...)
 
 
 Create the database scheme::
 
- sh createdb
+ FEDOCAL_CONFIG=fedocal.cfg sh createdb
 
 
 Run the server::
 
- sh runserver
+ FEDOCAL_CONFIG=fedocal.cfg sh runserver
 
 You should be able to access the server at http://localhost:5000
 
+.. note:: the part ``FEDOCAL_CONFIG=fedocal.cfg`` is only really needed if you
+          run fedocal on a dedicated database instead of the default sqlite one.
 
 
 Testing:

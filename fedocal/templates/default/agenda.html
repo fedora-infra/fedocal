@@ -252,7 +252,7 @@ else %}{{ location }}{% endif %}{% endblock %}
     {%- endmacro %}
       <table>
           <tr>
-              <th>{{ _('%%(timezone)s time', timezone=tzone) }}</th>
+              <th>{{ _('%(timezone)s time', timezone=tzone) }}</th>
               {% for day in weekdays %}
               <th>{{ day|HeaderDate }}</th>
               {% endfor %}

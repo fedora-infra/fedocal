@@ -40,6 +40,8 @@ from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 
 from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 
+from fedocal.fedocal_babel import gettext
+
 
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
          '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
@@ -327,7 +329,7 @@ def format_week_meeting(meeting_list, tzone, week_start):
     week_start = pytz.timezone(tzone).localize(
         datetime(week_start.year, week_start.month, week_start.day, 0, 0,))
     fmt = '%Hh%M'
-    #week_start = convert_time(week_start, 'UTC', tzone)
+    # week_start = convert_time(week_start, 'UTC', tzone)
     for meeting in meeting_list:
         meeting = convert_meeting_timezone(
             meeting, meeting.meeting_timezone, tzone)
@@ -861,7 +863,10 @@ def add_meeting(
             session, calendarobj.calendar_name, fas_user
             ) and not admin:  # pragma: no cover
         raise UserNotAllowed(
-            'You are not allowed to add a meeting to this calendar')
+            gettext(
+                'You are not allowed to add a meeting to this calendar'
+            )
+        )
 
     if meeting_date_end is None:
         meeting_date_end = meeting_date
@@ -880,18 +885,27 @@ def add_meeting(
 
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
-            'The start date of your meeting is later than the stop date.')
+            gettext(
+                'The start date of your meeting is later than the stop date.'
+            )
+        )
 
     if meeting_time_start > meeting_time_stop:
         raise InvalidMeeting(
-            'The start time of your meeting is later than the stop time.')
+            gettext(
+                'The start time of your meeting is later than the stop time.'
+            )
+        )
 
     if full_day:
         meeting_time_stop = meeting_time_stop + timedelta(days=1)
 
     if meeting_time_start == meeting_time_stop:
         raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.'
+            gettext(
+                'The start date of your meeting exactly '
+                'the same as the stop date.'
+            )
         )
 
     reminder = None
@@ -955,7 +969,7 @@ def edit_meeting(
     if not is_user_managing_in_calendar(
             session, calendarobj.calendar_name, fas_user) and not admin:
         raise UserNotAllowed(
-            'You are not allowed to add a meeting to this calendar')
+            gettext('You are not allowed to add a meeting to this calendar'))
 
     if not meeting_date_end:
         meeting_date_end = meeting_date
@@ -974,25 +988,34 @@ def edit_meeting(
 
     if meeting_time_start.date() > meeting_time_stop.date():
         raise InvalidMeeting(
-            'The start date of your meeting is later than the stop date.')
+            gettext(
+                'The start date of your meeting is later than the stop date.'
+            )
+        )
 
     if meeting_time_start > meeting_time_stop:
         raise InvalidMeeting(
-            'The start time of your meeting is later than the stop time.')
+            gettext(
+                'The start time of your meeting is later than the stop time.'
+            )
+        )
 
     if full_day and meeting_time_start == meeting_time_stop:
         meeting_time_stop = meeting_time_start + timedelta(days=1)
 
     if meeting_time_start == meeting_time_stop:
         raise InvalidMeeting(
-            'The start date of your meeting exactly the same as the stop date.'
+            gettext(
+                'The start date of your meeting exactly the same as '
+                'the stop date.'
+            )
         )
 
     if meeting.calendar_name != calendarobj.calendar_name:
         meeting.calendar_name = calendarobj.calendar_name
 
-    ## The information are correct
-    ## What we do now:
+    # The information are correct
+    # What we do now:
     # a) the meeting is not recursive -> edit the information as provided
     # b) the meeting is recursive and we update all the meetings
     #     -> recursion_end = today

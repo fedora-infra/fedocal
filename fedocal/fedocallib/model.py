@@ -454,7 +454,7 @@ class Meeting(BASE):
         if meeting:
             meeting.meeting_name = self.meeting_name
             meeting.meeting_manager_user = self.meeting_manager_user
-            #meeting.meeting_date = self.meeting_date
+            # meeting.meeting_date = self.meeting_date
             meeting.meeting_time_start = self.meeting_time_start
             meeting.meeting_time_stop = self.meeting_time_stop
             meeting.meeting_timezone = self.meeting_timezone

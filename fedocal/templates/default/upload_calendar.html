@@ -1,31 +1,30 @@
 {% extends "master.html" %}
 {% from "_formhelpers.html" import render_field_in_row %}
 
-{% block title %}Upload calendar{% endblock %}
+{% block title %}{{ _('Upload calendar') }}{% endblock %}
 
 {%block tag %}admin{% endblock %}
 
 {% block content %}
 <section>
     <header>
-        <h2>Upload calendar</h2>
+        <h2>{{ _('Upload calendar') }}</h2>
         <p>
-            Upload a calendar file using the <a
-            href="http://en.wikipedia.org/wiki/ICalendar">iCalendar</a>
-            format
+            {{ _('Upload a calendar file using the %(ical_link)s format',
+                ical_link='<a href="http://en.wikipedia.org/wiki/ICalendar">iCalendar</a>') }}
         </p>
     </header>
 
-    <p>Note: recurrent events are not yet taken into account by the upload.</p>
-    <p>Note2: Todo are considered as full day meeting and displayed as such.</p>
+    <p>{{ _('Note: recurrent events are not yet taken into account by the upload.') }}</p>
+    <p>{{ _('Note2: Todo are considered as full day meeting and displayed as such.') }}</p>
 
     <form action="" method="post" enctype="multipart/form-data">
         <table>
         {{ render_field_in_row(form.ics_file) }}
         </table>
         <p class="buttons indent">
-            <input type="submit" class="submit positive button" value="Upload">
-            <input type="button" value="Cancel" class="button" onclick="history.back();">
+            <input type="submit" class="submit positive button" value="{{ _('Upload') }}">
+            <input type="button" value="{{ _('Cancel') }}" class="button" onclick="history.back();">
             {{ form.csrf_token }}
         </p>
     </form>

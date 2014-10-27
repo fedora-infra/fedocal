@@ -1,7 +1,7 @@
 {% if full %}
 {% extends "master.html" %}
 
-{% block title %}Meeting {{ meeting.meeting_name}}{% endblock %}
+{% block title %}{{ _('Meeting "%(name)s"', name=meeting.meeting_name) }}{% endblock %}
 
 {%block tag %}home{% endblock %}
 
@@ -9,21 +9,21 @@
 
 {% block content %}
 <section>
-        <h2 class="orange"> Meeting: {{ meeting.meeting_name}}</h2>
+        <h2 class="orange">{{ _('Meeting "%(name)s"', name=meeting.meeting_name) }}</h2>
         <p class="blue">(<a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
             {{ meeting.calendar_name }}</a>)
         </p>
 
 
     {% if meeting.meeting_location %}
-    <p>Location: {{ meeting.meeting_location }}</p>
+    <p>{{ _('Location:') }} {{ meeting.meeting_location }}</p>
     {%endif%}
 
     <ul>
         <li title="{{ meeting_utc.meeting_date.strftime('%a, %B %d, %Y') }} - {{
             meeting_utc.meeting_time_start }} UTC">
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
-            Start:
+              {{ _('Start:') }}
           </span>
           {{ next_meeting.meeting_date.strftime('%a, %B %d, %Y') }} - {{
             meeting.meeting_time_start.strftime('%H:%M') }} {{ tzone }}
@@ -31,7 +31,7 @@
         <li title="{{ meeting_utc.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
             meeting_utc.meeting_time_stop }} UTC">
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
-            End:
+              {{ _('End:') }}
           </span>
           {{ next_meeting.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
               meeting.meeting_time_stop }} {{ tzone }} </li>
@@ -40,37 +40,34 @@
     <div id="countdown"></div>
 
     <div id="meeting_description">
-    {% autoescape off%} {{ meeting.meeting_information | markdown  or 'No description' }} {% endautoescape %}
+    {% autoescape off%} {{ meeting.meeting_information | markdown  or _('No description') }} {% endautoescape %}
     </div>
 
     {% if meeting.recursion_frequency and meeting.recursion_ends %}
-    <p>
-        This meeting is recurrent, it occurs every
-        {{ meeting.recursion_frequency }} days until
-        {{ meeting.recursion_ends }}
+    <p>{{ _('This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s', frequency=meeting.recursion_frequency, ends=meeting.recursion_ends) }}
     </p>
     {% endif %}
 
-    <p>
-    Meeting organized by
-    {% for manager in meeting.meeting_manager %}<a href="mailto:{{manager}}@fedorapeople.org">{{ manager }}</a>{%
-     if not loop.last %},{% endif %}{% endfor %}.
-    </p>
+    {% macro get_managers(managers) %}
+        {% for manager in managers %}<a href="mailto:{{manager}}@fedorapeople.org">{{ manager }}</a>
+        {%- if not loop.last %},{% endif %}{% endfor %}.
+    {% endmacro %}
+    <p>{{ _('Meeting organized by %(managers)s', managers=get_managers(meeting.meeting_manager)) }}</p>
 
     {% if editor %}
-    <p>Stored as:</p>
+    <p>{{ _('Stored as:') }}</p>
     <ul>
         <li title="{{ meeting_utc.meeting_date }} - {{
             meeting_utc.meeting_time_start }} UTC">
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
-            Start:
+              {{ _('Start:') }}
           </span>
           {{ org_meeting.meeting_date }} - {{ org_meeting.meeting_time_start
             }} {{ org_meeting.meeting_timezone }} </li>
         <li title="{{ meeting_utc.meeting_date_end }} - {{
             meeting_utc.meeting_time_stop }} UTC">
           <span {% if tzone != 'UTC' %} class="u_dashed" {% endif %}>
-            End:
+              {{ _('End:') }}
           </span>
           {{ org_meeting.meeting_date_end }} - {{ org_meeting.meeting_time_stop
             }} {{ org_meeting.meeting_timezone }} </li>
@@ -79,12 +76,12 @@
         <a href="{{ url_for('edit_meeting',
             meeting_id=meeting.meeting_id, from_date=from_date) }}">
             <img src="{{ url_for('static', filename='edit.png') }}"
-                title="Edit" alt="Edit"/>
+                title="{{ _('Edit') }}" alt="{{ _('Edit') }}"/>
         </a>
         <a href="{{ url_for('delete_meeting',
             meeting_id=meeting.meeting_id) }}{% if from_date %}?from_date={{ from_date }}{% endif %}">
             <img src="{{ url_for('static', filename='delete.png') }}"
-            title="Delete" alt="Delete"/>
+                title="{{ _('Delete') }}" alt="{{ _('Delete') }}"/>
         </a>
     </p>
     {% endif %}
@@ -107,7 +104,10 @@
             new Date(_date),
             function(event) {
                 $(this).html(
-                    event.strftime('Meeting in: %w weeks %d days %H:%M:%S'));
+                  event.strftime(
+                    '{{ _("Meeting in: %(weeks)s weeks %(days)s days %(time)s", weeks='%w', days='%d', time='%H:%M:%S') }}'
+                  )
+                );
             }
         ).on('finish.countdown', function(event){
             var _end_date = Date.UTC(
@@ -129,9 +129,9 @@
             );
 
             if ( _end_date > _current_date ) {
-                $(this).html('Meeting in progress.');
+                $(this).html('{{ _('Meeting in progress.')|e }}');
             } else {
-                $(this).html('Meeting is over!');
+                $(this).html('{{ _('Meeting is over!')|e }}');
             }
         });
     });
@@ -159,9 +159,36 @@ $(function(){
         new Date(_date),
         function(event) {
             $(this).html(
-                event.strftime('<p>Meeting in: %w weeks %d days %H:%M:%S</p>'));
+              event.strftime(
+                '{{ _("Meeting in: %(weeks)s weeks %(days)s days %(time)s", weeks='%w', days='%d', time='%H:%M:%S') }}'
+              )
+            );
         }
-    );
+    ).on('finish.countdown', function(event){
+            var _end_date = Date.UTC(
+                {{next_meeting.meeting_date_end.year}},
+                {{next_meeting.meeting_date_end.month}} - 1,
+                {{next_meeting.meeting_date_end.day}},
+                {{next_meeting.meeting_time_stop.hour }},
+                {{next_meeting.meeting_time_stop.minute}},
+                0
+            );
+            var _current_date = new Date();
+            _current_date = Date.UTC(
+                _current_date.getUTCFullYear(),
+                _current_date.getUTCMonth(),
+                _current_date.getUTCDate(),
+                _current_date.getUTCHours(),
+                _current_date.getUTCMinutes(),
+                0
+            );
+
+            if ( _end_date > _current_date ) {
+                $(this).html('<p>{{ _('Meeting in progress.')|e }}</p>');
+            } else {
+                $(this).html('<p>{{ _('Meeting is over!')|e }}</p>');
+            }
+        });
 });
 </script>
 {% endblock %}

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
  (c) 2012-2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
@@ -25,9 +25,10 @@
 
 import flask
 import re
-from flask.ext import wtf
 from datetime import time
 from datetime import datetime
+from fedocal.fedocal_babel import lazy_gettext as _
+import i18nforms
 
 from pytz import common_timezones
 
@@ -42,12 +43,16 @@ def validate_time(form, field):
         return
     import re
     if not re.match(r'\d?\d:\d\d?', field.data):
-        raise wtforms.ValidationError('Time must be of type "HH:MM"')
+        raise wtforms.ValidationError(
+            _('Time must be of type "HH:MM"')
+        )
     time_data = field.data.split(':')
     try:
         field.data = time(int(time_data[0]), int(time_data[1]))
     except ValueError:
-        raise wtforms.ValidationError('Time must be of type "HH:MM"')
+        raise wtforms.ValidationError(
+            _('Time must be of type "HH:MM"')
+        )
 
 
 def validate_meeting_location(form, field):
@@ -55,7 +60,9 @@ def validate_meeting_location(form, field):
         More info: https://fedorahosted.org/fedocal/ticket/118
     """
     if '#' in field.data.strip():
-        raise wtforms.ValidationError('Please use channel@server format!')
+        raise wtforms.ValidationError(
+            _('Please use channel@server format!')
+        )
 
 
 def validate_multi_email(form, field):
@@ -70,23 +77,23 @@ def validate_multi_email(form, field):
             continue
         match = pattern.match(field.data or '')
         if not match:
-            message = field.gettext('Invalid input.')
+            message = field.gettext(_('Invalid input.'))
             raise ValidationError(message)
 
 
-class AddCalendarForm(wtf.Form):
+class AddCalendarForm(i18nforms.Form):
     """ Form used to create a new calendar. """
     calendar_name = wtforms.TextField(
-        'Calendar',
+        _('Calendar'),
         [wtforms.validators.Required()])
     calendar_contact = wtforms.TextField(
-        'Contact email',
+        _('Contact email'),
         [wtforms.validators.Required()])
-    calendar_description = wtforms.TextField('Description')
-    calendar_editor_groups = wtforms.TextField('Editor groups')
-    calendar_admin_groups = wtforms.TextField('Admin groups')
+    calendar_description = wtforms.TextField(_('Description'))
+    calendar_editor_groups = wtforms.TextField(_('Editor groups'))
+    calendar_admin_groups = wtforms.TextField(_('Admin groups'))
     calendar_status = wtforms.SelectField(
-        'Status',
+        _('Status'),
         [wtforms.validators.Required()],
         choices=[]
     )
@@ -116,85 +123,85 @@ class AddCalendarForm(wtf.Form):
             self.calendar_status.data = calendar.calendar_status
 
 
-class AddMeetingForm(wtf.Form):
+class AddMeetingForm(i18nforms.Form):
     """ Form used to create a new meeting. """
     calendar_name = wtforms.SelectField(
-        'Calendar',
+        _('Calendar'),
         [wtforms.validators.Required()],
         choices=[])
 
     meeting_name = wtforms.TextField(
-        'Meeting name',
+        _('Meeting name'),
         [wtforms.validators.Required()])
 
     meeting_date = wtforms.DateField(
-        'Date',
+        _('Date'),
         [wtforms.validators.Required()])
 
     meeting_date_end = wtforms.DateField(
-        'End date',
+        _('End date'),
         [wtforms.validators.optional()])
 
     meeting_time_start = wtforms.TextField(
-        'Start time',
+        _('Start time'),
         [wtforms.validators.Required(), validate_time])
 
     meeting_time_stop = wtforms.TextField(
-        'Stop time',
+        _('Stop time'),
         [wtforms.validators.Required(), validate_time])
 
     meeting_timezone = wtforms.SelectField(
-        'Time zone',
+        _('Time zone'),
         [wtforms.validators.Required()],
         choices=[(tzone, tzone) for tzone in common_timezones])
 
-    wiki_link = wtforms.TextField('More information URL')
+    wiki_link = wtforms.TextField(_('More information URL'))
 
-    comanager = wtforms.TextField('Co-manager')
+    comanager = wtforms.TextField(_('Co-manager'))
 
-    information = wtforms.TextAreaField('Information')
+    information = wtforms.TextAreaField(_('Information'))
 
     meeting_location = wtforms.TextField(
-        'Location',
+        _('Location'),
         [wtforms.validators.optional(), validate_meeting_location]
     )
 
     # Recursion
     frequency = wtforms.SelectField(
-        'Repeat every',
+        _('Repeat every'),
         [wtforms.validators.optional()],
         choices=[
             ('', ''),
-            ('7', '7 days'),
-            ('14', '14 days'),
-            ('21', '3 weeks'),
-            ('28', '4 weeks'),
+            ('7', _('%(days)s days', days='7')),
+            ('14', _('%(days)s days', days='14')),
+            ('21', _('%(weeks)s weeks', weeks='3')),
+            ('28', _('%(weeks)s weeks', weeks='4')),
         ]
     )
     end_repeats = wtforms.DateField(
-        'End date',
+        _('End date'),
         [wtforms.validators.optional()])
 
     # Reminder
     remind_when = wtforms.SelectField(
-        'Send reminder',
+        _('Send reminder'),
         [wtforms.validators.optional()],
         choices=[('', ''),
-                 ('H-12', '12 hours before'),
-                 ('H-24', '1 day before'),
-                 ('H-48', '2 days before'),
-                 ('H-168', '7 days before'),
+                 ('H-12', _('%(hours)s hours before', hours='12')),
+                 ('H-24', _('%(days)s day before', days='1')),
+                 ('H-48', _('%(days)s days before', days='2')),
+                 ('H-168', _('%(days)s days before', days='7')),
                  ]
     )
     remind_who = wtforms.TextField(
-        'Send reminder to',
+        _('Send reminder to'),
         [validate_multi_email, wtforms.validators.optional()])
     reminder_from = wtforms.TextField(
-        'Send reminder from',
+        _('Send reminder from'),
         [wtforms.validators.Email(), wtforms.validators.optional()])
 
     # Full day
-    full_day = wtforms.BooleanField('Full day meeting')
+    full_day = wtforms.BooleanField(_('Full day meeting'))
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -237,30 +244,35 @@ class AddMeetingForm(wtf.Form):
                 self.remind_who.data = meeting.reminder.reminder_to
 
 
-class DeleteMeetingForm(wtf.Form):
+class DeleteMeetingForm(i18nforms.Form):
     """ Form used to delete a meeting. """
     confirm_delete = wtforms.BooleanField(
-        'Yes I want to delete this meeting')
+        _('Yes I want to delete this meeting')
+    )
     confirm_futher_delete = wtforms.BooleanField(
-        'Yes, I want to delete all futher meetings.')
+        _('Yes, I want to delete all futher meetings.')
+    )
     from_date = wtforms.DateField(
-        'Date from which to remove the meeting')
+        _('Date from which to remove the meeting')
+    )
 
 
-class DeleteCalendarForm(wtf.Form):
+class DeleteCalendarForm(i18nforms.Form):
     """ Form used to delete a calendar. """
     confirm_delete = wtforms.BooleanField(
-        'Yes I want to delete this calendar')
+        _('Yes I want to delete this calendar')
+    )
 
 
-class ClearCalendarForm(wtf.Form):
+class ClearCalendarForm(i18nforms.Form):
     """ Form used to delete a calendar. """
     confirm_delete = wtforms.BooleanField(
-        'Yes I want to clear this calendar')
+        _('Yes I want to clear this calendar')
+    )
 
 
-class UploadIcsForm(wtf.Form):
+class UploadIcsForm(i18nforms.Form):
     ''' Form to upload an ics file into a calendar. '''
     ics_file = wtforms.FileField(
-        'ics file',
+        _('ics file'),
         [wtforms.validators.Required()])

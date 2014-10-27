@@ -1,15 +1,15 @@
 {% extends "master.html" %}
 
-{% block title %}Admin{% endblock %}
+{% block title %}{{ _('Admin') }}{% endblock %}
 {%block tag %}admin{% endblock %}
 
 {% block content %}
-<h2>Admin interface</h2>
+<h2>{{ _('Admin interface') }}</h2>
 
 <ul>
   <li>
     <a href="{{ url_for('add_calendar') }}">
-      Add calendar
+        {{ _('Add calendar') }}
     </a>
   </li>
 
@@ -22,10 +22,10 @@
         {% endfor %}
       </select>
       <select name="action">
-        <option value="edit">Edit</option>
-        <option value="delete">Delete</option>
+        <option value="edit">{{ _('Edit') }}</option>
+        <option value="delete">{{ _('Delete') }}</option>
       </select>
-      <input type="submit" value="Go" class="nobutton"/>
+      <input type="submit" value="{{ _('Go') }}" class="nobutton"/>
     </form>
   </li>
 

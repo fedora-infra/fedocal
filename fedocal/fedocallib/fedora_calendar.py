@@ -16,12 +16,15 @@ license.
 """
 
 from datetime import date
-from calendar import HTMLCalendar
+from calendar import LocaleHTMLCalendar
+from calendar import TimeEncoding
 from calendar import month_name
+import locale
+import fedocal
 import flask
 
 
-class FedocalCalendar(HTMLCalendar):
+class FedocalCalendar(LocaleHTMLCalendar):
     """ Improve Python's HTMLCalendar object adding
     html validation and some features 'locally required'
     """
@@ -31,7 +34,15 @@ class FedocalCalendar(HTMLCalendar):
         """ Constructor.
         Stores the year and the month asked.
         """
-        super(FedocalCalendar, self).__init__()
+        cal_locale = 'en_EN'
+        try:
+            babel_locale = fedocal.get_locale()
+            if babel_locale:
+                cal_locale = locale.normalize(babel_locale)
+        except:
+            pass
+        super(FedocalCalendar, self).__init__(locale=cal_locale)
+
         self.year = year
         self.month = month
         self.day = day
@@ -96,10 +107,20 @@ class FedocalCalendar(HTMLCalendar):
         """
         Return a month name as a table row.
         """
-        if withyear:
-            string = '%s %s' % (month_name[themonth], theyear)
-        else:
-            string = '%s' % month_name[themonth]
+
+        locale = self.locale
+        if self.locale in ['en', 'en_EN']:
+            locale = 'C'
+
+        with TimeEncoding(locale) as encoding:
+            smonth = month_name[themonth]
+            if encoding is not None:
+                smonth = smonth.decode(encoding)
+
+            if withyear:
+                string = '%s %s' % (smonth, theyear)
+            else:
+                string = '%s' % smonth
 
         prev_month = self.month - 1
         prev_year = self.year
@@ -161,8 +182,8 @@ class FedocalCalendar(HTMLCalendar):
         item('\n')
         item(self.formatmonthname(self.year, self.month, withyear=withyear))
         item('\n')
-        #item(self.formatweekheader())
-        #item('\n')
+        # item(self.formatweekheader())
+        # item('\n')
         for week in self.monthdays2calendar(self.year, self.month):
             days = [day[0] for day in week]
             if self.day in days:

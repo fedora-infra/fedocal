@@ -1,6 +1,6 @@
 {% extends "master.html" %}
 
-{% block title %}Edit meeting{% endblock %}
+{% block title %}{{ _('Edit meeting') }}{% endblock %}
 
 {%block tag %}mymeeting{% endblock %}
 
@@ -8,8 +8,8 @@
 <section>
 
     <header>
-        <h2>Edit meeting {{ form.meeting_name.data }}</h2>
-        <p>Please enter your meeting details in the above form.</p>
+        <h2>{{ _('Edit meeting "%(name)s"', name=form.meeting_name.data) }}</h2>
+        <p>{{ _('Please enter your meeting details in the above form.') }}</p>
     </header>
 
     <form action="" method="post">
@@ -23,26 +23,29 @@
             {{ render_field_in_row(form.full_day) }}
             {{ render_field_in_row(form.meeting_timezone) }}
             {{ render_field_in_row(form.comanager) }}
+            {% macro get_after_markdown() %}
+                {{_('Supports the') }} <a href="http://daringfireball.net/projects/markdown/syntax"
+                    target="_blank">{{ _('Markdown syntax') }}</a>
+                <input type="button" class="event preview" value="{{ _('Preview')  }}">
+            {% endmacro %}
             {{ render_field_in_row(
                 form.information,
-                    after="Supports the <a href='http://daringfireball.net/projects/markdown/syntax'
-                    target='_blank'>Markdown syntax</a>
-                    <input type='button' class='event preview' value='Preview'>",
+                    after=get_after_markdown(),
                     escape_after=True) }}
             {{ render_field_in_row(form.meeting_location) }}
         </table>
 
-        <h4>Recursive event</h4>
-        <p>If this is a regular meeting this is where you want to set it as so.</p>
+        <h4>{{ _('Recursive event') }}</h4>
+        <p>{{ _('If this is a regular meeting this is where you want to set it as so.') }}</p>
         <table>
             {{ render_field_in_row(form.frequency) }}
             {{ render_field_in_row(form.end_repeats,
-                after='Leave empty if there is no end date for the repeat.') }}
+                after=_('Leave empty if there is no end date for the repeat.')) }}
         </table>
 
-        <h4>Reminder</h4>
-        <p>You may want fedocal to send an email to a mailing list of your choices.</p>
-        <p>Note that fedocal will send the reminder in your name.</p>
+        <h4>{{ _('Reminder') }}</h4>
+        <p>{{ _('You may want fedocal to send an email to a mailing list of your choices.') }}</p>
+        <p>{{ _('Note that fedocal will send the reminder in your name.') }}</p>
         <table>
             {{ render_field_in_row(form.remind_when) }}
             {{ render_field_in_row(form.reminder_from) }}
@@ -52,11 +55,11 @@
         {{ form.csrf_token }}
 
         <p class="buttons indent">
-            <input type="submit" name="action" class="submit positive button" value="Edit"/>
+            <input type="submit" name="action" class="submit positive button" value="{{ _('Edit') }}"/>
         {% if meeting.recursion_frequency %}
-            <input type="submit" name="action" class="submit positive button" value="Edit all"/>
+            <input type="submit" name="action" class="submit positive button" value="{{ _('Edit all') }}"/>
         {% endif %}
-            <input type="button" name="action" value="Cancel" class="button" onclick="history.back();"/>
+            <input type="button" name="action" value="{{ _('Cancel') }}" class="button" onclick="history.back();"/>
         </p>
 
     </form>
@@ -108,7 +111,7 @@
                 data: {content: _txt},
                 dataType: 'html',
                 success: function(res) {
-                    var _elt = $('<div title="Preview">' + res + '</div>');
+                    var _elt = $('<div title="{{ _('Preview')|e }}">' + res + '</div>');
                     var _height = $(window).height() * 0.8;
                     _elt.dialog({
                         height: _height,
@@ -117,7 +120,7 @@
                     });
                 },
                 error: function() {
-                    alert('Unable to generate preview!');
+                    alert('{{ _('Unable to generate preview!')|e }}');
                 }
             });
             return false;

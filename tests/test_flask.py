@@ -216,7 +216,7 @@ class Flasktests(Modeltests):
             today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         # 6 on Tue Jun 24 - 12 before, 14 on Tue Jul 15
-        self.assertTrue(output.data.count('<a class="event meeting_') >= 6)
+        self.assertTrue(output.data.count('<a class="event meeting_') >= 5)
         self.assertTrue(output.data.count('<tr') > 10)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
@@ -265,7 +265,7 @@ class Flasktests(Modeltests):
         self.assertEqual(output.status_code, 200)
         # 6 on Tue Jun 24 - 12 before, 14 on Tue Jul 15
         self.assertTrue(output.data.count(
-            '<a class="event event_blue meeting_') >= 6)
+            '<a class="event event_blue meeting_') >= 5)
         self.assertTrue(output.data.count('<tr') >= 10)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
@@ -288,10 +288,10 @@ class Flasktests(Modeltests):
             % (today.year, today.month), follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         # 6 on Tue Jun 24 - 12 before, 14 on Tue Jul 15
-        self.assertTrue(output.data.count('<a class="event meeting_') >= 6)
+        self.assertTrue(output.data.count('<a class="event meeting_') >= 5)
         # 14 on Tue Jun 24 - 20 before, 21 on Tue Jul 15, 27 on Fri Aug 1
         # 22 on August 15th
-        self.assertTrue(output.data.count('<tr') >= 13)
+        self.assertTrue(output.data.count('<tr') >= 12)
         self.assertTrue(
             '<title>test_calendar - Fedocal</title>' in output.data)
 

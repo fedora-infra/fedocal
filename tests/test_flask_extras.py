@@ -146,6 +146,70 @@ class ExtrasFlasktests(Modeltests):
                 in output2.data
             )
 
+    @flask10_only
+    def test_start_date_delete_meeting_form(self):
+        """ Test the content of the start_date in the delete meeting form.
+        """
+        self.__setup_calendar()
+
+        calendar = model.Calendar.by_id(self.session, 'test_calendar')
+        # Create a meeting
+        obj = model.Meeting(  # id:1
+            meeting_name='recursive meeting',
+            meeting_date=TODAY,
+            meeting_date_end=TODAY,
+            meeting_time_start=time(19, 50),
+            meeting_time_stop=time(20, 50),
+            meeting_information='This is a test meeting',
+            calendar_name='test_calendar',
+            recursion_frequency=14,
+            recursion_ends=TODAY + timedelta(days=90))
+        obj.add_manager(self.session, 'pingou,')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        user = FakeUser(['fi-apprentice'], username='pingou')
+        with user_set(fedocal.APP, user):
+            output = self.app.get('/meeting/delete/1/')
+            self.assertEqual(output.status_code, 200)
+
+            # If no date is specified, it returns the next occurence
+            self.assertTrue(
+                '<li>Date: %s</li>' % (TODAY + timedelta(days=14))
+                in output.data
+            )
+
+            # If a date in the future is specified, return the next occurence
+            # for this date
+            url = '/meeting/delete/1/?from_date=%s' % (
+                TODAY + timedelta(days=20))
+            output2 = self.app.get(url)
+            self.assertEqual(output2.status_code, 200)
+
+            self.assertTrue(
+                '<li>Date: %s</li>' % (TODAY + timedelta(days=28))
+                in output2.data
+            )
+
+            # If an exact date in the future is specified, return that date
+            url = '/meeting/delete/1/?from_date=%s' % (
+                TODAY + timedelta(days=14))
+            output2 = self.app.get(url)
+            self.assertEqual(output2.status_code, 200)
+
+            self.assertTrue(
+                '<li>Date: %s</li>' % (TODAY + timedelta(days=14))
+                in output2.data
+            )
+
+            # If an old date in the future is specified, return the first date
+            output2 = self.app.get('/meeting/delete/1/?from_date=2000-01-01')
+            self.assertEqual(output2.status_code, 200)
+
+            self.assertTrue(
+                '<li>Date: %s</li>' % (TODAY) in output2.data
+            )
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ExtrasFlasktests)

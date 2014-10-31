@@ -935,7 +935,7 @@ def edit_meeting(meeting_id):
         if from_date:
             try:
                 date_limit = parser.parse(
-                    from_date).date() + datetime.timedelta(days=6)
+                    from_date).date()
             except:
                 pass
 

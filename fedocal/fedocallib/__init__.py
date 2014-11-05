@@ -1029,20 +1029,30 @@ def edit_meeting(
 
     remove_recursion = False
     if meeting.recursion_frequency:
+
+        closest_meeting = update_date_rec_meeting(
+            meeting, action='closest', date_limit=meeting_date)
+
+        end_rec = closest_meeting.meeting_date - timedelta(days=1)
+        if (meeting_date - closest_meeting.meeting_date).days < 0:
+            end_rec = meeting_date + timedelta(
+                days=(meeting_date - closest_meeting.meeting_date).days)
+
         if meeting_date > meeting.meeting_date:
             old_meeting = meeting.copy()
             old_meeting.add_manager(session, meeting.meeting_manager)
-            old_meeting.recursion_ends = meeting_date - timedelta(days=1)
+            old_meeting.recursion_ends = end_rec
             if old_meeting.recursion_ends > old_meeting.meeting_date:
                 old_meeting.save(session)
+
         if not edit_all_meeting:
             remove_recursion = True
             new_meeting = meeting.copy()
             new_meeting.add_manager(session, meeting.meeting_manager)
-            new_meeting.meeting_date = meeting_date + timedelta(
-                days=meeting.recursion_frequency)
-            new_meeting.meeting_date_end = meeting_date_end + timedelta(
-                days=meeting.recursion_frequency)
+            new_meeting.meeting_date = closest_meeting.meeting_date \
+                + timedelta(days=meeting.recursion_frequency)
+            new_meeting.meeting_date_end = closest_meeting.meeting_date_end \
+                + timedelta(days=meeting.recursion_frequency)
 
             new_meeting.save(session)
 

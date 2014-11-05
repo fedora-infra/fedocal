@@ -204,15 +204,15 @@
       $('#meeting_date').change(function(){
         var _datestt = $('#meeting_date').val();
         $('#meeting_date_end').val(_datestt);
-
-        var cb = $('#full_day')
-        var tz = $('#meeting_timezone');
-        if(cb.checked) {
-            tz.val('UTC');
-            tz.attr('disabled', true);
-            tz.addClass('ui-state-disabled');
-        };
       });
+
+      var cb = $('#full_day')
+      var tz = $('#meeting_timezone');
+      if(cb.checked) {
+        tz.val('UTC');
+        tz.attr('disabled', true);
+        tz.addClass('ui-state-disabled');
+      };
 
       $('#full_day').click(function() {
         var tz = $('#meeting_timezone');

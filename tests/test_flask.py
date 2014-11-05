@@ -930,10 +930,9 @@ class Flasktests(Modeltests):
                                    data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<title>Home - Fedocal</title>' in output.data)
+                '<title>test_calendar - Fedocal</title>' in output.data)
             self.assertTrue(
-                '<span class="calendar_name">test_calendar</span>'
-                in output.data)
+                '<title>test_calendar - Fedocal</title>' in output.data)
 
             # Delete
             data = {
@@ -945,12 +944,11 @@ class Flasktests(Modeltests):
                                    data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<title>Home - Fedocal</title>' in output.data)
+                '<title>test_calendar - Fedocal</title>' in output.data)
+            self.assertTrue(
+                '<title>test_calendar - Fedocal</title>' in output.data)
             self.assertTrue(
                 '<li class="message">Calendar cleared</li>'
-                in output.data)
-            self.assertTrue(
-                '<span class="calendar_name">test_calendar</span>'
                 in output.data)
 
     @flask10_only

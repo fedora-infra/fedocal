@@ -163,7 +163,7 @@
 </script>
 <script type="text/javascript">
 
-   $(document).ready(function() {
+    $(document).ready(function() {
       var previous;
       $('#meeting_time_start').focus(
         function () {
@@ -200,14 +200,32 @@
             _timestp.val(_d.getHours() + ':' + _minutes).timespinner();
         }
       });
- });
-</script>
-<script type="text/javascript">
-   $(document).ready(function() {
-     $('#meeting_date').change(function(){
+
+      $('#meeting_date').change(function(){
         var _datestt = $('#meeting_date').val();
         $('#meeting_date_end').val(_datestt);
+
+        var cb = $('#full_day')
+        var tz = $('#meeting_timezone');
+        if(cb.checked) {
+            tz.val('UTC');
+            tz.attr('disabled', true);
+            tz.addClass('ui-state-disabled');
+        };
+      });
+
+      $('#full_day').click(function() {
+        var tz = $('#meeting_timezone');
+        if(this.checked == false) {
+            tz.removeAttr('disabled');
+            tz.removeClass('ui-state-disabled');
+        } else {
+            tz.val('UTC');
+            tz.attr('disabled', true);
+            tz.addClass('ui-state-disabled');
+        };
+      });
     });
- });
+
 </script>
 {% endblock %}

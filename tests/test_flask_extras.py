@@ -37,6 +37,7 @@ import unittest
 import sys
 import os
 
+from datetime import date
 from datetime import time
 from datetime import timedelta
 
@@ -104,11 +105,14 @@ class ExtrasFlasktests(Modeltests):
             output = self.app.get('/meeting/edit/1/')
             self.assertEqual(output.status_code, 200)
 
+            next_date = TODAY + timedelta(days=14)
+            if date.today() <= TODAY:
+                next_date = TODAY
+
             # If no date is specified, it returns the next occurence
             self.assertTrue(
                 '<input id="meeting_date" name="meeting_date" type="text" '
-                'value="%s">' % (TODAY + timedelta(days=14))
-                in output.data
+                'value="%s">' % (next_date) in output.data
             )
 
             # If a date in the future is specified, return the next occurence
@@ -132,8 +136,7 @@ class ExtrasFlasktests(Modeltests):
 
             self.assertTrue(
                 '<input id="meeting_date" name="meeting_date" type="text" '
-                'value="%s">' % (TODAY + timedelta(days=14))
-                in output2.data
+                'value="%s">' % (TODAY + timedelta(days=14)) in output2.data
             )
 
             # If an old date in the future is specified, return the first date
@@ -174,11 +177,12 @@ class ExtrasFlasktests(Modeltests):
             output = self.app.get('/meeting/delete/1/')
             self.assertEqual(output.status_code, 200)
 
+            next_date = TODAY + timedelta(days=14)
+            if date.today() <= TODAY:
+                next_date = TODAY
+
             # If no date is specified, it returns the next occurence
-            self.assertTrue(
-                '<li>Date: %s</li>' % (TODAY + timedelta(days=14))
-                in output.data
-            )
+            self.assertTrue('<li>Date: %s</li>' % next_date in output.data)
 
             # If a date in the future is specified, return the next occurence
             # for this date
@@ -198,10 +202,7 @@ class ExtrasFlasktests(Modeltests):
             output2 = self.app.get(url)
             self.assertEqual(output2.status_code, 200)
 
-            self.assertTrue(
-                '<li>Date: %s</li>' % (TODAY + timedelta(days=14))
-                in output2.data
-            )
+            self.assertTrue('<li>Date: %s</li>' % next_date in output.data)
 
             # If an old date in the future is specified, return the first date
             output2 = self.app.get('/meeting/delete/1/?from_date=2000-01-01')

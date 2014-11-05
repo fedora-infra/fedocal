@@ -1894,7 +1894,7 @@ class Fedocallibtests(Modeltests):
             7, None,  # Recursion
             None, None, None,  # Reminder
             full_day=False,
-            edit_all_meeting=False)
+            edit_all_meeting=True)
         meeting = model.Meeting.by_id(self.session, 9)
         self.assertNotEqual(meeting, None)
         self.assertEqual(

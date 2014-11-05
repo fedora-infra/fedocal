@@ -1072,14 +1072,15 @@ def edit_meeting(
     meeting.meeting_location = meeting_location or None
     meeting.meeting_timezone = tzone
 
-    recursion_frequency = recursion_frequency
-    if not recursion_frequency:
-        recursion_frequency = None
-    meeting.recursion_frequency = recursion_frequency
+    if edit_all_meeting or not meeting.recursion_ends:
+        recursion_frequency = recursion_frequency
+        if not recursion_frequency:
+            recursion_frequency = None
+        meeting.recursion_frequency = recursion_frequency
 
-    if recursion_frequency and not recursion_ends:
-        recursion_ends = date(2025, 12, 31)
-    meeting.recursion_ends = recursion_ends
+        if recursion_frequency and not recursion_ends:
+            recursion_ends = date(2025, 12, 31)
+        meeting.recursion_ends = recursion_ends
 
     if remind_when and remind_who and reminder_from:
         remind_who = ','.join([

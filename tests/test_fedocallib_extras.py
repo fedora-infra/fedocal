@@ -44,7 +44,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import fedocal.fedocallib as fedocallib
 from fedocal.fedocallib import model
-from tests import Modeltests
+from tests import Modeltests, FakeUser
 
 
 # pylint: disable=R0904
@@ -187,6 +187,277 @@ class FedocallibExtratests(Modeltests):
             [
                 '2014-09-08', '2014-09-15', '2014-09-22',
                 '2014-09-29', '2014-10-06', '2014-10-13',
+                '2014-10-27',
+            ]
+        )
+
+    def test_editing_recurring_meeting_one_day_later(self):
+        """ Test editing moving a meeting one day later in a recursion
+        """
+        # Setup info
+        self.__setup_calendar()
+        obj = model.Meeting(  # id:1
+            meeting_name='test recurring',
+            meeting_date=datetime(2014, 9, 1).date(),
+            meeting_date_end=datetime(2014, 9, 1).date(),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            meeting_information='This is a test meeting recurring',
+            calendar_name='test_calendar',
+            recursion_frequency=7,
+            recursion_ends=datetime(2014, 10, 27).date(),
+        )
+        obj.add_manager(self.session, 'pingou')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        # Before edition
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        meetings = fedocallib.get_by_date(
+            self.session, calendarobj,
+            datetime(2014, 9, 1).date(),
+            datetime(2014, 10, 27).date()
+        )
+        self.assertEqual(len(meetings), 9)
+        ids = set([mtg.meeting_id for mtg in meetings])
+        self.assertEqual(len(ids), 1)
+        self.assertEqual(list(ids)[0], 1)
+        dates = [str(mtg.meeting_date) for mtg in meetings]
+        self.assertEqual(
+            dates,
+            [
+                '2014-09-01', '2014-09-08', '2014-09-15', '2014-09-22',
+                '2014-09-29', '2014-10-06', '2014-10-13', '2014-10-20',
+                '2014-10-27',
+            ]
+        )
+
+        # Edit meeting in the middle to move it by one day
+        meeting = model.Meeting.by_id(self.session, 1)
+        fedocallib.edit_meeting(
+            session=self.session,
+            meeting=meeting,
+            calendarobj=calendarobj,
+            fas_user=FakeUser(groups=['fi-apprentice'], username='pingou'),
+            meeting_name='test recurring',
+            meeting_date=datetime(2014, 9, 16).date(),
+            meeting_date_end=datetime(2014, 9, 16).date(),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager='pingou',
+            meeting_information='This is a test meeting recurring',
+            meeting_location=None,
+            tzone='UTC',
+            recursion_frequency=7,
+            recursion_ends=datetime(2014, 10, 27).date(),
+            remind_when=None,
+            reminder_from=None,
+            remind_who=None,
+            full_day=False,
+            edit_all_meeting=False,
+            admin=False
+        )
+
+        # After edition
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        meetings = fedocallib.get_by_date(
+            self.session, calendarobj,
+            datetime(2014, 9, 1).date(),
+            datetime(2014, 10, 27).date()
+        )
+        self.assertEqual(len(meetings), 9)
+        ids = set([mtg.meeting_id for mtg in meetings])
+        self.assertEqual(list(ids), [1, 2, 3])
+        dates = [str(mtg.meeting_date) for mtg in meetings]
+        # One meeting moved by 1 day
+        self.assertEqual(
+            sorted(dates),
+            [
+                '2014-09-01', '2014-09-08', '2014-09-16', '2014-09-22',
+                '2014-09-29', '2014-10-06', '2014-10-13', '2014-10-20',
+                '2014-10-27',
+            ]
+        )
+
+        # Edit meeting in the middle to move it by 3 day (later)
+        meeting = model.Meeting.by_id(self.session, 3)
+        fedocallib.edit_meeting(
+            session=self.session,
+            meeting=meeting,
+            calendarobj=calendarobj,
+            fas_user=FakeUser(groups=['fi-apprentice'], username='pingou'),
+            meeting_name='test recurring',
+            meeting_date=datetime(2014, 10, 9).date(),
+            meeting_date_end=datetime(2014, 10, 9).date(),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager='pingou',
+            meeting_information='This is a test meeting recurring',
+            meeting_location=None,
+            tzone='UTC',
+            recursion_frequency=7,
+            recursion_ends=datetime(2014, 10, 27).date(),
+            remind_when=None,
+            reminder_from=None,
+            remind_who=None,
+            full_day=False,
+            edit_all_meeting=False,
+            admin=False
+        )
+
+        # After edition
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        meetings = fedocallib.get_by_date(
+            self.session, calendarobj,
+            datetime(2014, 9, 1).date(),
+            datetime(2014, 10, 27).date()
+        )
+        self.assertEqual(len(meetings), 9)
+        ids = set([mtg.meeting_id for mtg in meetings])
+        self.assertEqual(list(ids), [1, 2, 3, 4, 5])
+        dates = [str(mtg.meeting_date) for mtg in meetings]
+        # One meeting moved by 3 days
+        self.assertEqual(
+            sorted(dates),
+            [
+                '2014-09-01', '2014-09-08', '2014-09-16', '2014-09-22',
+                '2014-09-29', '2014-10-09', '2014-10-13', '2014-10-20',
+                '2014-10-27',
+            ]
+        )
+
+    def test_editing_recurring_meeting_one_day_earlier(self):
+        """ Test editing moving a meeting one day earlier in a recursion
+        """
+        # Setup info
+        self.__setup_calendar()
+        obj = model.Meeting(  # id:1
+            meeting_name='test recurring',
+            meeting_date=datetime(2014, 9, 1).date(),
+            meeting_date_end=datetime(2014, 9, 1).date(),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            meeting_information='This is a test meeting recurring',
+            calendar_name='test_calendar',
+            recursion_frequency=7,
+            recursion_ends=datetime(2014, 10, 27).date(),
+        )
+        obj.add_manager(self.session, 'pingou')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        # Before edition
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        meetings = fedocallib.get_by_date(
+            self.session, calendarobj,
+            datetime(2014, 9, 1).date(),
+            datetime(2014, 10, 27).date()
+        )
+        self.assertEqual(len(meetings), 9)
+        ids = set([mtg.meeting_id for mtg in meetings])
+        self.assertEqual(list(ids)[0], 1)
+        dates = [str(mtg.meeting_date) for mtg in meetings]
+        self.assertEqual(
+            dates,
+            [
+                '2014-09-01', '2014-09-08', '2014-09-15', '2014-09-22',
+                '2014-09-29', '2014-10-06', '2014-10-13', '2014-10-20',
+                '2014-10-27',
+            ]
+        )
+
+        # Edit meeting in the middle to move it by one day
+        meeting = model.Meeting.by_id(self.session, 1)
+        fedocallib.edit_meeting(
+            session=self.session,
+            meeting=meeting,
+            calendarobj=calendarobj,
+            fas_user=FakeUser(groups=['fi-apprentice'], username='pingou'),
+            meeting_name='test recurring',
+            meeting_date=datetime(2014, 9, 14).date(),
+            meeting_date_end=datetime(2014, 9, 14).date(),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager='pingou',
+            meeting_information='This is a test meeting recurring',
+            meeting_location=None,
+            tzone='UTC',
+            recursion_frequency=7,
+            recursion_ends=datetime(2014, 10, 27).date(),
+            remind_when=None,
+            reminder_from=None,
+            remind_who=None,
+            full_day=False,
+            edit_all_meeting=False,
+            admin=False
+        )
+
+        # After edition
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        meetings = fedocallib.get_by_date(
+            self.session, calendarobj,
+            datetime(2014, 9, 1).date(),
+            datetime(2014, 10, 27).date()
+        )
+        #self.assertEqual(len(meetings), 9)
+        ids = set([mtg.meeting_id for mtg in meetings])
+        #self.assertEqual(list(ids), [1, 2, 3])
+        dates = [str(mtg.meeting_date) for mtg in meetings]
+        # One meeting moved by 1 day
+        self.assertEqual(
+            sorted(dates),
+            [
+                '2014-09-01', '2014-09-08', '2014-09-14', '2014-09-22',
+                '2014-09-29', '2014-10-06', '2014-10-13', '2014-10-20',
+                '2014-10-27',
+            ]
+        )
+
+        # Edit meeting in the middle to move it by 3 days (earlier)
+        meeting = model.Meeting.by_id(self.session, 3)
+        fedocallib.edit_meeting(
+            session=self.session,
+            meeting=meeting,
+            calendarobj=calendarobj,
+            fas_user=FakeUser(groups=['fi-apprentice'], username='pingou'),
+            meeting_name='test recurring',
+            meeting_date=datetime(2014, 9, 26).date(),
+            meeting_date_end=datetime(2014, 9, 26).date(),
+            meeting_time_start=time(9, 0),
+            meeting_time_stop=time(10, 0),
+            comanager='pingou',
+            meeting_information='This is a test meeting recurring',
+            meeting_location=None,
+            tzone='UTC',
+            recursion_frequency=7,
+            recursion_ends=datetime(2014, 10, 27).date(),
+            remind_when=None,
+            reminder_from=None,
+            remind_who=None,
+            full_day=False,
+            edit_all_meeting=False,
+            admin=False
+        )
+
+        # After edition
+        calendarobj = model.Calendar.by_id(self.session, 'test_calendar')
+        meetings = fedocallib.get_by_date(
+            self.session, calendarobj,
+            datetime(2014, 9, 1).date(),
+            datetime(2014, 10, 27).date()
+        )
+        self.assertEqual(len(meetings), 9)
+        ids = set([mtg.meeting_id for mtg in meetings])
+        self.assertEqual(list(ids), [1, 2, 3, 4, 5])
+        dates = [str(mtg.meeting_date) for mtg in meetings]
+        # One meeting moved by 3 day
+        self.assertEqual(
+            sorted(dates),
+            [
+                '2014-09-01', '2014-09-08', '2014-09-14', '2014-09-22',
+                '2014-09-26', '2014-10-06', '2014-10-13', '2014-10-20',
                 '2014-10-27',
             ]
         )

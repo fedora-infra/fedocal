@@ -1054,8 +1054,9 @@ def delete_meeting(meeting_id):
         except:
             pass
 
+    date_limit = deleteform.from_date.data
     next_meeting = fedocallib.update_date_rec_meeting(
-        meeting, action='next', date_limit=deleteform.from_date.data)
+        meeting, action='next', date_limit=date_limit)
 
     # pylint: disable=E1101
     if deleteform.validate_on_submit():
@@ -1085,8 +1086,16 @@ def delete_meeting(meeting_id):
                 LOG.exception(err)
                 flask.flash(gettext('Could not delete this meeting.'), 'error')
 
+        year = month = day = None
+        if date_limit:
+            year = date_limit.year
+            month = date_limit.month
+            day = date_limit.day
+
         return flask.redirect(flask.url_for(
-            'calendar', calendar_name=meeting.calendar_name))
+            'calendar', calendar_name=meeting.calendar_name,
+            year=year, month=month, day=day))
+
     return flask.render_template(
         'delete_meeting.html',
         form=deleteform,
@@ -1181,7 +1190,8 @@ def clear_calendar(calendar_name):
             agent=flask.g.fas_user.username,
             calendar=calendarobj.to_json(),
         ))
-        return flask.redirect(flask.url_for('index'))
+        return flask.redirect(flask.url_for(
+            'calendar', calendar_name=calendar_name))
     return flask.render_template(
         'clear_calendar.html', form=clearform, calendarobj=calendarobj)
 

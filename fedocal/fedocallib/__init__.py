@@ -1029,20 +1029,30 @@ def edit_meeting(
 
     remove_recursion = False
     if meeting.recursion_frequency:
+
+        closest_meeting = update_date_rec_meeting(
+            meeting, action='closest', date_limit=meeting_date)
+
+        end_rec = closest_meeting.meeting_date - timedelta(days=1)
+        if (meeting_date - closest_meeting.meeting_date).days < 0:
+            end_rec = meeting_date + timedelta(
+                days=(meeting_date - closest_meeting.meeting_date).days)
+
         if meeting_date > meeting.meeting_date:
             old_meeting = meeting.copy()
             old_meeting.add_manager(session, meeting.meeting_manager)
-            old_meeting.recursion_ends = meeting_date - timedelta(days=1)
+            old_meeting.recursion_ends = end_rec
             if old_meeting.recursion_ends > old_meeting.meeting_date:
                 old_meeting.save(session)
+
         if not edit_all_meeting:
             remove_recursion = True
             new_meeting = meeting.copy()
             new_meeting.add_manager(session, meeting.meeting_manager)
-            new_meeting.meeting_date = meeting_date + timedelta(
-                days=meeting.recursion_frequency)
-            new_meeting.meeting_date_end = meeting_date_end + timedelta(
-                days=meeting.recursion_frequency)
+            new_meeting.meeting_date = closest_meeting.meeting_date \
+                + timedelta(days=meeting.recursion_frequency)
+            new_meeting.meeting_date_end = closest_meeting.meeting_date_end \
+                + timedelta(days=meeting.recursion_frequency)
 
             new_meeting.save(session)
 
@@ -1062,14 +1072,15 @@ def edit_meeting(
     meeting.meeting_location = meeting_location or None
     meeting.meeting_timezone = tzone
 
-    recursion_frequency = recursion_frequency
-    if not recursion_frequency:
-        recursion_frequency = None
-    meeting.recursion_frequency = recursion_frequency
+    if edit_all_meeting or not meeting.recursion_ends:
+        recursion_frequency = recursion_frequency
+        if not recursion_frequency:
+            recursion_frequency = None
+        meeting.recursion_frequency = recursion_frequency
 
-    if recursion_frequency and not recursion_ends:
-        recursion_ends = date(2025, 12, 31)
-    meeting.recursion_ends = recursion_ends
+        if recursion_frequency and not recursion_ends:
+            recursion_ends = date(2025, 12, 31)
+        meeting.recursion_ends = recursion_ends
 
     if remind_when and remind_who and reminder_from:
         remind_who = ','.join([
@@ -1260,6 +1271,14 @@ def update_date_rec_meeting(meeting, action='last', date_limit=None):
             meetingobj.meeting_date_end = meetingobj.meeting_date_end + \
                 timedelta(days=meetingobj.recursion_frequency)
         meetingobj.meeting_manager_user = meeting.meeting_manager_user
+
+        if action == 'closest':
+            last_date = meetingobj.meeting_date - \
+                timedelta(days=meetingobj.recursion_frequency)
+            delta_before = last_date - date_limit
+            delta_after = meetingobj.meeting_date - date_limit
+            if abs(delta_before) < abs(delta_after):
+                action = 'last'
 
         if action == 'last':
             last_date = meetingobj.meeting_date - \

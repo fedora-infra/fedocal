@@ -9,6 +9,7 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 from setuptools import setup
+
 from fedocal import __version__
 
 
@@ -26,7 +27,7 @@ def get_requirements(requirements_file='requirements.txt'):
 
     return [
         line.strip().split('#')[0]
-        for line in lines 
+        for line in lines
         if not line.startswith('#')
     ]
 
@@ -46,4 +47,4 @@ setup(
     include_package_data=True,
     scripts=['fedocal_cron.py'],
     install_requires=get_requirements(),
-    )
+)

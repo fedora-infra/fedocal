@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.11.1
+Version:        0.12
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -22,7 +22,7 @@ BuildRequires:  python-kitchen
 BuildRequires:  python-fedora >= 0.3.33
 BuildRequires:  python-fedora-flask >= 0.3.33
 BuildRequires:  python-alembic
-BuildRequires:  python-dateutil <= 1.5
+BuildRequires:  python-dateutil
 BuildRequires:  python-setuptools
 BuildRequires:  python-markdown
 BuildRequires:  python-docutils
@@ -30,6 +30,9 @@ BuildRequires:  python-nose
 BuildRequires:  python-coverage
 BuildRequires:  python-mock
 BuildRequires:  python-psutil
+BuildRequires:  python-flask-babel
+BuildRequires:  babel
+BuildRequires:  python-blinker
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -49,11 +52,13 @@ Requires:  python-kitchen
 Requires:  python-fedora >= 0.3.32.3-3
 Requires:  python-fedora-flask
 Requires:  python-alembic
-Requires:  python-dateutil <= 1.5
+Requires:  python-dateutil
 Requires:  python-setuptools
 Requires:  python-markdown
 Requires:  python-docutils
 Requires:  python-psutil
+Requires:  python-flask-babel
+Requires:  python-blinker
 Requires:  mod_wsgi
 
 %description
@@ -66,6 +71,10 @@ most calendar application.
 %setup -q
 
 sed -i -e 's|script_location = alembic|script_location = /usr/share/fedocal/alembic|' alembic.ini.sample
+
+# Compile the translations
+pybabel compile -d fedocal/translations
+
 
 %build
 %{__python} setup.py build
@@ -92,6 +101,7 @@ install -m 644 fedocal.wsgi $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal.wsgi
 # Install the createdb script
 install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.py
 
+
 %check
 ./run_tests.sh
 
@@ -108,6 +118,17 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Tue Jan 20 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.12-1
+- Update to 0.12
+- Drop the hard-coded red * from the form fields and set them in the templates
+  instead
+- Add support for i18n (Thanks Johan Cwiklinski)
+- Fix the mail_logging  module if the pid could not be retrieved
+- Adjust the doc for i18n (Thanks Johan Cwiklinski)
+- Fix the README on how to get fedocal running
+- Fix the handling of the `?from_date` parameter when editing a meeting
+- Fix redirecting and editing meetings in recursion
+
 * Mon Oct 6 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.11.1-1
 - Update to 0.11.1
 - Fix bug when deleting meeting in the middle of a recursion

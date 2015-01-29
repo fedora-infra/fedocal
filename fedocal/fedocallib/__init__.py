@@ -666,7 +666,7 @@ def retrieve_meeting_to_remind(session, offset=30):
     return meetings
 
 
-def add_meeting_to_vcal(ical, meeting):
+def add_meeting_to_vcal(ical, meeting, enable_reminder=False):
     """ Convert a Meeting object into iCal object and add it to the
     provided calendar.
 
@@ -674,6 +674,8 @@ def add_meeting_to_vcal(ical, meeting):
         be added.
     :arg meeting: a single fedocal.model.Meeting object to convert to
         iCal and add to the provided calendar.
+    :kwarg enable_reminder: a boolean telling whether to add reminder
+        for the meeting in the iCal object or not.
     """
     entry = ical.add('vevent')
     entry.add('summary').value = meeting.meeting_name
@@ -713,8 +715,28 @@ def add_meeting_to_vcal(ical, meeting):
                 until=meeting.recursion_ends))
         entry.rruleset = newrule
 
+    if enable_reminder:
+        # FIXME: This timedeltas could be part of conf or explicitly
+        #        mentioned by the caller. A policy decision to make.
 
-def add_meetings_to_vcal(ical, meetings):
+        # FIXME: I am adding multiple VALARM elements here because docs at
+        #        http://www.kanzaki.com/docs/ical/valarm.html do
+        #        say nothing about having multiple TRIGGERS inside a VALARM.
+        #        Also, REPEAT does not seem much useful as we are not reminding
+        #        regular intervals.
+        for trigger in (
+                timedelta(days=-1), timedelta(hours=-1),
+                timedelta(minutes=-5)):
+            valarm = entry.add('valarm')
+            valarm.add('trigger').value = trigger
+            valarm.add('action').value = 'DISPLAY'
+            valarm.add('description').value = (
+                '[{calendar_name}] [Fedocal] Reminder meeting: {meeting_name}'
+            ).format(calendar_name=meeting.calendar_name,
+                     meeting_name=meeting.meeting_name)
+
+
+def add_meetings_to_vcal(ical, meetings, enable_reminder=False):
     """ Convert the Meeting objects into iCal object and add them to
     the provided calendar.
 
@@ -722,6 +744,8 @@ def add_meetings_to_vcal(ical, meetings):
         be added.
     :arg meetings: a list of fedocal.model.Meeting object to convert to
         iCal and add to the provided calendar.
+    :kwarg enable_reminder: a boolean telling whether to add reminder
+        for the meetings in the iCal object or not.
     """
     for meeting in meetings:
         add_meeting_to_vcal(ical, meeting)

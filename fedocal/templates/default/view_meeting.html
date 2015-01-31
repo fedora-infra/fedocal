@@ -56,7 +56,7 @@
 
     <a href="{{ url_for('ical_calendar_meeting', meeting_id=meeting.meeting_id) }}"
        title="{{ _('Add this meeting to your agenda') }}">
-       iCal export
+       {{ _('iCal export') }}
     </a>
 
     {% if editor %}

@@ -373,6 +373,21 @@ class Flasktests(Modeltests):
         self.assertEqual(output.data.count('BEGIN:VEVENT'), 15)
         self.assertEqual(output.data.count('END:VEVENT'), 15)
 
+    def test_ical_meeting(self):
+        """ Test the ical_calendar_meeting function. """
+        self.__setup_db()
+
+        output = self.app.get('/ical/calendar/meeting/2/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('BEGIN:VCALENDAR' in output.data)
+        self.assertTrue('SUMMARY:test-meeting2' in output.data)
+        self.assertTrue(
+            'DESCRIPTION:This is another test meeting'
+            in output.data)
+        self.assertTrue('ORGANIZER:pingou' in output.data)
+        self.assertEqual(output.data.count('BEGIN:VEVENT'), 1)
+        self.assertEqual(output.data.count('END:VEVENT'), 1)
+
     def test_view_meeting(self):
         """ Test the view_meeting function. """
         self.__setup_db()
@@ -404,6 +419,9 @@ class Flasktests(Modeltests):
         self.assertTrue(
             'This is a test meeting at the same time'
             in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
+            in output.data)
 
         output = self.app.get('/meeting/5/0/')
         self.assertEqual(output.status_code, 200)
@@ -415,6 +433,9 @@ class Flasktests(Modeltests):
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
+            in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
             in output.data)
 
         # Invalid from_date
@@ -429,6 +450,9 @@ class Flasktests(Modeltests):
         self.assertTrue(
             'This is a test meeting at the same time'
             in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
+            in output.data)
 
         # Valid from_date
         output = self.app.get(
@@ -442,6 +466,9 @@ class Flasktests(Modeltests):
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
+            in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
             in output.data)
 
         output = self.app.get('/meeting/50/0/', follow_redirects=True)

@@ -35,6 +35,7 @@ import logging
 import unittest
 import sys
 import os
+import re
 
 from datetime import date
 from datetime import time
@@ -61,6 +62,37 @@ class Flasktests(Modeltests):
         meeting = Meetingtests('test_init_meeting')
         meeting.session = self.session
         meeting.test_init_meeting()
+
+    def get_sample_file_content(self, filename):
+        """
+        Read a file with filename from dir ./sample_files and
+        return its content.
+
+        :arg filename: A string
+        :returns: A string
+        """
+        f = open(
+            os.path.join(
+                os.path.dirname(__file__), 'sample_files/meeting.ical'
+            )
+        )
+        content = f.read()
+        f.close()
+        return content
+
+    def wrap_content(self, content, replacements=[]):
+        """
+        Wrap content and return wrapped content.
+
+        :arg content: String
+        :kwarg replacements: A list of tuples, where each
+            tuple is of the form (<pattern_str>, <repl_str>)
+
+        :returns: A string
+        """
+        for pattern, repl in replacements:
+            content = re.sub(pattern, repl, content)
+        return content
 
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
@@ -379,14 +411,16 @@ class Flasktests(Modeltests):
 
         output = self.app.get('/ical/calendar/meeting/2/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('BEGIN:VCALENDAR' in output.data)
-        self.assertTrue('SUMMARY:test-meeting2' in output.data)
-        self.assertTrue(
-            'DESCRIPTION:This is another test meeting'
-            in output.data)
-        self.assertTrue('ORGANIZER:pingou' in output.data)
-        self.assertEqual(output.data.count('BEGIN:VEVENT'), 1)
-        self.assertEqual(output.data.count('END:VEVENT'), 1)
+        expected_data = self.get_sample_file_content(
+            'meeting.ical')
+        data = self.wrap_content(
+            output.data, replacements=[
+                (r'UID:.*\n', 'UID:DUMMY_UID\r\n'),
+                (r'DTSTART:.*\n', 'DTSTART:DUMMY_START_DATETIME\r\n'),
+                (r'DTEND:.*\n', 'DTEND:DUMMY_END_DATETIME\r\n')
+            ]
+        )
+        self.assertEqual(data, expected_data)
 
     def test_view_meeting(self):
         """ Test the view_meeting function. """

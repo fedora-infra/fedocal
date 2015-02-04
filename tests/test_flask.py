@@ -38,6 +38,7 @@ import os
 import re
 
 from datetime import date
+from datetime import datetime
 from datetime import time
 from datetime import timedelta
 
@@ -409,15 +410,24 @@ class Flasktests(Modeltests):
         """ Test the ical_calendar_meeting function. """
         self.__setup_db()
 
+        meeting_obj = model.Meeting.by_id(self.session, 2)
+        expected_data = self.get_sample_file_content(
+            'meeting.ical').format(
+            start_datetime=datetime.combine(
+                meeting_obj.meeting_date,
+                meeting_obj.meeting_time_start).strftime(
+                    '%Y%m%dT%H%M%SZ'),
+            end_datetime=datetime.combine(
+                meeting_obj.meeting_date_end,
+                meeting_obj.meeting_time_stop).strftime(
+                    '%Y%m%dT%H%M%SZ')
+        )
+
         output = self.app.get('/ical/calendar/meeting/2/')
         self.assertEqual(output.status_code, 200)
-        expected_data = self.get_sample_file_content(
-            'meeting.ical')
         data = self.wrap_content(
             output.data, replacements=[
-                (r'UID:.*\n', 'UID:DUMMY_UID\r\n'),
-                (r'DTSTART:.*\n', 'DTSTART:DUMMY_START_DATETIME\r\n'),
-                (r'DTEND:.*\n', 'DTEND:DUMMY_END_DATETIME\r\n')
+                (r'UID:.*\n', 'UID:DUMMY_UID\r\n')
             ]
         )
         self.assertEqual(data, expected_data)

@@ -35,8 +35,10 @@ import logging
 import unittest
 import sys
 import os
+import re
 
 from datetime import date
+from datetime import datetime
 from datetime import time
 from datetime import timedelta
 
@@ -61,6 +63,37 @@ class Flasktests(Modeltests):
         meeting = Meetingtests('test_init_meeting')
         meeting.session = self.session
         meeting.test_init_meeting()
+
+    def get_sample_file_content(self, filename):
+        """
+        Read a file with filename from dir ./sample_files and
+        return its content.
+
+        :arg filename: A string
+        :returns: A string
+        """
+        f = open(
+            os.path.join(
+                os.path.dirname(__file__), 'sample_files/meeting.ical'
+            )
+        )
+        content = f.read()
+        f.close()
+        return content
+
+    def wrap_content(self, content, replacements=[]):
+        """
+        Wrap content and return wrapped content.
+
+        :arg content: String
+        :kwarg replacements: A list of tuples, where each
+            tuple is of the form (<pattern_str>, <repl_str>)
+
+        :returns: A string
+        """
+        for pattern, repl in replacements:
+            content = re.sub(pattern, repl, content)
+        return content
 
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
@@ -373,6 +406,32 @@ class Flasktests(Modeltests):
         self.assertEqual(output.data.count('BEGIN:VEVENT'), 15)
         self.assertEqual(output.data.count('END:VEVENT'), 15)
 
+    def test_ical_meeting(self):
+        """ Test the ical_calendar_meeting function. """
+        self.__setup_db()
+
+        meeting_obj = model.Meeting.by_id(self.session, 2)
+        expected_data = self.get_sample_file_content(
+            'meeting.ical').format(
+            start_datetime=datetime.combine(
+                meeting_obj.meeting_date,
+                meeting_obj.meeting_time_start).strftime(
+                    '%Y%m%dT%H%M%SZ'),
+            end_datetime=datetime.combine(
+                meeting_obj.meeting_date_end,
+                meeting_obj.meeting_time_stop).strftime(
+                    '%Y%m%dT%H%M%SZ')
+        )
+
+        output = self.app.get('/ical/calendar/meeting/2/')
+        self.assertEqual(output.status_code, 200)
+        data = self.wrap_content(
+            output.data, replacements=[
+                (r'UID:.*\n', 'UID:DUMMY_UID\r\n')
+            ]
+        )
+        self.assertEqual(data, expected_data)
+
     def test_view_meeting(self):
         """ Test the view_meeting function. """
         self.__setup_db()
@@ -404,6 +463,9 @@ class Flasktests(Modeltests):
         self.assertTrue(
             'This is a test meeting at the same time'
             in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
+            in output.data)
 
         output = self.app.get('/meeting/5/0/')
         self.assertEqual(output.status_code, 200)
@@ -415,6 +477,9 @@ class Flasktests(Modeltests):
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
+            in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
             in output.data)
 
         # Invalid from_date
@@ -429,6 +494,9 @@ class Flasktests(Modeltests):
         self.assertTrue(
             'This is a test meeting at the same time'
             in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
+            in output.data)
 
         # Valid from_date
         output = self.app.get(
@@ -442,6 +510,9 @@ class Flasktests(Modeltests):
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
+            in output.data)
+        self.assertTrue(
+            '<a href="/ical/calendar/meeting/5/"'
             in output.data)
 
         output = self.app.get('/meeting/50/0/', follow_redirects=True)

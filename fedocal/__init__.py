@@ -611,6 +611,32 @@ def ical_out(calendar_name):
         headers=headers)
 
 
+@APP.route('/ical/calendar/meeting/<int:meeting_id>/')
+def ical_calendar_meeting(meeting_id):
+    """ Returns a iCal feed of a calendar meeting.
+
+    :arg meeting_id: the identifier of a meeting
+    """
+    meeting = Meeting.by_id(SESSION, meeting_id)
+    if not meeting:
+        return flask.abort(404)
+    ical = vobject.iCalendar()
+    fedocallib.add_meeting_to_vcal(ical, meeting)
+    headers = {}
+    filename = secure_filename('%s-%s-%s.ical' % (
+        meeting.calendar_name, meeting.meeting_name,
+        datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
+    )
+    headers["Content-Disposition"] = "attachment; filename=%s" % filename
+    output = ical.serialize()
+    output = output.replace('TZID:', 'TZID:fedocal_')
+    output = output.replace('TZID=', 'TZID=fedocal_')
+    return flask.Response(
+        output,
+        mimetype='text/calendar',
+        headers=headers)
+
+
 # CLA + 1
 @APP.route('/mine/')
 @cla_plus_one_required

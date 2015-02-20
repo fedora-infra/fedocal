@@ -622,7 +622,11 @@ def ical_calendar_meeting(meeting_id):
         return flask.abort(404)
     ical = vobject.iCalendar()
     fedocallib.add_meeting_to_vcal(
-        ical, meeting, enable_reminder=flask.request.args.get('reminder')=='1')
+        ical, meeting,
+        enable_reminder=flask.request.args.get('reminder') == '1',
+        reminders=APP.config.get('ICAL_REMINDERS') or [
+            {'days': -1}, {'hours': -1}, {'minutes': -5}
+        ])
     headers = {}
     filename = secure_filename('%s-%s-%s.ical' % (
         meeting.calendar_name, meeting.meeting_name,

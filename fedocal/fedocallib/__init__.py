@@ -666,7 +666,7 @@ def retrieve_meeting_to_remind(session, offset=30):
     return meetings
 
 
-def add_meeting_to_vcal(ical, meeting, enable_reminder=False):
+def add_meeting_to_vcal(ical, meeting, enable_reminder=False, reminders=[]):
     """ Convert a Meeting object into iCal object and add it to the
     provided calendar.
 
@@ -676,6 +676,8 @@ def add_meeting_to_vcal(ical, meeting, enable_reminder=False):
         iCal and add to the provided calendar.
     :kwarg enable_reminder: a boolean telling whether to add reminder
         for the meeting in the iCal object or not.
+    :kwarg reminders: a list of dictionaries, kwargs for instantiating
+        timedelta instances.
     """
     entry = ical.add('vevent')
     entry.add('summary').value = meeting.meeting_name
@@ -716,17 +718,8 @@ def add_meeting_to_vcal(ical, meeting, enable_reminder=False):
         entry.rruleset = newrule
 
     if enable_reminder:
-        # FIXME: This timedeltas could be part of conf or explicitly
-        #        mentioned by the caller. A policy decision to make.
-
-        # FIXME: I am adding multiple VALARM elements here because docs at
-        #        http://www.kanzaki.com/docs/ical/valarm.html do
-        #        say nothing about having multiple TRIGGERS inside a VALARM.
-        #        Also, REPEAT does not seem much useful as we are not reminding
-        #        regular intervals.
         for trigger in (
-                timedelta(days=-1), timedelta(hours=-1),
-                timedelta(minutes=-5)):
+                timedelta(**reminder) for reminder in reminders):
             valarm = entry.add('valarm')
             valarm.add('trigger').value = trigger
             valarm.add('action').value = 'DISPLAY'

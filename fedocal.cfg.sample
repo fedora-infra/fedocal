@@ -59,3 +59,6 @@ APP_URL = 'https://apps.fedoraproject.org/calendar/'
 ### In case of exception flask sends an email with some information to debug the
 ### problem. The email is sent to the address listed here.
 # EMAIL_ERROR = 'pingou@pingoured.fr'
+
+ICAL_REMINDERS = [{'days': -1}, {'hours': -1}, {'minutes': -5}]
+

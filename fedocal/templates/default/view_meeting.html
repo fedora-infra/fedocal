@@ -54,10 +54,16 @@
     {% endmacro %}
     <p>{{ _('Meeting organized by %(managers)s', managers=get_managers(meeting.meeting_manager)) }}</p>
 
-    <a href="{{ url_for('ical_calendar_meeting', meeting_id=meeting.meeting_id) }}"
+    <a id="ical-meeting-export" href="{{ url_for('ical_calendar_meeting', meeting_id=meeting.meeting_id) }}"
        title="{{ _('Add this meeting to your agenda') }}">
        {{ _('iCal export') }}
     </a>
+    <span>
+        <label for="ical-meeting-export-reminder-toggle">
+            <input id="ical-meeting-export-reminder-toggle" type="checkbox">
+            <em>{{ _('with reminder') }}</em>
+        </label>
+    </span>
 
     {% if editor %}
     <p>{{ _('Stored as:') }}</p>
@@ -138,6 +144,17 @@
             } else {
                 $(this).html('{{ _('Meeting is over!')|e }}');
             }
+        });
+
+        // Handle iCal meeting export with reminder toggle
+        $('#ical-meeting-export-reminder-toggle').change(function (e) {
+            var $icalExportLink = $('#ical-meeting-export');
+            if (this.checked)
+                $icalExportLink.attr(
+                    'href', $icalExportLink.attr('href') + '?reminder=1');
+            else
+                $icalExportLink.attr(
+                    'href', $icalExportLink.attr('href').split('?')[0]);
         });
     });
     </script>

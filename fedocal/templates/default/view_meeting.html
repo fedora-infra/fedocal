@@ -154,7 +154,7 @@
         });
 
         // Handle iCal meeting export with reminder toggle
-        $('#ical-meeting-export-reminder-toggle').change(function (e) {
+        $('#ical-meeting-export-reminder-toggle').on('change', function (e) {
             var $icalExportLink = $('#ical-meeting-export');
             var $icalReminderOptions = $('#ical-meeting-export-reminder-at');
             if (this.checked) {
@@ -170,7 +170,7 @@
         });
 
         // Handle change event in reminder options dropdown in iCal export
-        $('#ical-meeting-export-reminder-at').change(function (e) {
+        $('#ical-meeting-export-reminder-at').on('change', function (e) {
             var $this = $(this);
             var $icalExportLink = $('#ical-meeting-export');
             $icalExportLink.attr(

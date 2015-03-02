@@ -61,8 +61,15 @@
     <span>
         <label for="ical-meeting-export-reminder-toggle">
             <input id="ical-meeting-export-reminder-toggle" type="checkbox">
-            <em>{{ _('with reminder') }}</em>
+            <em>{{ _('with reminder before') }}</em>
         </label>
+        <select id="ical-meeting-export-reminder-at" disabled="disabled">
+            {% for option in reminder_at_options %}
+                <option value="{{ option[0] }}"{% if loop.index == 0 %} selected="selected"{% endif %}>
+                    {{ option[1] }}
+                </option>
+            {% endfor %}
+        </select>
     </span>
 
     {% if editor %}
@@ -149,12 +156,27 @@
         // Handle iCal meeting export with reminder toggle
         $('#ical-meeting-export-reminder-toggle').change(function (e) {
             var $icalExportLink = $('#ical-meeting-export');
-            if (this.checked)
+            var $icalReminderOptions = $('#ical-meeting-export-reminder-at');
+            if (this.checked) {
+                $icalReminderOptions.removeAttr('disabled');
                 $icalExportLink.attr(
-                    'href', $icalExportLink.attr('href') + '?reminder=1');
-            else
-                $icalExportLink.attr(
+                    'href', $icalExportLink.attr('href') + '?reminder_at=' +
+                    $icalReminderOptions.val());
+            } else {
+               $icalReminderOptions.attr('disabled', 'disabled');
+               $icalExportLink.attr(
                     'href', $icalExportLink.attr('href').split('?')[0]);
+            }
+        });
+
+        // Handle change event in reminder options dropdown in iCal export
+        $('#ical-meeting-export-reminder-at').change(function (e) {
+            var $this = $(this);
+            var $icalExportLink = $('#ical-meeting-export');
+            $icalExportLink.attr(
+                'href',
+                $icalExportLink.attr('href').split('?')[0] +
+                '?reminder_at=' + $this.val());
         });
     });
     </script>

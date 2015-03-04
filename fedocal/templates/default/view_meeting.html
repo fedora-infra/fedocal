@@ -160,7 +160,7 @@
             if (this.checked) {
                 $icalReminderOptions.removeAttr('disabled');
                 $icalExportLink.attr(
-                    'href', $icalExportLink.attr('href') + '?reminder_at=' +
+                    'href', $icalExportLink.attr('href') + '?reminder_delta=' +
                     $icalReminderOptions.val());
             } else {
                $icalReminderOptions.attr('disabled', 'disabled');
@@ -176,7 +176,7 @@
             $icalExportLink.attr(
                 'href',
                 $icalExportLink.attr('href').split('?')[0] +
-                '?reminder_at=' + $this.val());
+                '?reminder_delta=' + $this.val());
         });
     });
     </script>

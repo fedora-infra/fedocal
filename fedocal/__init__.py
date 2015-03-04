@@ -33,7 +33,6 @@ import datetime
 import logging
 import textwrap
 import os
-import re
 import urllib
 import urlparse
 from dateutil import parser
@@ -355,36 +354,6 @@ def validate_input_file(input_file):
         )
 
 
-def get_timedelta_from_str(timedelta_str):
-    '''
-    Returns datetime.timedelta instance parsed from a string, else None.
-
-    :arg timedelta_str: A string of the form '-1d2h3m1s'.
-    '''
-    m = re.match(
-        (
-            r'(?P<sign>-)?(?:(?P<days>\d+)d)?(?:(?P<hours>\d+)h)?'
-            r'(?:(?P<minutes>\d+)m)?(?:(?P<seconds>\d+)s)?'
-        ),
-        timedelta_str
-    )
-    if m is None:
-        return
-    sign, days, hours, minutes, seconds = [
-        (-1 if item == '-' else 1) if n == 0 else (
-            int(item) if item else 0
-        )
-        for n, item in enumerate(m.groups())]
-    if not (days or hours or minutes or second):
-        return
-    return sign * datetime.timedelta(
-        days=days,
-        hours=hours,
-        minutes=minutes,
-        seconds=seconds
-    )
-
-
 # Flask application
 @APP.route('/')
 def index():
@@ -652,11 +621,15 @@ def ical_calendar_meeting(meeting_id):
     if not meeting:
         return flask.abort(404)
     ical = vobject.iCalendar()
-    reminder_at_str = (flask.request.args.get('reminder_at') or '').strip()
-    fedocallib.add_meeting_to_vcal(
-        ical, meeting,
-        reminder=get_timedelta_from_str(reminder_at_str)
-    )
+    try:
+        reminder = datetime.timedelta(
+            minutes=-1 * int(
+                (flask.request.args.get('reminder_delta') or '').strip()
+            )
+        )
+    except ValueError:
+        reminder = None
+    fedocallib.add_meeting_to_vcal(ical, meeting, reminder=reminder)
     headers = {}
     filename = secure_filename('%s-%s-%s.ical' % (
         meeting.calendar_name, meeting.meeting_name,

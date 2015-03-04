@@ -73,7 +73,7 @@ LANGUAGES = {
 
 # Options for iCal remind before dropdown
 ICAL_REMINDER_AT_OPTIONS = (
-    ('-5m', '5 minutes'),
-    ('-1h', '1 hour'),
-    ('-1d', '1 day')
+    ('5', '5 minutes'),
+    ('60', '1 hour'),
+    ('1440', '1 day')
 )

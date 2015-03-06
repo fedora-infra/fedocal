@@ -716,6 +716,45 @@ class Fedocallibtests(Modeltests):
         self.assertEqual(len(meetings), 0)
         self.assertEqual(meetings, [])
 
+    def test_add_meeting_to_vcal(self):
+        """ Test the add_meeting_to_vcal function """
+        import vobject
+        calendar = vobject.iCalendar()
+        self.__setup_meeting()
+        meetings = fedocallib.get_future_single_meeting_of_user(
+            self.session, 'pingou', from_date=TODAY)
+        self.assertNotEqual(meetings, None)
+        self.assertEqual(len(meetings), 4)
+
+        # Test with reminder
+        meeting = meetings[0]
+        reminder = timedelta(hours=-1)
+
+        fedocallib.add_meeting_to_vcal(calendar, meeting, reminder)
+        self.assertEqual(len(calendar.vevent_list), 1)
+        event = calendar.vevent
+        self.assertEqual(event.summary.value, 'Fedora-fr-test-meeting')
+        self.assertEqual(event.organizer.value, 'pingou, shaiton')
+        self.assertEqual(len(event.valarm_list), 1)
+        self.assertEqual(event.valarm.action.value, 'DISPLAY')
+        self.assertEqual(
+            event.valarm.description.value,
+            (
+                '[test_calendar] [Fedocal] Reminder meeting: Fedora-'
+                'fr-test-meeting'
+            )
+        )
+        self.assertEqual(
+            event.valarm.trigger.value, reminder)
+
+        # Test without reminder
+        reminder = None
+        calendar = vobject.iCalendar()
+        fedocallib.add_meeting_to_vcal(calendar, meeting, reminder)
+        event = calendar.vevent
+        self.assertFalse(hasattr(event, 'valarm_list'))
+        self.assertFalse(hasattr(event, 'valarm'))
+
     def test_add_meetings_to_vcal(self):
         """ Test the add_meetings_to_vcal function. """
         import vobject

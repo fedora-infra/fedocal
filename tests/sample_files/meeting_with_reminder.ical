@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//PYVOBJECT//NONSGML Version 1//EN
+BEGIN:VEVENT
+UID:DUMMY_UID
+DTSTART:{start_datetime}
+DTEND:{end_datetime}
+DESCRIPTION:This is another test meeting
+ORGANIZER:pingou
+SUMMARY:test-meeting2
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:[test_calendar] [Fedocal] Reminder meeting: test-meeting2
+TRIGGER:-PT1H
+END:VALARM
+END:VEVENT
+END:VCALENDAR

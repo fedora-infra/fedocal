@@ -74,7 +74,8 @@ class Flasktests(Modeltests):
         """
         f = open(
             os.path.join(
-                os.path.dirname(__file__), 'sample_files/meeting.ical'
+                os.path.dirname(__file__),
+                'sample_files/{}'.format(filename)
             )
         )
         content = f.read()
@@ -432,6 +433,27 @@ class Flasktests(Modeltests):
         )
         self.assertEqual(data, expected_data)
 
+        # Test meeting iCal with reminder
+        expected_data = self.get_sample_file_content(
+            'meeting_with_reminder.ical').format(
+            start_datetime=datetime.combine(
+                meeting_obj.meeting_date,
+                meeting_obj.meeting_time_start).strftime(
+                    '%Y%m%dT%H%M%SZ'),
+            end_datetime=datetime.combine(
+                meeting_obj.meeting_date_end,
+                meeting_obj.meeting_time_stop).strftime(
+                    '%Y%m%dT%H%M%SZ')
+        )
+        output = self.app.get('/ical/calendar/meeting/2/?reminder_delta=60')
+        self.assertEqual(output.status_code, 200)
+        data = self.wrap_content(
+            output.data, replacements=[
+                (r'UID:.*\n', 'UID:DUMMY_UID\r\n')
+            ]
+        )
+        self.assertEqual(data, expected_data)
+
     def test_view_meeting(self):
         """ Test the view_meeting function. """
         self.__setup_db()
@@ -446,6 +468,10 @@ class Flasktests(Modeltests):
             in output.data)
         self.assertTrue(
             'This is a test meeting at the same time'
+            in output.data)
+        self.assertTrue('iCal export' in output.data)
+        self.assertTrue(
+            '<select id="ical-meeting-export-reminder-at"'
             in output.data)
 
     def test_view_meeting_page(self):

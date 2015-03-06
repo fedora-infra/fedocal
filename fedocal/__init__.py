@@ -1039,7 +1039,7 @@ def view_meeting_page(meeting_id, full):
         title=meeting.meeting_name,
         editor=editor,
         from_date=from_date,
-        reminder_at_options=APP.config.get('ICAL_REMINDER_AT_OPTIONS') or []
+        reminder_options=APP.config.get('ICAL_REMINDER_OPTIONS', [])
     )
 
 

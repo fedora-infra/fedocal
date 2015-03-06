@@ -58,19 +58,21 @@
        title="{{ _('Add this meeting to your agenda') }}">
        {{ _('iCal export') }}
     </a>
+    {% if reminder_options %}
     <span>
         <label for="ical-meeting-export-reminder-toggle">
             <input id="ical-meeting-export-reminder-toggle" type="checkbox">
             <em>{{ _('with reminder before') }}</em>
         </label>
         <select id="ical-meeting-export-reminder-at" disabled="disabled">
-            {% for option in reminder_at_options %}
+            {% for option in reminder_options %}
                 <option value="{{ option[0] }}"{% if loop.index == 0 %} selected="selected"{% endif %}>
                     {{ option[1] }}
                 </option>
             {% endfor %}
         </select>
     </span>
+    {% endif %}
 
     {% if editor %}
     <p>{{ _('Stored as:') }}</p>

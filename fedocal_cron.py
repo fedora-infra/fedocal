@@ -115,7 +115,7 @@ Source: %(host)s/meeting/%(id)s/
         'location': u'%s' % location,
         'description': u'%s' % meeting.meeting_information,
         'id': meeting_id,
-        'host': fedocal.APP.config['APP_URL'],
+        'host': fedocal.APP.config['SITE_URL'],
     })
 
     if meeting.reminder.reminder_text:

@@ -30,7 +30,10 @@ PATH_ALEMBIC_INI='/etc/fedocal/alembic.ini'
 
 ### The URL at which the project is available.
 ### This is used in the reminder email to give the appropriate link
-APP_URL = 'https://apps.fedoraproject.org/calendar/'
+### This is also used by flask to generate link with the proper protocol
+### (http/https)
+SITE_ROOT = 'https://apps.fedoraproject.org'
+SITE_URL = '%s/calendar' % SITE_ROOT
 
 ### Optional Configuration
 

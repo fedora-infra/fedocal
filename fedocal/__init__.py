@@ -689,7 +689,8 @@ def auth_logout():
     """ Method to log out from the application. """
     next_url = flask.url_for('index')
     if 'next' in flask.request.values:  # pragma: no cover
-        next_url = flask.request.values['next']
+        if is_safe_url(flask.request.args['next']):
+            next_url = flask.request.values['next']
 
     if next_url == flask.url_for('auth_login'):  # pragma: no cover
         next_url = flask.url_for('index')

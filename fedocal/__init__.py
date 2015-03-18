@@ -687,11 +687,19 @@ def auth_login():
 @APP.route('/logout/')
 def auth_logout():
     """ Method to log out from the application. """
-    if not authenticated():
-        return flask.redirect(flask.url_for('index'))
-    FAS.logout()
-    flask.flash(gettext('You have been logged out'))
-    return flask.redirect(flask.url_for('index'))
+    next_url = flask.url_for('index')
+    if 'next' in flask.request.values:  # pragma: no cover
+        if is_safe_url(flask.request.args['next']):
+            next_url = flask.request.values['next']
+
+    if next_url == flask.url_for('auth_login'):  # pragma: no cover
+        next_url = flask.url_for('index')
+
+    if authenticated():
+        FAS.logout()
+        flask.flash(gettext('You have been logged out'))
+
+    return flask.redirect(next_url)
 
 
 # CLA + 1 (and admin)

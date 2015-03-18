@@ -64,7 +64,8 @@ ALLOWED_MIMETYPES = [
 EMAIL_ERROR = 'pingou@pingoured.fr'
 
 # The URL at which the project is available.
-APP_URL = 'https://apps.fedoraproject.org/calendar/'
+SITE_ROOT = 'https://apps.fedoraproject.org'
+SITE_URL = '%s/calendar' % SITE_ROOT
 
 LANGUAGES = {
     'en': 'English',

@@ -98,6 +98,7 @@
             filename='jquery-ui.min-1.11.1.js') }}">
     </script>
     <script type="text/javascript">
+        FEDOCAL = {};
         function CopyToClipboard (text) {
             window.prompt('{{ _('Press CTRL+C, then ENTER')|e }}',
                          '{{ request.host_url }}' + text);

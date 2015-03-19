@@ -40,6 +40,7 @@ from logging.handlers import SMTPHandler
 
 import flask
 import bleach
+import jinja2
 import markdown
 import vobject
 from dateutil.relativedelta import relativedelta
@@ -71,6 +72,19 @@ babel = Babel(APP)
 
 if 'FEDOCAL_CONFIG' in os.environ:
     APP.config.from_envvar('FEDOCAL_CONFIG')
+
+# Use the templates
+# First we test the core templates directory
+# (contains stuff that users won't see)
+# Then we use the configured template directory
+templ_loaders = []
+templ_loaders.append(APP.jinja_loader)
+templ_loaders.append(jinja2.FileSystemLoader(os.path.join(
+    APP.root_path, APP.template_folder, APP.config['THEME_FOLDER'])))
+templ_loaders.append(jinja2.FileSystemLoader(os.path.join(
+    APP.root_path, APP.template_folder, 'default')))
+APP.jinja_loader = jinja2.ChoiceLoader(templ_loaders)
+
 
 # Points the template and static folders to the desired theme
 APP.template_folder = os.path.join(

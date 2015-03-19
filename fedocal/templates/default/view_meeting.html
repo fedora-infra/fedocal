@@ -54,9 +54,11 @@
     {% endmacro %}
     <p>{{ _('Meeting organized by %(managers)s', managers=get_managers(meeting.meeting_manager)) }}</p>
 
-    <a id="ical-meeting-export" href="{{ url_for('ical_calendar_meeting', meeting_id=meeting.meeting_id) }}"
-       title="{{ _('Add this meeting to your agenda') }}">
-       {{ _('iCal export') }}
+    <a href="{{ url_for('ical_calendar_meeting',
+        meeting_id=meeting.meeting_id) }}"
+        id="ical-meeting-export"
+        title="{{ _('Add this meeting to your agenda') }}">
+        {{ _('iCal export') }}
     </a>
     {% if reminder_options %}
     <span>

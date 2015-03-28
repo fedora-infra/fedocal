@@ -5,6 +5,8 @@
 
 {%block tag %}home{% endblock %}
 
+{% else %}
+    {% extends "base_partial.html" %}
 {% endif %}
 
 {% block content %}
@@ -107,138 +109,42 @@
         </a>
     </p>
     {% endif %}
-
-    {% if not full %}
-    {# We need to include this here, otherwise it won't work in the pop-up view #}
-    <script type="text/javascript"
-        src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
-    </script>
-
-    <script type="text/javascript">
-    $(function(){
-        var _date = Date.UTC(
-            {{next_meeting.meeting_date.year}},
-            {{next_meeting.meeting_date.month}} - 1,
-            {{next_meeting.meeting_date.day}},
-            {{next_meeting.meeting_time_start.hour }},
-            {{next_meeting.meeting_time_start.minute}}, 0);
-        $('#countdown').countdown(
-            new Date(_date),
-            function(event) {
-                $(this).html(
-                  event.strftime(
-                    '{{ _("Meeting in: %(weeks)s weeks %(days)s days %(time)s", weeks='%w', days='%d', time='%H:%M:%S') }}'
-                  )
-                );
-            }
-        ).on('finish.countdown', function(event){
-            var _end_date = Date.UTC(
-                {{next_meeting.meeting_date_end.year}},
-                {{next_meeting.meeting_date_end.month}} - 1,
-                {{next_meeting.meeting_date_end.day}},
-                {{next_meeting.meeting_time_stop.hour }},
-                {{next_meeting.meeting_time_stop.minute}},
-                0
-            );
-            var _current_date = new Date();
-            _current_date = Date.UTC(
-                _current_date.getUTCFullYear(),
-                _current_date.getUTCMonth(),
-                _current_date.getUTCDate(),
-                _current_date.getUTCHours(),
-                _current_date.getUTCMinutes(),
-                0
-            );
-
-            if ( _end_date > _current_date ) {
-                $(this).html('{{ _('Meeting in progress.')|e }}');
-            } else {
-                $(this).html('{{ _('Meeting is over!')|e }}');
-            }
-        });
-
-        // Handle iCal meeting export with reminder toggle
-        $('#ical-meeting-export-reminder-toggle').on('change', function (e) {
-            var $icalExportLink = $('#ical-meeting-export');
-            var $icalReminderOptions = $('#ical-meeting-export-reminder-at');
-            if (this.checked) {
-                $icalReminderOptions.removeAttr('disabled');
-                $icalExportLink.attr(
-                    'href', $icalExportLink.attr('href') + '?reminder_delta=' +
-                    $icalReminderOptions.val());
-            } else {
-               $icalReminderOptions.attr('disabled', 'disabled');
-               $icalExportLink.attr(
-                    'href', $icalExportLink.attr('href').split('?')[0]);
-            }
-        });
-
-        // Handle change event in reminder options dropdown in iCal export
-        $('#ical-meeting-export-reminder-at').on('change', function (e) {
-            var $this = $(this);
-            var $icalExportLink = $('#ical-meeting-export');
-            $icalExportLink.attr(
-                'href',
-                $icalExportLink.attr('href').split('?')[0] +
-                '?reminder_delta=' + $this.val());
-        });
-    });
-    </script>
-    {% endif %}
 </section>
 {% endblock %}
 
 
-{% if full %}
 {% block jscripts %}
 {{ super() }}
 <script type="text/javascript"
     src="{{ url_for('static', filename='jquery.countdown.min.js') }}">
 </script>
 <script type="text/javascript">
-$(function(){
-    var _date = Date.UTC(
-        {{next_meeting.meeting_date.year}},
-        {{next_meeting.meeting_date.month}} - 1,
-        {{next_meeting.meeting_date.day}},
-        {{next_meeting.meeting_time_start.hour }},
-        {{next_meeting.meeting_time_start.minute}}, 0);
-    $('#countdown').countdown(
-        new Date(_date),
-        function(event) {
-            $(this).html(
-              event.strftime(
-                '{{ _("Meeting in: %(weeks)s weeks %(days)s days %(time)s", weeks='%w', days='%d', time='%H:%M:%S') }}'
-              )
-            );
-        }
-    ).on('finish.countdown', function(event){
-            var _end_date = Date.UTC(
-                {{next_meeting.meeting_date_end.year}},
-                {{next_meeting.meeting_date_end.month}} - 1,
-                {{next_meeting.meeting_date_end.day}},
-                {{next_meeting.meeting_time_stop.hour }},
-                {{next_meeting.meeting_time_stop.minute}},
-                0
-            );
-            var _current_date = new Date();
-            _current_date = Date.UTC(
-                _current_date.getUTCFullYear(),
-                _current_date.getUTCMonth(),
-                _current_date.getUTCDate(),
-                _current_date.getUTCHours(),
-                _current_date.getUTCMinutes(),
-                0
-            );
-
-            if ( _end_date > _current_date ) {
-                $(this).html('<p>{{ _('Meeting in progress.')|e }}</p>');
-            } else {
-                $(this).html('<p>{{ _('Meeting is over!')|e }}</p>');
-            }
-        });
-});
+    FEDOCAL['NEXT_MEETING'] = {
+        startDate:  Date.UTC(
+            {{next_meeting.meeting_date.year}},
+            {{next_meeting.meeting_date.month}} - 1,
+            {{next_meeting.meeting_date.day}},
+            {{next_meeting.meeting_time_start.hour }},
+            {{next_meeting.meeting_time_start.minute}}, 0),
+        endDate:  Date.UTC(
+            {{next_meeting.meeting_date_end.year}},
+            {{next_meeting.meeting_date_end.month}} - 1,
+            {{next_meeting.meeting_date_end.day}},
+            {{next_meeting.meeting_time_stop.hour }},
+            {{next_meeting.meeting_time_stop.minute}},
+            0
+        )
+    };
+    FEDOCAL['MESSAGES'] = FEDOCAL.MESSAGES || {};
+    FEDOCAL['MESSAGES']['MEETING_IN_PROGRESS'] = "{{ _(
+        'Meeting in progress.')|e }}";
+    FEDOCAL['MESSAGES']['MEETING_IS_OVER'] = "{{ _('Meeting is over!')|e }}";
+    FEDOCAL['MESSAGES']['NEXT_MEETING_IN'] = '{{ _(
+        "Meeting in: %(weeks)s weeks %(days)s days %(time)s",
+        weeks='%w', days='%d', time='%H:%M:%S') }}';
+</script>
+<script type="text/javascript"
+    src="{{ url_for('static', filename='fedocal_meeting_details.js') }}">
 </script>
 {% endblock %}
 
-{% endif %}

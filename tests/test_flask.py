@@ -454,6 +454,18 @@ class Flasktests(Modeltests):
         )
         self.assertEqual(data, expected_data)
 
+        # Test non numeric value for numeric data
+        output = self.app.get('/ical/calendar/meeting/2/?reminder_delta=foo')
+        self.assertEqual(output.status_code, 200)
+        self.assertFalse('VALARM' in output.data)
+        self.assertEqual(data, expected_data)
+
+        # Test with a reminder_delta value not in the default choice
+        output = self.app.get('/ical/calendar/meeting/2/?reminder_delta=150')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('VALARM' in output.data)
+        self.assertTrue('TRIGGER:-PT2H30M' in output.data)
+
     def test_view_meeting(self):
         """ Test the view_meeting function. """
         self.__setup_db()

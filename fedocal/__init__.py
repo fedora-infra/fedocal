@@ -45,6 +45,7 @@ import markdown
 import vobject
 from dateutil.relativedelta import relativedelta
 from flask_fas_openid import FAS
+from flask_multistatic import MultiStaticFlask
 from functools import wraps
 from pytz import common_timezones
 from sqlalchemy.exc import SQLAlchemyError
@@ -63,7 +64,7 @@ from fedocal.fedocallib.model import (Calendar, Meeting)
 import fedocal.fedocallib.fedmsgshim as fedmsg
 
 # Create the application.
-APP = flask.Flask(__name__)
+APP = MultiStaticFlask(__name__)
 
 # set up FAS
 APP.config.from_object('fedocal.default_config')
@@ -87,12 +88,13 @@ APP.jinja_loader = jinja2.ChoiceLoader(templ_loaders)
 
 
 # Points the template and static folders to the desired theme
-APP.template_folder = os.path.join(
-    APP.template_folder, APP.config['THEME_FOLDER'])
-APP.static_folder = os.path.join(
-    APP.static_folder, APP.config['THEME_FOLDER'])
+APP.static_folder = [
+    os.path.join(APP.root_path, 'static', APP.config['THEME_FOLDER']),
+    os.path.join(APP.root_path, 'static', 'default')
+]
 
 FAS = FAS(APP)
+
 APP.wsgi_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 

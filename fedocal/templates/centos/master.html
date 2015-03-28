@@ -1,0 +1,118 @@
+{% from "_formhelpers.html" import render_field, render_field_invert,
+    render_field_in_row %}
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{% block title %}{% endblock %} - Centocal</title>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon"
+        href="{{ url_for('static', filename='favicon.ico')}}"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='koji.css') }}"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='fedocal.css') }}"/>
+    <link type="text/css" rel="stylesheet"
+        href="{{ url_for('static',
+            filename='fedocal/jquery-ui-1.11.1.min.css')}}" />
+    {% block header %}{% endblock %}
+  </head>
+  <body id="{% block tag %}{% endblock %}">
+
+    <div id="wrap">
+      <div id="innerwrap">
+
+        <!-- HEADER -->
+        <div id="header">
+          <img src="{{ url_for('static', filename='centocal-logo.png') }}"
+            alt="Centocal" id="kojiLogo"/>
+          <form action="{{url_for('search')}}" id="headerSearch">
+              <input type="text" name="keyword" title="{{ _("Search for meetings, you may use '*'") }}"/>
+              <input type="submit" value="{{ _('Search') }}"/>
+          </form>
+        </div><!-- end header -->
+
+        <!-- MAIN NAVIGATION -->
+        <div id="mainNav">
+          <h4 class="hide">{{ _('Main Site Links') }}</h4>
+          <ul>
+              <li id="homeTab"><a href="{{url_for('index')}}">{{ _('Home') }}</a></li>
+              <li id="locationsTab"><a href="{{url_for('locations')}}">{{ _('Locations') }}</a></li>
+              <li id="apiTab"><a href="{{url_for('api')}}">{{ _('API') }}</a></li>
+            {% if g.fas_user %}
+            <li id="mymeetingTab"><a href="{{url_for('my_meetings')}}">{{ _('My meetings') }}</a></li>
+            {% endif %}
+            {% if admin %}
+            <li id="adminTab"><a href="{{url_for('admin')}}">{{ _('Admin') }}</a></li>
+            {% endif %}
+          </ul>
+        </div><!-- end mainNav -->
+
+        <span id="loginInfo">
+          {% if g.fas_user %}
+          <span class="text">{{ _('logged in as') }} </span>
+            <a href="{{url_for('my_meetings',)}}">{{ g.fas_user.username }}</a> |
+            <a href="{{ url_for('auth_logout') }}?next={{request.url}}">{{ _('log out') }}</a>
+          {% else %}
+          <a href="{{ url_for('auth_login') }}?next={{request.url}}">{{ _('login') }}</a>
+          {% endif %}
+        </span>
+
+        <div id="content">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if category, messages %}
+                <ul id="flashes">
+                    {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+        </div>
+
+        <p id="footer">
+          Copyright &copy; 2012-2014 Red Hat
+          <a href="https://fedorahosted.org/fedocal/">fedocal</a>
+          -- {{version}}
+          -- <a href="http://fedocal.rtfd.org"
+              target="_blank">{{ _('Documentation') }}</a>
+          -- <a href="http://fedocal.readthedocs.org/en/latest/contributors.html">{{ _('Authors') }}</a>
+          -- <a href="{{ url_for('api') }}">{{ _('API') }}</a>
+        </p>
+
+      </div>
+    </div>
+
+    {% block sidebar %}{% endblock %}
+
+    {% block jscripts %}
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery-1.10.2.js') }}">
+    </script>
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery-ui.min-1.11.1.js') }}">
+    </script>
+    <script type="text/javascript">
+        function CopyToClipboard (text) {
+            window.prompt('{{ _('Press CTRL+C, then ENTER')|e }}',
+                         '{{ request.host_url }}' + text);
+            return false;
+        }
+        $(".toDisable").on("click", function (){document.location = this.href;});
+        $(function(){
+            $('#calendars_menu').menu();
+            $('.button').button();
+            $('#accordion').accordion({
+                heightStyle: 'content',
+                collapsible: true
+            });
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

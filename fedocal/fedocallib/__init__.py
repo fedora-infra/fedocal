@@ -666,7 +666,7 @@ def retrieve_meeting_to_remind(session, offset=30):
     return meetings
 
 
-def add_meeting_to_vcal(ical, meeting):
+def add_meeting_to_vcal(ical, meeting, reminder=None):
     """ Convert a Meeting object into iCal object and add it to the
     provided calendar.
 
@@ -674,6 +674,7 @@ def add_meeting_to_vcal(ical, meeting):
         be added.
     :arg meeting: a single fedocal.model.Meeting object to convert to
         iCal and add to the provided calendar.
+    :kwarg reminder: None or a datetime.timedelta instance.
     """
     entry = ical.add('vevent')
     entry.add('summary').value = meeting.meeting_name
@@ -713,8 +714,17 @@ def add_meeting_to_vcal(ical, meeting):
                 until=meeting.recursion_ends))
         entry.rruleset = newrule
 
+    if reminder:
+        valarm = entry.add('valarm')
+        valarm.add('trigger').value = reminder
+        valarm.add('action').value = 'DISPLAY'
+        valarm.add('description').value = (
+            '[{calendar_name}] [Fedocal] Reminder meeting: {meeting_name}'
+        ).format(calendar_name=meeting.calendar_name,
+                 meeting_name=meeting.meeting_name)
 
-def add_meetings_to_vcal(ical, meetings):
+
+def add_meetings_to_vcal(ical, meetings, reminder=None):
     """ Convert the Meeting objects into iCal object and add them to
     the provided calendar.
 
@@ -722,9 +732,10 @@ def add_meetings_to_vcal(ical, meetings):
         be added.
     :arg meetings: a list of fedocal.model.Meeting object to convert to
         iCal and add to the provided calendar.
+    :kwarg reminder: None or a datetime.timedelta instance.
     """
     for meeting in meetings:
-        add_meeting_to_vcal(ical, meeting)
+        add_meeting_to_vcal(ical, meeting, reminder)
 
 
 def get_html_monthly_cal(

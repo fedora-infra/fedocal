@@ -621,7 +621,15 @@ def ical_calendar_meeting(meeting_id):
     if not meeting:
         return flask.abort(404)
     ical = vobject.iCalendar()
-    fedocallib.add_meeting_to_vcal(ical, meeting)
+    try:
+        reminder = datetime.timedelta(
+            minutes=-1 * int(
+                (flask.request.args.get('reminder_delta') or '').strip()
+            )
+        )
+    except ValueError:
+        reminder = None
+    fedocallib.add_meeting_to_vcal(ical, meeting, reminder=reminder)
     headers = {}
     filename = secure_filename('%s-%s-%s.ical' % (
         meeting.calendar_name, meeting.meeting_name,
@@ -1038,7 +1046,9 @@ def view_meeting_page(meeting_id, full):
         tzone=tzone,
         title=meeting.meeting_name,
         editor=editor,
-        from_date=from_date)
+        from_date=from_date,
+        reminder_options=APP.config.get('ICAL_REMINDER_OPTIONS', [])
+    )
 
 
 @APP.route('/meeting/delete/<int:meeting_id>/', methods=('GET', 'POST'))

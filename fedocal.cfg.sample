@@ -62,3 +62,11 @@ SITE_URL = '%s/calendar' % SITE_ROOT
 ### In case of exception flask sends an email with some information to debug the
 ### problem. The email is sent to the address listed here.
 # EMAIL_ERROR = 'pingou@pingoured.fr'
+
+### Options for iCal remind before dropdown
+ICAL_REMINDER_OPTIONS = (
+    ('5', '5 minutes'),
+    ('60', '1 hour'),
+    ('1440', '1 day')
+)
+

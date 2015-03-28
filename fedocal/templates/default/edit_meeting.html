@@ -213,22 +213,19 @@
     });
 
     var cb = $('#full_day')
-    var tz = $('#meeting_timezone');
-    if(cb.checked) {
+    var tz = $('#meeting_timezone').parent().parent();
+    if(cb.prop('checked')) {
       tz.val('UTC');
-      tz.attr('disabled', true);
-      tz.addClass('ui-state-disabled');
+      tz.hide();
     };
 
     $('#full_day').click(function() {
-      var tz = $('#meeting_timezone');
+      var tz = $('#meeting_timezone').parent().parent();
       if(this.checked == false) {
-          tz.removeAttr('disabled');
-          tz.removeClass('ui-state-disabled');
+        tz.show();
       } else {
-          tz.val('UTC');
-          tz.attr('disabled', true);
-          tz.addClass('ui-state-disabled');
+        tz.val('UTC');
+        tz.hide();
       };
     });
   });

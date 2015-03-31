@@ -443,7 +443,8 @@ def calendar(calendar_name, year=None, month=None, day=None, mid=None):
         next_week=next_week,
         prev_week=prev_week,
         curmonth_cal=curmonth_cal,
-        calendar_admin=is_calendar_admin(calendarobj))
+        calendar_admin=is_calendar_admin(calendarobj),
+        calendar_editor=is_calendar_manager(calendarobj))
 
 
 @APP.route('/list/<calendar_name>/')

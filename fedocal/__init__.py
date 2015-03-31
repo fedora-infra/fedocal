@@ -764,6 +764,12 @@ def add_calendar():
 @APP.route('/<calendar_name>/add/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def add_meeting(calendar_name):
+    return add_meeting_page(calendar_name, True)
+
+
+@APP.route('/<calendar_name>/add/<int:full>/', methods=('GET', 'POST'))
+@cla_plus_one_required
+def add_meeting_page(calendar_name, full):
     """ Add a meeting to the database.
     This function is only available to CLA+1 member or members of the
     group administrating of the said calendar.
@@ -866,7 +872,11 @@ def add_meeting(calendar_name):
         form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
 
     return flask.render_template(
-        'add_meeting.html', calendar=calendarobj, form=form, tzone=tzone)
+        'add_meeting.html',
+        calendar=calendarobj,
+        form=form,
+        tzone=tzone,
+        full=full)
 
 
 # pylint: disable=R0915,R0912,R0911

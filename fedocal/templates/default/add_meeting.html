@@ -18,7 +18,8 @@
         <p>{{ _('Please enter your meeting details in the above form.') }}</p>
     </header>
 
-    <form action="" method="post">
+    <form action="{{ url_for('add_meeting',
+                    calendar_name=calendar.calendar_name) }}" method="post">
         <table>
             {{ render_field_in_row(form.meeting_name) }}
             {{ render_field_in_row(form.meeting_date) }}

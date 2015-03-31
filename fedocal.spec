@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.12
+Version:        0.13
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -118,6 +118,16 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Tue Mar 31 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.13-1
+- Update to 0.13
+- Add the possibility to get an iCal feed for a single meeting
+  (Ratnadeep Debnath)
+- Add the possibility to have client side reminder via the iCal feed
+  (Ratnadeep Debnath)
+- Hide the timezone on full-day meetings instead of de-activating it
+- Fix the domain name of the fedoraproject aliases
+- Allow adding meeting by clicking on the calendar matrix
+
 * Tue Jan 20 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.12-1
 - Update to 0.12
 - Drop the hard-coded red * from the form fields and set them in the templates

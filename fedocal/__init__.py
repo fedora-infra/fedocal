@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
- (c) 2012-2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
+ (c) 2012-2015 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website
@@ -27,7 +27,7 @@
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
-__version__ = '0.12'
+__version__ = '0.13'
 
 import datetime
 import logging

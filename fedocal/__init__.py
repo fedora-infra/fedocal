@@ -883,8 +883,7 @@ def add_meeting_page(calendar_name, full):
                 hours = int(hours) + 1
             except:
                 pass
-            if hours >= 24:
-                hours = 0
+            hours = hours % 24
             end_time = '%s:%s' % (hours, minutes)
             form.meeting_time_stop.data = end_time
 

@@ -480,7 +480,7 @@ else %}{{ location }}{% endif %}{% endblock %}
             view_meeting(_url, _meetId);
             return false;
         });
-        {% if g.fas_user %}
+        {% if g.fas_user and calendar_admin %}
         $('.row_height').click(function(){
             var _row = $(this).parent().parent();
             var _date = $(this).parent().attr('data-date');

@@ -188,11 +188,11 @@ else %}{{ location }}{% endif %}{% endblock %}
 
     </aside>
     <div id='agenda'>
-    {% macro render_meetings(meeting_list, loopidx, prev_meetings, next_meetings) -%}
+    {% macro render_meetings(meeting_list, loopidx, prev_meetings, next_meetings, time) -%}
       {% if loopidx == day_index %}
-          <td class="today">
+          <td class="today" data-date="{{ weekdays[loopidx] }}", data-time="{{ time }}">
       {% else %}
-          <td>
+          <td  data-date="{{ weekdays[loopidx] }}" data-time="{{ time }}">
       {% endif %}
 
       {% if meeting_list %}
@@ -298,12 +298,14 @@ else %}{{ location }}{% endif %}{% endblock %}
                   {{ render_meetings(meeting_list,
                                      loop.index,
                                      [],
-                                     meetings[keys[cnt]]) }}
+                                     meetings[keys[cnt]],
+                                     keys[cnt -1]) }}
                   {% else %}
                   {{ render_meetings(meeting_list,
                                      loop.index,
                                      meetings[keys[cnt - 2]],
-                                     meetings[keys[cnt]]) }}
+                                     meetings[keys[cnt]],
+                                     keys[cnt -1]) }}
                   {% endif %}
               {% endfor %}
           </tr>
@@ -315,7 +317,8 @@ else %}{{ location }}{% endif %}{% endblock %}
                   {{ render_meetings(meeting_list,
                                      loop.index,
                                      meetings['23h00'],
-                                     None) }}
+                                     None,
+                                     '23h30') }}
               {% endfor %}
               {% endif %}
           </tr>

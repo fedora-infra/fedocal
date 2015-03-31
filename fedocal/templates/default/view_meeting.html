@@ -51,7 +51,7 @@
     {% endif %}
 
     {% macro get_managers(managers) %}
-        {% for manager in managers %}<a href="mailto:{{manager}}@fedorapeople.org">{{ manager }}</a>
+        {% for manager in managers %}<a href="mailto:{{manager}}@fedoraproject.org">{{ manager }}</a>
         {%- if not loop.last %},{% endif %}{% endfor %}.
     {% endmacro %}
     <p>{{ _('Meeting organized by %(managers)s', managers=get_managers(meeting.meeting_manager)) }}</p>

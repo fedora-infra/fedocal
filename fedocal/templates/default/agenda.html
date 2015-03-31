@@ -442,6 +442,30 @@ else %}{{ location }}{% endif %}{% endblock %}
         });
     }
 
+    function add_meeting(_url){
+        $.ajax({
+            url: _url,
+            type: 'GET',
+            dataType: 'html',
+            success: function(res) {
+                var _elt = $('<div title="{{ _('Add Meeting')|e }}" id="add_meeting">' + res + '</div>');
+                var _height = $(window).height() * 0.8;
+                _elt.dialog({
+                    height: _height,
+                    width: '75%',
+                    modal: true,
+                    cache: false,
+                    close: function() {
+                        $(this).html("");
+                    },
+                });
+            },
+            error: function() {
+                alert('{{ _('Unable to retrieve selected meeting!')|e }}');
+            }
+        });
+    }
+
     $(function(){
         $('.event_blue').click(function(){
             var _cls = $(this).attr('class');
@@ -454,6 +478,30 @@ else %}{{ location }}{% endif %}{% endblock %}
                 _url = _url + '?' + _comp;
             }
             view_meeting(_url, _meetId);
+            return false;
+        });
+        $('.row_height').click(function(){
+            var _row = $(this).parent().parent();
+            var _date = $(this).parent().attr('data-date');
+            var _time = $(this).parent().attr('data-time');;
+            _time = _time.replace('h', ':');
+            var _opt = '';
+            if (_time){
+                _opt += 'time=' + _time;
+            }
+            if (_date){
+                if (_opt){
+                    _opt += '&';
+                }
+                _opt += 'date=' + _date;
+            }
+
+            var _url = "{{ url_for('add_meeting_page',
+                calendar_name=calendar.calendar_name, full=0) }}";
+            if (_opt){
+                _url += '?' + _opt;
+            }
+            add_meeting(_url);
             return false;
         });
     });

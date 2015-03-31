@@ -843,7 +843,7 @@ def add_meeting_page(calendar_name, full=True):
                 full_day=form.full_day.data,
                 admin=is_admin())
         except FedocalException, err:
-            flask.flash(err, 'warnings')
+            flask.flash(str(err), 'warnings')
             return flask.render_template(
                 'add_meeting.html', calendar=calendarobj, form=form,
                 tzone=tzone, full=full)

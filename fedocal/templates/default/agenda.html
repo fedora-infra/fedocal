@@ -334,12 +334,14 @@ else %}{{ location }}{% endif %}{% endblock %}
 {% if calendar %}
   <aside id="shortmenu">
     <ul>
+      {% if calendar_editor %}
       <li>
         <a href="{{ url_for('add_meeting',
                             calendar_name=calendar.calendar_name) }}">
             <img src="{{ url_for('static', filename='plus.png') }}" title="{{ _('Add meeting') }}" alt="{{ _('Add meeting') }}" />
         </a>
       </li>
+      {% endif %}
       <li>
         <a href="{{ url_for('calendar_list',
                             calendar_name=calendar.calendar_name) }}">

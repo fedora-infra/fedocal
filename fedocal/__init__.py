@@ -876,7 +876,7 @@ def add_meeting_page(calendar_name, full):
             form.meeting_date_end.data = parser.parse(mtg_date).date()
 
         mtg_time = flask.request.args.get('time', None)
-        if mtg_time:
+        if mtg_time and str(mtg_time[-2:]) in ['00', '30']:
             form.meeting_time_start.data = mtg_time
             hours, minutes = mtg_time.split(':')[:2]
             try:

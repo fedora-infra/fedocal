@@ -870,6 +870,23 @@ def add_meeting_page(calendar_name, full):
             day=form.meeting_date.data.day))
     elif flask.request.method == 'GET':
         form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
+        mtg_date = flask.request.args.get('date', None)
+        if mtg_date:
+            form.meeting_date.data = parser.parse(mtg_date).date()
+            form.meeting_date_end.data = parser.parse(mtg_date).date()
+
+        mtg_time = flask.request.args.get('time', None)
+        if mtg_time:
+            form.meeting_time_start.data = mtg_time
+            hours, minutes = mtg_time.split(':')[:2]
+            try:
+                hours = int(hours) + 1
+            except:
+                pass
+            if hours >= 24:
+                hours = 0
+            end_time = '%s:%s' % (hours, minutes)
+            form.meeting_time_stop.data = end_time
 
     return flask.render_template(
         'add_meeting.html',

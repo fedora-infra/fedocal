@@ -1,10 +1,17 @@
+{% if full %}
 {% extends "master.html" %}
-{% from "_formhelpers.html" import render_field %}
 
 {% block title %}{{ _('Add meeting') }}{% endblock %}
 {%block tag %}home{% endblock %}
 
+{% else %}
+    {% extends "base_partial.html" %}
+{% endif %}
+
+
 {% block content %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
 <section>
     <header>
         <h2>{{ _('New meeting') }}</h2>

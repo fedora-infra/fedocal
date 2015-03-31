@@ -480,6 +480,7 @@ else %}{{ location }}{% endif %}{% endblock %}
             view_meeting(_url, _meetId);
             return false;
         });
+        {% if g.fas_user %}
         $('.row_height').click(function(){
             var _row = $(this).parent().parent();
             var _date = $(this).parent().attr('data-date');
@@ -504,6 +505,7 @@ else %}{{ location }}{% endif %}{% endblock %}
             add_meeting(_url);
             return false;
         });
+        {% endif %}
     });
 
     $(window.onload=function(){

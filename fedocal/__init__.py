@@ -764,6 +764,12 @@ def add_calendar():
 @APP.route('/<calendar_name>/add/', methods=('GET', 'POST'))
 @cla_plus_one_required
 def add_meeting(calendar_name):
+    return add_meeting_page(calendar_name, True)
+
+
+@APP.route('/<calendar_name>/add/<int:full>/', methods=('GET', 'POST'))
+@cla_plus_one_required
+def add_meeting_page(calendar_name, full):
     """ Add a meeting to the database.
     This function is only available to CLA+1 member or members of the
     group administrating of the said calendar.
@@ -864,9 +870,29 @@ def add_meeting(calendar_name):
             day=form.meeting_date.data.day))
     elif flask.request.method == 'GET':
         form = forms.AddMeetingForm(timezone=tzone, calendars=calendars)
+        mtg_date = flask.request.args.get('date', None)
+        if mtg_date:
+            form.meeting_date.data = parser.parse(mtg_date).date()
+            form.meeting_date_end.data = parser.parse(mtg_date).date()
+
+        mtg_time = flask.request.args.get('time', None)
+        if mtg_time and str(mtg_time[-2:]) in ['00', '30']:
+            form.meeting_time_start.data = mtg_time
+            hours, minutes = mtg_time.split(':')[:2]
+            try:
+                hours = int(hours) + 1
+            except:
+                pass
+            hours = hours % 24
+            end_time = '%s:%s' % (hours, minutes)
+            form.meeting_time_stop.data = end_time
 
     return flask.render_template(
-        'add_meeting.html', calendar=calendarobj, form=form, tzone=tzone)
+        'add_meeting.html',
+        calendar=calendarobj,
+        form=form,
+        tzone=tzone,
+        full=full)
 
 
 # pylint: disable=R0915,R0912,R0911

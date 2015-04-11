@@ -35,7 +35,7 @@ from sqlalchemy.orm import scoped_session
 from fedocal.fedocallib.week import Week
 from fedocal.fedocallib.model import (
     CalendarStatus, Calendar, Reminder, Meeting)
-import dbaction as dbaction
+from fedocal.fedocallib import dbaction
 from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 
 from fedocal.fedocallib.fedora_calendar import FedocalCalendar
@@ -375,9 +375,9 @@ def format_week_meeting(meeting_list, tzone, week_start):
 
         t_time = startdt
         while t_time < stopdt:
+            nweek = week_start + timedelta(days=7)
             if t_time < week_start \
-                    or t_time >= (week_start + timedelta(days=7)
-                                  ):  # pragma: no cover
+                    or t_time >= nweek:  # pragma: no cover
                 # Skip meeting start or ending in another week
                 t_time = t_time + timedelta(minutes=30)
                 continue
@@ -581,9 +581,7 @@ def delete_recursive_meeting(
     cnt = 0
     while meeting_date < del_date:
         if meeting.recursion_ends < meeting_date + \
-                timedelta(
-                    days=meeting.recursion_frequency
-                ):
+                timedelta(days=meeting.recursion_frequency):
             break
         meeting_date = meeting.meeting_date + timedelta(
             days=meeting.recursion_frequency * cnt)
@@ -871,8 +869,9 @@ def add_meeting(
     and then add the desired meeting.
     """
     if not is_user_managing_in_calendar(
-            session, calendarobj.calendar_name, fas_user
-            ) and not admin:  # pragma: no cover
+            session,
+            calendarobj.calendar_name,
+            fas_user) and not admin:  # pragma: no cover
         raise UserNotAllowed(
             gettext(
                 'You are not allowed to add a meeting to this calendar'
@@ -1271,33 +1270,28 @@ def update_date_rec_meeting(meeting, action='last', date_limit=None):
 
     if meeting.recursion_frequency and meeting.recursion_ends:
         meetingobj = Meeting.copy(meeting)
+        delta = timedelta(days=meetingobj.recursion_frequency)
         while meetingobj.meeting_date < date_limit:
             if meetingobj.recursion_ends < meetingobj.meeting_date + \
-                    timedelta(
-                        days=meetingobj.recursion_frequency
-                    ):  # pragma: no cover
+                    delta:  # pragma: no cover
                 break
-            meetingobj.meeting_date = meetingobj.meeting_date + \
-                timedelta(days=meetingobj.recursion_frequency)
-            meetingobj.meeting_date_end = meetingobj.meeting_date_end + \
-                timedelta(days=meetingobj.recursion_frequency)
+            meetingobj.meeting_date = meetingobj.meeting_date + delta
+            meetingobj.meeting_date_end = meetingobj.meeting_date_end + delta
         meetingobj.meeting_manager_user = meeting.meeting_manager_user
 
         if action == 'closest':
-            last_date = meetingobj.meeting_date - \
-                timedelta(days=meetingobj.recursion_frequency)
+            last_date = meetingobj.meeting_date - delta
             delta_before = last_date - date_limit
             delta_after = meetingobj.meeting_date - date_limit
             if abs(delta_before) < abs(delta_after):
                 action = 'last'
 
         if action == 'last':
-            last_date = meetingobj.meeting_date - \
-                timedelta(days=meetingobj.recursion_frequency)
+            last_date = meetingobj.meeting_date - delta
             if meeting.meeting_date < last_date:
                 meetingobj.meeting_date = last_date
                 meetingobj.meeting_date_end = meetingobj.meeting_date_end - \
-                    timedelta(days=meetingobj.recursion_frequency)
+                    delta
 
         meeting = meetingobj
 

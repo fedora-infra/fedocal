@@ -25,7 +25,7 @@
 """
 
 from flask.ext import wtf
-from fedocal.fedocal_babel import get_locale, gettext, ngettext
+from fedocal.fedocal_babel import gettext, ngettext
 
 
 class Translations(object):

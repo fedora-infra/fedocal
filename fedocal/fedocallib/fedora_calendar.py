@@ -108,11 +108,11 @@ class FedocalCalendar(LocaleHTMLCalendar):
         Return a month name as a table row.
         """
 
-        locale = self.locale
+        lcle = self.locale
         if self.locale in ['en', 'en_EN']:
-            locale = 'C'
+            lcle = 'C'
 
-        with TimeEncoding(locale) as encoding:
+        with TimeEncoding(lcle) as encoding:
             smonth = month_name[themonth]
             if encoding is not None:
                 smonth = smonth.decode(encoding)

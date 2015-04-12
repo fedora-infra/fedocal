@@ -29,10 +29,8 @@ from sqlalchemy import (
     Date,
     Enum,
     ForeignKey,
-    ForeignKeyConstraint,
     Integer,
     String,
-    Table,
     Text,
     Time,
 )
@@ -278,6 +276,8 @@ class User(BASE):
 
 
 class MeetingsUsers(BASE):
+    """ Table linking meetings with users. """
+
     __tablename__ = 'meetings_users'
     username = Column(
         String(50),
@@ -1116,8 +1116,8 @@ class Reminder(BASE):
 
     __tablename__ = 'reminders'
     reminder_id = Column(Integer, primary_key=True)
-    reminder_offset = Column(Enum(
-        'H-12', 'H-24', 'H-48', 'H-168', name='reminder_offset'),
+    reminder_offset = Column(
+        Enum('H-12', 'H-24', 'H-48', 'H-168', name='reminder_offset'),
         nullable=False)
     reminder_to = Column(String(500), nullable=False)
     reminder_from = Column(String(100), nullable=False)
@@ -1158,7 +1158,8 @@ if __name__ == '__main__':  # pragma: no cover
     if os.path.exists('/etc/fedocal.cfg'):
         CONFIG.readfp(open('/etc/fedocal.cfg'))
     else:
-        CONFIG.readfp(open(os.path.join(os.path.dirname(
-            os.path.abspath(__file__)),
-            '..', 'fedocal.cfg')))
+        CONFIG.readfp(
+            open(os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                '..', 'fedocal.cfg')))
     create_tables(CONFIG.get('fedocal', 'db_url'), True)

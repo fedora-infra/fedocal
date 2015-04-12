@@ -25,7 +25,6 @@
  MA 02110-1301, USA.
 """
 
-import os
 from babel import support
 
 try:
@@ -40,10 +39,10 @@ except ImportError:
         except KeyError:
             return string
 
-    def ngettext(singular, plural, n, **variables):
+    def ngettext(singular, plural, num, **variables):
         """Wrapper for ngettext functions, if flask-babel is missing"""
-        variables['num'] = n
-        if n == 1:
+        variables['num'] = num
+        if num == 1:
             return gettext(singular, **variables)
         else:
             return gettext(plural, **variables)
@@ -74,5 +73,5 @@ except ImportError:
                 newstyle=True
             )
 
-        def localeselector(self, f):
-            return f
+        def localeselector(self, func):
+            return func

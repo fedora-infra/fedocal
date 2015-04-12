@@ -96,6 +96,7 @@ class ContextInjector(logging.Filter):
 
     @staticmethod
     def get_current_process():
+        ''' Find out the PID of the current process. '''
         mypid = os.getpid()
 
         if not psutil:

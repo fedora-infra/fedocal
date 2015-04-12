@@ -16,7 +16,7 @@ license.
 """
 
 from datetime import date
-import model
+from fedocal.fedocallib import  model
 
 
 def add_reminder(

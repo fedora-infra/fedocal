@@ -499,7 +499,7 @@ else %}{{ location }}{% endif %}{% endblock %}
                 _opt += 'date=' + _date;
             }
 
-            var _url = "{{ url_for('add_meeting_page',
+            var _url = "{{ url_for('add_meeting',
                 calendar_name=calendar.calendar_name, full=0) }}";
             if (_opt){
                 _url += '?' + _opt;

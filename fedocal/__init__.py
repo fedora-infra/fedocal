@@ -99,6 +99,9 @@ import fedocal.api
 
 
 def authenticated():
+    ''' Simple utility method returning whether the user in the current requests
+    has authenticated or not.
+    '''
     return hasattr(flask.g, 'fas_user') and flask.g.fas_user
 
 
@@ -568,8 +571,9 @@ def ical_all():
             SESSION, calendarobj, startd, endd, extended=False))
     fedocallib.add_meetings_to_vcal(ical, meetings)
     headers = {}
-    filename = secure_filename('all_calendars-%s.ical' % (
-        datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
+    filename = secure_filename(
+        'all_calendars-%s.ical' % (
+            datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
     )
     headers["Content-Disposition"] = "attachment; filename=%s" % filename
     return flask.Response(
@@ -598,9 +602,10 @@ def ical_out(calendar_name):
     ical = vobject.iCalendar()
     fedocallib.add_meetings_to_vcal(ical, meetings)
     headers = {}
-    filename = secure_filename('%s-%s.ical' % (
-        calendar_name,
-        datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
+    filename = secure_filename(
+        '%s-%s.ical' % (
+            calendar_name,
+            datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
     )
     headers["Content-Disposition"] = "attachment; filename=%s" % filename
     output = ical.serialize()
@@ -632,9 +637,10 @@ def ical_calendar_meeting(meeting_id):
         reminder = None
     fedocallib.add_meeting_to_vcal(ical, meeting, reminder=reminder)
     headers = {}
-    filename = secure_filename('%s-%s-%s.ical' % (
-        meeting.calendar_name, meeting.meeting_name,
-        datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
+    filename = secure_filename(
+        '%s-%s-%s.ical' % (
+            meeting.calendar_name, meeting.meeting_name,
+            datetime.datetime.utcnow().strftime('%Y-%m-%d %Hh%M'))
     )
     headers["Content-Disposition"] = "attachment; filename=%s" % filename
     output = ical.serialize()
@@ -681,9 +687,9 @@ def auth_login():
         return flask.redirect(return_point)
 
     groups = set()
-    for calendar in fedocallib.get_calendars(SESSION):
-        groups.update(calendar.admin_groups)
-        groups.update(calendar.editor_groups)
+    for cal in fedocallib.get_calendars(SESSION):
+        groups.update(cal.admin_groups)
+        groups.update(cal.editor_groups)
 
     if isinstance(APP.config['ADMIN_GROUP'], basestring):
         groups.update([APP.config['ADMIN_GROUP']])
@@ -721,8 +727,9 @@ def add_calendar():
     if not authenticated():  # pragma: no cover
         return flask.redirect(flask.url_for('index'))
     if not is_admin():
-        flask.flash(gettext('You are not a fedocal admin, you are not allowed '
-                    'to add calendars.'), 'errors')
+        flask.flash(gettext(
+            'You are not a fedocal admin, you are not allowed '
+            'to add calendars.'), 'errors')
         return flask.redirect(flask.url_for('index'))
 
     status = fedocallib.get_calendar_statuses(SESSION)
@@ -763,14 +770,9 @@ def add_calendar():
 # pylint: disable=R0915,R0912,R0911
 # CLA + 1
 @APP.route('/<calendar_name>/add/', methods=('GET', 'POST'))
-@cla_plus_one_required
-def add_meeting(calendar_name):
-    return add_meeting_page(calendar_name, True)
-
-
 @APP.route('/<calendar_name>/add/<int:full>/', methods=('GET', 'POST'))
 @cla_plus_one_required
-def add_meeting_page(calendar_name, full=True):
+def add_meeting(calendar_name, full=True):
     """ Add a meeting to the database.
     This function is only available to CLA+1 member or members of the
     group administrating of the said calendar.
@@ -792,12 +794,13 @@ def add_meeting_page(calendar_name, full=True):
     calendars = Calendar.get_all(SESSION)
 
     if calendarobj.calendar_status != 'Enabled':
-        flask.flash(gettext(
-            'This calendar is "%(status)s", you are not allowed to '
-            'add meetings anymore.', status=calendarobj.calendar_status),
+        flask.flash(
+            gettext(
+                'This calendar is "%(status)s", you are not allowed to '
+                'add meetings anymore.', status=calendarobj.calendar_status),
             'errors')
-        return flask.redirect(flask.url_for('calendar',
-                              calendar_name=calendar_name))
+        return flask.redirect(
+            flask.url_for('calendar', calendar_name=calendar_name))
 
     if not is_calendar_manager(calendarobj):
         flask.flash(gettext(
@@ -917,19 +920,21 @@ def edit_meeting(meeting_id):
     calendarobj = Calendar.by_id(SESSION, meeting.calendar_name)
 
     if calendarobj.calendar_status != 'Enabled':
-        flask.flash(gettext(
-            'This calendar is "%(status)s", you are not allowed to '
-            'edit its meetings anymore.',
-            status=calendarobj.calendar_status),
+        flask.flash(
+            gettext(
+                'This calendar is "%(status)s", you are not allowed to '
+                'edit its meetings anymore.',
+                status=calendarobj.calendar_status),
             'errors')
-        return flask.redirect(flask.url_for('calendar',
-                              calendar_name=calendarobj.calendar_name))
+        return flask.redirect(
+            flask.url_for('calendar', calendar_name=calendarobj.calendar_name))
 
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(calendarobj)):
-        flask.flash(gettext(
-            'You are not one of the manager of this meeting, '
-            'or an admin, you are not allowed to edit it.'),
+        flask.flash(
+            gettext(
+                'You are not one of the manager of this meeting, '
+                'or an admin, you are not allowed to edit it.'),
             'errors')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
@@ -996,8 +1001,8 @@ def edit_meeting(meeting_id):
             meeting=meeting.to_json(),
             calendar=calendarobj.to_json(),
         ))
-        return flask.redirect(flask.url_for('view_meeting',
-                              meeting_id=meeting_id))
+        return flask.redirect(
+            flask.url_for('view_meeting', meeting_id=meeting_id))
     elif flask.request.method == 'GET':
         from_date = flask.request.args.get('from_date', None)
         date_limit = None
@@ -1037,8 +1042,9 @@ def view_meeting_page(meeting_id, full):
     org_meeting = meeting = Meeting.by_id(SESSION, meeting_id)
     tzone = get_timezone()
     if not meeting:
-        flask.flash(gettext(
-            'No meeting could be found for this identifier'),
+        flask.flash(
+            gettext(
+                'No meeting could be found for this identifier'),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
@@ -1090,27 +1096,30 @@ def delete_meeting(meeting_id):
     meeting = Meeting.by_id(SESSION, meeting_id)
 
     if not meeting:
-        flask.flash(gettext(
-            'No meeting with this identifier could be found.'),
+        flask.flash(
+            gettext(
+                'No meeting with this identifier could be found.'),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
     if meeting.calendar.calendar_status != 'Enabled':
-        flask.flash(gettext(
-            'This calendar is "%(status)s", you are not allowed to delete '
-            'its meetings anymore.',
-            status=meeting.calendar.calendar_status),
+        flask.flash(
+            gettext(
+                'This calendar is "%(status)s", you are not allowed to delete '
+                'its meetings anymore.',
+                status=meeting.calendar.calendar_status),
             'errors')
         return flask.redirect(
-            flask.url_for('calendar',
-                          calendar_name=meeting.calendar.calendar_name)
+            flask.url_for(
+                'calendar', calendar_name=meeting.calendar.calendar_name)
         )
 
     if not (is_meeting_manager(meeting)
             or is_calendar_admin(meeting.calendar)):
-        flask.flash(gettext(
-            'You are not one of the manager of this meeting, '
-            'or an admin, you are not allowed to delete it.'),
+        flask.flash(
+            gettext(
+                'You are not one of the manager of this meeting, '
+                'or an admin, you are not allowed to delete it.'),
             'errors')
         return flask.redirect(flask.url_for('view_meeting',
                                             meeting_id=meeting_id))
@@ -1191,9 +1200,10 @@ def delete_calendar(calendar_name):
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(gettext(
-            'No calendar named %(name)s could be found',
-            name=calendar_name),
+        flask.flash(
+            gettext(
+                'No calendar named %(name)s could be found',
+                name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
     deleteform = forms.DeleteCalendarForm()
@@ -1232,8 +1242,10 @@ def clear_calendar(calendar_name):
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(gettext(
-            'No calendar named %(name)s could be found', name=calendar_name),
+        flask.flash(
+            gettext(
+                'No calendar named %(name)s could be found',
+                name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
@@ -1286,9 +1298,10 @@ def edit_calendar(calendar_name):
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(gettext(
-            'No calendar named %(name)s could be found',
-            name=calendar_name),
+        flask.flash(
+            gettext(
+                'No calendar named %(name)s could be found',
+                name=calendar_name),
             'errors')
         return flask.redirect(flask.url_for('index'))
 
@@ -1480,8 +1493,9 @@ def location(loc_name, year, month, day):
     """
     list_locations = fedocallib.get_locations(SESSION)
     if loc_name not in list_locations:
-        flask.flash(gettext(
-            'No location named %(name)s could be found', name=loc_name),
+        flask.flash(
+            gettext(
+                'No location named %(name)s could be found', name=loc_name),
             'errors')
         return flask.redirect(flask.url_for('locations'))
 
@@ -1567,8 +1581,9 @@ def location_list(loc_name, year, month, day):
     """
     list_locations = fedocallib.get_locations(SESSION)
     if loc_name not in list_locations:
-        flask.flash(gettext(
-            'No location named %(name)s could be found', name=loc_name),
+        flask.flash(
+            gettext(
+                'No location named %(name)s could be found', name=loc_name),
             'errors')
         return flask.redirect(flask.url_for('locations'))
 

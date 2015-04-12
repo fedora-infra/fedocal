@@ -23,25 +23,20 @@
  MA 02110-1301, USA.
 """
 
-import flask
 import re
 from datetime import time
-from datetime import datetime
 from fedocal.fedocal_babel import lazy_gettext as _
-import i18nforms
+from fedocal import i18nforms
 
 from pytz import common_timezones
 
 import wtforms
-
-import fedocal.fedocallib as fedocallib
 
 
 def validate_time(form, field):
     """ Validate if the data set in the given field is a valid time. """
     if isinstance(field.data, time):  # pragma: no cover
         return
-    import re
     if not re.match(r'\d?\d:\d\d?', field.data):
         raise wtforms.ValidationError(
             _('Time must be of type "HH:MM"')
@@ -78,7 +73,7 @@ def validate_multi_email(form, field):
         match = pattern.match(field.data or '')
         if not match:
             message = field.gettext(_('Invalid input.'))
-            raise ValidationError(message)
+            raise wtforms.ValidationError(message)
 
 
 class AddCalendarForm(i18nforms.Form):
@@ -186,12 +181,13 @@ class AddMeetingForm(i18nforms.Form):
     remind_when = wtforms.SelectField(
         _('Send reminder'),
         [wtforms.validators.optional()],
-        choices=[('', ''),
-                 ('H-12', _('%(hours)s hours before', hours='12')),
-                 ('H-24', _('%(days)s day before', days='1')),
-                 ('H-48', _('%(days)s days before', days='2')),
-                 ('H-168', _('%(days)s days before', days='7')),
-                 ]
+        choices=[
+            ('', ''),
+            ('H-12', _('%(hours)s hours before', hours='12')),
+            ('H-24', _('%(days)s day before', days='1')),
+            ('H-48', _('%(days)s days before', days='2')),
+            ('H-168', _('%(days)s days before', days='7')),
+        ]
     )
     remind_who = wtforms.TextField(
         _('Send reminder to'),

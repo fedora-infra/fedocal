@@ -372,9 +372,9 @@ Filter arguments
         calendarobj = Calendar.by_id(SESSION, calendar_name)
 
         if not calendarobj:
-            output = {"meetings": [],
-                      "error": "Invalid calendar provided: %s" %
-                      calendar_name}
+            output = {
+                "meetings": [],
+                "error": "Invalid calendar provided: %s" % calendar_name}
             return flask.Response(
                 response=json.dumps(output),
                 status=400,

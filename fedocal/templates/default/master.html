@@ -115,7 +115,7 @@
         });
     </script>
 
-    {% if config['FEDMENU_URL'] is defined %}
+    {% if config['FEDMENU_URL'] %}
     <script src="{{ config['FEDMENU_URL'] }}/js/fedora-libravatar.js"></script>
     <script src="{{ config['FEDMENU_URL'] }}/js/fedmenu.js"></script>
     <script>

@@ -78,4 +78,3 @@ ICAL_REMINDER_OPTIONS = (
     ('60', '1 hour'),
     ('1440', '1 day')
 )
-

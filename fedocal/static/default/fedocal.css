@@ -133,7 +133,7 @@ section nav {
 #content {
     position: relative;
     margin: .5em;
-    min-height: 450px;
+    min-height: 400px;
 }
 
 #content #agenda, #content #meeting_list{

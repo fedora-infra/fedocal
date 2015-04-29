@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.13.1
+Version:        0.13.2
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -118,6 +118,12 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Wed Apr 29 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.13.2-1
+- Update 0.13.2
+- Make fedocal prettier on high resolution displays
+- Add fedmenu
+- Clean the code with pylint
+
 * Tue Mar 31 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.13.1-1
 - Update to 0.13.1
 - Prevent non-editor user from beeing offered the possibility to add meetings

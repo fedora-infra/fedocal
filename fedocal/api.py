@@ -484,7 +484,12 @@ endpoint raises a 404.
         SESSION, calendarobj, start_date, end_date, tzone='UTC')
 
     green, red = 'brightgreen', 'red'
-    template = 'http://b.repl.ca/v1/%s-%s_%s-%s.png'
+
+    ## We *would* use the canonical b.repl.ca url, but it doesn't support SSL
+    ## the way that we need currently.  So, instead we'll use the backend name
+    ## to get around that.
+    #template = 'http://b.repl.ca/v1/%s-%s_%s-%s.png'
+    template = 'https://buckler-bowes.rhcloud.com/v1/%s-%s_%s-%s.png'
 
     output = None
     for meeting in meetings:

@@ -428,3 +428,80 @@ Filter arguments
         status=status,
         mimetype='application/json'
     )
+
+
+@APP.route('/api/<username>/shield/<calendar_name>/')
+@APP.route('/api/<username>/shield/<calendar_name>')
+def api_user_shield(username, calendar_name):
+    """
+User shield
+===========
+
+Provides a small image (a shield) displaying the status of the specified
+user on the specified calendar if the user is currently managing a meeting.
+
+Filter arguments
+----------------
+
+``connector``
+  Changes the 'connector' text used in the image.
+
+  Default: 'in'
+
+``status``
+  Changes the 'status' text used in the image.
+
+  Default: the name of the calendar checked
+
+``always``
+  Booleans to specify whether to return an image if no meeting is found for
+  the specified user on the specified calendar.
+
+  Default: True
+  Can be:  False, 0, f
+
+If the user is not managing a meeting, instead of returning the image the
+endpoint raises a 404.
+
+    """
+    connector = flask.request.args.get('connector', 'in')
+    status = flask.request.args.get('status', calendar_name)
+    always = flask.request.args.get('always', True)
+
+    if str(always).lower() in ['0', 'false', 'f']:
+        always = False
+    else:
+        always = True
+
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.abort(400, 'Invalid calendar provided')
+
+    start_date = datetime.datetime.utcnow().date()
+    end_date = start_date + datetime.timedelta(days=1)
+
+    meetings = fedocallib.get_by_date(
+        SESSION, calendarobj, start_date, end_date, tzone='UTC')
+
+    green, red = 'brightgreen', 'red'
+
+    ## We *would* use the canonical b.repl.ca url, but it doesn't support SSL
+    ## the way that we need currently.  So, instead we'll use the backend name
+    ## to get around that.
+    #template = 'http://b.repl.ca/v1/%s-%s_%s-%s.png'
+    template = 'https://buckler-bowes.rhcloud.com/v1/%s-%s_%s-%s.png'
+
+    output = None
+    for meeting in meetings:
+        usernames = [user.username for user in meeting.meeting_manager_user]
+        if username in usernames:
+            output = template % (username, connector, status, green)
+            break
+
+    if output:
+        return flask.redirect(output)
+    elif always:
+        output = template % (username, "not " + connector, status, red)
+        return flask.redirect(output)
+    else:
+        flask.abort(404)

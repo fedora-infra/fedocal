@@ -453,12 +453,25 @@ Filter arguments
 
   Default: the name of the calendar checked
 
+``always``
+  Booleans to specify whether to return an image if no meeting is found for
+  the specified user on the specified calendar.
+
+  Default: True
+  Can be:  False, 0, f
+
 If the user is not managing a meeting, instead of returning the image the
 endpoint raises a 404.
 
     """
     connector = flask.request.args.get('connector', 'in')
     status = flask.request.args.get('status', calendar_name)
+    always = flask.request.args.get('always', True)
+
+    if str(always).lower() in ['0', 'false', 'f']:
+        always = False
+    else:
+        always = True
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
@@ -481,6 +494,10 @@ endpoint raises a 404.
             break
 
     if output:
+        return flask.redirect(output)
+    elif always:
+        template = 'http://b.repl.ca/v1/%s-not_%s_%s-%s.png'
+        output = template % (username, connector, status, red)
         return flask.redirect(output)
     else:
         flask.abort(404)

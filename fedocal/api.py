@@ -459,7 +459,7 @@ anything.
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, start_date, end_date, tzone='UTC')
 
-    output = {'status': ''}
+    output = {'status': None}
     for meeting in meetings:
         usernames = [user.username for user in meeting.meeting_manager_user]
         if username in usernames:

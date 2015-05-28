@@ -448,11 +448,17 @@ Filter arguments
 
   Default: 'in'
 
+``status``
+  Changes the 'status' text used in the image.
+
+  Default: the name of the calendar checked
+
 If the user is not managing a meeting, instead of returning the image the
 endpoint raises a 404.
 
     """
     connector = flask.request.args.get('connector', 'in')
+    status = flask.request.args.get('status', calendar_name)
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
@@ -471,7 +477,7 @@ endpoint raises a 404.
     for meeting in meetings:
         usernames = [user.username for user in meeting.meeting_manager_user]
         if username in usernames:
-            output = template % (username, connector, calendar_name, green)
+            output = template % (username, connector, status, green)
             break
 
     if output:

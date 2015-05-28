@@ -496,8 +496,7 @@ endpoint raises a 404.
     if output:
         return flask.redirect(output)
     elif always:
-        template = 'http://b.repl.ca/v1/%s-not_%s_%s-%s.png'
-        output = template % (username, connector, status, red)
+        output = template % (username, "not " + connector, status, red)
         return flask.redirect(output)
     else:
         flask.abort(404)

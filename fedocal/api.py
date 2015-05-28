@@ -428,3 +428,45 @@ Filter arguments
         status=status,
         mimetype='application/json'
     )
+
+
+@APP.route('/api/<username>/shield/<calendar_name>/')
+@APP.route('/api/<username>/shield/<calendar_name>')
+def api_user_shield(username, calendar_name):
+    """
+User shield
+===========
+
+Provides a small image (a shield) displaying the status of the specified
+user on the specified calendar if the user is currently managing a meeting.
+
+If the user is not managing a meeting, this endpoint does not return
+anything.
+
+    """
+
+    calendarobj = Calendar.by_id(SESSION, calendar_name)
+    if not calendarobj:
+        flask.flash(
+            gettext(
+                'No calendar named %(name)s could be found',
+                name=calendar_name
+            ),
+            'errors')
+        return flask.redirect(flask.url_for('index'))
+
+    start_date = datetime.datetime.utcnow().date()
+    end_date = start_date + datetime.timedelta(days=1)
+
+    meetings = fedocallib.get_by_date(
+        SESSION, calendarobj, start_date, end_date, tzone='UTC')
+
+    output = ''
+    for meeting in meetings:
+        usernames = [user.username for user in meeting.meeting_manager_user]
+        if username in usernames:
+            output = 'http://b.repl.ca/v1/%s-in_%s-brightgreen.png' % (
+                username, calendar_name)
+            break
+
+    return output

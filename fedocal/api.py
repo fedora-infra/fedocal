@@ -444,16 +444,14 @@ If the user is not managing a meeting, this endpoint does not return
 anything.
 
     """
+    @flask.after_this_request
+    def callback(response):
+        """ Handle case the query was an JQuery ajax call. """
+        return check_callback(response)
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
-        flask.flash(
-            gettext(
-                'No calendar named %(name)s could be found',
-                name=calendar_name
-            ),
-            'errors')
-        return flask.redirect(flask.url_for('index'))
+        flask.abort(400, 'Invalid calendar provided')
 
     start_date = datetime.datetime.utcnow().date()
     end_date = start_date + datetime.timedelta(days=1)
@@ -461,12 +459,16 @@ anything.
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, start_date, end_date, tzone='UTC')
 
-    output = ''
+    output = {'status': ''}
     for meeting in meetings:
         usernames = [user.username for user in meeting.meeting_manager_user]
         if username in usernames:
-            output = 'http://b.repl.ca/v1/%s-in_%s-brightgreen.png' % (
+            output['status'] = 'http://b.repl.ca/v1/%s-in_%s-brightgreen.png' % (
                 username, calendar_name)
             break
 
-    return output
+    return flask.Response(
+        response=json.dumps(output),
+        status=200,
+        mimetype='application/json'
+    )

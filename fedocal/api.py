@@ -440,14 +440,19 @@ User shield
 Provides a small image (a shield) displaying the status of the specified
 user on the specified calendar if the user is currently managing a meeting.
 
-If the user is not managing a meeting, this endpoint does not return
-anything.
+Filter arguments
+----------------
+
+``connector``
+  Changes the 'connector' text used in the image.
+
+  Default: 'in'
+
+If the user is not managing a meeting, instead of returning the image the
+endpoint raises a 404.
 
     """
-    @flask.after_this_request
-    def callback(response):
-        """ Handle case the query was an JQuery ajax call. """
-        return check_callback(response)
+    connector = flask.request.args.get('connector', 'in')
 
     calendarobj = Calendar.by_id(SESSION, calendar_name)
     if not calendarobj:
@@ -459,16 +464,17 @@ anything.
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, start_date, end_date, tzone='UTC')
 
-    output = {'status': None}
+    green, red = 'brightgreen', 'red'
+    template = 'http://b.repl.ca/v1/%s-%s_%s-%s.png'
+
+    output = None
     for meeting in meetings:
         usernames = [user.username for user in meeting.meeting_manager_user]
         if username in usernames:
-            output['status'] = 'http://b.repl.ca/v1/%s-in_%s-brightgreen.png' % (
-                username, calendar_name)
+            output = template % (username, connector, calendar_name, green)
             break
 
-    return flask.Response(
-        response=json.dumps(output),
-        status=200,
-        mimetype='application/json'
-    )
+    if output:
+        return flask.redirect(output)
+    else:
+        flask.abort(404)

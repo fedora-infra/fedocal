@@ -39,6 +39,7 @@ from dateutil import parser
 from logging.handlers import SMTPHandler
 
 import flask
+import bleach
 import markdown
 import vobject
 from dateutil.relativedelta import relativedelta
@@ -171,13 +172,25 @@ def reverse_filter(weekdays):
                         weekdays[-1].strftime('%d %b %Y'))
 
 
+def sanitize(text):
+    """ Sanitize a given text from any not-allowed html using bleach. """
+    return bleach.clean(
+        text,
+        tags=bleach.ALLOWED_TAGS + [
+             'p', 'br', 'div', 'h1', 'h2', 'h3', 'table', 'td', 'tr',
+             'th', 'col', 'tbody', 'pre', 'img',
+            ],
+        attributes=bleach.ALLOWED_ATTRIBUTES
+    )
+
+
 @APP.template_filter('markdown')
 def markdown_filter(text):
     """ Template filter converting a string into html content using the
     markdown library.
     """
     if text:
-        return markdown.markdown(text)
+        return sanitize(markdown.markdown(text))
 
     return ''
 
@@ -188,8 +201,8 @@ def markdown_wrap_filter(text):
     markdown library but only keeping the first 3 lines of the text.
     """
     if text:
-        return markdown.markdown(
-            '\n'.join(textwrap.wrap(text)[:2])+"...")
+        return sanitize(markdown.markdown(
+            '\n'.join(textwrap.wrap(text)[:2])+"..."))
 
     return ''
 

@@ -33,6 +33,7 @@ BuildRequires:  python-psutil
 BuildRequires:  python-flask-babel
 BuildRequires:  babel
 BuildRequires:  python-blinker
+BuildRequires:  python-bleach
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -59,6 +60,7 @@ Requires:  python-docutils
 Requires:  python-psutil
 Requires:  python-flask-babel
 Requires:  python-blinker
+Requires:  python-bleach
 Requires:  mod_wsgi
 
 %description

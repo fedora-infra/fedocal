@@ -3,16 +3,16 @@ Contributors to fedocal
 
 Fedocal would be nothing without its contributors.
 
-On April 29, 2015 (release 0.13.3), the list looks as follow:
+On June 15, 2015 (release 0.14), the list looks as follow:
 
 =================  ===========
 Number of commits  Contributor
 =================  ===========
-  1571              Pierre-Yves Chibon <pingou@pingoured.fr>
+  1581              Pierre-Yves Chibon <pingou@pingoured.fr>
    113              Johan Cwiklinski <johan@x-tnd.be>
     17              Toshio Kuratomi <toshio@fedoraproject.org>
     15              Ratnadeep Debnath <rtnpro@gmail.com>
-    10              Ralph Bean <rbean@redhat.com>
+    13              Ralph Bean <rbean@redhat.com>
      3              Haikel Guemar <hguemar@fedoraproject.org>
      3              Maciej Lasyk <maciek@lasyk.info>
      3              rtnpro <rtnpro@gmail.com>

@@ -50,7 +50,7 @@ from fedocal.fedocallib import model, get_start_week
 
 
 DB_PATH = 'sqlite:///:memory:'
-FAITOUT_URL = 'http://209.132.184.152/faitout/'
+FAITOUT_URL = 'http://faitout.cloud.fedoraproject.org/faitout/'
 
 if os.environ.get('BUILD_ID'):
     try:

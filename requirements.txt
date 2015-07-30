@@ -6,7 +6,7 @@ flask-wtf
 flask
 flask-babel
 kitchen
-mock
+mock==1.1.2
 python-dateutil #<= 1.5
 python-fedora>=0.3.33
 pytz>=2013b

@@ -55,9 +55,9 @@
         {{ form.csrf_token }}
 
         <p class="buttons indent">
-            <input type="submit" name="action" class="submit positive button" value="{{ _('Edit') }}"/>
+            <input type="submit" name="action" class="submit positive button" value="{{ _('Save') }}"/>
         {% if meeting.recursion_frequency %}
-            <input type="submit" name="action" class="submit positive button" value="{{ _('Edit all') }}"/>
+            <input type="submit" name="action" class="submit positive button" value="{{ _('Save all') }}"/>
         {% endif %}
             <input type="button" name="action" value="{{ _('Cancel') }}" class="button" onclick="history.back();"/>
         </p>

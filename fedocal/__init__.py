@@ -1008,7 +1008,7 @@ def edit_meeting(meeting_id):
                 reminder_from=form.reminder_from.data,
                 remind_who=form.remind_who.data,
                 full_day=form.full_day.data,
-                edit_all_meeting=action == 'Edit all',
+                edit_all_meeting=action == 'Save all',
                 admin=is_admin())
         except FedocalException, err:
             flask.flash(err, 'warnings')

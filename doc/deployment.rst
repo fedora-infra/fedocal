@@ -93,7 +93,7 @@ Set-up the cron job
 Reminders are sent by a cron job which is provided with the source under
 the name ``fedocal_cron.py``.
 
-You will need to specified the ``FEDOCAL_CONFIG`` environment variable
+You will need to specify  the ``FEDOCAL_CONFIG`` environment variable
 when running the cron job as the specified configuration file contains
 information required by the cron job (ie: SMTP_SERVER or CRON_FREQUENCY,
 see :doc:`configuration`).

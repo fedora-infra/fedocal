@@ -771,7 +771,7 @@ def get_html_monthly_cal(
 def get_by_date(session, calendarobj, start_date, end_date, tzone='UTC',
                 extended=True, name=None):
     """ Returns all the meetings in a given time period.
-    Recursive meetings are expanded as if each was a single meeting.
+    Recurring meetings are expanded as if each was a single meeting.
 
     :arg session: the database session to use
     :arg calendarobj: the calendar (object) of interest.
@@ -828,7 +828,7 @@ def get_meetings_by_date_and_location(
 def get_by_date_at_location(
         session, location, start_date, end_date, tzone='UTC'):
     """ Returns all the meetings in a given time period at a given location.
-    Recursive meetings are expanded as if each was a single meeting.
+    Recurring meetings are expanded as if each was a single meeting.
 
     :arg session: the database session to use
     :arg calendarobj: the calendar (object) of interest.

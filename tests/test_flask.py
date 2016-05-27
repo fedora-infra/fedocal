@@ -1699,7 +1699,7 @@ class Flasktests(Modeltests):
 
         user = FakeUser(['packager'], username='pingou')
         with user_set(fedocal.APP, user):
-            # Recursive meeting
+            # Recurring meeting
             output = self.app.get(
                 '/meeting/edit/12/?from_date=foor', follow_redirects=True)
             self.assertEqual(output.status_code, 200)

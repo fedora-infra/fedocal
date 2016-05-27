@@ -449,7 +449,7 @@ msgstr ""
 
 #: fedocal/templates/default/add_meeting.html:36
 #: fedocal/templates/default/edit_meeting.html:38
-msgid "Recursive event"
+msgid "Recurring event"
 msgstr ""
 
 #: fedocal/templates/default/add_meeting.html:37

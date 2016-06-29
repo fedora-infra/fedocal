@@ -38,6 +38,7 @@ import flask
 import bleach
 import jinja2
 import markdown
+import munch
 import six
 import six.moves
 import vobject
@@ -93,7 +94,7 @@ APP.static_folder = [
     os.path.join(APP.root_path, 'static', 'default')
 ]
 
-FAS = OpenIDConnect(APP)
+FAS = OpenIDConnect(APP, credentials_store=flask.session )
 
 APP.wsgi_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
@@ -256,6 +257,22 @@ def set_session():
     """ Set the flask session as permanent. """
     flask.session.permanent = True
 
+    if FAS.user_loggedin:
+        if not hasattr(flask.session, 'fas_user') or not flask.session.fas_user:
+            flask.session.fas_user = munch.Munch({
+                'username': FAS.user_getfield('nickname'),
+                'email': FAS.user_getfield('email'),
+                'timezone': FAS.user_getfield('zoneinfo'),
+                'cla_done': \
+                    'http://admin.fedoraproject.org/accounts/cla/done' \
+                    in FAS.user_getfield('cla'),
+                'groups': FAS.user_getfield('groups'),
+            })
+        flask.g.fas_user = flask.session.fas_user
+    else:
+        flask.session.fas_user = None
+        flask.g.fas_user = None
+
 
 # Local function
 def is_admin():
@@ -391,12 +408,6 @@ def validate_input_file(input_file):
 def index():
     """ Displays the index page presenting all the calendars available.
     """
-    print FAS.user_loggedin
-
-    if FAS.user_loggedin:
-        print flask.g.oidc_id_token
-        print FAS.user_getfield('email')
-
     calendars_enabled = Calendar.by_status(SESSION, 'Enabled')
     calendars_disabled = Calendar.by_status(SESSION, 'Disabled')
     return flask.render_template(
@@ -749,6 +760,8 @@ def auth_logout():
 
     if authenticated():
         FAS.logout()
+        flask.session.fas_user = None
+        flask.g.fas_user = None
         flask.flash(gettext('You have been logged out'))
 
     return flask.redirect(next_url)

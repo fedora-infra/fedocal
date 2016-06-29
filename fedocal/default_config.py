@@ -79,3 +79,11 @@ ICAL_REMINDER_OPTIONS = (
     ('60', '1 hour'),
     ('1440', '1 day')
 )
+
+
+
+OIDC_CLIENT_SECRETS = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), '..', 'client_secrets.json')
+OIDC_ID_TOKEN_COOKIE_SECURE = False
+OIDC_REQUIRE_VERIFIED_EMAIL = False
+OIDC_OPENID_REALM = 'http://localhost:5000/oidc_callback'

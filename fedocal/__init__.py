@@ -42,7 +42,7 @@ import six
 import six.moves
 import vobject
 from dateutil.relativedelta import relativedelta
-from flask_fas_openid import FAS
+from flask.ext.oidc import OpenIDConnect
 from flask_multistatic import MultiStaticFlask
 from functools import wraps
 from pytz import common_timezones
@@ -93,7 +93,7 @@ APP.static_folder = [
     os.path.join(APP.root_path, 'static', 'default')
 ]
 
-FAS = FAS(APP)
+FAS = OpenIDConnect(APP)
 
 APP.wsgi_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
@@ -391,6 +391,12 @@ def validate_input_file(input_file):
 def index():
     """ Displays the index page presenting all the calendars available.
     """
+    print FAS.user_loggedin
+
+    if FAS.user_loggedin:
+        print flask.g.oidc_id_token
+        print FAS.user_getfield('email')
+
     calendars_enabled = Calendar.by_status(SESSION, 'Enabled')
     calendars_disabled = Calendar.by_status(SESSION, 'Disabled')
     return flask.render_template(
@@ -704,6 +710,7 @@ def my_meetings():
 
 
 @APP.route('/login/', methods=('GET', 'POST'))
+@FAS.require_login
 def auth_login():
     """ Method to log into the application using FAS OpenID. """
 
@@ -725,7 +732,8 @@ def auth_login():
     else:
         groups.update(APP.config['ADMIN_GROUP'])
 
-    return FAS.login(return_url=return_point, groups=groups)
+    #return FAS.login(return_url=return_point, groups=groups)
+    return flask.redirect(return_point)
 
 
 @APP.route('/logout/')

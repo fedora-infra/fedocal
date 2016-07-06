@@ -94,7 +94,7 @@ APP.static_folder = [
     os.path.join(APP.root_path, 'static', 'default')
 ]
 
-FAS = OpenIDConnect(APP, credentials_store=flask.session )
+OIDC = OpenIDConnect(APP, credentials_store=flask.session )
 
 APP.wsgi_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
@@ -257,16 +257,16 @@ def set_session():
     """ Set the flask session as permanent. """
     flask.session.permanent = True
 
-    if FAS.user_loggedin:
+    if OIDC.user_loggedin:
         if not hasattr(flask.session, 'fas_user') or not flask.session.fas_user:
             flask.session.fas_user = munch.Munch({
-                'username': FAS.user_getfield('nickname'),
-                'email': FAS.user_getfield('email'),
-                'timezone': FAS.user_getfield('zoneinfo'),
+                'username': OIDC.user_getfield('nickname'),
+                'email': OIDC.user_getfield('email'),
+                'timezone': OIDC.user_getfield('zoneinfo'),
                 'cla_done': \
                     'http://admin.fedoraproject.org/accounts/cla/done' \
-                    in FAS.user_getfield('cla'),
-                'groups': FAS.user_getfield('groups'),
+                    in OIDC.user_getfield('cla'),
+                'groups': OIDC.user_getfield('groups'),
             })
         flask.g.fas_user = flask.session.fas_user
     else:
@@ -721,7 +721,7 @@ def my_meetings():
 
 
 @APP.route('/login/', methods=('GET', 'POST'))
-@FAS.require_login
+@OIDC.require_login
 def auth_login():
     """ Method to log into the application using FAS OpenID. """
 
@@ -759,7 +759,7 @@ def auth_logout():
         next_url = flask.url_for('index')
 
     if authenticated():
-        FAS.logout()
+        OIDC.logout()
         flask.session.fas_user = None
         flask.g.fas_user = None
         flask.flash(gettext('You have been logged out'))

@@ -96,6 +96,7 @@ def user_set(APP, user):
 
     def handler(sender, **kwargs):
         g.fas_user = user
+        g.oidc_id_token = None
 
     with appcontext_pushed.connected_to(handler, APP):
         yield

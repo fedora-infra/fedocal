@@ -841,20 +841,8 @@ class Flasktests(Modeltests):
             self.assertFalse(
                 fedocal.is_safe_url('https://fedoraproject.org/'))
 
-    def test_auth_login(self):
-        """ Test the auth_login function. """
-        app = flask.Flask('fedocal')
-
-        with app.test_request_context():
-            flask.g.fas_user = FakeUser(['gitr2spec'])
-            output = self.app.get('/login/')
-            self.assertEqual(output.status_code, 200)
-
-            output = self.app.get('/login/?next=http://localhost/')
-            self.assertEqual(output.status_code, 200)
-
     @flask10_only
-    def test_auth_login_logedin(self):
+    def test_auth_login(self):
         """ Test the auth_login function. """
         self.__setup_db()
         user = FakeUser([], username='pingou')
@@ -996,7 +984,7 @@ class Flasktests(Modeltests):
             # discoveryfailure happens if there is no network
             self.assertTrue(
                 '<title>OpenID transaction in progress</title>'
-                in output_text or 'discoveryfailure', output_text)
+                in output_text or 'discoveryfailure' in output_text)
 
         user = FakeUser(['test'])
         with user_set(fedocal.APP, user):

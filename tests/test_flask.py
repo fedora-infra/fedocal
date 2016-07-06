@@ -1469,9 +1469,11 @@ class Flasktests(Modeltests):
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<td>Time must be of type &#34;HH:MM&#34;</td>',
-                output_text)
+            self.assertTrue(
+                '<td>Time must be of type &HH:MM&#34;</td>' in output_text
+                or
+                '<td>Time must be of type "HH:MM"</td>' in output_text
+            )
 
             # Start time should have integer
             data = {
@@ -1488,9 +1490,11 @@ class Flasktests(Modeltests):
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<td>Time must be of type &#34;HH:MM&#34;</td>',
-                output_text)
+            self.assertTrue(
+                '<td>Time must be of type &HH:MM&#34;</td>' in output_text
+                or
+                '<td>Time must be of type "HH:MM"</td>' in output_text
+            )
 
             # End date earlier than the start date
             data = {

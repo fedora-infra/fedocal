@@ -109,6 +109,8 @@ if not APP.debug:
 handler = logging.StreamHandler()
 handler.setLevel(APP.config.get('log_level', 'INFO'))
 APP.logger.addHandler(handler)
+oidc_logs = logging.getLogger('flask_oidc')
+oidc_logs.addHandler(handler)
 
 LOG = APP.logger
 

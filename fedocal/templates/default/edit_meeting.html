@@ -25,7 +25,7 @@
             {{ render_field_in_row(form.comanager) }}
             {% macro get_after_markdown() %}
                 {{_('Supports the') }} <a href="http://daringfireball.net/projects/markdown/syntax"
-                    target="_blank">{{ _('Markdown syntax') }}</a>
+                    rel="noopener noreferrer" target="_blank">{{ _('Markdown syntax') }}</a>
                 <input type="button" class="event preview" value="{{ _('Preview')  }}">
             {% endmacro %}
             {{ render_field_in_row(

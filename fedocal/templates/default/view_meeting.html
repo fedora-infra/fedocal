@@ -1,7 +1,7 @@
 {% if full %}
 {% extends "master.html" %}
 
-{% block title %}{{ _('Meeting "%(name)s"', name=meeting.meeting_name) }}{% endblock %}
+{% block title %}{{ _('Meeting "%(name)s"', name=org_meeting.meeting_name) }}{% endblock %}
 
 {%block tag %}home{% endblock %}
 
@@ -11,14 +11,14 @@
 
 {% block content %}
 <section>
-        <h2 class="orange">{{ _('Meeting "%(name)s"', name=meeting.meeting_name) }}</h2>
-        <p class="blue">(<a href="{{ url_for('calendar', calendar_name=meeting.calendar_name) }}">
-            {{ meeting.calendar_name }}</a>)
+        <h2 class="orange">{{ _('Meeting "%(name)s"', name=org_meeting.meeting_name) }}</h2>
+        <p class="blue">(<a href="{{ url_for('calendar', calendar_name=org_meeting.calendar_name) }}">
+            {{ org_meeting.calendar_name }}</a>)
         </p>
 
 
-    {% if meeting.meeting_location %}
-    <p>{{ _('Location:') }} {{ meeting.meeting_location }}</p>
+    {% if org_meeting.meeting_location %}
+    <p>{{ _('Location:') }} {{ org_meeting.meeting_location }}</p>
     {%endif%}
 
     <ul>
@@ -28,7 +28,7 @@
               {{ _('Start:') }}
           </span>
           {{ next_meeting.meeting_date.strftime('%a, %B %d, %Y') }} - {{
-            meeting.meeting_time_start.strftime('%H:%M') }} {{ tzone }}
+            next_meeting.meeting_time_start.strftime('%H:%M') }} {{ tzone }}
         </li>
         <li title="{{ meeting_utc.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
             meeting_utc.meeting_time_stop }} UTC">
@@ -36,17 +36,18 @@
               {{ _('End:') }}
           </span>
           {{ next_meeting.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
-              meeting.meeting_time_stop }} {{ tzone }} </li>
+              next_meeting.meeting_time_stop }} {{ tzone }} </li>
     </ul>
 
     <div id="countdown"></div>
 
     <div id="meeting_description">
-    {% autoescape off%} {{ meeting.meeting_information | markdown  or _('No description') }} {% endautoescape %}
+    {% autoescape off%} {{ org_meeting.meeting_information | markdown  or _('No description') }} {% endautoescape %}
     </div>
 
-    {% if meeting.recursion_frequency and meeting.recursion_ends %}
-    <p>{{ _('This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s', frequency=meeting.recursion_frequency, ends=meeting.recursion_ends) }}
+    {% if org_meeting.recursion_frequency and org_meeting.recursion_ends %}
+    <p>{{ _('This meeting is recurrent, it occurs every %(frequency)s days until %(ends)s',
+            frequency=org_meeting.recursion_frequency, ends=org_meeting.recursion_ends) }}
     </p>
     {% endif %}
 
@@ -54,10 +55,10 @@
         {% for manager in managers %}<a href="mailto:{{manager}}@fedoraproject.org">{{ manager }}</a>
         {%- if not loop.last %},{% endif %}{% endfor %}.
     {% endmacro %}
-    <p>{{ _('Meeting organized by %(managers)s', managers=get_managers(meeting.meeting_manager)) }}</p>
+    <p>{{ _('Meeting organized by %(managers)s', managers=get_managers(org_meeting.meeting_manager)) }}</p>
 
     <a href="{{ url_for('ical_calendar_meeting',
-        meeting_id=meeting.meeting_id) }}"
+        meeting_id=org_meeting.meeting_id) }}"
         id="ical-meeting-export"
         title="{{ _('Add this meeting to your agenda') }}">
         {{ _('iCal export') }}
@@ -98,12 +99,12 @@
     </ul>
     <p>
         <a href="{{ url_for('edit_meeting',
-            meeting_id=meeting.meeting_id, from_date=from_date) }}">
+            meeting_id=org_meeting.meeting_id, from_date=from_date) }}">
             <img src="{{ url_for('static', filename='edit.png') }}"
                 title="{{ _('Edit') }}" alt="{{ _('Edit') }}"/>
         </a>
         <a href="{{ url_for('delete_meeting',
-            meeting_id=meeting.meeting_id) }}{% if from_date %}?from_date={{ from_date }}{% endif %}">
+            meeting_id=org_meeting.meeting_id) }}{% if from_date %}?from_date={{ from_date }}{% endif %}">
             <img src="{{ url_for('static', filename='delete.png') }}"
                 title="{{ _('Delete') }}" alt="{{ _('Delete') }}"/>
         </a>

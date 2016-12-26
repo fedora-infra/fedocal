@@ -701,9 +701,7 @@ def add_meeting_to_vcal(ical, meeting, reminder=None):
 
     if meeting.recursion_frequency and meeting.recursion_ends:
         newrule = rrule.rruleset()
-        freq = 1
-        if meeting.recursion_frequency == 14:
-            freq = 2
+        freq = meeting.recursion_frequency / 7
         newrule.rrule(
             rrule.rrule(
                 freq=rrule.WEEKLY,

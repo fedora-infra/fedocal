@@ -3,7 +3,7 @@
 """
  (c) 2014 - Copyright Johan Cwiklinski <johan@x-tnd.be>
  (c) 2014 - Copyright Patrick Uiterwijk <puiterwijk@redhat.com>
- (c) 2014 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
+ (c) 2014-2017 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website
@@ -28,7 +28,7 @@
 from babel import support
 
 try:
-    from flask.ext.babel import (
+    from flask_babel import (
         Babel, lazy_gettext, gettext, ngettext, format_datetime, get_locale)
 except ImportError:
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
- (c) 2012-2016 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
+ (c) 2012-2017 - Copyright Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
  You can find a copy of this license on the website
@@ -157,7 +157,7 @@ def get_locale():
     """try to guess the language from the user accept
     header the browser transmits"""
     try:
-        import flask.ext.babel
+        import flask_babel
         return flask.request.accept_languages.best_match(
             APP.config['LANGUAGES'].keys()
         )

@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.14
+Version:        0.15
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -120,6 +120,17 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Tue Jan 10 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.15-1
+- Update to 0.15
+- Add support for multi-theming in fedocal and start a CentOS theme
+- Fix typo in the deployment documentation (Viorel Tabara)
+- Use 'Save' on edit screen instead of 'Edit' (Paul W. Frields)
+- Improve the runserver script
+- Fix links using target="_blank"
+- Fix detecting the meeting frequency
+- Replace "Recursive event" with "Recurring event" (Jonathan Wakely)
+- Fix the dates in the meeting details
+
 * Mon Jun 15 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.14-1
 - Update to 0.14
 - Add an API endpoint presenting a shield if the user is currently in a meeting

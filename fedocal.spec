@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           fedocal
-Version:        0.15
+Version:        0.15.1
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -120,6 +120,10 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 
 
 %changelog
+* Wed Jan 11 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.15.1-1
+- Update to 0.15.1
+- Fix double time-zone conversion
+
 * Tue Jan 10 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.15-1
 - Update to 0.15
 - Add support for multi-theming in fedocal and start a CentOS theme

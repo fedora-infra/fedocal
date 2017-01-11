@@ -1095,7 +1095,7 @@ def view_meeting_page(meeting_id, full):
     next_meeting = fedocallib.update_date_rec_meeting(
         meeting_utc, action='next', date_limit=date_limit)
     next_meeting = fedocallib.convert_meeting_timezone(
-        next_meeting, next_meeting.meeting_timezone, tzone)
+        next_meeting, 'UTC', tzone)
 
     return flask.render_template(
         'view_meeting.html',

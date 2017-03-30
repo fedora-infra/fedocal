@@ -148,7 +148,7 @@ class AddMeetingForm(i18nforms.Form):
     meeting_timezone = wtforms.SelectField(
         _('Time zone'),
         [wtforms.validators.Required()],
-        choices=[(tzone, tzone) for tzone in common_timezones])
+        choices=[(tzone, tzone) for tzone in sorted(common_timezones)])
 
     wiki_link = wtforms.TextField(_('More information URL'))
 

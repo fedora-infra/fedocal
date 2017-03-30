@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 
 """
- (c) 2012 - Copyright Pierre-Yves Chibon
+ (c) 2012-2017 - Copyright Pierre-Yves Chibon
  Author: Pierre-Yves Chibon <pingou@pingoured.fr>
 
  Distributed under License GPLv3 or later
@@ -596,6 +596,118 @@ class Flasktests(Modeltests):
             calendar = model.Calendar.by_id(self.session, 'test_calendar3')
             flask.g.fas_user = FakeUser(['gitr2spec'])
             self.assertFalse(fedocal.is_calendar_admin(calendar))
+
+    def test_view_meeting_page_dst(self):
+        """ Test the view_meeting_page function accross the DST time change
+        """
+        # Create calendar
+        obj = model.Calendar(
+            calendar_name='test_calendar',
+            calendar_contact='test@example.com',
+            calendar_description='This is a test calendar',
+            calendar_editor_group='fi-apprentice',
+            calendar_admin_group='infrastructure-main2')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        # Add a meeting
+        mdate = date(2017, 1, 2)
+        obj = model.Meeting(  # id:1
+            meeting_name='Fedora-fr-test-meeting',
+            meeting_date=mdate,
+            meeting_date_end=mdate,
+            meeting_time_start=time(9, 00),
+            meeting_time_stop=time(10, 00),
+            meeting_timezone='America/New_York',
+            meeting_information='This is a test meeting',
+            calendar_name='test_calendar',
+            recursion_frequency=7,
+            recursion_ends=mdate + timedelta(days=365)
+        )
+        obj.add_manager(self.session, 'pingou, shaiton,')
+        obj.save(self.session)
+        self.session.commit()
+        self.assertNotEqual(obj, None)
+
+        # Winter time
+        output = self.app.get('/meeting/1/?from_date=2017-02-27')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
+            in output.data)
+        self.assertTrue(
+            'Mon, February 27, 2017 - 14:00 UTC'
+            in output.data)
+        self.assertTrue(
+            'Mon, February 27, 2017 - 15:00:00 UTC'
+            in output.data)
+
+        # Summer time
+        output = self.app.get('/meeting/1/?from_date=2017-03-13')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 13:00 UTC'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 14:00 UTC'
+            in output.data)
+
+        # Summer time in the US
+        output = self.app.get(
+            '/meeting/1/?from_date=2017-03-13&tzone=America/New_York')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 13:00:00 UTC'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 14:00:00 UTC'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 09:00 America/New_York'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 10:00 America/New_York'
+            in output.data)
+
+        # Summer time in the US but not in Europe
+        output = self.app.get(
+            '/meeting/1/?from_date=2017-03-13&tzone=Europe/Paris')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 13:00:00 UTC'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 14:00:00 UTC'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 14:00 Europe/Paris'
+            in output.data)
+        self.assertTrue(
+            'Mon, March 13, 2017 - 15:00 Europe/Paris'
+            in output.data)
+
+        # Winter time again
+        output = self.app.get('/meeting/1/?from_date=2017-11-20')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<title>Meeting "Fedora-fr-test-meeting" - Fedocal</title>'
+            in output.data)
+        self.assertTrue(
+            'Mon, November 20, 2017 - 14:00 UTC'
+            in output.data)
+        self.assertTrue(
+            'Mon, November 20, 2017 - 15:00 UTC'
+            in output.data)
 
     def test_is_calendar_manager(self):
         """ Test the is_calendar_manager function. """

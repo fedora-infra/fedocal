@@ -1077,9 +1077,6 @@ def view_meeting_page(meeting_id, full):
             'errors')
         return flask.redirect(flask.url_for('index'))
 
-    meeting_utc = fedocallib.convert_meeting_timezone(
-        org_meeting, org_meeting.meeting_timezone, 'UTC')
-
     editor = False
     if is_meeting_manager(org_meeting) or is_calendar_admin(
             org_meeting.calendar):
@@ -1093,9 +1090,13 @@ def view_meeting_page(meeting_id, full):
             pass
 
     next_meeting = fedocallib.update_date_rec_meeting(
-        meeting_utc, action='next', date_limit=date_limit)
+        org_meeting, action='next', date_limit=date_limit)
+
+    meeting_utc = fedocallib.convert_meeting_timezone(
+        next_meeting, org_meeting.meeting_timezone, 'UTC')
+
     next_meeting = fedocallib.convert_meeting_timezone(
-        next_meeting, 'UTC', tzone)
+        next_meeting, org_meeting.meeting_timezone, tzone)
 
     return flask.render_template(
         'view_meeting.html',

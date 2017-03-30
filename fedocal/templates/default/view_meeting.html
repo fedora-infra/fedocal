@@ -36,7 +36,8 @@
               {{ _('End:') }}
           </span>
           {{ next_meeting.meeting_date_end.strftime('%a, %B %d, %Y') }} - {{
-              next_meeting.meeting_time_stop }} {{ tzone }} </li>
+              next_meeting.meeting_time_stop.strftime('%H:%M') }} {{ tzone }}
+        </li>
     </ul>
 
     <div id="countdown"></div>

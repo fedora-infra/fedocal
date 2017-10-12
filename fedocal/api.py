@@ -492,11 +492,7 @@ endpoint raises a 404.
 
     green, red = 'brightgreen', 'red'
 
-    ## We *would* use the canonical b.repl.ca url, but it doesn't support SSL
-    ## the way that we need currently.  So, instead we'll use the backend name
-    ## to get around that.
-    #template = 'http://b.repl.ca/v1/%s-%s_%s-%s.png'
-    template = 'https://buckler-bowes.rhcloud.com/v1/%s-%s_%s-%s.png'
+    template = 'https://img.shields.io/badge/%s-%s_%s-%s.png'
 
     output = None
     for meeting in meetings:

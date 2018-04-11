@@ -24,7 +24,11 @@
  MA 02110-1301, USA.
 """
 
-from flask.ext import wtf
+try:
+   from flask_wtf import FlaskForm as FlaskForm
+except ImportError:
+   from flask_wtf import Form as FlaskForm
+
 from fedocal.fedocal_babel import gettext, ngettext
 
 
@@ -40,7 +44,7 @@ class Translations(object):
         self.ngettext = ngettext
 
 
-class Form(wtf.Form):
+class Form(FlaskForm):
     """I18n form"""
     def _get_translations(self):
         """I18n form translation"""

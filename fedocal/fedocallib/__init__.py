@@ -707,7 +707,7 @@ def add_meeting_to_vcal(ical, meeting, reminder=None):
                 freq=rrule.WEEKLY,
                 interval=freq,
                 dtstart=start.value,
-                until=meeting.recursion_ends))
+                until=meeting.recursion_ends.replace(tzinfo='utc')))
         entry.rruleset = newrule
 
     if reminder:

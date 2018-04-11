@@ -197,11 +197,7 @@ else %}{{ location }}{% endif %}{% endblock %}
 
       {% if meeting_list %}
           {% for meeting in meeting_list %}
-              {% if loop.first %}
-              {% set day_index = 0 %}
-              {% else %}
-              {% set day_index = day_index + 1 %}
-              {% endif %}
+              {% set day_index = loop.index-1%}
 
               {% set first_meeting = [] %}
               {% set last_meeting = [] %}
@@ -262,11 +258,7 @@ else %}{{ location }}{% endif %}{% endblock %}
                   <div class="row_height"></div>
               </th>
               {% for meetings in full_day_meetings %}
-                {% if loop.first %}
-                {% set day_index = 0 %}
-                {% else %}
-                {% set day_index = day_index + 1 %}
-                {% endif %}
+                {% set day_index = loop.index-1%}
                 <td>
                     {% for meeting in meetings %}
                     <a class="event_blue meeting_{{ meeting.meeting_id }}"

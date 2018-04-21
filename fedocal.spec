@@ -16,8 +16,8 @@ Release:        1%{?dist}
 Summary:        A web based calendar application
 
 License:        GPLv3+
-URL:            http://fedorahosted.org/fedocal/
-Source0:        https://fedorahosted.org/releases/f/e/fedocal/%{name}-%{version}.tar.gz
+URL:            https://pagure.io/fedocal/
+Source0:        https://pagure.io/fedocal/releases/%{name}-%{version}.tar.gz
 
 BuildArch:      noarch
 

@@ -98,7 +98,7 @@ The form to will ask for:
 .. note:: To create a new calendar in the `Fedora instance of fedocal
           <https://apps.fedoraproject.org/calendar>`_ you will need to
           create a ticket on the `infrastructure trac
-          <https://fedorahosted.org/fedora-infrastructure/>`_
+          <https://pagure.io/fedora-infrastructure/>`_
 
 
 Edit a calendar

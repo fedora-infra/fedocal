@@ -8,13 +8,13 @@ Anonymous:
 
 ::
 
-  git clone http://git.fedorahosted.org/git/fedocal.git
+  git clone https://pagure.io/fedocal.git
 
 Contributors:
 
 ::
 
-  git clone ssh://<FAS user>@git.fedorahosted.org/git/fedocal.git
+  git clone ssh://<FAS user>@git.pagure.io/fedocal.git
 
 
 Dependencies
@@ -119,7 +119,7 @@ This will create two patch files that you can send by email to submit in the
 trac.
 
 .. note:: You can send your patch by email to the `fedocal mailing-list
-          <https://lists.fedorahosted.org/mailman/listinfo/fedocal>`_
+          <https://lists.fedoraproject.org/archives/list/fedocal@lists.fedorahosted.org/>`_
 
 
 Unit-tests

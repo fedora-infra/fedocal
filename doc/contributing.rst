@@ -28,4 +28,4 @@ If you're submitting patches to fedocal, please observe the following:
    you?
 
    Come to see us on IRC: ``#fedora-apps`` on irc.freenode.net or via the
-   `trac of the project <http://fedorahosted.org/fedocal/>`_.
+   `issue tracker of the project <https://pagure.io/fedocal/>`_.

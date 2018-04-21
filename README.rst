@@ -9,7 +9,7 @@ fedocal is a web based calendar application.
 
 Get this project:
 -----------------
-Source:  https://pagure.io/fedocal
+Source:  https://pagure.io/fedocal.git/
 Mirror on github: https://github.com/fedora-infra/fedocal
 (Please use Pagure as the main repository and make sure
 you run your patch against it)

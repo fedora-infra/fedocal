@@ -6,7 +6,7 @@ From sources
 
 Clone the source::
 
- git clone http://git.fedorahosted.org/git/fedocal.git
+ git clone https://pagure.io/fedocal.git
 
 
 Copy the configuration files::

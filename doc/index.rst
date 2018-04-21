@@ -25,14 +25,14 @@ this task off the shoulders of fellow contributors.
 
 Resources:
 
-- `Home page <http://fedorahosted.org/fedocal/>`_
+- `Home page <http://pagure.io/fedocal/>`_
 - `Documentation <http://fedocal.rtfd.org/>`_
-- `Git repository <http://git.fedorahosted.org/git/fedocal>`_
+- `Git repository <https://pagure.io/fedocal.git>`_
 - `Github mirror <https://github.com/fedora-infra/fedocal>`_
 - `Discussion mailing-list
-  <https://lists.fedorahosted.org/mailman/listinfo/fedocal>`_
+  <https://lists.fedoraproject.org/archives/list/fedocal@lists.fedorahosted.org/>`_
 - `Developer mailing-list
-  <https://lists.fedorahosted.org/mailman/listinfo/fedocal-devel>`_ (this
+  <https://lists.fedoraproject.org/archives/list/fedocal-devel@lists.fedorahosted.org/>`_ (this
   contains changes in the trac as well as commit notifications. It is not
   intended for discussion)
 

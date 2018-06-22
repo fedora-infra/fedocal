@@ -255,10 +255,11 @@ Sample response:
                 "meeting_time_stop": "23:00:00",
                 "calendar_name": "test",
                 "meeting_date_end": "2013-05-27",
-                "meeting_manager": "pingou2,",
+                "meeting_manager": [ "pingou2" ],
                 "meeting_date": "2013-05-27",
                 "meeting_name": "test1.5",
-                "meeting_location": "None"
+                "meeting_location": "None",
+                "meeting_timezone": "UTC"
             },
             {
                 "meeting_time_start": "06:00:00",
@@ -266,10 +267,11 @@ Sample response:
                 "meeting_time_stop": "07:00:00",
                 "calendar_name": "test",
                 "meeting_date_end": "2013-05-28",
-                "meeting_manager": "pingou,",
+                "meeting_manager": [ "pingou" ],
                 "meeting_date": "2013-05-28",
                 "meeting_name": "test3",
-                "meeting_location": null
+                "meeting_location": null,
+                "meeting_timezone": "UTC"
             }
         ],
         "arguments": {
@@ -280,6 +282,11 @@ Sample response:
         }
     }
 
+The ``meeting_time_start``, ``meeting_time_end``, ``meeting_date`` and
+``meeting_date_end`` contain time in "UTC". The ``meeting_timezone`` indicates
+the timezone the meeting is registered with. If the ``meeting_timezone`` is not
+"UTC", the meeting time will change according to DST rules of the specified
+timezone.
 
 The ``arguments`` item in the root dictionary contains all possible
 arguments, and displays the value used (the default if the argument

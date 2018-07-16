@@ -80,7 +80,7 @@ Create the database scheme::
 
 Run the server::
 
- FEDOCAL_CONFIG=fedocal.cfg sh runserver
+ FEDOCAL_CONFIG=`pwd`/fedocal.cfg python runserver.py
 
 You should be able to access the server at http://localhost:5000
 

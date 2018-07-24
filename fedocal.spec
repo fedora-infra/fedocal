@@ -1,8 +1,17 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from
-%distutils.sysconfig import get_python_lib; print (get_python_lib())")}
+%if (0%{?fedora} && 0%{?fedora} <= 27) || (0%{?rhel} && 0%{?rhel} <= 7)
+%global pyversion %{nil}
+%else
+%global pyversion 2
+%endif
+
+%if (0%{?fedora} && 0%{?fedora} > 27) || (0%{?rhel} && 0%{?rhel} <= 7)
+%global pyversion2 %{nil}
+%else
+%global pyversion2 2
+%endif
 
 Name:           fedocal
-Version:        0.15.1
+Version:        0.16
 Release:        1%{?dist}
 Summary:        A web based calendar application
 
@@ -12,55 +21,53 @@ Source0:        https://fedorahosted.org/releases/f/e/fedocal/%{name}-%{version}
 
 BuildArch:      noarch
 
-BuildRequires:  python2-devel
-BuildRequires:  python-flask
-BuildRequires:  pytz
-BuildRequires:  python-wtforms
-BuildRequires:  python-flask-wtf
-BuildRequires:  python-vobject
-BuildRequires:  python-kitchen
-BuildRequires:  python-fedora >= 0.3.33
-BuildRequires:  python-fedora-flask >= 0.3.33
-BuildRequires:  python-alembic
-BuildRequires:  python-dateutil
-BuildRequires:  python-setuptools
-BuildRequires:  python-markdown
-BuildRequires:  python-docutils
-BuildRequires:  python-nose
-BuildRequires:  python-coverage
-BuildRequires:  python-mock
-BuildRequires:  python-psutil
-BuildRequires:  python-flask-babel
+BuildRequires:  python%{pyversion2}-speaklater
+BuildRequires:  python%{pyversion2}-blinker
+
+BuildRequires:  python%{pyversion2}-wtforms
+BuildRequires:  python%{pyversion}-flask
+BuildRequires:  python%{pyversion}-flask-wtf
+
+BuildRequires:  python%{pyversion}-devel
+BuildRequires:  python%{pyversion}-pytz
+BuildRequires:  python%{pyversion}-vobject
+BuildRequires:  python%{pyversion}-kitchen
+BuildRequires:  python%{pyversion}-fedora >= 0.3.33
+BuildRequires:  python%{pyversion}-fedora-flask >= 0.3.33
+BuildRequires:  python%{pyversion}-alembic
+BuildRequires:  python%{pyversion}-dateutil
+BuildRequires:  python%{pyversion}-setuptools
+BuildRequires:  python%{pyversion}-markdown
+BuildRequires:  python%{pyversion}-docutils
+BuildRequires:  python%{pyversion}-nose
+BuildRequires:  python%{pyversion}-coverage
+BuildRequires:  python%{pyversion}-mock
+BuildRequires:  python%{pyversion}-psutil
+BuildRequires:  python%{pyversion}-flask-babel
+BuildRequires:  python%{pyversion}-bleach
+BuildRequires:  python%{pyversion}-sqlalchemy > 0.5
 BuildRequires:  babel
-BuildRequires:  python-blinker
-BuildRequires:  python-bleach
 
-# EPEL6
-%if ( 0%{?rhel} && 0%{?rhel} == 6 )
-BuildRequires:  python-sqlalchemy0.7
-Requires:  python-sqlalchemy0.7
-%else
-BuildRequires:  python-sqlalchemy > 0.5
-Requires:  python-sqlalchemy > 0.5
-%endif
+Requires:  python%{pyversion2}-wtforms
+Requires:  python%{pyversion2}-flask-wtf
 
-Requires:  python-flask
-Requires:  pytz
-Requires:  python-wtforms
-Requires:  python-flask-wtf
-Requires:  python-vobject
-Requires:  python-kitchen
-Requires:  python-fedora >= 0.3.32.3-3
-Requires:  python-fedora-flask
-Requires:  python-alembic
-Requires:  python-dateutil
-Requires:  python-setuptools
-Requires:  python-markdown
-Requires:  python-docutils
-Requires:  python-psutil
-Requires:  python-flask-babel
-Requires:  python-blinker
-Requires:  python-bleach
+Requires:  python%{pyversion2}-blinker
+Requires:  python%{pyversion}-flask
+
+Requires:  python%{pyversion}-sqlalchemy > 0.5
+Requires:  python%{pyversion}-pytz
+Requires:  python%{pyversion}-vobject
+Requires:  python%{pyversion}-kitchen
+Requires:  python%{pyversion}-fedora >= 0.3.32.3-3
+Requires:  python%{pyversion}-fedora-flask
+Requires:  python%{pyversion}-alembic
+Requires:  python%{pyversion}-dateutil
+Requires:  python%{pyversion}-setuptools
+Requires:  python%{pyversion}-markdown
+Requires:  python%{pyversion}-docutils
+Requires:  python%{pyversion}-psutil
+Requires:  python%{pyversion}-flask-babel
+Requires:  python%{pyversion}-bleach
 Requires:  mod_wsgi
 
 %description
@@ -73,18 +80,19 @@ most calendar application.
 %setup -q
 
 sed -i -e 's|script_location = alembic|script_location = /usr/share/fedocal/alembic|' alembic.ini.sample
+sed -i -e "s|#!/usr/bin/env python|#!%{__python2}|" nosetests
 
 # Compile the translations
 pybabel compile -d fedocal/translations
 
 
 %build
-%{__python} setup.py build
+%{__python2} setup.py build
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
 # Install apache configuration file
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/
@@ -114,12 +122,27 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/fedocal/fedocal_createdb.
 %config(noreplace) %{_sysconfdir}/fedocal/alembic.ini
 %dir %{_sysconfdir}/fedocal/
 %{_datadir}/fedocal/
-%{python_sitelib}/fedocal/
-%{python_sitelib}/fedocal*.egg-info
+%{python2_sitelib}/fedocal/
+%{python2_sitelib}/fedocal*.egg-info
 %{_bindir}/fedocal_cron.py
 
 
 %changelog
+* Tue Jul 24 2018 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.16-1
+- Update to 0.16
+- Port spec file to newer Fedora guidelines
+- Drop support for EL6 in the spec file
+- Clarify that times returned in the API are in UTC (Amitosh Swain Mahapatra)
+- Point repo links to pagure.io rather than fedorahosted.org (Amitosh Swain
+  Mahapatra)
+- Ensure the time-zones are always sorted
+- Make the start and stop time of the meeting be in the same format
+- Fix showing the meeting in its proper time
+- flask_wtf.Form got renamed to flask_wtf.FlaskForm in newer version of flask-wtf
+- Ensure the recursion_ends is provided in UTC
+- Make recursion ends timezone aware
+- Move to shields.io for the shields
+
 * Wed Jan 11 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.15.1-1
 - Update to 0.15.1
 - Fix double time-zone conversion

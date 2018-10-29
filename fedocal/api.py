@@ -412,7 +412,7 @@ Filter arguments
                 for calendar in fedocallib.get_calendars(SESSION):
                     meetings.extend(fedocallib.get_by_date(
                         SESSION, calendar, startd, endd))
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         status = 500
         LOG.debug('Error in api_meetings')
         LOG.exception(err)

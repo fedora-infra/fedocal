@@ -32,6 +32,7 @@ Note: It will need the SQLAlchemy database url filled at the top of this
 file.
 
 '''
+from __future__ import print_function
 
 ## These two lines are needed to run on EL6
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
@@ -107,7 +108,7 @@ def convert_calendars(fed03_sess, fed04_sess):
         fed04_sess.add(calendarobj)
         cnt += 1
     fed04_sess.commit()
-    print '%s calendars added' % cnt
+    print('%s calendars added' % cnt)
 
 
 def convert_reminders(fed03_sess, fed04_sess):
@@ -124,7 +125,7 @@ def convert_reminders(fed03_sess, fed04_sess):
         fed04_sess.add(reminderobj)
         cnt += 1
     fed04_sess.commit()
-    print '%s reminders added' % cnt
+    print('%s reminders added' % cnt)
 
 
 def convert_meetings(fed03_sess, fed04_sess):
@@ -161,7 +162,7 @@ def convert_meetings(fed03_sess, fed04_sess):
         fed04_sess.flush()
         cnt += 1
     fed04_sess.commit()
-    print '%s meetings added' % cnt
+    print('%s meetings added' % cnt)
 
 
 def main(db_url_fed03, db_url_fed04):
@@ -180,8 +181,8 @@ def main(db_url_fed03, db_url_fed04):
 
 if __name__ == '__main__':
     if not DB_URL_FEDOCAL03 or not DB_URL_FEDOCAL04:
-        print 'You need to set the database(s) URL(s) at the top of this ' \
-              'file'
+        print('You need to set the database(s) URL(s) at the top of this ' \
+              'file')
         sys.exit(1)
 
     main(DB_URL_FEDOCAL03, DB_URL_FEDOCAL04)

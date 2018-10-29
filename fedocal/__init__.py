@@ -777,7 +777,7 @@ def add_calendar():
         try:
             calendarobj.save(SESSION)
             SESSION.commit()
-        except SQLAlchemyError, err:
+        except SQLAlchemyError as err:
             SESSION.rollback()
             LOG.debug('Error in add_calendar')
             LOG.exception(err)
@@ -875,12 +875,12 @@ def add_meeting(calendar_name, full=True):
                 remind_who=form.remind_who.data,
                 full_day=form.full_day.data,
                 admin=is_admin())
-        except FedocalException, err:
+        except FedocalException as err:
             flask.flash(str(err), 'warnings')
             return flask.render_template(
                 'add_meeting.html', calendar=calendarobj, form=form,
                 tzone=tzone, full=full)
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in add_meeting')
             LOG.exception(err)
@@ -1010,12 +1010,12 @@ def edit_meeting(meeting_id):
                 full_day=form.full_day.data,
                 edit_all_meeting=action == 'Save all',
                 admin=is_admin())
-        except FedocalException, err:
+        except FedocalException as err:
             flask.flash(err, 'warnings')
             return flask.render_template(
                 'edit_meeting.html', meeting=meeting, calendar=calendarobj,
                 form=form, tzone=tzone)
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in edit_meeting')
             LOG.exception(err)
@@ -1188,7 +1188,7 @@ def delete_meeting(meeting_id):
                     calendar=meeting.calendar.to_json(),
                 ))
                 flask.flash(gettext('Meeting deleted'))
-            except SQLAlchemyError, err:  # pragma: no cover
+            except SQLAlchemyError as err:  # pragma: no cover
                 SESSION.rollback()
                 LOG.debug('Error in delete_meeting - 2')
                 LOG.exception(err)
@@ -1248,7 +1248,7 @@ def delete_calendar(calendar_name):
                     agent=flask.g.fas_user.username,
                     calendar=calendarobj.to_json(),
                 ))
-            except SQLAlchemyError, err:  # pragma: no cover
+            except SQLAlchemyError as err:  # pragma: no cover
                 SESSION.rollback()
                 LOG.debug('Error in delete_calendar')
                 LOG.exception(err)
@@ -1291,7 +1291,7 @@ def clear_calendar(calendar_name):
                 fedocallib.clear_calendar(SESSION, calendarobj)
                 SESSION.commit()
                 flask.flash(gettext('Calendar cleared'))
-            except SQLAlchemyError, err:  # pragma: no cover
+            except SQLAlchemyError as err:  # pragma: no cover
                 SESSION.rollback()
                 LOG.debug('Error in clear_calendar')
                 LOG.exception(err)
@@ -1348,7 +1348,7 @@ def edit_calendar(calendar_name):
             calendarobj.calendar_status = form.calendar_status.data
             calendarobj.save(SESSION)
             SESSION.commit()
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in edit_calendar')
             LOG.exception(err)
@@ -1742,7 +1742,7 @@ def upload_calendar(calendar_name):
             flask.flash(err.message, 'error')
             return flask.render_template(
                 'upload_calendar.html', form=form, calendar=calendarobj)
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             SESSION.rollback()
             LOG.debug('Error in upload_calendar')
             LOG.exception(err)

@@ -26,6 +26,7 @@
 
  fedocal.model test script
 """
+from __future__ import print_function
 
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
@@ -1328,7 +1329,7 @@ class Flasktests(Modeltests):
         with user_set(fedocal.APP, user):
             output = self.app.get('/calendar_test/add/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            print output.data
+            print(output.data)
             self.assertTrue(
                 '"errors">No calendar named calendar_test could be found</'
                 in output.data)

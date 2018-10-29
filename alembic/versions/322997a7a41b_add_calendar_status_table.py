@@ -5,6 +5,7 @@ Revises: 4f509700da52
 Create Date: 2013-10-15 11:52:16.185994
 
 """
+from __future__ import print_function
 
 # revision identifiers, used by Alembic.
 revision = '322997a7a41b'
@@ -25,7 +26,7 @@ def upgrade():
                       server_default='Enabled')
             )
     except Exception as e:
-        print e
+        print(e)
 
 
 def downgrade():

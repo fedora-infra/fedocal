@@ -26,9 +26,7 @@
 
  fedocal.model test script
 """
-
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
-import pkg_resources
+from __future__ import unicode_literals, absolute_import, print_function
 
 import unittest
 import sys
@@ -62,7 +60,7 @@ class Fedocallibtests(Modeltests):
 
     def __setup_calendar(self):
         """ Set up basic calendar information. """
-        from test_calendar import Calendartests
+        from .test_calendar import Calendartests
         cal = Calendartests('test_init_calendar')
         cal.session = self.session
         cal.test_init_calendar()
@@ -70,7 +68,7 @@ class Fedocallibtests(Modeltests):
     def __setup_meeting(self):
         """ Set up basic calendar information and add some meetings in
         them. """
-        from test_meeting import Meetingtests
+        from .test_meeting import Meetingtests
         meeting = Meetingtests('test_init_meeting')
         meeting.session = self.session
         meeting.test_init_meeting()

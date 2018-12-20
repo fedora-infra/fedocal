@@ -26,9 +26,7 @@
 
  fedocal.model test script
 """
-
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
-import pkg_resources
+from __future__ import unicode_literals, absolute_import, print_function
 
 import unittest
 import sys
@@ -41,8 +39,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from fedocal.fedocallib import model
-from tests import Modeltests, TODAY
-from test_calendar import Calendartests
+from . import Modeltests, TODAY
+from .test_calendar import Calendartests
 
 
 # pylint: disable=R0904

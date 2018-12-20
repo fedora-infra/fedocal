@@ -22,10 +22,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  MA 02110-1301, USA.
 """
-
-# These two lines are needed to run on EL6
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
-import pkg_resources
+from __future__ import unicode_literals, absolute_import, print_function
 
 __version__ = '0.16'
 
@@ -34,7 +31,6 @@ import logging
 import textwrap
 import os
 import urllib
-import urlparse
 from dateutil import parser
 from logging.handlers import SMTPHandler
 
@@ -42,14 +38,18 @@ import flask
 import bleach
 import jinja2
 import markdown
+import six
+import six.moves
 import vobject
 from dateutil.relativedelta import relativedelta
 from flask_fas_openid import FAS
 from flask_multistatic import MultiStaticFlask
 from functools import wraps
 from pytz import common_timezones
+from six.moves.urllib.parse import urlparse, urljoin
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug import secure_filename
+
 from fedocal.fedocal_babel import Babel
 from fedocal.fedocal_babel import gettext
 from fedocal.fedocal_babel import format_datetime
@@ -228,7 +228,7 @@ def format_time_spinner(time):
     """ Template filter returning for a given time only the hours and
     minutes.
     """
-    if isinstance(time, basestring):
+    if isinstance(time, six.string_types):
         return ':'.join(time.split(':')[:2])
     else:
         return time.strftime('%H:%M')
@@ -266,7 +266,7 @@ def is_admin():
         return False
 
     admins = APP.config['ADMIN_GROUP']
-    if isinstance(admins, basestring):
+    if isinstance(admins, six.string_types):
         admins = set([admins])
     else:  # pragma: no cover
         admins = set(admins)
@@ -337,7 +337,7 @@ def get_timezone():
 def chunks(item_list, chunks_size):
     """ Yield successive n-sized chunks from item_list.
     """
-    for i in xrange(0, len(item_list), chunks_size):
+    for i in six.moves.range(0, len(item_list), chunks_size):
         yield item_list[i: i + chunks_size]
 
 
@@ -345,9 +345,9 @@ def is_safe_url(target):
     """ Checks that the target url is safe and sending to the current
     website not some other malicious one.
     """
-    ref_url = urlparse.urlparse(flask.request.host_url)
-    test_url = urlparse.urlparse(
-        urlparse.urljoin(flask.request.host_url, target))
+    ref_url = urlparse(flask.request.host_url)
+    test_url = urlparse(
+        urljoin(flask.request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
         ref_url.netloc == test_url.netloc
 
@@ -720,7 +720,7 @@ def auth_login():
         groups.update(cal.admin_groups)
         groups.update(cal.editor_groups)
 
-    if isinstance(APP.config['ADMIN_GROUP'], basestring):
+    if isinstance(APP.config['ADMIN_GROUP'], six.string_types):
         groups.update([APP.config['ADMIN_GROUP']])
     else:
         groups.update(APP.config['ADMIN_GROUP'])
@@ -1730,16 +1730,16 @@ def upload_calendar(calendar_name):
                       'file: "%s"',
                       flask.g.fas_user.username, ical_file.filename)
             LOG.exception(err)
-            flask.flash(err.message, 'error')
+            flask.flash("%s" % err, 'error')
             return flask.render_template(
                 'upload_calendar.html', form=form, calendar=calendarobj)
 
         try:
             fedocallib.add_vcal_file(
-                SESSION, calendarobj, ical_file, flask.g.fas_user, is_admin())
+                SESSION, calendarobj, ical_file.read(), flask.g.fas_user, is_admin())
             flask.flash(gettext('Calendar uploaded'))
         except FedocalException as err:  # pragma: no cover
-            flask.flash(err.message, 'error')
+            flask.flash("%s" % err, 'error')
             return flask.render_template(
                 'upload_calendar.html', form=form, calendar=calendarobj)
         except SQLAlchemyError as err:  # pragma: no cover

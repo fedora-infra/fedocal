@@ -13,12 +13,10 @@ your option) any later version.
 See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
+from __future__ import unicode_literals, absolute_import, print_function
 
 import copy
-import vobject
-import pytz
 import operator
-
 from datetime import datetime
 from datetime import date
 from datetime import time
@@ -27,6 +25,9 @@ from dateutil import zoneinfo
 from dateutil.relativedelta import relativedelta
 import dateutil.rrule as rrule
 
+import six
+import pytz
+import vobject
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
@@ -1182,6 +1183,9 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
         'CEST': 'Europe/Paris',
         'EDT': 'US/Eastern',
     }
+
+    if isinstance(stream, six.binary_type):
+        stream = stream.decode('utf-8')
 
     meetings = vobject.readOne(stream)
     for meeting in meetings.components():

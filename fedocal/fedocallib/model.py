@@ -14,13 +14,14 @@ your option) any later version.
 See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
-__requires__ = ['SQLAlchemy >= 0.7']
-import pkg_resources
+from __future__ import unicode_literals, absolute_import, print_function
+
 import operator
 
 from datetime import date
 from datetime import timedelta
 
+import six
 from sqlalchemy import (
     Boolean,
     create_engine,
@@ -411,7 +412,7 @@ class Meeting(BASE):
         if ',' in meeting_manager:
             meeting_manager = meeting_manager.split(',')
 
-        if isinstance(meeting_manager, basestring):
+        if isinstance(meeting_manager, six.string_types):
             meeting_manager = [meeting_manager]
 
         for manager in meeting_manager:

@@ -27,9 +27,7 @@
  fedocal's flask application tests script
  - for special corner case to test
 """
-
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
-import pkg_resources
+from __future__ import unicode_literals, absolute_import, print_function
 
 import flask
 import logging
@@ -104,15 +102,16 @@ class ExtrasFlasktests(Modeltests):
         with user_set(fedocal.APP, user):
             output = self.app.get('/meeting/edit/1/')
             self.assertEqual(output.status_code, 200)
+            output_text = output.get_data(as_text=True)
 
             next_date = TODAY + timedelta(days=14)
             if date.today() <= TODAY:
                 next_date = TODAY
 
             # If no date is specified, it returns the next occurence
-            self.assertTrue(
+            self.assertIn(
                 '<input id="meeting_date" name="meeting_date" type="text" '
-                'value="%s">' % (next_date) in output.data
+                'value="%s">' % (next_date), output_text
             )
 
             # If a date in the future is specified, return the next occurence
@@ -121,11 +120,12 @@ class ExtrasFlasktests(Modeltests):
                 TODAY + timedelta(days=20))
             output2 = self.app.get(url)
             self.assertEqual(output2.status_code, 200)
+            output2_text = output2.get_data(as_text=True)
 
-            self.assertTrue(
+            self.assertIn(
                 '<input id="meeting_date" name="meeting_date" type="text" '
-                'value="%s">' % (TODAY + timedelta(days=28))
-                in output2.data
+                'value="%s">' % (TODAY + timedelta(days=28)),
+                output2_text
             )
 
             # If an exact date in the future is specified, return that date
@@ -133,20 +133,21 @@ class ExtrasFlasktests(Modeltests):
                 TODAY + timedelta(days=14))
             output2 = self.app.get(url)
             self.assertEqual(output2.status_code, 200)
+            output2_text = output2.get_data(as_text=True)
 
-            self.assertTrue(
+            self.assertIn(
                 '<input id="meeting_date" name="meeting_date" type="text" '
-                'value="%s">' % (TODAY + timedelta(days=14)) in output2.data
+                'value="%s">' % (TODAY + timedelta(days=14)), output2_text
             )
 
             # If an old date in the future is specified, return the first date
             output2 = self.app.get('/meeting/edit/1/?from_date=2000-01-01')
             self.assertEqual(output2.status_code, 200)
+            output2_text = output2.get_data(as_text=True)
 
-            self.assertTrue(
+            self.assertIn(
                 '<input id="meeting_date" name="meeting_date" type="text" '
-                'value="%s">' % (TODAY)
-                in output2.data
+                'value="%s">' % (TODAY), output2_text
             )
 
     @flask10_only
@@ -176,13 +177,14 @@ class ExtrasFlasktests(Modeltests):
         with user_set(fedocal.APP, user):
             output = self.app.get('/meeting/delete/1/')
             self.assertEqual(output.status_code, 200)
+            output_text = output.get_data(as_text=True)
 
             next_date = TODAY + timedelta(days=14)
             if date.today() <= TODAY:
                 next_date = TODAY
 
             # If no date is specified, it returns the next occurence
-            self.assertTrue('<li>Date: %s</li>' % next_date in output.data)
+            self.assertIn('<li>Date: %s</li>' % next_date, output_text)
 
             # If a date in the future is specified, return the next occurence
             # for this date
@@ -190,10 +192,11 @@ class ExtrasFlasktests(Modeltests):
                 TODAY + timedelta(days=20))
             output2 = self.app.get(url)
             self.assertEqual(output2.status_code, 200)
+            output_text = output2.get_data(as_text=True)
 
-            self.assertTrue(
-                '<li>Date: %s</li>' % (TODAY + timedelta(days=28))
-                in output2.data
+            self.assertIn(
+                '<li>Date: %s</li>' % (TODAY + timedelta(days=28)),
+                output_text
             )
 
             # If an exact date in the future is specified, return that date
@@ -201,16 +204,19 @@ class ExtrasFlasktests(Modeltests):
                 TODAY + timedelta(days=14))
             output2 = self.app.get(url)
             self.assertEqual(output2.status_code, 200)
+            output_text = output2.get_data(as_text=True)
 
-            self.assertTrue('<li>Date: %s</li>' % next_date in output.data)
+            self.assertIn('<li>Date: %s</li>' % next_date, output_text)
 
             # If an old date in the future is specified, return the first date
             output2 = self.app.get('/meeting/delete/1/?from_date=2000-01-01')
             self.assertEqual(output2.status_code, 200)
+            output_text = output2.get_data(as_text=True)
 
             self.assertTrue(
-                '<li>Date: %s</li>' % (TODAY) in output2.data
+                '<li>Date: %s</li>' % (TODAY), output_text
             )
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(ExtrasFlasktests)

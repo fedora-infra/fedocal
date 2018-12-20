@@ -27,8 +27,7 @@
  tests for fedocal's cron job
 """
 
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
-import pkg_resources
+from __future__ import unicode_literals, absolute_import, print_function
 
 import logging
 import unittest
@@ -49,8 +48,8 @@ from fedocal.fedocallib import week
 from fedocal.fedocallib import exceptions
 
 import tests
-from tests import Modeltests
-from test_meeting import Meetingtests, TODAY
+from . import Modeltests
+from .test_meeting import Meetingtests, TODAY
 
 
 DB_PATH = 'sqlite:////tmp/fedocal_test.sqlite'

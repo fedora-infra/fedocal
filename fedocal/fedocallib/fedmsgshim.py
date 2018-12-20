@@ -5,6 +5,7 @@ messages.  If it is not installed, it will return silently.
   :Author: Ralph Bean <rbean@redhat.com>
 
 """
+from __future__ import unicode_literals, absolute_import, print_function
 
 import warnings
 

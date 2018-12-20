@@ -18,6 +18,7 @@
 # License and may only be used or replicated with the express permission
 # of Red Hat, Inc.
 #
+from __future__ import unicode_literals, absolute_import, print_function
 
 '''
 Mail handler for logging.

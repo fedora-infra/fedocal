@@ -14,17 +14,22 @@ your option) any later version.
 See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
+from __future__ import unicode_literals, absolute_import, print_function
 
-from datetime import date
-from calendar import LocaleHTMLCalendar
-from calendar import TimeEncoding
-from calendar import month_name
+import calendar
 import locale
-import fedocal
+from datetime import date
+try:
+    from calendar import TimeEncoding
+    PY3 = False
+except ImportError:
+    PY3 = True
+
 import flask
 
+import fedocal
 
-class FedocalCalendar(LocaleHTMLCalendar):
+class FedocalCalendar(calendar.LocaleHTMLCalendar):
     """ Improve Python's HTMLCalendar object adding
     html validation and some features 'locally required'
     """
@@ -112,15 +117,19 @@ class FedocalCalendar(LocaleHTMLCalendar):
         if self.locale in ['en', 'en_EN']:
             lcle = 'C'
 
-        with TimeEncoding(lcle) as encoding:
-            smonth = month_name[themonth]
-            if encoding is not None:
-                smonth = smonth.decode(encoding)
+        if PY3:
+            with calendar.different_locale(lcle) as encoding:
+                smonth = calendar.month_name[themonth].capitalize()
+        else:
+            with TimeEncoding(lcle) as encoding:
+                smonth = calendar.month_name[themonth].capitalize()
+                if encoding is not None:
+                    smonth = smonth.decode(encoding).capitalize()
 
-            if withyear:
-                string = '%s %s' % (smonth, theyear)
-            else:
-                string = '%s' % smonth
+        if withyear:
+            string = '%s %s' % (smonth, theyear)
+        else:
+            string = '%s' % smonth
 
         prev_month = self.month - 1
         prev_year = self.year

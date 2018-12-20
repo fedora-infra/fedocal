@@ -26,20 +26,18 @@
 
  fedocal.model test script
 """
-from __future__ import print_function
-
-__requires__ = ['SQLAlchemy >= 0.7']
-import pkg_resources
+from __future__ import unicode_literals, absolute_import, print_function
 
 import unittest
 import sys
 import os
 
+from contextlib import contextmanager
 from datetime import date
 from datetime import timedelta
 from functools import wraps
 
-from contextlib import contextmanager
+import six
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
@@ -152,7 +150,7 @@ class FakeUser(object):
         :arg groups: list of the groups in which this fake user is
             supposed to be.
         """
-        if isinstance(groups, basestring):
+        if isinstance(groups, six.string_types):
             groups = [groups]
         self.groups = groups
         self.username = username

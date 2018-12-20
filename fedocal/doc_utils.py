@@ -23,9 +23,12 @@
  MA 02110-1301, USA.
 """
 
+from __future__ import unicode_literals, absolute_import
+
 import docutils
 import docutils.examples
 import markupsafe
+import six
 
 
 def modify_rst(rst):
@@ -72,7 +75,9 @@ def modify_html(html):
 def load_doc(endpoint):
     """ Utility to load an RST file and turn it into fancy HTML. """
 
-    rst = unicode(endpoint.__doc__)
+    rst = endpoint.__doc__
+    if isinstance(rst, six.binary_type):
+        rst = rst.decode('utf-8')
 
     rst = modify_rst(rst)
 

@@ -22,18 +22,18 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  MA 02110-1301, USA.
 """
+from __future__ import unicode_literals, absolute_import, print_function
 
 
 import datetime
-import flask
 import json
-
 from dateutil import parser
+
+import flask
 from sqlalchemy.exc import SQLAlchemyError
 
 import fedocal.fedocallib as fedocallib
 from fedocal.doc_utils import load_doc
-
 from fedocal import APP, SESSION, LOG
 from fedocal.fedocallib.model import Calendar
 

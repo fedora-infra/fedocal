@@ -13,6 +13,7 @@ your option) any later version.
 See http://www.gnu.org/copyleft/gpl.html  for the full text of the
 license.
 """
+from __future__ import unicode_literals, absolute_import, print_function
 
 from datetime import timedelta
 import operator

@@ -16,6 +16,7 @@ license.
 from __future__ import unicode_literals, absolute_import, print_function
 
 import copy
+import logging
 import operator
 from datetime import datetime
 from datetime import date
@@ -42,6 +43,8 @@ from fedocal.fedocallib.exceptions import UserNotAllowed, InvalidMeeting
 from fedocal.fedocallib.fedora_calendar import FedocalCalendar
 
 from fedocal.fedocal_babel import gettext
+
+_log = logging.getLogger(__name__)
 
 
 HOURS = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
@@ -1166,6 +1169,7 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
     """ Add the meetings from the iCalendar stream provided into the calendar
     specified.
     """
+    _log.info('Uploading a vCal file')
     # Build a dict with all the common timezones storing for each their
     # localize name and their offset (ie: CEST 2:00:00)
     timezone_lookup = dict()
@@ -1239,6 +1243,11 @@ def add_vcal_file(session, calendar, stream, fas_user, admin=False):
         if isinstance(meeting_date_end, datetime):
             meeting_time_stop = meeting_date_end.time()
             meeting_date_end = meeting_date_end.date()
+
+        _log.info('Add meeting: {} - Start: {}:{} - End:   {}:{}'.format(
+            meeting_name, meeting_date, meeting_time_start,
+            meeting_date_end, meeting_time_stop
+        ))
 
         add_meeting(
             session,

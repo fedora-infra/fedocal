@@ -16,3 +16,4 @@ _build/
 pylint.out
 nosetests.xml
 MANIFEST
+.tox

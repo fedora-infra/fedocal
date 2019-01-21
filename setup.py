@@ -4,13 +4,17 @@
 Setup script
 """
 
-# Required to build on EL6
-__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
-import pkg_resources
+import os
+import re
 
 from setuptools import setup
 
-from fedocal import __version__
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+with open(os.path.join(here, "fedocal", "__init__.py")) as fd:
+    match = re.search(r"^__version__ = '([^']+)'$", fd.read(), re.MULTILINE)
+    VERSION = match.group(1)
 
 
 def get_requirements(requirements_file='requirements.txt'):
@@ -35,7 +39,7 @@ def get_requirements(requirements_file='requirements.txt'):
 setup(
     name='fedocal',
     description='fedocal is a web based calendar application for Fedora.',
-    version=__version__,
+    version=VERSION,
     author='Pierre-Yves Chibon',
     author_email='pingou@pingoured.fr',
     maintainer='Pierre-Yves Chibon',

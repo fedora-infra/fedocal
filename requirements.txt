@@ -8,7 +8,7 @@ flask-babel
 flask-oidc
 kitchen
 mock==1.1.2
-python-dateutil #<= 1.5
+python-dateutil<=2.7.0
 python-fedora>=0.3.33
 pytz>=2013b
 sqlalchemy
@@ -24,3 +24,6 @@ flask_oidc
 fedora-messaging
 email_validator
 fedocal-messages>=1.4.0
+
+gunicorn
+psycopg2

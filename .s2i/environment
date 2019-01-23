@@ -1,0 +1,6 @@
+FEDOCAL_CONFIG=/opt/app-root/config/fedocal.cfg
+FEDORA_MESSAGING_CONF=/opt/app-root/config/fedora-messaging.toml
+UPGRADE_PIP_TO_LATEST=1
+LANG=en_US.UTF-8
+LC_ALL=en_US.UTF-8
+LC_CTYPE=en_US.UTF-8

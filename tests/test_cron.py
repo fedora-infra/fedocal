@@ -138,8 +138,8 @@ class Crontests(Modeltests):
             meeting_information='This is a test meeting with reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id)
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -174,8 +174,8 @@ class Crontests(Modeltests):
             meeting_information='This is a test meeting with reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id)
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -212,8 +212,8 @@ class Crontests(Modeltests):
             meeting_information='This is a test meeting with reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id)
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 

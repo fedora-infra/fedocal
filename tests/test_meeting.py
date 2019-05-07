@@ -62,8 +62,8 @@ class Meetingtests(Modeltests):
             meeting_time_stop=time(20, 50),
             meeting_information='This is a test meeting',
             calendar_name='test_calendar')
-        obj.add_manager(self.session, 'pingou, shaiton,')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou, shaiton,')
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -75,8 +75,8 @@ class Meetingtests(Modeltests):
             meeting_time_stop=time(16, 15),
             meeting_information='This is another test meeting',
             calendar_name='test_calendar')
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -88,8 +88,8 @@ class Meetingtests(Modeltests):
             meeting_time_stop=time(23, 59),
             meeting_information='This is another test meeting',
             calendar_name='test_calendar')
-        obj.add_manager(self.session, ['pingou23h'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou23h'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -104,8 +104,8 @@ class Meetingtests(Modeltests):
             calendar_name='test_calendar3',
             recursion_frequency=7,
             recursion_ends=TODAY - timedelta(days=7))
-        obj.add_manager(self.session, ['test2'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['test2'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -119,8 +119,8 @@ class Meetingtests(Modeltests):
             meeting_information='This is a test meeting at the same time',
             calendar_name='test_calendar4',
             meeting_location='NA')
-        obj.add_manager(self.session, ['test'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['test'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -134,8 +134,8 @@ class Meetingtests(Modeltests):
                                 ' same time',
             calendar_name='test_calendar4',
             meeting_location='EMEA')
-        obj.add_manager(self.session, ['test'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['test'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -150,8 +150,9 @@ class Meetingtests(Modeltests):
             calendar_name='test_calendar',
             recursion_frequency=7,
             recursion_ends=TODAY + timedelta(days=90))
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
+        self.session.commit()
 
         obj = model.Meeting(  # id:8
             meeting_name='Another test meeting2',
@@ -163,8 +164,8 @@ class Meetingtests(Modeltests):
             calendar_name='test_calendar',
             recursion_frequency=14,
             recursion_ends=TODAY + timedelta(days=90))
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -183,8 +184,8 @@ class Meetingtests(Modeltests):
             meeting_information='This is a test meeting with reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id)
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -207,8 +208,8 @@ class Meetingtests(Modeltests):
             reminder_id=remobj.reminder_id,
             recursion_frequency=7,
             recursion_ends=TODAY + timedelta(days=60))
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -221,8 +222,8 @@ class Meetingtests(Modeltests):
             meeting_information='This is a second test meeting in EMEA',
             calendar_name='test_calendar4',
             meeting_location='EMEA')
-        obj.add_manager(self.session, ['test'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['test'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -238,8 +239,8 @@ class Meetingtests(Modeltests):
             recursion_frequency=7,
             recursion_ends=TODAY + timedelta(days=90),
             full_day=False)
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -255,8 +256,8 @@ class Meetingtests(Modeltests):
             recursion_frequency=None,
             recursion_ends=None,
             full_day=True)
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -272,8 +273,8 @@ class Meetingtests(Modeltests):
             recursion_frequency=7,
             recursion_ends=TODAY + timedelta(days=30),
             full_day=True)
-        obj.add_manager(self.session, ['pingou'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['pingou'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -287,8 +288,8 @@ class Meetingtests(Modeltests):
             meeting_information='Full day meeting 2',
             calendar_name='test_calendar2',
             full_day=True)
-        obj.add_manager(self.session, ['toshio'])
         obj.save(self.session)
+        obj.add_manager(self.session, ['toshio'])
         self.session.commit()
         self.assertNotEqual(obj, None)
 

@@ -73,7 +73,7 @@ class FlaskApitests(Modeltests):
     def test_api(self):
         """ Test the index function. """
         output = self.app.get('/api')
-        self.assertEqual(output.status_code, 301)
+        self.assertTrue(output.status_code in [301, 308])
 
         output = self.app.get('/api/')
         self.assertEqual(output.status_code, 200)

@@ -80,8 +80,8 @@ class FedocallibExtratests(Modeltests):
             recursion_frequency=7,
             recursion_ends=datetime(2014, 10, 27).date(),
         )
-        obj.add_manager(self.session, 'pingou')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou')
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -205,8 +205,8 @@ class FedocallibExtratests(Modeltests):
             recursion_frequency=7,
             recursion_ends=datetime(2014, 10, 27).date(),
         )
-        obj.add_manager(self.session, 'pingou')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou')
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -341,8 +341,8 @@ class FedocallibExtratests(Modeltests):
             recursion_frequency=7,
             recursion_ends=datetime(2014, 10, 27).date(),
         )
-        obj.add_manager(self.session, 'pingou')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou')
         self.session.commit()
         self.assertNotEqual(obj, None)
 

@@ -611,6 +611,7 @@ def delete_recursive_meeting(
 
         # Re-create after deletion has occured
         new_meeting = meeting.copy()
+        new_meeting.save(session)
 
         new_meeting.add_manager(session, meeting.meeting_manager)
         new_meeting.meeting_date = meeting_date + timedelta(
@@ -618,8 +619,6 @@ def delete_recursive_meeting(
         new_meeting.meeting_date_end = meeting_date_end + timedelta(
             days=meeting.recursion_frequency)
         new_meeting.recursion_ends = original_rec_end
-
-        new_meeting.save(session)
 
 
 # pylint: disable=C0103
@@ -1054,21 +1053,20 @@ def edit_meeting(
 
         if meeting_date > meeting.meeting_date:
             old_meeting = meeting.copy()
-            old_meeting.add_manager(session, meeting.meeting_manager)
-            old_meeting.recursion_ends = end_rec
             if old_meeting.recursion_ends > old_meeting.meeting_date:
                 old_meeting.save(session)
+            old_meeting.add_manager(session, meeting.meeting_manager)
+            old_meeting.recursion_ends = end_rec
 
         if not edit_all_meeting:
             remove_recursion = True
             new_meeting = meeting.copy()
+            new_meeting.save(session)
             new_meeting.add_manager(session, meeting.meeting_manager)
             new_meeting.meeting_date = closest_meeting.meeting_date \
                 + timedelta(days=meeting.recursion_frequency)
             new_meeting.meeting_date_end = closest_meeting.meeting_date_end \
                 + timedelta(days=meeting.recursion_frequency)
-
-            new_meeting.save(session)
 
     meeting.meeting_name = meeting_name
 

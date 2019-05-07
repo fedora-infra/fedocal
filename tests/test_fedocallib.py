@@ -328,8 +328,8 @@ class Fedocallibtests(Modeltests):
             meeting_information='This is a test meeting',
             calendar_name='test_calendar4',
             full_day=True)
-        obj.add_manager(self.session, 'pingou')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou')
         self.session.commit()
 
         # Meeting ending on the week's start
@@ -342,8 +342,8 @@ class Fedocallibtests(Modeltests):
             meeting_information='This is a test meeting ending on week start',
             calendar_name='test_calendar4',
             full_day=True)
-        obj.add_manager(self.session, 'pingou')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou')
         self.session.commit()
 
         calendar = model.Calendar.by_id(self.session, 'test_calendar4')
@@ -394,8 +394,8 @@ class Fedocallibtests(Modeltests):
             meeting_time_stop=time(13, 00),
             meeting_information='This is a past test meeting',
             calendar_name='test_calendar')
-        obj.add_manager(self.session, 'pingou')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou')
         self.session.commit()
         meetings = fedocallib.get_past_meeting_of_user(
             self.session, 'pingou', from_date=TODAY - timedelta(days=100))
@@ -690,8 +690,8 @@ class Fedocallibtests(Modeltests):
             meeting_information='This is a test meeting with reminder',
             calendar_name='test_calendar',
             reminder_id=remobj.reminder_id)
-        meeting.add_manager(self.session, 'pingou')
         meeting.save(self.session)
+        meeting.add_manager(self.session, 'pingou')
         self.session.commit()
 
         meetings = fedocallib.retrieve_meeting_to_remind(self.session)

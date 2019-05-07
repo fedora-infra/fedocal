@@ -133,7 +133,7 @@ class Flasktests(Modeltests):
         self.__setup_db()
 
         output = self.app.get('/test_calendar')
-        self.assertEqual(output.status_code, 301)
+        self.assertTrue(output.status_code in [301, 308])
 
         output = self.app.get('/test_calendar', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
@@ -172,7 +172,7 @@ class Flasktests(Modeltests):
         self.__setup_db()
 
         output = self.app.get('/location/test')
-        self.assertEqual(output.status_code, 301)
+        self.assertTrue(output.status_code in [301, 308])
 
         output = self.app.get('/location/test/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
@@ -202,7 +202,7 @@ class Flasktests(Modeltests):
         output = self.app.get(
             '/test_calendar/%s/%s/%s' % (
                 today.year, today.month, today.day))
-        self.assertEqual(output.status_code, 301)
+        self.assertTrue(output.status_code in [301, 308])
 
         output = self.app.get('/test_calendar/%s/%s/%s/' % (
             today.year, today.month, today.day), follow_redirects=True)
@@ -247,7 +247,7 @@ class Flasktests(Modeltests):
 
         output = self.app.get('/list/test_calendar/%s/%s/%s' % (
             today.year, today.month, today.day))
-        self.assertEqual(output.status_code, 301)
+        self.assertTrue(output.status_code in [301, 308])
 
         output = self.app.get('/list/test_calendar/%s/%s/%s/' % (
             today.year, today.month, today.day), follow_redirects=True)
@@ -680,8 +680,8 @@ class Flasktests(Modeltests):
             recursion_frequency=7,
             recursion_ends=mdate + timedelta(days=365)
         )
-        obj.add_manager(self.session, 'pingou, shaiton,')
         obj.save(self.session)
+        obj.add_manager(self.session, 'pingou, shaiton,')
         self.session.commit()
         self.assertNotEqual(obj, None)
 
@@ -872,7 +872,7 @@ class Flasktests(Modeltests):
         self.__setup_db()
 
         output = self.app.get('/location/EMEA')
-        self.assertEqual(output.status_code, 301)
+        self.assertTrue(output.status_code in [301, 308])
 
         output = self.app.get('/location/EMEA', follow_redirects=True)
         self.assertEqual(output.status_code, 200)

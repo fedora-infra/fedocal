@@ -79,7 +79,8 @@ def add_meeting(
         recursion_frequency=recursion_frequency,
         recursion_ends=recursion_ends,
         full_day=full_day)
+    meeting.save(session)
     meeting.add_manager(session, meeting_manager)
     meeting.save(session)
-    session.flush()
+    session.commit()
     return meeting

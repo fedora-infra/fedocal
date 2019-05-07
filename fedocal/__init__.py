@@ -43,7 +43,7 @@ import six
 import six.moves
 import vobject
 from dateutil.relativedelta import relativedelta
-from flask.ext.oidc import OpenIDConnect
+from flask_oidc import OpenIDConnect
 from flask_multistatic import MultiStaticFlask
 from functools import wraps
 from pytz import common_timezones

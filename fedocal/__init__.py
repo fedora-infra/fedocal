@@ -745,7 +745,6 @@ def auth_login():
     else:
         groups.update(APP.config['ADMIN_GROUP'])
 
-    #return FAS.login(return_url=return_point, groups=groups)
     return flask.redirect(return_point)
 
 

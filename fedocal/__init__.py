@@ -732,19 +732,6 @@ def auth_login():
         if is_safe_url(flask.request.args['next']):
             return_point = flask.request.args['next']
 
-    if authenticated():
-        return flask.redirect(return_point)
-
-    groups = set()
-    for cal in fedocallib.get_calendars(SESSION):
-        groups.update(cal.admin_groups)
-        groups.update(cal.editor_groups)
-
-    if isinstance(APP.config['ADMIN_GROUP'], six.string_types):
-        groups.update([APP.config['ADMIN_GROUP']])
-    else:
-        groups.update(APP.config['ADMIN_GROUP'])
-
     return flask.redirect(return_point)
 
 

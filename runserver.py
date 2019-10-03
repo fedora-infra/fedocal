@@ -24,7 +24,7 @@ parser.add_argument(
 parser.add_argument(
     '--host', default="127.0.0.1",
     help='Hostname to listen on. When set to 0.0.0.0 the server is available '
-    'externally. Defaults to 127.0.0.1 making the it only visable on localhost')
+    'externally. Defaults to 127.0.0.1 making it only visible on localhost')
 
 args = parser.parse_args()
 

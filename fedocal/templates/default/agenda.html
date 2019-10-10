@@ -74,9 +74,9 @@ else %}{{ location }}{% endif %}{% endblock %}
           {% else %}
           <input type="hidden" name="location" value="{{location}}"/>
           {% endif %}
-          <input type="text" name="day" placeholder="28" title="{{ _('Day in decimal') }}"/>
-          <input type="text" name="month" placeholder="02" title="{{ _('Month in decimal') }}"/>
-          <input type="text" name="year" placeholder="2014" title="{{ _('Year in decimal') }}"/>
+	  <input type="text" name="day" placeholder="{{ now.day }}" title="{{ _('Day in decimal') }}"/>
+	  <input type="text" name="month" placeholder="{{ now.month }}" title="{{ _('Month in decimal') }}"/>
+	  <input type="text" name="year" placeholder="{{  now.year }}" title="{{ _('Year in decimal') }}"/>
           <input type="submit" value="{{ _('Go') }}"/>
         </form>
         <form action="{{ url_for('update_tz') }}" id="update_tz">

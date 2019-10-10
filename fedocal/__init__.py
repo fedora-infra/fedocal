@@ -483,6 +483,7 @@ def calendar(calendar_name, year=None, month=None, day=None, mid=None):
 
     return flask.render_template(
         'agenda.html',
+        now=datetime.datetime.utcnow(),
         calendar=calendarobj,
         month=month_name,
         weekdays=weekdays,

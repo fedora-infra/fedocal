@@ -26,55 +26,37 @@
 This script is meant to be run as a cron job to send the reminders for
 each meeting that asked for it.
 """
-
+from __future__ import unicode_literals, absolute_import
 
 import smtplib
 import warnings
+import logging
 
 from email.mime.text import MIMEText
 
 import fedocal
 import fedocal.fedocallib as fedocallib
+import fedocal.fedocallib.fedmsgshim as fedmsg
 
-
-def fedmsg_init():
-    """ Instanciate fedmsg """
-    try:
-        import fedmsg
-        import fedmsg.config
-    except ImportError:
-        warnings.warn("fedmsg ImportError")
-        return
-
-    config = fedmsg.config.load_config()
-    config['active'] = True
-    config['name'] = 'relay_inbound'
-    config['cert_prefix'] = 'fedocal'
-    fedmsg.init(**config)
-
+_log = logging.getLogger(__name__)
 
 def fedmsg_publish(meeting, meeting_id):
-    """ Publish the meeting.reminder messages on fedmsg.
+    """ Publish the meeting.reminder messages on fedora-messaging.
     :arg meeting: a Meeting object from fedocallib.model
     :arg meeting_id: an int representing the meeting identifier in the
         database
     """
-    try:
-        import fedmsg
-    except ImportError:
-        return
+    _log.debug('Publishing a message for %r: %s', topic, msg)
+
 
     meeting_dict = meeting.to_json()
     meeting_dict['meeting_id'] = meeting_id
 
-    fedmsg.publish(
-        modname="fedocal",
-        topic="meeting.reminder",
-        msg=dict(
-            meeting=meeting_dict,
-            calendar=meeting.calendar.to_json()
-        ),
+    message = dict(
+        meeting=meeting_dict,
+        calendar=meeting.calendar.to_json()
     )
+    fedmsg.publish('fedocal.reminder', message)
 
 
 def send_reminder_meeting(meeting, meeting_id):
@@ -155,5 +137,4 @@ def send_reminder():
 
 
 if __name__ == '__main__':
-    fedmsg_init()
     send_reminder()

@@ -23,3 +23,5 @@ flask_multistatic
 python-openid
 python-openid_cla
 python-openid_teams
+fedora-messaging
+

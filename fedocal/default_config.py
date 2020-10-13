@@ -87,4 +87,8 @@ OIDC_CLIENT_SECRETS = os.path.join(os.path.dirname(
 OIDC_ID_TOKEN_COOKIE_SECURE = False
 OIDC_REQUIRE_VERIFIED_EMAIL = False
 OIDC_OPENID_REALM = 'http://localhost:5000/oidc_callback'
-OIDC_SCOPES = ['openid', 'email', 'profile', 'fedora']
+OIDC_SCOPES = [
+    'openid', 'email', 'profile',
+    'https://id.fedoraproject.org/scope/cla',
+    'https://id.fedoraproject.org/scope/groups',
+]

@@ -46,8 +46,7 @@ def fedmsg_publish(meeting, meeting_id):
     :arg meeting_id: an int representing the meeting identifier in the
         database
     """
-    _log.debug('Publishing a message for %r: %s', topic, msg)
-
+    _log.debug('Publishing a message for meeting: %s', meeting_id)
 
     meeting_dict = meeting.to_json()
     meeting_dict['meeting_id'] = meeting_id
@@ -56,7 +55,7 @@ def fedmsg_publish(meeting, meeting_id):
         meeting=meeting_dict,
         calendar=meeting.calendar.to_json()
     )
-    fedmsg.publish('fedocal.reminder', message)
+    fedmsg.publish(topic='reminder', msg=message)
 
 
 def send_reminder_meeting(meeting, meeting_id):

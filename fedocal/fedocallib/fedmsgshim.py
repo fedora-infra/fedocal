@@ -16,7 +16,7 @@ _log = logging.getLogger(__name__)
 
 
 def publish(topic, msg):  # pragma: no cover
-    _log.debug('Publishing a message for %r: %s', topic, msg)
+    _log.debug('Publishing a message for %s: %s', topic, msg)
     try:
         message = fedora_messaging.api.Message(
             topic='fedocal.%s' % topic,

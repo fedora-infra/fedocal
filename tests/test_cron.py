@@ -36,7 +36,8 @@ import os
 
 from datetime import timedelta, datetime
 
-from mock import patch
+from fedora_messaging import api, testing
+from mock import ANY, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
@@ -68,12 +69,13 @@ class FakeSMTP(object):
 class Crontests(Modeltests):
     """ Cron tests. """
 
+    maxDiff = None
+
     def _clean(self):
         """ Clean a potentially existing test database. """
         root, path = DB_PATH.split(':///', 1)
         if os.path.exists(path):
             os.unlink(path)
-
 
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
@@ -103,8 +105,6 @@ class Crontests(Modeltests):
         calendar.save(self.session)
         self.session.commit()
         self.assertNotEqual(calendar, None)
-
-    fedocal_cron.fedmsg_init()
 
     def tearDown(self):
         """ Remove the test.db database if there is one. """
@@ -143,7 +143,8 @@ class Crontests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        msgs = fedocal_cron.send_reminder()
+        with testing.mock_sends():
+            msgs = fedocal_cron.send_reminder()
 
         self.assertEqual(len(msgs), 0)
 
@@ -179,7 +180,33 @@ class Crontests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        msgs = fedocal_cron.send_reminder()
+        with testing.mock_sends(api.Message(
+                topic="fedocal.reminder",
+                body={
+                    'meeting': {
+                        'meeting_id': 1,
+                        'meeting_name': 'Test meeting with reminder',
+                        'meeting_manager': ['pingou'],
+                        'meeting_date': ANY,
+                        'meeting_date_end': ANY,
+                        'meeting_time_start': ANY,
+                        'meeting_time_stop': ANY,
+                        'meeting_timezone': 'UTC',
+                        'meeting_information': 'This is a test meeting with reminder',
+                        'meeting_location': None,
+                        'calendar_name': 'test_calendar'
+                    },
+                    'calendar': {
+                        'calendar_name': 'test_calendar',
+                        'calendar_contact': 'test@example.com',
+                        'calendar_description': 'This is a test calendar',
+                        'calendar_editor_group': 'fi-apprentice',
+                        'calendar_admin_group': 'infrastructure-main2',
+                        'calendar_status': 'Enabled'
+                    }
+                }
+            )):
+            msgs = fedocal_cron.send_reminder()
 
         self.assertEqual(len(msgs), 1)
         self.assertEqual(msgs[0]['To'], 'list@lists.fp.o')
@@ -217,7 +244,33 @@ class Crontests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        msgs = fedocal_cron.send_reminder()
+        with testing.mock_sends(api.Message(
+                topic="fedocal.reminder",
+                body={
+                    'meeting': {
+                        'meeting_id': 1,
+                        'meeting_name': 'Test meeting with reminder',
+                        'meeting_manager': ['pingou'],
+                        'meeting_date': ANY,
+                        'meeting_date_end': ANY,
+                        'meeting_time_start': ANY,
+                        'meeting_time_stop': ANY,
+                        'meeting_timezone': 'UTC',
+                        'meeting_information': 'This is a test meeting with reminder',
+                        'meeting_location': None,
+                        'calendar_name': 'test_calendar'
+                    },
+                    'calendar': {
+                        'calendar_name': 'test_calendar',
+                        'calendar_contact': 'test@example.com',
+                        'calendar_description': 'This is a test calendar',
+                        'calendar_editor_group': 'fi-apprentice',
+                        'calendar_admin_group': 'infrastructure-main2',
+                        'calendar_status': 'Enabled'
+                    }
+                }
+            )):
+            msgs = fedocal_cron.send_reminder()
 
         self.assertEqual(len(msgs), 1)
         self.assertEqual(msgs[0]['To'], 'pingou@fp.o, pingou@p.fr')

@@ -20,8 +20,6 @@ psutil
 blinker # Required by flask >= 0.10 for the unit-tests
 funcsigs  # Required by mock but somehow missed
 flask_multistatic
-python-openid
-python-openid_cla
-python-openid_teams
+flask_oidc
 fedora-messaging
-
+email_validator

@@ -379,8 +379,8 @@ class Flasktests(Modeltests):
         self.assertIn(' <a href="/test_calendar/">', output_text)
         self.assertIn(' <a href="/test_calendar2/">', output_text)
         self.assertIn(' <a href="/test_calendar4/">', output_text)
-        self.assertEqual(output_text.count('<a class="event event_blue'), 1)
-        self.assertEqual(output_text.count('<a class="event'), 2)
+        self.assertEqual(output_text.count('<a class="event event_blue'), 2)
+        self.assertEqual(output_text.count('<a class="event'), 4)
 
         output = self.app.get('/location/list/foorbar/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)

@@ -49,7 +49,7 @@ from functools import wraps
 from pytz import common_timezones
 from six.moves.urllib.parse import urlparse, urljoin
 from sqlalchemy.exc import SQLAlchemyError
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 
 from fedocal.fedocal_babel import Babel
 from fedocal.fedocal_babel import gettext
@@ -1577,6 +1577,7 @@ def location(loc_name, year, month, day):
 
     return flask.render_template(
         'agenda.html',
+        now=datetime.datetime.utcnow(),
         location=loc_name,
         month=month_name,
         weekdays=weekdays,

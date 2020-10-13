@@ -104,7 +104,7 @@ class FlaskApitests(Modeltests):
         self.assertEqual(output.status_code, 200)
         output_text = output.get_data(as_text=True)
         self.assertIn(
-            ' "meeting_manager": ["pingou", "shaiton"],', output_text)
+            ' "meeting_manager": ["pingou", "shaiton"]', output_text)
         self.assertIn('"meeting_name": "test-meeting2"', output_text)
         self.assertEqual(output_text.count('meeting_name'), 49)
         data = json.loads(output.get_data(as_text=True))
@@ -165,9 +165,9 @@ class FlaskApitests(Modeltests):
         self.assertEqual(output.status_code, 200)
         output_text = output.get_data(as_text=True)
         self.assertIn(
-            ' "meeting_manager": ["pingou", "shaiton"],', output_text)
+            '"meeting_manager": ["pingou", "shaiton"]', output_text)
         self.assertIn(
-            '"meeting_name": "Another test meeting2",', output_text)
+            '"meeting_name": "Another test meeting2"', output_text)
         self.assertEqual(output_text.count('meeting_name'), 8)
 
         end_date = TODAY + timedelta(days=2)

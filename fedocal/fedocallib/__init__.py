@@ -687,13 +687,14 @@ def add_meeting_to_vcal(ical, meeting, reminder=None):
 
     start = entry.add('dtstart')
     stop = entry.add('dtend')
+    tz = zoneinfo.gettz(meeting.meeting_timezone)
     if meeting.full_day:
-        start.value = meeting.meeting_date
-        stop.value = meeting.meeting_date_end
+        start.value = datetime.combine(
+            meeting.meeting_date, time(0)).replace(tzinfo=tz)
+        stop.value = datetime.combine(
+            meeting.meeting_date_end, time(0)).replace(tzinfo=tz)
         entry.add('transp').value = 'TRANSPARENT'
     else:
-        tz = zoneinfo.gettz(meeting.meeting_timezone)
-
         dti_start = datetime.combine(
             meeting.meeting_date, meeting.meeting_time_start)
         start.value = dti_start.replace(tzinfo=tz)

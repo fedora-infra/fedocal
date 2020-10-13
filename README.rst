@@ -55,6 +55,9 @@ The dependency list is therefore:
 - `python-alembic`_
 - `pytz`_
 - `python-dateutil`_
+- `python-fedora-messaging`_
+- `python-flask-multistatic`_
+- `python-flask-oidc`_
 
 
 Running a development instance:
@@ -94,16 +97,21 @@ Testing:
 This project contains unit-tests allowing you to check if your server
 has all the dependencies correctly set.
 
-To run them::
+To run them simply call::
 
- ./run_tests.sh
+ tox
 
 .. note:: To stop the test at the first error or failure you can try:
 
    ::
 
-    ./run_tests.sh -x
+    tox -- -x
 
+.. note:: To run a single file you can try:
+
+   ::
+
+    tox -- tests/test_flask.py -x
 
 
 Reporting issues:

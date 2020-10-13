@@ -81,14 +81,31 @@ Create the database scheme::
  FEDOCAL_CONFIG=fedocal.cfg sh createdb
 
 
+Register the application to iddev for development::
+
+  oidc-register https://iddev.fedorainfracloud.org/ http://localhost:5000/oidc_callback
+
+
+Add the following two lines in your configuration file `fedocal.cfg`::
+
+  OIDC_ID_TOKEN_COOKIE_SECURE = False
+  OIDC_REQUIRE_VERIFIED_EMAIL = False
+
+
 Run the server::
 
- FEDOCAL_CONFIG=`pwd`/fedocal.cfg python runserver.py
+ python runserver.py --config fedocal.cfg
 
-You should be able to access the server at http://localhost:5000
+You should be able to access the server at http://localhost:5000 (do not use
+``127.0.0.1`` as it will no work)
 
-.. note:: the part ``FEDOCAL_CONFIG=fedocal.cfg`` is only really needed if you
-          run fedocal on a dedicated database instead of the default sqlite one.
+
+/!\ If login in does not work and gives you an ``invalid return_uri`` check
+  the ``redirect_uris`` in the ``client_secrets.json`` file and make sure it
+  matches **exactly** (check http vs https, trailing slash vs no trailing slash...).
+  You may have to re-register as editing directly the ``client_secrets.json``
+  file will not work.
+
 
 
 Testing:

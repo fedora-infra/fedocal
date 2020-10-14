@@ -45,7 +45,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import fedocal
 import fedocal.fedocallib as fedocallib
 import fedocal.fedocallib.model as model
-from tests import (Modeltests, FakeUser, flask10_only, user_set, TODAY)
+from tests import (Modeltests, FakeUser, user_set, TODAY)
 
 
 # pylint: disable=E1103
@@ -75,7 +75,6 @@ class ExtrasFlasktests(Modeltests):
         fedocal.SESSION = self.session
         self.app = fedocal.APP.test_client()
 
-    @flask10_only
     def test_start_date_edit_meeting_form(self):
         """ Test the content of the start_date in the edit meeting form.
         """
@@ -93,6 +92,8 @@ class ExtrasFlasktests(Modeltests):
             calendar_name='test_calendar',
             recursion_frequency=14,
             recursion_ends=TODAY + timedelta(days=90))
+        self.session.add(obj)
+        self.session.flush()
         obj.add_manager(self.session, 'pingou,')
         obj.save(self.session)
         self.session.commit()
@@ -110,7 +111,7 @@ class ExtrasFlasktests(Modeltests):
 
             # If no date is specified, it returns the next occurence
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" type="text" '
+                '<input id="meeting_date" name="meeting_date" required type="text" '
                 'value="%s">' % (next_date), output_text
             )
 
@@ -123,9 +124,8 @@ class ExtrasFlasktests(Modeltests):
             output2_text = output2.get_data(as_text=True)
 
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" type="text" '
-                'value="%s">' % (TODAY + timedelta(days=28)),
-                output2_text
+                '<input id="meeting_date" name="meeting_date" required type="text" '
+                'value="%s">' % (TODAY + timedelta(days=28)), output2_text
             )
 
             # If an exact date in the future is specified, return that date
@@ -136,7 +136,7 @@ class ExtrasFlasktests(Modeltests):
             output2_text = output2.get_data(as_text=True)
 
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" type="text" '
+                '<input id="meeting_date" name="meeting_date" required type="text" '
                 'value="%s">' % (TODAY + timedelta(days=14)), output2_text
             )
 
@@ -146,11 +146,10 @@ class ExtrasFlasktests(Modeltests):
             output2_text = output2.get_data(as_text=True)
 
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" type="text" '
+                '<input id="meeting_date" name="meeting_date" required type="text" '
                 'value="%s">' % (TODAY), output2_text
             )
 
-    @flask10_only
     def test_start_date_delete_meeting_form(self):
         """ Test the content of the start_date in the delete meeting form.
         """
@@ -168,6 +167,8 @@ class ExtrasFlasktests(Modeltests):
             calendar_name='test_calendar',
             recursion_frequency=14,
             recursion_ends=TODAY + timedelta(days=90))
+        self.session.add(obj)
+        self.session.flush()
         obj.add_manager(self.session, 'pingou,')
         obj.save(self.session)
         self.session.commit()
@@ -206,7 +207,7 @@ class ExtrasFlasktests(Modeltests):
             self.assertEqual(output2.status_code, 200)
             output_text = output2.get_data(as_text=True)
 
-            self.assertIn('<li>Date: %s</li>' % next_date, output_text)
+            self.assertIn('<li>Date: %s</li>' % (TODAY + timedelta(days=14)), output_text)
 
             # If an old date in the future is specified, return the first date
             output2 = self.app.get('/meeting/delete/1/?from_date=2000-01-01')

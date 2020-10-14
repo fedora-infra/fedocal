@@ -71,19 +71,6 @@ ICS_FILE_NOTOK = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'ical_wrong.txt')
 
 
-def flask10_only(function):
-    """ Decorator to skip tests if the flask version is lower than 0.10 """
-    @wraps(function)
-    def decorated_function(*args, **kwargs):
-        """ Decorated function, actually does the work. """
-        import flask
-        ver = flask.__version__.split('.')
-        if int(ver[0]) >= 0 and int(ver[1]) >= 10:
-            return function(*args, **kwargs)
-        return 'Skipped'
-    return decorated_function
-
-
 @contextmanager
 def user_set(APP, user):
     """ Set the provided user as fas_user in the provided application."""

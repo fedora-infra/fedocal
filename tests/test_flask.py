@@ -48,7 +48,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import fedocal
 import fedocal.fedocallib as fedocallib
 import fedocal.fedocallib.model as model
-from tests import (Modeltests, FakeUser, flask10_only, user_set, TODAY,
+from tests import (Modeltests, FakeUser, user_set, TODAY,
                    ICS_FILE, ICS_FILE_NOTOK)
 
 
@@ -841,16 +841,13 @@ class Flasktests(Modeltests):
             self.assertFalse(
                 fedocal.is_safe_url('https://fedoraproject.org/'))
 
-    @flask10_only
     def test_auth_login(self):
         """ Test the auth_login function. """
         self.__setup_db()
         user = FakeUser([], username='pingou')
         with user_set(fedocal.APP, user):
-            output = self.app.get('/login/', follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn('<title>Home - Fedocal</title>', output_text)
+            output = self.app.get('/login/')
+            self.assertEqual(output.status_code, 302)
 
     def test_locations(self):
         """ Test the locations function. """
@@ -905,7 +902,6 @@ class Flasktests(Modeltests):
             'class="errors">No location named foobar could be found</',
             output_text)
 
-    @flask10_only
     def test_admin(self):
         """ Test the admin function. """
         user = None
@@ -973,18 +969,12 @@ class Flasktests(Modeltests):
             self.assertIn(
                 'value="Delete">', output_text)
 
-    @flask10_only
     def test_add_calendar(self):
         """ Test the add_calendar function. """
         user = None
         with user_set(fedocal.APP, user):
-            output = self.app.get('/calendar/add/', follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            # discoveryfailure happens if there is no network
-            self.assertTrue(
-                '<title>OpenID transaction in progress</title>'
-                in output_text or 'discoveryfailure' in output_text)
+            output = self.app.get('/calendar/add/')
+            self.assertEqual(output.status_code, 302)
 
         user = FakeUser(['test'])
         with user_set(fedocal.APP, user):
@@ -1057,7 +1047,6 @@ class Flasktests(Modeltests):
                 '="errors">Could not add this calendar to the database</',
                 output_text)
 
-    @flask10_only
     def test_delete_calendar(self):
         """ Test the delete_calendar function. """
         self.__setup_db()
@@ -1148,7 +1137,6 @@ class Flasktests(Modeltests):
                 '<span class="calendar_name">test_calendar</span>',
                 output_text)
 
-    @flask10_only
     def test_clear_calendar(self):
         """ Test the clear_calendar function. """
         self.__setup_db()
@@ -1241,7 +1229,6 @@ class Flasktests(Modeltests):
                 '<li class="message">Calendar cleared</li>',
                 output_text)
 
-    @flask10_only
     def test_edit_calendar(self):
         """ Test the edit_calendar function. """
         self.__setup_db()
@@ -1307,7 +1294,7 @@ class Flasktests(Modeltests):
             self.assertEqual(output.status_code, 200)
             output_text = output.get_data(as_text=True)
             self.assertEqual(
-                output_text.count('<td>This field is required.</td>'), 2)
+                output_text.count('<td>This field is required.</td>'), 3)
             self.assertIn(
                 '<h2>Edit calendar "test_calendar"</h2>',
                 output_text)
@@ -1339,7 +1326,6 @@ class Flasktests(Modeltests):
                 '<span class="calendar_name">election1</span>',
                 output_text)
 
-    @flask10_only
     def test_auth_logout(self):
         """ Test the auth_logout function. """
         user = FakeUser(fedocal.APP.config['ADMIN_GROUP'])
@@ -1362,7 +1348,6 @@ class Flasktests(Modeltests):
                 '<li class="message">You have been logged out</li>',
                 output_text)
 
-    @flask10_only
     def test_my_meetings(self):
         """ Test the my_meetings function. """
         self.__setup_db()
@@ -1397,7 +1382,6 @@ class Flasktests(Modeltests):
             self.assertIn(
                 '<td> Test meeting with reminder </td>', output_text)
 
-    @flask10_only
     def test_add_meeting(self):
         """ Test the add_meeting function. """
         self.__setup_db()
@@ -1615,8 +1599,8 @@ class Flasktests(Modeltests):
                 'meeting_time_stop': time(14, 0),
                 'meeting_timezone': 'Europe/Paris',
                 'frequency': '',
-                'reminder_from': 'pingou@fp.o',
-                'reminder_who': 'pingou@fp.org',
+                'reminder_from': 'pingou@fp',
+                'remind_who': 'pingou@fp.org',
                 'remind_when': 'H-12',
                 'csrf_token': csrf_token,
             }
@@ -1640,7 +1624,7 @@ class Flasktests(Modeltests):
                 'meeting_timezone': 'Europe/Paris',
                 'frequency': '',
                 'reminder_from': 'pingou@fp.o',
-                'reminder_who': 'pingou@fp.org, pingou@fp.o',
+                'remind_who': 'pingou@fp.org, pingou@fp',
                 'remind_when': 'H-12',
                 'csrf_token': csrf_token,
             }
@@ -1652,7 +1636,8 @@ class Flasktests(Modeltests):
             self.assertIn(
                 '<h2>New meeting</h2>', output_text)
             self.assertIn(
-                '<td>Invalid email address.</td>', output_text)
+                '<td>The domain name fp is not valid. It should have a period.</td>',
+                output_text)
 
             # Works - with one email as recipient of the reminder
             data = {
@@ -1663,7 +1648,7 @@ class Flasktests(Modeltests):
                 'meeting_timezone': 'Europe/Paris',
                 'frequency': '',
                 'reminder_from': 'pingou@fp.org',
-                'reminder_who': 'pingou@fp.org',
+                'remind_who': 'pingou@fp.org',
                 'remind_when': 'H-12',
                 'csrf_token': csrf_token,
             }
@@ -1692,7 +1677,7 @@ class Flasktests(Modeltests):
                 'meeting_timezone': 'Europe/Paris',
                 'frequency': '',
                 'reminder_from': 'pingou@fp.org',
-                'reminder_who': 'pingou@fp.org,pingou@p.fr',
+                'remind_who': 'pingou@fp.org,pingou@p.fr',
                 'remind_when': 'H-12',
                 'csrf_token': csrf_token,
             }
@@ -1712,7 +1697,6 @@ class Flasktests(Modeltests):
             self.assertNotIn(
                 'href="/meeting/20/?from_date=', output_text)
 
-    @flask10_only
     def test_edit_meeting(self):
         """ Test the edit_meeting function. """
         self.__setup_db()
@@ -1801,7 +1785,7 @@ class Flasktests(Modeltests):
             self.assertEqual(output.status_code, 200)
             output_text = output.get_data(as_text=True)
             self.assertIn(
-                '<td>Not a valid choice</td>', output_text)
+                '<td>This field is required.</td>', output_text)
             self.assertIn(
                 '<title>Edit meeting - Fedocal</title>', output_text)
 
@@ -1883,6 +1867,8 @@ class Flasktests(Modeltests):
             meeting_information='Full day meeting 2',
             calendar_name='test_calendar_disabled',
             full_day=True)
+        self.session.add(obj)
+        self.session.flush()
         obj.add_manager(self.session, ['toshio'])
         obj.save(self.session)
         self.session.commit()
@@ -1950,7 +1936,6 @@ class Flasktests(Modeltests):
             self.assertEqual(
                 output_text.count('<span class="required">*</span>'), 6)
 
-    @flask10_only
     def test_delete_meeting(self):
         """ Test the delete_meeting function. """
         self.__setup_db()
@@ -2082,6 +2067,8 @@ class Flasktests(Modeltests):
             meeting_information='Full day meeting 2',
             calendar_name='test_calendar_disabled',
             full_day=True)
+        self.session.add(obj)
+        self.session.flush()
         obj.add_manager(self.session, ['toshio'])
         obj.save(self.session)
         self.session.commit()
@@ -2289,7 +2276,6 @@ class Flasktests(Modeltests):
         self.assertIn(
             '<p>This is a test calendar</p>', output_text)
 
-    @flask10_only
     def test_upload_calendar(self):
         """ Test the upload_calendar function. """
         self.__setup_db()
@@ -2371,7 +2357,6 @@ class Flasktests(Modeltests):
                     'extension &#34;txt&#34; which is not an allowed '
                     'format</li>', output_text)
 
-    @flask10_only
     def test_markdown_preview(self):
         """ Test the markdown_preview function. """
         user = FakeUser(['gitr2spec'], username='kevin')

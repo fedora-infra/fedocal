@@ -28,6 +28,7 @@ from datetime import time
 from fedocal.fedocal_babel import lazy_gettext as _
 from fedocal import i18nforms
 
+import email_validator
 from pytz import common_timezones
 
 import wtforms
@@ -64,16 +65,16 @@ def validate_multi_email(form, field):
     """ Raises an exception if the content of the field does not contain one or
         more email.
     """
-    pattern = re.compile(r'^.+@([^.@][^@]+)$', re.IGNORECASE)
     data = field.data.replace(' ', ',')
     for entry in data.split(','):
         entry = entry.strip()
         if not entry:
             continue
-        match = pattern.match(field.data or '')
-        if not match:
-            message = field.gettext(_('Invalid input.'))
-            raise wtforms.ValidationError(message)
+        try:
+            email_validator.validate_email(entry)
+        except email_validator.EmailNotValidError as e:
+            # email is not valid, exception message is human-readable
+            raise wtforms.ValidationError(str(e))
 
 
 class AddCalendarForm(i18nforms.Form):

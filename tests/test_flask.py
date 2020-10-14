@@ -42,6 +42,10 @@ from datetime import timedelta
 import flask
 import six
 
+import fedocal_messages.messages as schema
+from fedora_messaging import testing
+from mock import ANY, patch
+
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
@@ -1024,12 +1028,26 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/calendar/add/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<li class="message">Calendar added</li>', output_text)
+            with testing.mock_sends(schema.CalendarNewV1(
+                    topic="fedocal.calendar.new",
+                    body={
+                        'agent': 'username',
+                        'calendar': {
+                            'calendar_name': 'election1',
+                            'calendar_contact': 'election1',
+                            'calendar_description': '',
+                            'calendar_editor_group': '',
+                            'calendar_admin_group': '',
+                            'calendar_status': 'Enabled'
+                        }
+                    }
+                )):
+                output = self.app.post('/calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Calendar added</li>', output_text)
 
             # This calendar already exists
             data = {
@@ -1124,18 +1142,32 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/calendar/delete/test_calendar/',
-                                   data=data, follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<title>Home - Fedocal</title>', output_text)
-            self.assertIn(
-                '<li class="message">Calendar deleted</li>',
-                output_text)
-            self.assertNotIn(
-                '<span class="calendar_name">test_calendar</span>',
-                output_text)
+            with testing.mock_sends(schema.CalendarDeleteV1(
+                    topic="fedocal.calendar.delete",
+                    body={
+                        'agent': 'kevin',
+                        'calendar': {
+                            'calendar_name': 'test_calendar',
+                            'calendar_contact': 'test@example.com',
+                            'calendar_description': 'This is a test calendar',
+                            'calendar_editor_group': 'fi-apprentice',
+                            'calendar_admin_group': 'infrastructure-main2',
+                            'calendar_status': 'Enabled'
+                        }
+                    }
+                )):
+                output = self.app.post('/calendar/delete/test_calendar/',
+                                       data=data, follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<title>Home - Fedocal</title>', output_text)
+                self.assertIn(
+                    '<li class="message">Calendar deleted</li>',
+                    output_text)
+                self.assertNotIn(
+                    '<span class="calendar_name">test_calendar</span>',
+                    output_text)
 
     def test_clear_calendar(self):
         """ Test the clear_calendar function. """
@@ -1217,17 +1249,31 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/calendar/clear/test_calendar/',
-                                   data=data, follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<title>test_calendar - Fedocal</title>', output_text)
-            self.assertIn(
-                '<title>test_calendar - Fedocal</title>', output_text)
-            self.assertIn(
-                '<li class="message">Calendar cleared</li>',
-                output_text)
+            with testing.mock_sends(schema.CalendarClearV1(
+                    topic="fedocal.calendar.clear",
+                    body={
+                        'agent': 'kevin',
+                        'calendar': {
+                            'calendar_name': 'test_calendar',
+                            'calendar_contact': 'test@example.com',
+                            'calendar_description': 'This is a test calendar',
+                            'calendar_editor_group': 'fi-apprentice',
+                            'calendar_admin_group': 'infrastructure-main2',
+                            'calendar_status': 'Enabled'
+                        }
+                    }
+                )):
+                output = self.app.post('/calendar/clear/test_calendar/',
+                                       data=data, follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<title>test_calendar - Fedocal</title>', output_text)
+                self.assertIn(
+                    '<title>test_calendar - Fedocal</title>', output_text)
+                self.assertIn(
+                    '<li class="message">Calendar cleared</li>',
+                    output_text)
 
     def test_edit_calendar(self):
         """ Test the edit_calendar function. """
@@ -1310,21 +1356,35 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/calendar/edit/test_calendar/',
-                                   data=data, follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<title>Election1 - Fedocal</title>', output_text)
-            self.assertIn(
-                '<li class="message">Calendar updated</li>',
-                output_text)
-            self.assertNotIn(
-                '<span class="calendar_name">test_calendar</span>',
-                output_text)
-            self.assertNotIn(
-                '<span class="calendar_name">election1</span>',
-                output_text)
+            with testing.mock_sends(schema.CalendarUpdateV1(
+                    topic="fedocal.calendar.update",
+                    body={
+                        'agent': 'kevin',
+                        'calendar': {
+                            'calendar_name': 'Election1',
+                            'calendar_contact': 'election1',
+                            'calendar_description': '',
+                            'calendar_editor_group': '',
+                            'calendar_admin_group': '',
+                            'calendar_status': 'Enabled'
+                        }
+                    }
+                )):
+                output = self.app.post('/calendar/edit/test_calendar/',
+                                       data=data, follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<title>Election1 - Fedocal</title>', output_text)
+                self.assertIn(
+                    '<li class="message">Calendar updated</li>',
+                    output_text)
+                self.assertNotIn(
+                    '<span class="calendar_name">test_calendar</span>',
+                    output_text)
+                self.assertNotIn(
+                    '<span class="calendar_name">election1</span>',
+                    output_text)
 
     def test_auth_logout(self):
         """ Test the auth_logout function. """
@@ -1534,16 +1594,43 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/test_calendar/add/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<li class="message">Meeting added</li>', output_text)
-            self.assertIn(
-                'href="/meeting/16/?from_date=', output_text)
-            self.assertNotIn(
-                'href="/meeting/17/?from_date=', output_text)
+            with testing.mock_sends(schema.MeetingNewV1(
+                    topic="fedocal.meeting.new",
+                    body={
+                        'agent': 'pingou',
+                        'meeting': {
+                            'meeting_id': 16,
+                            'meeting_name': 'guess what?',
+                            'meeting_manager': ['pingou'],
+                            'meeting_date': TODAY.strftime('%Y-%m-%d'),
+                            'meeting_date_end': TODAY.strftime('%Y-%m-%d'),
+                            'meeting_time_start': '13:00:00',
+                            'meeting_time_stop': '14:00:00',
+                            'meeting_timezone': 'Europe/Paris',
+                            'meeting_information': '',
+                            'meeting_location': '',
+                            'calendar_name': 'test_calendar'
+                        },
+                        'calendar': {
+                            'calendar_name': 'test_calendar',
+                            'calendar_contact': 'test@example.com',
+                            'calendar_description': 'This is a test calendar',
+                            'calendar_editor_group': 'fi-apprentice',
+                            'calendar_admin_group': 'infrastructure-main2',
+                            'calendar_status': 'Enabled'
+                        }
+                    }
+                )):
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+                self.assertIn(
+                    'href="/meeting/16/?from_date=', output_text)
+                self.assertNotIn(
+                    'href="/meeting/17/?from_date=', output_text)
 
             # Works - with a wiki_link
             data = {
@@ -1824,14 +1911,41 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/meeting/edit/1/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<li class="message">Meeting updated</li>', output_text)
-            self.assertIn(
-                '<title>Meeting "guess what?" - Fedocal</title>', output_text)
+            with testing.mock_sends(schema.MeetingUpdateV1(
+                    topic="fedocal.meeting.update",
+                    body={
+                        'agent': 'pingou',
+                        'meeting': {
+                        'meeting_id': 1,
+                            'meeting_name': 'guess what?',
+                            'meeting_manager': ['pingou'],
+                            'meeting_date': TODAY.strftime('%Y-%m-%d'),
+                            'meeting_date_end': TODAY.strftime('%Y-%m-%d'),
+                            'meeting_time_start': '13:00:00',
+                            'meeting_time_stop': '14:00:00',
+                            'meeting_timezone': 'Europe/Paris',
+                            'meeting_information': '',
+                            'meeting_location': None,
+                            'calendar_name': 'test_calendar'
+                        },
+                        'calendar': {
+                            'calendar_name': 'test_calendar',
+                            'calendar_contact': 'test@example.com',
+                            'calendar_description': 'This is a test calendar',
+                            'calendar_editor_group': 'fi-apprentice',
+                            'calendar_admin_group': 'infrastructure-main2',
+                            'calendar_status': 'Enabled'
+                        }
+                    }
+                )):
+                output = self.app.post('/meeting/edit/1/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting updated</li>', output_text)
+                self.assertIn(
+                    '<title>Meeting "guess what?" - Fedocal</title>', output_text)
 
             # Calendar disabled
             data = {
@@ -2032,14 +2146,41 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/meeting/delete/1/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<title>test_calendar - Fedocal</title>', output_text)
-            self.assertIn(
-                '<li class="message">Meeting deleted</li>', output_text)
+            with testing.mock_sends(schema.MeetingDeleteV1(
+                    topic="fedocal.meeting.delete",
+                    body={
+                        'agent': 'pingou',
+                        'meeting': {
+                            'meeting_id': 1,
+                            'meeting_name': 'Fedora-fr-test-meeting',
+                            'meeting_manager': [],
+                            'meeting_date': TODAY.strftime('%Y-%m-%d'),
+                            'meeting_date_end': TODAY.strftime('%Y-%m-%d'),
+                            'meeting_time_start': '19:50:00',
+                            'meeting_time_stop': '20:50:00',
+                            'meeting_timezone': 'UTC',
+                            'meeting_information': 'This is a test meeting',
+                            'meeting_location': None,
+                            'calendar_name': 'test_calendar'
+                        },
+                        'calendar': {
+                            'calendar_name': 'test_calendar',
+                            'calendar_contact': 'test@example.com',
+                            'calendar_description': 'This is a test calendar',
+                            'calendar_editor_group': 'fi-apprentice',
+                            'calendar_admin_group': 'infrastructure-main2',
+                            'calendar_status': 'Enabled'
+                        }
+                    }
+                )):
+                output = self.app.post('/meeting/delete/1/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<title>test_calendar - Fedocal</title>', output_text)
+                self.assertIn(
+                    '<li class="message">Meeting deleted</li>', output_text)
 
             # Delete all
             data = {
@@ -2320,24 +2461,38 @@ class Flasktests(Modeltests):
                     'enctype': 'multipart/form-data',
                     'csrf_token': csrf_token,
                 }
-                output = self.app.post('/calendar/upload/test_calendar/',
-                                       follow_redirects=True, data=data)
-                self.assertEqual(output.status_code, 200)
-                output_text = output.get_data(as_text=True)
-                if '<li class="error">' not in output_text:
-                    self.assertIn(
-                        '<title>test_calendar - Fedocal</title>',
-                        output_text)
-                    self.assertIn(
-                        '<p>This is a test calendar</p>', output_text)
-                    self.assertIn(
-                        'li class="message">Calendar uploaded</li>',
-                        output_text)
-                else:
-                    self.assertIn(
-                        '<li class="error">The submitted candidate has the '
-                        'MIME type &#34;application/octet-stream&#34; which '
-                        'is not an allowed MIME type</li>', output_text)
+                with testing.mock_sends(schema.CalendarUploadV1(
+                        topic="fedocal.calendar.upload",
+                        body={
+                            'agent': 'kevin',
+                            'calendar': {
+                                'calendar_name': 'test_calendar',
+                                'calendar_contact': 'test@example.com',
+                                'calendar_description': 'This is a test calendar',
+                                'calendar_editor_group': 'fi-apprentice',
+                                'calendar_admin_group': 'infrastructure-main2',
+                                'calendar_status': 'Enabled'
+                            }
+                        }
+                    )):
+                    output = self.app.post('/calendar/upload/test_calendar/',
+                                           follow_redirects=True, data=data)
+                    self.assertEqual(output.status_code, 200)
+                    output_text = output.get_data(as_text=True)
+                    if '<li class="error">' not in output_text:
+                        self.assertIn(
+                            '<title>test_calendar - Fedocal</title>',
+                            output_text)
+                        self.assertIn(
+                            '<p>This is a test calendar</p>', output_text)
+                        self.assertIn(
+                            'li class="message">Calendar uploaded</li>',
+                            output_text)
+                    else:
+                        self.assertIn(
+                            '<li class="error">The submitted candidate has the '
+                            'MIME type &#34;application/octet-stream&#34; which '
+                            'is not an allowed MIME type</li>', output_text)
 
             with open(ICS_FILE_NOTOK, 'rb') as stream:
                 data = {

@@ -36,7 +36,8 @@ import os
 
 from datetime import timedelta, datetime
 
-from fedora_messaging import api, testing
+import fedocal_messages.messages as schema
+from fedora_messaging import testing
 from mock import ANY, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(
@@ -180,7 +181,7 @@ class Crontests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        with testing.mock_sends(api.Message(
+        with testing.mock_sends(schema.ReminderV1(
                 topic="fedocal.reminder",
                 body={
                     'meeting': {
@@ -244,7 +245,7 @@ class Crontests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-        with testing.mock_sends(api.Message(
+        with testing.mock_sends(schema.ReminderV1(
                 topic="fedocal.reminder",
                 body={
                     'meeting': {

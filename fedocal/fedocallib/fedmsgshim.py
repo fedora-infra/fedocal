@@ -11,6 +11,7 @@ import logging
 import fedora_messaging.api
 from fedora_messaging.exceptions import PublishReturned, ConnectionException
 
+import fedocal_messages
 import fedocal_messages.messages as schema
 
 
@@ -20,59 +21,18 @@ _log = logging.getLogger(__name__)
 def publish(topic, msg):  # pragma: no cover
     _log.debug('Publishing a message for %s: %s', topic, msg)
     try:
-        if topic == "reminder":
-            message = schema.ReminderV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "calendar.new":
-            message = schema.CalendarNewV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "calendar.update":
-            message = schema.CalendarUpdateV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "calendar.upload":
-            message = schema.CalendarUploadV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "calendar.delete":
-            message = schema.CalendarDeleteV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "calendar.clear":
-            message = schema.CalendarClearV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "meeting.new":
-            message = schema.MeetingNewV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "meeting.update":
-            message = schema.MeetingUpdateV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        elif topic == "meeting.delete":
-            message = schema.MeetingDeleteV1(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
-        else:
+
+        msg_cls = fedocal_messages.get_message_object_from_topic(
+            'fedocal.%s' % topic
+        )
+
+        if not hasattr(msg_cls, "app_name") is False:
             _log.warning(
-                "fedocal is about to send a message that has no schemas"
+                "fedocal is about to send a message that has no schemas: %s",
+                topic
             )
-            message = fedora_messaging.api.Message(
-                topic='fedocal.%s' % topic,
-                body=msg
-            )
+
+        message = msg_cls(body=msg)
         fedora_messaging.api.publish(message)
         _log.debug("Sent to fedora_messaging")
     except PublishReturned as e:

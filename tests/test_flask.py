@@ -1240,11 +1240,13 @@ class Flasktests(Modeltests):
             output_text = output.get_data(as_text=True)
             self.assertIn(
                 '<title>test_calendar - Fedocal</title>', output_text)
-            self.assertIn(
-                '<title>test_calendar - Fedocal</title>', output_text)
+            self.assertNotIn(
+                '<li class="message">Calendar cleared</li>', output_text)
 
             # Delete
             data = {
+                # html booleans are: arg missing = False, arg present = True
+                # regardless of the value of the arg passed
                 'confirm_delete': False,
                 'csrf_token': csrf_token,
             }
@@ -1267,8 +1269,6 @@ class Flasktests(Modeltests):
                                        data=data, follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
-                self.assertIn(
-                    '<title>test_calendar - Fedocal</title>', output_text)
                 self.assertIn(
                     '<title>test_calendar - Fedocal</title>', output_text)
                 self.assertIn(
@@ -1644,16 +1644,17 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/test_calendar/add/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<li class="message">Meeting added</li>', output_text)
-            self.assertIn(
-                'href="/meeting/17/?from_date=', output_text)
-            self.assertNotIn(
-                'href="/meeting/18/?from_date=', output_text)
+            with testing.mock_sends(schema.MeetingNewV1):
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+                self.assertIn(
+                    'href="/meeting/17/?from_date=', output_text)
+                self.assertNotIn(
+                    'href="/meeting/18/?from_date=', output_text)
 
             # Calendar disabled
             data = {
@@ -1740,20 +1741,21 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/test_calendar/add/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<li class="message">Meeting added</li>', output_text)
-            self.assertIn(
-                'href="/meeting/17/?from_date=', output_text)
-            self.assertIn(
-                'href="/meeting/18/?from_date=', output_text)
-            self.assertIn(
-                'Reminder', output_text)
-            self.assertNotIn(
-                'href="/meeting/19/?from_date=', output_text)
+            with testing.mock_sends(schema.MeetingNewV1):
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+                self.assertIn(
+                    'href="/meeting/17/?from_date=', output_text)
+                self.assertIn(
+                    'href="/meeting/18/?from_date=', output_text)
+                self.assertIn(
+                    'Reminder', output_text)
+                self.assertNotIn(
+                    'href="/meeting/19/?from_date=', output_text)
 
             # Works - with two emails as recipient of the reminder
             data = {
@@ -1769,20 +1771,21 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/test_calendar/add/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<li class="message">Meeting added</li>', output_text)
-            self.assertIn(
-                'href="/meeting/18/?from_date=', output_text)
-            self.assertIn(
-                'href="/meeting/19/?from_date=', output_text)
-            self.assertIn(
-                'Reminder2', output_text)
-            self.assertNotIn(
-                'href="/meeting/20/?from_date=', output_text)
+            with testing.mock_sends(schema.MeetingNewV1):
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+                self.assertIn(
+                    'href="/meeting/18/?from_date=', output_text)
+                self.assertIn(
+                    'href="/meeting/19/?from_date=', output_text)
+                self.assertIn(
+                    'Reminder2', output_text)
+                self.assertNotIn(
+                    'href="/meeting/20/?from_date=', output_text)
 
     def test_edit_meeting(self):
         """ Test the edit_meeting function. """
@@ -2189,14 +2192,15 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/meeting/delete/8/', data=data,
-                                   follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            output_text = output.get_data(as_text=True)
-            self.assertIn(
-                '<title>test_calendar - Fedocal</title>', output_text)
-            self.assertIn(
-                '<li class="message">Meeting deleted</li>', output_text)
+            with testing.mock_sends(schema.MeetingDeleteV1):
+                output = self.app.post('/meeting/delete/8/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<title>test_calendar - Fedocal</title>', output_text)
+                self.assertIn(
+                    '<li class="message">Meeting deleted</li>', output_text)
 
         # Add a meeting to the test_calendar_disabled calendar
         obj = model.Meeting(  # id:16

@@ -1307,10 +1307,10 @@ def clear_calendar(calendar_name):
                 LOG.exception(err)
                 flask.flash(gettext(
                     'Could not clear this calendar.'), 'errors')
-        fedmsg.publish(topic="calendar.clear", msg=dict(
-            agent=flask.g.fas_user.username,
-            calendar=calendarobj.to_json(),
-        ))
+            fedmsg.publish(topic="calendar.clear", msg=dict(
+                agent=flask.g.fas_user.username,
+                calendar=calendarobj.to_json(),
+            ))
         return flask.redirect(flask.url_for(
             'calendar', calendar_name=calendar_name))
     return flask.render_template(

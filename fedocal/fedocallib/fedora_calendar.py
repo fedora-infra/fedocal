@@ -44,6 +44,8 @@ class FedocalCalendar(calendar.LocaleHTMLCalendar):
             babel_locale = fedocal.get_locale()
             if babel_locale:
                 cal_locale = locale.normalize(babel_locale)
+                if '.' in cal_locale:
+                    cal_locale = "%s.UTF-8" % cal_locale.partition('.')[0]
         except:
             pass
         super(FedocalCalendar, self).__init__(locale=cal_locale)

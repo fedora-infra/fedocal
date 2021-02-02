@@ -267,7 +267,7 @@ def set_session():
                 'timezone': OIDC.user_getfield('zoneinfo'),
                 'cla_done': \
                     'http://admin.fedoraproject.org/accounts/cla/done' \
-                    in OIDC.user_getfield('cla'),
+                    in (OIDC.user_getfield('cla') or []),
                 'groups': OIDC.user_getfield('groups'),
             })
         flask.g.fas_user = flask.session.fas_user

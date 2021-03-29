@@ -137,20 +137,21 @@ work.
         if not authenticated():
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
-        elif not flask.g.fas_user.cla_done:
-            flask.flash(
-                gettext('You must sign the CLA (Contributor License'
+        elif "signed_fpca" not in (flask.g.fas_user.groups or []):
+                flask.flash(
+                    gettext('You must sign the CLA (Contributor License'
                         ' Agreement) to use fedocal'),
+
+                )
+                return flask.redirect(flask.url_for('index'))
+        elif "signed_fpca" in (flask.g.fas_user.groups or []) and len(flask.g.fas_user.groups or []) < 2:
+            flask.flash(
+                gettext('You must be in one more group than the CLA'),
+                    'errors'
                 'errors'
             )
             return flask.redirect(flask.url_for('.index'))
-        else:
-            if len(flask.g.fas_user.groups) == 0:
-                flask.flash(
-                    gettext('You must be in one more group than the CLA'),
-                    'errors'
-                )
-                return flask.redirect(flask.url_for('index'))
+
         return function(*args, **kwargs)
     return decorated_function
 

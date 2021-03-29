@@ -55,7 +55,7 @@ def fedmsg_publish(meeting, meeting_id):
         meeting=meeting_dict,
         calendar=meeting.calendar.to_json()
     )
-    fedmsg.publish(topic='reminder', msg=message)
+    fedmsg.publish(topic='meeting.reminder', msg=message)
 
 
 def send_reminder_meeting(meeting, meeting_id):

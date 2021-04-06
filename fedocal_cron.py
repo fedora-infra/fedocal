@@ -47,6 +47,7 @@ def fedmsg_publish(meeting, meeting_id):
         database
     """
     _log.info('Publishing a message for meeting: %s', meeting)
+    print('Publishing a message for meeting: %s', meeting)
 
     meeting_dict = meeting.to_json()
     meeting_dict['meeting_id'] = meeting_id
@@ -68,6 +69,7 @@ def send_reminder_meeting(meeting, meeting_id):
         return
 
     _log.info("Sending email reminder about meeting: %s", meeting)
+    print("Sending email reminder about meeting: %s", meeting)
 
     location = ''
     if meeting.meeting_location:
@@ -133,6 +135,7 @@ def send_reminder():
         meeting_id = meeting.meeting_id
         meeting = fedocallib.update_date_rec_meeting(meeting, action='next')
         _log.info("Processing meeting: %s", meeting)
+        print("Processing meeting: %s", meeting)
         msgs.append(send_reminder_meeting(meeting, meeting_id))
         fedmsg_publish(meeting, meeting_id)
 

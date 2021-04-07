@@ -81,16 +81,16 @@ class AddCalendarForm(i18nforms.Form):
     """ Form used to create a new calendar. """
     calendar_name = wtforms.TextField(
         _('Calendar'),
-        [wtforms.validators.Required()])
+        [wtforms.validators.DataRequired()])
     calendar_contact = wtforms.TextField(
         _('Contact email'),
-        [wtforms.validators.Required()])
+        [wtforms.validators.DataRequired()])
     calendar_description = wtforms.TextField(_('Description'))
     calendar_editor_groups = wtforms.TextField(_('Editor groups'))
     calendar_admin_groups = wtforms.TextField(_('Admin groups'))
     calendar_status = wtforms.SelectField(
         _('Status'),
-        [wtforms.validators.Required()],
+        [wtforms.validators.DataRequired()],
         choices=[]
     )
 
@@ -123,16 +123,16 @@ class AddMeetingForm(i18nforms.Form):
     """ Form used to create a new meeting. """
     calendar_name = wtforms.SelectField(
         _('Calendar'),
-        [wtforms.validators.Required()],
+        [wtforms.validators.DataRequired()],
         choices=[])
 
     meeting_name = wtforms.TextField(
         _('Meeting name'),
-        [wtforms.validators.Required()])
+        [wtforms.validators.DataRequired()])
 
     meeting_date = wtforms.DateField(
         _('Date'),
-        [wtforms.validators.Required()])
+        [wtforms.validators.DataRequired()])
 
     meeting_date_end = wtforms.DateField(
         _('End date'),
@@ -140,15 +140,15 @@ class AddMeetingForm(i18nforms.Form):
 
     meeting_time_start = wtforms.TextField(
         _('Start time'),
-        [wtforms.validators.Required(), validate_time])
+        [wtforms.validators.DataRequired(), validate_time])
 
     meeting_time_stop = wtforms.TextField(
         _('Stop time'),
-        [wtforms.validators.Required(), validate_time])
+        [wtforms.validators.DataRequired(), validate_time])
 
     meeting_timezone = wtforms.SelectField(
         _('Time zone'),
-        [wtforms.validators.Required()],
+        [wtforms.validators.DataRequired()],
         choices=[(tzone, tzone) for tzone in sorted(common_timezones)])
 
     wiki_link = wtforms.TextField(_('More information URL'))
@@ -272,4 +272,4 @@ class UploadIcsForm(i18nforms.Form):
     ''' Form to upload an ics file into a calendar. '''
     ics_file = wtforms.FileField(
         _('ics file'),
-        [wtforms.validators.Required()])
+        [wtforms.validators.DataRequired()])

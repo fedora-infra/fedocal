@@ -140,6 +140,8 @@ class FakeUser(object):
         """
         if isinstance(groups, six.string_types):
             groups = [groups]
+        if cla_done:
+            groups.append("signed_fpca")
         self.groups = groups
         self.username = username
         self.name = username

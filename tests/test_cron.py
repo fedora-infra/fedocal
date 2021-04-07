@@ -182,7 +182,7 @@ class Crontests(Modeltests):
         self.assertNotEqual(obj, None)
 
         with testing.mock_sends(schema.ReminderV1(
-                topic="fedocal.reminder",
+                topic="fedocal.meeting.reminder",
                 body={
                     'meeting': {
                         'meeting_id': 1,
@@ -246,7 +246,7 @@ class Crontests(Modeltests):
         self.assertNotEqual(obj, None)
 
         with testing.mock_sends(schema.ReminderV1(
-                topic="fedocal.reminder",
+                topic="fedocal.meeting.reminder",
                 body={
                     'meeting': {
                         'meeting_id': 1,

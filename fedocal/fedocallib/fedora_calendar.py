@@ -39,7 +39,6 @@ class FedocalCalendar(calendar.LocaleHTMLCalendar):
         """ Constructor.
         Stores the year and the month asked.
         """
-        cal_locale = 'en_EN'
         try:
             babel_locale = fedocal.get_locale()
             if babel_locale:
@@ -48,6 +47,7 @@ class FedocalCalendar(calendar.LocaleHTMLCalendar):
                     cal_locale = "%s.UTF-8" % cal_locale.partition('.')[0]
         except:
             pass
+        cal_locale = 'en_EN'
         super(FedocalCalendar, self).__init__(locale=cal_locale)
 
         self.year = year

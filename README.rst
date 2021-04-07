@@ -28,7 +28,6 @@ Dependencies:
 .. _python-sqlalchemy: http://www.sqlalchemy.org/
 .. _python-vobject: http://vobject.skyhouseconsulting.com/
 .. _iCal: http://en.wikipedia.org/wiki/ICalendar
-.. _python-kitchen: http://packages.python.org/kitchen/
 .. _alembic: https://bitbucket.org/zzzeek/alembic
 .. _python-alembic: http://pypi.python.org/pypi/alembic
 .. _pytz: http://pytz.sourceforge.net/

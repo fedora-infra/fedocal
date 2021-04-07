@@ -6,7 +6,6 @@ flask-wtf
 flask
 flask-babel
 flask-oidc
-kitchen
 mock==1.1.2
 python-dateutil #<= 1.5
 python-fedora>=0.3.33

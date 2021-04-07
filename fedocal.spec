@@ -31,7 +31,6 @@ BuildRequires:  python%{pyversion}-flask-wtf
 BuildRequires:  python%{pyversion}-devel
 BuildRequires:  python%{pyversion}-pytz
 BuildRequires:  python%{pyversion}-vobject
-BuildRequires:  python%{pyversion}-kitchen
 BuildRequires:  python%{pyversion}-fedora >= 0.3.33
 BuildRequires:  python%{pyversion}-fedora-flask >= 0.3.33
 BuildRequires:  python%{pyversion}-alembic
@@ -57,7 +56,6 @@ Requires:  python%{pyversion}-flask
 Requires:  python%{pyversion}-sqlalchemy > 0.5
 Requires:  python%{pyversion}-pytz
 Requires:  python%{pyversion}-vobject
-Requires:  python%{pyversion}-kitchen
 Requires:  python%{pyversion}-fedora >= 0.3.32.3-3
 Requires:  python%{pyversion}-fedora-flask
 Requires:  python%{pyversion}-alembic

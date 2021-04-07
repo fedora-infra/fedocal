@@ -148,7 +148,6 @@ work.
             flask.flash(
                 gettext('You must be in one more group than the CLA'),
                     'errors'
-                'errors'
             )
             return flask.redirect(flask.url_for('.index'))
 

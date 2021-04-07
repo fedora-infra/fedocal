@@ -57,21 +57,6 @@ class Remindertests(Modeltests):
         self.session.commit()
         self.assertNotEqual(obj, None)
 
-    def test_init_reminder_failed(self):
-        """ Test the Reminder init function. """
-        obj = model.Reminder(
-            'H-36',
-            'pingou@fp.o',
-            'fi-apprentice@lists.fedoraproject.org,'
-            'ambassadors@lists.fedoraproject.org',
-            'This is your friendly reminder')
-        obj.save(self.session)
-        try:
-            self.session.flush()
-        except (IntegrityError, DataError):
-            obj = None
-        self.assertEqual(obj, None)
-
     def test_repr_reminder(self):
         """ Test the Reminder string representation function. """
         self.test_init_reminder()

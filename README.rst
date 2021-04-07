@@ -19,20 +19,13 @@ Documentation: http://fedocal.rtfd.org
 
 Dependencies:
 -------------
-.. _python: http://www.python.org
 .. _Flask: http://flask.pocoo.org/
-.. _python-flask: http://flask.pocoo.org/
-.. _python-flask-wtf: http://packages.python.org/Flask-WTF/
-.. _python-wtforms: http://wtforms.simplecodes.com/docs/1.0.1/
 .. _SQLAlchemy: http://www.sqlalchemy.org/
-.. _python-sqlalchemy: http://www.sqlalchemy.org/
-.. _python-vobject: http://vobject.skyhouseconsulting.com/
-.. _iCal: http://en.wikipedia.org/wiki/ICalendar
 .. _alembic: https://bitbucket.org/zzzeek/alembic
-.. _python-alembic: http://pypi.python.org/pypi/alembic
+.. _iCal: http://en.wikipedia.org/wiki/ICalendar
+.. _python-vobject: http://vobject.skyhouseconsulting.com/
 .. _pytz: http://pytz.sourceforge.net/
 .. _dateutil: http://labix.org/python-dateutil
-.. _python-dateutil: http://pypi.python.org/pypi/python-dateutil
 
 This project is a `Flask`_ application. The calendars and meetings are
 stored into a relational database using `SQLAlchemy`_ as Object Relational
@@ -41,22 +34,7 @@ fedocal provides an `iCal`_ feed for each calendar and relies on
 `python-vobject`_ for this. Finally, `pytz`_ is used to handle the timezone
 changes and `dateutil`_ to allow date manipulation over months/years.
 
-
-The dependency list is therefore:
-
-- `python`_ (2.5 minimum)
-- `python-flask`_
-- `python-flask-wtf`_
-- `python-wtforms`_
-- `python-sqlalchemy`_
-- `python-vobject`_
-- `python-kitchen`_
-- `python-alembic`_
-- `pytz`_
-- `python-dateutil`_
-- `python-fedora-messaging`_
-- `python-flask-multistatic`_
-- `python-flask-oidc`_
+The full list of dependencies can be found ine the ``requirements.txt`` file.
 
 
 Running a development instance:

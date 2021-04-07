@@ -84,6 +84,26 @@ You should be able to access the server at http://localhost:5000 (do not use
   file will not work.
 
 
+Git Branches:
+-------------
+
+This project has three principal git branches:
+
+* ``master``: this is the default branch in which development is done. It is the
+  branch from which releases are made. It is the branch feature branches are
+  branched from and get merged into.
+* ``staging``: fedocal is deployed in the Fedora infrastructure in openshift
+  using s2i, the staging environment is built from this branch. This branch has
+  one extra commit that is not in ``master`` which adds all the files and changes
+  necessary to deploy fedocal in openshift using s2i. This branch is therefore
+  rebased and force-pushed when the staging fedocal instance is updated.
+  Pull-Request should not target this branch.
+* ``production``: this branch is used for the same situation as the ``staging``
+  branch but for the production fedocal instance. It also contains an additional
+  commit that is not in the ``master`` branch and is therefore force-pushed
+  after a rebase when the production fedocal instance is updated.
+  Pull-Request should not target this branch.
+
 
 Testing:
 --------

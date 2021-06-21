@@ -193,7 +193,7 @@ Sample response:
     {
         "locations": [
             "EMEA",
-            "#fedora-meeting@irc.freenode.net"
+            "#fedora-meeting@irc.libera.chat"
         ]
     }
     """

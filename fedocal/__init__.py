@@ -279,9 +279,10 @@ def set_session():
 # Local function
 def is_admin():
     """ Return whether the user is admin for this application or not. """
+
     if not authenticated() \
-            or not flask.g.fas_user.cla_done \
-            or len(flask.g.fas_user.groups) < 1:
+            or "signed_fpca" not in (flask.g.fas_user.groups or []) \
+            or len(flask.g.fas_user.groups or []) < 2:
         return False
 
     admins = APP.config['ADMIN_GROUP']

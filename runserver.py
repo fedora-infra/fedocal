@@ -22,6 +22,15 @@ parser.add_argument(
     '--port', '-p', default=5000,
     help='Port for the fedocal to run on.')
 parser.add_argument(
+    "--cert", "-s", default=None, help="Filename of SSL cert for the flask application."
+)
+parser.add_argument(
+    "--key",
+    "-k",
+    default=None,
+    help="Filename of the SSL key for the flask application.",
+)
+parser.add_argument(
     '--host', default="127.0.0.1",
     help='Hostname to listen on. When set to 0.0.0.0 the server is available '
     'externally. Defaults to 127.0.0.1 making it only visible on localhost')
@@ -43,4 +52,7 @@ if args.profile:
     APP.wsgi_app = ProfilerMiddleware(APP.wsgi_app, restrictions=[30])
 
 APP.debug = True
-APP.run(host=args.host, port=int(args.port))
+if args.cert and args.key:
+    APP.run(host=args.host, port=int(args.port), ssl_context=(args.cert, args.key))
+else:
+    APP.run(host=args.host, port=int(args.port))

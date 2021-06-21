@@ -1695,7 +1695,7 @@ def update_tz():
     """
     url = flask.url_for('index')
     if flask.request.referrer:  # pragma: no cover
-        urltmp = urllib.unquote(flask.request.referrer.split('?', 1)[0])
+        urltmp = urllib.parse.unquote(flask.request.referrer.split('?', 1)[0])
         if is_safe_url(urltmp):
             url = urltmp
     else:

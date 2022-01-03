@@ -65,7 +65,8 @@ def validate_multi_email(form, field):
     """ Raises an exception if the content of the field does not contain one or
         more email.
     """
-    data = field.data.replace(' ', ',')
+    data = field.data or ''
+    data = data.replace(' ', ',')
     for entry in data.split(','):
         entry = entry.strip()
         if not entry:
@@ -79,15 +80,15 @@ def validate_multi_email(form, field):
 
 class AddCalendarForm(i18nforms.Form):
     """ Form used to create a new calendar. """
-    calendar_name = wtforms.TextField(
+    calendar_name = wtforms.StringField(
         _('Calendar'),
         [wtforms.validators.DataRequired()])
-    calendar_contact = wtforms.TextField(
+    calendar_contact = wtforms.StringField(
         _('Contact email'),
         [wtforms.validators.DataRequired()])
-    calendar_description = wtforms.TextField(_('Description'))
-    calendar_editor_groups = wtforms.TextField(_('Editor groups'))
-    calendar_admin_groups = wtforms.TextField(_('Admin groups'))
+    calendar_description = wtforms.StringField(_('Description'))
+    calendar_editor_groups = wtforms.StringField(_('Editor groups'))
+    calendar_admin_groups = wtforms.StringField(_('Admin groups'))
     calendar_status = wtforms.SelectField(
         _('Status'),
         [wtforms.validators.DataRequired()],
@@ -126,7 +127,7 @@ class AddMeetingForm(i18nforms.Form):
         [wtforms.validators.DataRequired()],
         choices=[])
 
-    meeting_name = wtforms.TextField(
+    meeting_name = wtforms.StringField(
         _('Meeting name'),
         [wtforms.validators.DataRequired()])
 
@@ -138,11 +139,11 @@ class AddMeetingForm(i18nforms.Form):
         _('End date'),
         [wtforms.validators.optional()])
 
-    meeting_time_start = wtforms.TextField(
+    meeting_time_start = wtforms.StringField(
         _('Start time'),
         [wtforms.validators.DataRequired(), validate_time])
 
-    meeting_time_stop = wtforms.TextField(
+    meeting_time_stop = wtforms.StringField(
         _('Stop time'),
         [wtforms.validators.DataRequired(), validate_time])
 
@@ -151,13 +152,13 @@ class AddMeetingForm(i18nforms.Form):
         [wtforms.validators.DataRequired()],
         choices=[(tzone, tzone) for tzone in sorted(common_timezones)])
 
-    wiki_link = wtforms.TextField(_('More information URL'))
+    wiki_link = wtforms.StringField(_('More information URL'))
 
-    comanager = wtforms.TextField(_('Co-manager'))
+    comanager = wtforms.StringField(_('Co-manager'))
 
     information = wtforms.TextAreaField(_('Information'))
 
-    meeting_location = wtforms.TextField(
+    meeting_location = wtforms.StringField(
         _('Location'),
         [wtforms.validators.optional(), validate_meeting_location]
     )
@@ -190,10 +191,10 @@ class AddMeetingForm(i18nforms.Form):
             ('H-168', _('%(days)s days before', days='7')),
         ]
     )
-    remind_who = wtforms.TextField(
+    remind_who = wtforms.StringField(
         _('Send reminder to'),
         [validate_multi_email, wtforms.validators.optional()])
-    reminder_from = wtforms.TextField(
+    reminder_from = wtforms.StringField(
         _('Send reminder from'),
         [wtforms.validators.Email(), wtforms.validators.optional()])
 

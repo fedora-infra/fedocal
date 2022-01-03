@@ -780,9 +780,9 @@ def add_calendar():
         calendarobj = Calendar(
             calendar_name=form.calendar_name.data,
             calendar_contact=form.calendar_contact.data,
-            calendar_description=form.calendar_description.data,
-            calendar_editor_group=form.calendar_editor_groups.data,
-            calendar_admin_group=form.calendar_admin_groups.data,
+            calendar_description=form.calendar_description.data or '',
+            calendar_editor_group=form.calendar_editor_groups.data or '',
+            calendar_admin_group=form.calendar_admin_groups.data or '',
             calendar_status=form.calendar_status.data
         )
         try:
@@ -858,10 +858,10 @@ def add_meeting(calendar_name, full=True):
     if form.validate_on_submit():
         tzone = form.meeting_timezone.data or tzone
         try:
-            information = form.information.data
+            information = form.information.data or ''
             # If a wiki_link is specified add it at the end of the
             # description
-            if form.wiki_link.data.strip():
+            if form.wiki_link.data and form.wiki_link.data.strip():
                 wiki_link = form.wiki_link.data.strip()
                 if wiki_link not in information:
                     information += '\n\nMore information available at:'\
@@ -877,7 +877,7 @@ def add_meeting(calendar_name, full=True):
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,
                 meeting_information=information,
-                meeting_location=form.meeting_location.data,
+                meeting_location=form.meeting_location.data or '',
                 tzone=tzone,
                 frequency=form.frequency.data,
                 end_repeats=form.end_repeats.data,
@@ -1010,8 +1010,8 @@ def edit_meeting(meeting_id):
                 meeting_time_start=form.meeting_time_start.data,
                 meeting_time_stop=form.meeting_time_stop.data,
                 comanager=form.comanager.data,
-                meeting_information=form.information.data,
-                meeting_location=form.meeting_location.data,
+                meeting_information=form.information.data or '',
+                meeting_location=form.meeting_location.data or '',
                 tzone=tzone,
                 recursion_frequency=form.frequency.data,
                 recursion_ends=form.end_repeats.data,
@@ -1351,11 +1351,12 @@ def edit_calendar(calendar_name):
         try:
             calendarobj.calendar_name = form.calendar_name.data
             calendarobj.calendar_contact = form.calendar_contact.data
-            calendarobj.calendar_description = form.calendar_description.data
+            calendarobj.calendar_description = \
+                form.calendar_description.data or ''
             calendarobj.calendar_editor_group = \
-                form.calendar_editor_groups.data
+                form.calendar_editor_groups.data or ''
             calendarobj.calendar_admin_group = \
-                form.calendar_admin_groups.data
+                form.calendar_admin_groups.data or ''
             calendarobj.calendar_status = form.calendar_status.data
             calendarobj.save(SESSION)
             SESSION.commit()

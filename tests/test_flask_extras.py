@@ -111,7 +111,7 @@ class ExtrasFlasktests(Modeltests):
 
             # If no date is specified, it returns the next occurence
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" required type="text" '
+                '<input id="meeting_date" name="meeting_date" required type="date" '
                 'value="%s">' % (next_date), output_text
             )
 
@@ -124,7 +124,7 @@ class ExtrasFlasktests(Modeltests):
             output2_text = output2.get_data(as_text=True)
 
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" required type="text" '
+                '<input id="meeting_date" name="meeting_date" required type="date" '
                 'value="%s">' % (TODAY + timedelta(days=28)), output2_text
             )
 
@@ -136,7 +136,7 @@ class ExtrasFlasktests(Modeltests):
             output2_text = output2.get_data(as_text=True)
 
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" required type="text" '
+                '<input id="meeting_date" name="meeting_date" required type="date" '
                 'value="%s">' % (TODAY + timedelta(days=14)), output2_text
             )
 
@@ -146,7 +146,7 @@ class ExtrasFlasktests(Modeltests):
             output2_text = output2.get_data(as_text=True)
 
             self.assertIn(
-                '<input id="meeting_date" name="meeting_date" required type="text" '
+                '<input id="meeting_date" name="meeting_date" required type="date" '
                 'value="%s">' % (TODAY), output2_text
             )
 

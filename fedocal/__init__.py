@@ -619,7 +619,15 @@ def ical_all():
     for calendarobj in Calendar.get_all(SESSION):
         meetings.extend(fedocallib.get_by_date(
             SESSION, calendarobj, startd, endd, extended=False))
-    fedocallib.add_meetings_to_vcal(ical, meetings)
+    try:
+        reminder = datetime.timedelta(
+            minutes=-1 * int(
+                (flask.request.args.get('reminder_delta') or '').strip()
+            )
+        )
+    except ValueError:
+        reminder = None
+    fedocallib.add_meetings_to_vcal(ical, meetings reminder=reminder)
     headers = {}
     filename = secure_filename(
         'all_calendars-%s.ical' % (
@@ -650,7 +658,15 @@ def ical_out(calendar_name):
     meetings = fedocallib.get_by_date(
         SESSION, calendarobj, startd, endd, extended=False, tzone=False)
     ical = vobject.iCalendar()
-    fedocallib.add_meetings_to_vcal(ical, meetings)
+    try:
+        reminder = datetime.timedelta(
+            minutes=-1 * int(
+                (flask.request.args.get('reminder_delta') or '').strip()
+            )
+        )
+    except ValueError:
+        reminder = None
+    fedocallib.add_meetings_to_vcal(ical, meetings reminder=reminder)
     headers = {}
     filename = secure_filename(
         '%s-%s.ical' % (

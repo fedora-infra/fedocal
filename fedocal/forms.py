@@ -52,12 +52,23 @@ def validate_time(form, field):
 
 
 def validate_meeting_location(form, field):
-    """ Validate if location doesn't contain #irc-chan format
-        More info: https://fedorahosted.org/fedocal/ticket/118
+    """ Validate if location for compatibility to IRC and Matrix.
+        More info: https://fedorahosted.org/fedocal/ticket/213
     """
-    if '#' in field.data.strip():
-        raise wtforms.ValidationError(
-            _('Please use channel@server format!')
+    # As always, try: https://regex101.com/
+    # These aren't "perfect" but close enough: [-\w] allows alphanum '_' and '-'
+    loc = field.data.strip()
+    # - ircroom@irc.server
+    if re.match(r'^[-\w]+@[-\w]+([.][-\w]+)*$', loc):
+        return
+    # - #room:host.name.tld
+    if re.match(r'^#[-\w]+:[-\w]+([.][-\w]+)*$', loc):
+        return
+    # - https://matrix.to/#/#room:host.name.tld
+    if re.match(r'^https?://matrix.to/#/#[-\w]+:[-\w]+([.][-\w]+)*$', loc):
+        return
+    raise wtforms.ValidationError(
+            _('Please use channel@server or #room:server formats!')
         )
 
 

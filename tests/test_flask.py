@@ -1562,7 +1562,9 @@ class Flasktests(Modeltests):
             self.assertIn(
                 '<title>Add meeting - Fedocal</title>', output_text)
 
-            # Invalid location
+            # Invalid meeting location: IRC Channel name without server
+            # Allowed: channel@irc.server.tld
+            # https://pagure.io/fedocal/issue/118
             data = {
                 'meeting_name': 'guess what?',
                 'meeting_date': TODAY,
@@ -1786,6 +1788,70 @@ class Flasktests(Modeltests):
                     'Reminder2', output_text)
                 self.assertNotIn(
                     'href="/meeting/20/?from_date=', output_text)
+
+            # Valid meeting location: IRC Channel with server
+            # https://pagure.io/fedocal/issue/118
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'meeting_location': 'meeting-1@fedoraproject.org',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            with testing.mock_sends(schema.MeetingNewV1):
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+
+            # Valid meeting location: Matrix Room
+            # https://pagure.io/fedocal/issue/213
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'meeting_location': '#meeting-1:fedoraproject.org',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            with testing.mock_sends(schema.MeetingNewV1):
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+
+            # Valid meeting location: Matrix Room URL
+            # https://pagure.io/fedocal/issue/213
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'meeting_location': 'https://matrix.to/#/#meeting-1:fedoraproject.org',
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            with testing.mock_sends(schema.MeetingNewV1):
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+
 
     def test_edit_meeting(self):
         """ Test the edit_meeting function. """

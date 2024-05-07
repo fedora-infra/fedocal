@@ -58,17 +58,63 @@ def validate_meeting_location(form, field):
     # As always, try: https://regex101.com/
     # These aren't "perfect" but close enough: [-\w] allows alphanum '_' and '-'
     loc = field.data.strip()
+    # Allow a "blank" entry...
+    if loc == '':
+        return
+
     # - ircroom@irc.server
     if re.match(r'^[-\w]+@[-\w]+([.][-\w]+)*$', loc):
         return
+
     # - #room:host.name.tld
     if re.match(r'^#[-\w]+:[-\w]+([.][-\w]+)*$', loc):
         return
+
     # - https://matrix.to/#/#room:host.name.tld
     if re.match(r'^https?://matrix.to/#/#[-\w]+:[-\w]+([.][-\w]+)*$', loc):
         return
+
+    # - irc://irc.server/ircroom
+    # Eg.
+    #   irc://irc.libera.chat/fedora-zh
+    if re.match(r'^irc://[-\w]+([.][-\w]+)*/[-\w]+$', loc):
+        return
+
+    # - https://meet.<server>/<name>
+    # Eg.
+    #   https://meet.google.com/acq-pwxk-fhv
+    #   https://meet.jit.si/fedora-websites-apps-meeting
+    if re.match(r'^https?://meet([.][-\w]+)+/[-\w]+$', loc):
+        return
+
+    # - https://meet.<server>/b/<name>
+    # Eg.
+    #   https://meet.kde.org/b/ale-swq-39j
+    if re.match(r'^https?://meet([.][-\w]+)+/b/[-\w]+$', loc):
+        return
+
+    # - https://<server>.zoom.us/j/<name>?pwd=<pwd>
+    # Eg.
+    #   https://umich.zoom.us/j/96648123924?pwd=RitQVVQvMFVSaXJhNkFBS08vWTk0Zz09
+    if re.match(r'^https?://[-\w]+.zoom.us/j/\d+([?]pwd=\w+)?$', loc):
+        return
+
+    # - https://hangouts.google.com/hangouts/_/<name>
+    # Eg.
+    #   https://hangouts.google.com/hangouts/_/67zc3kvkovelxctlilphwodlp4e
+    if re.match(r'^https?://hangouts.google.com/hangouts/_/[-\w]+$', loc):
+        return
+
+    # podcast.fedoraproject.org
+    if loc == 'podcast.fedoraproject.org':
+        return
+    if loc == 'http://podcast.fedoraproject.org/':
+        return
+    if loc == 'https://podcast.fedoraproject.org/':
+        return
+
     raise wtforms.ValidationError(
-            _('Please use channel@server or #room:server formats!')
+            _('Please use IRC, Matrix, meet, zoom or hangouts formats!')
         )
 
 

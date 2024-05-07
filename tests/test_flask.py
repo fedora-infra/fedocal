@@ -1852,6 +1852,44 @@ class Flasktests(Modeltests):
                 self.assertIn(
                     '<li class="message">Meeting added</li>', output_text)
 
+            # Valid meeting location: List of current meeting locations:
+            meet_locations = ['',
+                'https://unomaha.zoom.us/j/609939109',
+                'https://hangouts.google.com/hangouts/_/67zc3kvkovelxctlilphwodlp4e',
+                'https://meet.opensuse.org/epel',
+                'irc://irc.libera.chat/fedora-zh',
+                'https://meet.google.com/acq-pwxk-fhv',
+                'https://meet.google.com/mic-otnv-kse',
+                'https://meet.jit.si/fedora-websites-apps-meeting',
+                'https://meet.kde.org/b/ale-swq-39j',
+                'https://umich.zoom.us/j/96648123924?pwd=RitQVVQvMFVSaXJhNkFBS08vWTk0Zz09',
+                'https://umich.zoom.us/j/99842244394?pwd=YVdkQjJTdnpBMUkySGVzK1kyTGoyZz09',
+                'https://meet.google.com/xuj-jswy-hat',
+                'podcast.fedoraproject.org',
+                'https://podcast.fedoraproject.org/',
+                'https://meet.google.com/jod-dkmw-ibd']
+            # https://pagure.io/fedocal/issue/213
+            data = {
+                'meeting_name': 'guess what?',
+                'meeting_date': TODAY,
+                'meeting_time_start': time(13, 0),
+                'meeting_time_stop': time(14, 0),
+                'meeting_timezone': 'Europe/Paris',
+                'meeting_location': None,
+                'frequency': '',
+                'csrf_token': csrf_token,
+            }
+
+            for meet_location in meet_locations:
+              with testing.mock_sends(schema.MeetingNewV1):
+                data['meeting_location'] = meet_location
+                output = self.app.post('/test_calendar/add/', data=data,
+                                       follow_redirects=True)
+                self.assertEqual(output.status_code, 200)
+                output_text = output.get_data(as_text=True)
+                self.assertIn(
+                    '<li class="message">Meeting added</li>', output_text)
+
 
     def test_edit_meeting(self):
         """ Test the edit_meeting function. """

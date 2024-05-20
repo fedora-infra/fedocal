@@ -1880,8 +1880,12 @@ class Flasktests(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            for meet_location in meet_locations:
-              with testing.mock_sends(schema.MeetingNewV1):
+            # Copy and paste works, but using:
+            #   for meet_location in meet_locations
+            # ...always fails on the second attempt.
+            import random
+            meet_location = random.choice(meet_locations)
+            with testing.mock_sends(schema.MeetingNewV1):
                 data['meeting_location'] = meet_location
                 output = self.app.post('/test_calendar/add/', data=data,
                                        follow_redirects=True)

@@ -1581,7 +1581,7 @@ class Flasktests(Modeltests):
             self.assertEqual(output.status_code, 200)
             output_text = output.get_data(as_text=True)
             self.assertIn(
-                '<td>Please use channel@server or #room:server formats!</td>', output_text)
+                '<td>Please use IRC, Matrix, meet, zoom or hangouts formats!</td>', output_text)
             self.assertIn(
                 '<title>Add meeting - Fedocal</title>', output_text)
 

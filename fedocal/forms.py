@@ -108,9 +108,13 @@ def validate_meeting_location(form, field):
     # podcast.fedoraproject.org
     if loc == 'podcast.fedoraproject.org':
         return
-    if loc == 'http://podcast.fedoraproject.org/':
+
+    # Just let in all URLs ...
+    if loc.startswith('irc://'):
         return
-    if loc == 'https://podcast.fedoraproject.org/':
+    if loc.startswith('http://'):
+        return
+    if loc.startswith('https://'):
         return
 
     raise wtforms.ValidationError(

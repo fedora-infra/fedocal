@@ -1789,110 +1789,59 @@ class Flasktests(Modeltests):
                 self.assertNotIn(
                     'href="/meeting/20/?from_date=', output_text)
 
-            # Valid meeting location: IRC Channel with server
-            # https://pagure.io/fedocal/issue/118
-            data = {
+            _mnum = 0
+            def _tst_add_meeting_loc(loc):
+              nonlocal _mnum
+              data = {
                 'meeting_name': 'guess what?',
                 'meeting_date': TODAY,
-                'meeting_time_start': time(13, 0),
-                'meeting_time_stop': time(14, 0),
+                'meeting_time_start': time(_mnum, 0),
+                'meeting_time_stop': time(_mnum+1, 0),
                 'meeting_timezone': 'Europe/Paris',
-                'meeting_location': 'meeting-1@fedoraproject.org',
+                'meeting_location': loc,
                 'frequency': '',
                 'csrf_token': csrf_token,
-            }
-
-            with testing.mock_sends(schema.MeetingNewV1):
+              }
+              _mnum += 1
+              with testing.mock_sends(schema.MeetingNewV1):
                 output = self.app.post('/test_calendar/add/', data=data,
                                        follow_redirects=True)
                 self.assertEqual(output.status_code, 200)
                 output_text = output.get_data(as_text=True)
                 self.assertIn(
                     '<li class="message">Meeting added</li>', output_text)
+
+            meeting_locs = set()
+            # Valid meeting location: IRC Channel with server
+            # https://pagure.io/fedocal/issue/118
+            meeting_locs.add('meeting-1@fedoraproject.org')
 
             # Valid meeting location: Matrix Room
             # https://pagure.io/fedocal/issue/213
-            data = {
-                'meeting_name': 'guess what?',
-                'meeting_date': TODAY,
-                'meeting_time_start': time(13, 0),
-                'meeting_time_stop': time(14, 0),
-                'meeting_timezone': 'Europe/Paris',
-                'meeting_location': '#meeting-1:fedoraproject.org',
-                'frequency': '',
-                'csrf_token': csrf_token,
-            }
-
-            with testing.mock_sends(schema.MeetingNewV1):
-                output = self.app.post('/test_calendar/add/', data=data,
-                                       follow_redirects=True)
-                self.assertEqual(output.status_code, 200)
-                output_text = output.get_data(as_text=True)
-                self.assertIn(
-                    '<li class="message">Meeting added</li>', output_text)
+            meeting_locs.add('#meeting-1:fedoraproject.org')
 
             # Valid meeting location: Matrix Room URL
             # https://pagure.io/fedocal/issue/213
-            data = {
-                'meeting_name': 'guess what?',
-                'meeting_date': TODAY,
-                'meeting_time_start': time(13, 0),
-                'meeting_time_stop': time(14, 0),
-                'meeting_timezone': 'Europe/Paris',
-                'meeting_location': 'https://matrix.to/#/#meeting-1:fedoraproject.org',
-                'frequency': '',
-                'csrf_token': csrf_token,
-            }
-
-            with testing.mock_sends(schema.MeetingNewV1):
-                output = self.app.post('/test_calendar/add/', data=data,
-                                       follow_redirects=True)
-                self.assertEqual(output.status_code, 200)
-                output_text = output.get_data(as_text=True)
-                self.assertIn(
-                    '<li class="message">Meeting added</li>', output_text)
+            meeting_locs.add('https://matrix.to/#/#meeting-1:fedoraproject.org')
 
             # Valid meeting location: List of current meeting locations:
-            meet_locations = ['',
-                'https://unomaha.zoom.us/j/609939109',
-                'https://hangouts.google.com/hangouts/_/67zc3kvkovelxctlilphwodlp4e',
-                'https://meet.opensuse.org/epel',
-                'irc://irc.libera.chat/fedora-zh',
-                'https://meet.google.com/acq-pwxk-fhv',
-                'https://meet.google.com/mic-otnv-kse',
-                'https://meet.jit.si/fedora-websites-apps-meeting',
-                'https://meet.kde.org/b/ale-swq-39j',
-                'https://umich.zoom.us/j/96648123924?pwd=RitQVVQvMFVSaXJhNkFBS08vWTk0Zz09',
-                'https://umich.zoom.us/j/99842244394?pwd=YVdkQjJTdnpBMUkySGVzK1kyTGoyZz09',
-                'https://meet.google.com/xuj-jswy-hat',
-                'podcast.fedoraproject.org',
-                'https://podcast.fedoraproject.org/',
-                'https://meet.google.com/jod-dkmw-ibd']
-            # https://pagure.io/fedocal/issue/213
-            data = {
-                'meeting_name': 'guess what?',
-                'meeting_date': TODAY,
-                'meeting_time_start': time(13, 0),
-                'meeting_time_stop': time(14, 0),
-                'meeting_timezone': 'Europe/Paris',
-                'meeting_location': None,
-                'frequency': '',
-                'csrf_token': csrf_token,
-            }
-
-            # Copy and paste works, but using:
-            #   for meet_location in meet_locations
-            # ...always fails on the second attempt.
-            import random
-            meet_location = random.choice(meet_locations)
-            with testing.mock_sends(schema.MeetingNewV1):
-                data['meeting_location'] = meet_location
-                output = self.app.post('/test_calendar/add/', data=data,
-                                       follow_redirects=True)
-                self.assertEqual(output.status_code, 200)
-                output_text = output.get_data(as_text=True)
-                self.assertIn(
-                    '<li class="message">Meeting added</li>', output_text)
+            meeting_locs.add('')
+            meeting_locs.add('https://unomaha.zoom.us/j/609939109')
+            meeting_locs.add('https://hangouts.google.com/hangouts/_/67zc3kvkovelxctlilphwodlp4e')
+            meeting_locs.add('https://meet.opensuse.org/epel')
+            meeting_locs.add('irc://irc.libera.chat/fedora-zh')
+            meeting_locs.add('https://meet.google.com/acq-pwxk-fhv')
+            meeting_locs.add('https://meet.google.com/mic-otnv-kse')
+            meeting_locs.add('https://meet.jit.si/fedora-websites-apps-meeting')
+            meeting_locs.add('https://meet.kde.org/b/ale-swq-39j')
+            meeting_locs.add('https://umich.zoom.us/j/96648123924?pwd=RitQVVQvMFVSaXJhNkFBS08vWTk0Zz09')
+            meeting_locs.add('https://umich.zoom.us/j/99842244394?pwd=YVdkQjJTdnpBMUkySGVzK1kyTGoyZz09')
+            meeting_locs.add('https://meet.google.com/xuj-jswy-hat')
+            meeting_locs.add('podcast.fedoraproject.org')
+            meeting_locs.add('https://podcast.fedoraproject.org/')
+            meeting_locs.add('https://meet.google.com/jod-dkmw-ibd')
+            for loc in meeting_locs:
+                _tst_add_meeting_loc(loc)
 
 
     def test_edit_meeting(self):

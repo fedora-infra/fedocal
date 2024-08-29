@@ -63,10 +63,9 @@ Register the application to iddev for development::
   oidc-register https://iddev.fedorainfracloud.org/ http://localhost:5000/oidc_callback
 
 
-Add the following two lines in your configuration file `fedocal.cfg`::
+Add the following line in your configuration file `fedocal.cfg`::
 
   OIDC_ID_TOKEN_COOKIE_SECURE = False
-  OIDC_REQUIRE_VERIFIED_EMAIL = False
 
 
 Run the server::

@@ -85,8 +85,6 @@ ICAL_REMINDER_OPTIONS = (
 OIDC_CLIENT_SECRETS = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..', 'client_secrets.json')
 OIDC_ID_TOKEN_COOKIE_SECURE = False
-OIDC_REQUIRE_VERIFIED_EMAIL = False
-OIDC_OPENID_REALM = 'http://localhost:5000/oidc_callback'
 OIDC_SCOPES = [
     'openid', 'email', 'profile',
     'https://id.fedoraproject.org/scope/cla',

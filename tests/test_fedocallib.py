@@ -753,6 +753,26 @@ class Fedocallibtests(Modeltests):
         self.assertFalse(hasattr(event, 'valarm_list'))
         self.assertFalse(hasattr(event, 'valarm'))
 
+    def test_add_meeting_to_vcal_gmeet(self):
+        """ Test the add_meeting_to_vcal function with Google Meet"""
+        import vobject
+        calendar = vobject.iCalendar()
+        self.__setup_meeting()
+        meetings = fedocallib.get_future_single_meeting_of_user(
+            self.session, 'pingou', from_date=TODAY)
+        self.assertNotEqual(meetings, None)
+        self.assertEqual(len(meetings), 4)
+
+        meeting = meetings[0]
+        meeting.meeting_location = "https://meet.google.com/do-not-exist"
+
+        fedocallib.add_meeting_to_vcal(calendar, meeting)
+        self.assertEqual(len(calendar.vevent_list), 1)
+        event = calendar.vevent
+        print(meeting)
+        print(event)
+        self.assertEqual(event.x_google_conference.value, event.location.value)
+
     def test_add_meetings_to_vcal(self):
         """ Test the add_meetings_to_vcal function. """
         import vobject

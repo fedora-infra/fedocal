@@ -684,6 +684,8 @@ def add_meeting_to_vcal(ical, meeting, reminder=None):
     entry.add('organizer').value = ', '.join(meeting.meeting_manager)
     if meeting.meeting_location:
         entry.add('location').value = meeting.meeting_location
+        if meeting.meeting_location.startswith('https://meet.google.com/'):
+            entry.add('x-google-conference').value = meeting.meeting_location
 
     start = entry.add('dtstart')
     stop = entry.add('dtend')

@@ -195,10 +195,10 @@ def sanitize(text):
     """ Sanitize a given text from any not-allowed html using bleach. """
     return bleach.clean(
         text,
-        tags=bleach.ALLOWED_TAGS + [
+        tags=bleach.ALLOWED_TAGS.union([
              'p', 'br', 'div', 'h1', 'h2', 'h3', 'table', 'td', 'tr',
              'th', 'col', 'tbody', 'pre', 'img',
-            ],
+            ]),
         attributes=bleach.ALLOWED_ATTRIBUTES
     )
 

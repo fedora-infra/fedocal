@@ -155,7 +155,6 @@ work.
     return decorated_function
 
 
-@babel.localeselector
 def get_locale():
     """try to guess the language from the user accept
     header the browser transmits"""
@@ -166,6 +165,7 @@ def get_locale():
         )
     except ImportError:
         return 'en'
+babel.init_app(APP, locale_selector=get_locale)
 
 
 @APP.context_processor

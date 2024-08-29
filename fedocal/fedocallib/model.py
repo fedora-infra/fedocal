@@ -38,7 +38,7 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import relation as relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import and_, or_
 from sqlalchemy import func as safunc
 

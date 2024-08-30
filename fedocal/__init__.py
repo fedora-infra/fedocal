@@ -627,7 +627,7 @@ def ical_all():
         )
     except ValueError:
         reminder = None
-    fedocallib.add_meetings_to_vcal(ical, meetings reminder=reminder)
+    fedocallib.add_meetings_to_vcal(ical, meetings, reminder=reminder)
     headers = {}
     filename = secure_filename(
         'all_calendars-%s.ical' % (
@@ -666,7 +666,7 @@ def ical_out(calendar_name):
         )
     except ValueError:
         reminder = None
-    fedocallib.add_meetings_to_vcal(ical, meetings reminder=reminder)
+    fedocallib.add_meetings_to_vcal(ical, meetings, reminder=reminder)
     headers = {}
     filename = secure_filename(
         '%s-%s.ical' % (

@@ -141,7 +141,7 @@ class Calendar(BASE):
         ForeignKey('calendar_status.status', onupdate="cascade"),
         default='Enabled',
         nullable=False)
-    meetings = relationship("Meeting")
+    meetings = relationship("Meeting", back_populates="calendar")
 
     def __init__(
             self, calendar_name, calendar_contact, calendar_description,
@@ -336,7 +336,7 @@ class Meeting(BASE):
         String(80),
         ForeignKey('calendars.calendar_name', onupdate="cascade"),
         nullable=False)
-    calendar = relationship("Calendar", lazy='joined')
+    calendar = relationship("Calendar", lazy='joined', back_populates="meetings")
     # 5 person max (32 * 5) + 5 = 165
     meeting_manager_user = relationship('MeetingsUsers', lazy='joined')
     meeting_date = Column(Date, default=safunc.now(), nullable=False)

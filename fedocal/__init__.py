@@ -49,6 +49,7 @@ from functools import wraps
 from pytz import common_timezones
 from six.moves.urllib.parse import urlparse, urljoin
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 
 from fedocal.fedocal_babel import Babel
@@ -58,7 +59,6 @@ from fedocal.fedocal_babel import format_datetime
 import fedocal.forms as forms
 import fedocal.fedocallib as fedocallib
 import fedocal.mail_logging
-import fedocal.proxy
 from fedocal.fedocallib.exceptions import FedocalException
 from fedocal.fedocallib.model import (Calendar, Meeting)
 
@@ -96,7 +96,7 @@ APP.static_folder = [
 
 OIDC = OpenIDConnect(APP, credentials_store=flask.session )
 
-APP.wsgi_app = fedocal.proxy.ReverseProxied(APP.wsgi_app)
+APP.wsgi_app = ProxyFix(APP.wsgi_app, x_proto=1, x_host=1)
 SESSION = fedocallib.create_session(APP.config['DB_URL'])
 
 if not APP.debug:

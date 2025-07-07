@@ -44,11 +44,11 @@ import six.moves
 import vobject
 from dateutil.relativedelta import relativedelta
 from flask_oidc import OpenIDConnect
-from flask_multistatic import MultiStaticFlask
 from functools import wraps
 from pytz import common_timezones
 from six.moves.urllib.parse import urlparse, urljoin
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.exceptions import NotFound
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 
@@ -65,7 +65,7 @@ from fedocal.fedocallib.model import (Calendar, Meeting)
 import fedocal.fedocallib.fedmsgshim as fedmsg
 
 # Create the application.
-APP = MultiStaticFlask(__name__)
+APP = flask.Flask(__name__, static_folder=None)
 
 # set up FAS
 APP.config.from_object('fedocal.default_config')
@@ -89,10 +89,28 @@ APP.jinja_loader = jinja2.ChoiceLoader(templ_loaders)
 
 
 # Points the template and static folders to the desired theme
-APP.static_folder = [
-    os.path.join(APP.root_path, 'static', APP.config['THEME_FOLDER']),
-    os.path.join(APP.root_path, 'static', 'default')
-]
+def get_static_view(directories: list[str]):
+    def _view(filename):
+        max_age = flask.current_app.get_send_file_max_age(filename)
+        for directory in directories:
+            try:
+                return flask.helpers.send_from_directory(directory, filename, max_age=max_age)
+            except NotFound:
+                continue
+        raise NotFound()
+
+    return _view
+
+APP.add_url_rule(
+    "/static/<path:filename>",
+    endpoint="static",
+    view_func=get_static_view(
+        [
+            os.path.join('static', APP.config['THEME_FOLDER']),
+            os.path.join('static', 'default')
+        ],
+    ),
+)
 
 OIDC = OpenIDConnect(APP, credentials_store=flask.session )
 

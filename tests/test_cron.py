@@ -33,12 +33,12 @@ import logging
 import unittest
 import sys
 import os
+from unittest.mock import ANY, patch
 
 from datetime import timedelta, datetime
 
 import fedocal_messages.messages as schema
 from fedora_messaging import testing
-from mock import ANY, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))

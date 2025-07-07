@@ -33,6 +33,7 @@ import unittest
 import sys
 import os
 import re
+from unittest.mock import ANY, patch
 
 from datetime import date
 from datetime import datetime
@@ -44,7 +45,6 @@ import six
 
 import fedocal_messages.messages as schema
 from fedora_messaging import testing
-from mock import ANY, patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
@@ -1726,7 +1726,7 @@ class Flasktests(Modeltests):
             self.assertIn(
                 '<h2>New meeting</h2>', output_text)
             self.assertIn(
-                '<td>The domain name fp is not valid. It should have a period.</td>',
+                '<td>The part after the @-sign is not valid. It should have a period.</td>',
                 output_text)
 
             # Works - with one email as recipient of the reminder

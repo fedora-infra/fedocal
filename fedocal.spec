@@ -40,7 +40,6 @@ BuildRequires:  python%{pyversion}-markdown
 BuildRequires:  python%{pyversion}-docutils
 BuildRequires:  python%{pyversion}-nose
 BuildRequires:  python%{pyversion}-coverage
-BuildRequires:  python%{pyversion}-mock
 BuildRequires:  python%{pyversion}-psutil
 BuildRequires:  python%{pyversion}-flask-babel
 BuildRequires:  python%{pyversion}-bleach

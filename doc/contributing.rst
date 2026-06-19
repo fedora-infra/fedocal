@@ -27,5 +27,5 @@ If you're submitting patches to fedocal, please observe the following:
    idea but don't know how to implement it, you just have something bugging
    you?
 
-   Come to see us on IRC: ``#fedora-apps`` on irc.freenode.net or via the
+   Come to see us on IRC: ``#fedora-apps`` on irc.libera.chat or via the
    `issue tracker of the project <https://pagure.io/fedocal/>`_.
